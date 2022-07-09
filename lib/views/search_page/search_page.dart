@@ -1,7 +1,13 @@
+import 'dart:math';
+
 import 'package:better_bus_v2/data_provider/vitalis_data_provider.dart';
 import 'package:better_bus_v2/model/clean/bus_stop.dart';
 import 'package:better_bus_v2/views/common/background.dart';
+import 'package:better_bus_v2/views/common/error_handler.dart';
+import 'package:better_bus_v2/views/common/line_widget.dart';
 import 'package:flutter/material.dart';
+
+import '../../model/clean/bus_line.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
@@ -12,15 +18,22 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   List<BusStop>? busStops;
+  Map<String, bool> resultExpand = {};
+  Map<String, List<BusLine>?> busStopsLines = {};
+
   List<BusStop>? validResult;
 
   @override
   void initState() {
     super.initState();
     VitalisDataProvider.getStops().then((value) {
+      for (BusStop stop in value!) {
+        resultExpand[stop.name] = false;
+        busStopsLines[stop.name] = null;
+      }
       setState(() {
         busStops = value;
-        validResult = List.from(value!);
+        validResult = List.from(value);
       });
     });
   }
@@ -39,6 +52,10 @@ class _SearchPageState extends State<SearchPage> {
     });
   }
 
+  void selectBusStop(BusStop stopSelected) {
+    Navigator.pop(context, stopSelected);
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget? output;
@@ -47,7 +64,7 @@ class _SearchPageState extends State<SearchPage> {
     } else if (validResult!.isEmpty) {
       output = NotFoundScreen();
     } else {
-      output = StopScreen(validResult!);
+      output = StopScreen(validResult!, this);
     }
 
     return Scaffold(
@@ -61,7 +78,9 @@ class _SearchPageState extends State<SearchPage> {
                   onChanged: inputChange,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
-                    fillColor: Theme.of(context).backgroundColor,
+                    fillColor: Theme
+                        .of(context)
+                        .backgroundColor,
                     filled: true,
                   ),
                 ),
@@ -107,15 +126,17 @@ class NotFoundScreen extends StatelessWidget {
 }
 
 class StopScreen extends StatelessWidget {
-  const StopScreen(this.validStops, {Key? key}) : super(key: key);
+  const StopScreen(this.validStops, this.rootState, {Key? key})
+      : super(key: key);
   final List<BusStop> validStops;
+  final _SearchPageState rootState;
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: ListView.builder(
         itemBuilder: (context, index) {
-          return BusStopWidget(validStops[index]);
+          return BusStopWidget(validStops[index], rootState);
         },
         itemCount: validStops.length,
       ),
@@ -124,11 +145,10 @@ class StopScreen extends StatelessWidget {
 }
 
 class BusStopWidget extends StatefulWidget {
-  const BusStopWidget(this.stop, {this.expand = false, Key? key})
-      : super(key: key);
+  const BusStopWidget(this.stop, this.rootWidget, {Key? key}) : super(key: key);
 
   final BusStop stop;
-  final bool expand;
+  final _SearchPageState rootWidget;
 
   @override
   State<BusStopWidget> createState() => _BusStopWidgetState();
@@ -138,6 +158,18 @@ class _BusStopWidgetState extends State<BusStopWidget>
     with SingleTickerProviderStateMixin {
   late AnimationController expandController;
   late Animation<double> animation;
+
+  bool get expand => widget.rootWidget.resultExpand[widget.stop.name]!;
+
+  set expand(bool v) => widget.rootWidget.resultExpand[widget.stop.name] = v;
+
+  List<BusLine>? get busLines =>
+      widget.rootWidget.busStopsLines[widget.stop.name];
+
+  set busLines(List<BusLine>? v) =>
+      widget.rootWidget.busStopsLines[widget.stop.name] = v;
+
+  bool getRequestLaunch = false;
 
   @override
   void initState() {
@@ -157,7 +189,7 @@ class _BusStopWidgetState extends State<BusStopWidget>
   }
 
   void runExpandCheck() {
-    if (widget.expand) {
+    if (expand) {
       expandController.forward();
     } else {
       expandController.reverse();
@@ -176,35 +208,90 @@ class _BusStopWidgetState extends State<BusStopWidget>
     super.dispose();
   }
 
+  void getInfo() {
+    if (expand) {
+      expand = false;
+    } else {
+      expand = true;
+      if (getRequestLaunch == false) {
+        getRequestLaunch = true;
+        VitalisDataProvider.getLines(widget.stop)
+            .then((value) =>
+        {
+          setState(() => {busLines = value})
+        },
+            onError: ErrorHandler.printError
+        );
+      }
+    }
+    runExpandCheck();
+  }
+
+  void widgetPressed() {
+    widget.rootWidget.selectBusStop(widget.stop);
+  }
+
   @override
   Widget build(BuildContext context) {
+    Widget? busStopInfo;
+    if (busLines == null) {
+      busStopInfo = const Center(
+        child: CircularProgressIndicator(),
+      );
+    } else {
+      List<Widget> children = [];
+      for (BusLine line in busLines!) {
+        children.add(LineWidget(line, 35));
+      }
+
+      busStopInfo = Row(
+        children: children,
+      );
+    }
+
     return Padding(
       padding: const EdgeInsets.all(3.0),
       child: OutlinedButton(
-        onPressed: () {
-          expandController.forward();
-        },
+        onPressed: widgetPressed,
         style: TextButton.styleFrom(
           alignment: Alignment.centerLeft,
           padding: EdgeInsets.all(5),
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          backgroundColor: Theme.of(context).backgroundColor,
+          backgroundColor: Theme
+              .of(context)
+              .backgroundColor,
         ),
-        child: Row(
+        child: Column(
           children: [
-            Text(
-              widget.stop.name,
-              textAlign: TextAlign.left,
-              style: Theme.of(context).textTheme.headline5,
+            Row(
+              children: [
+                Text(
+                  widget.stop.name,
+                  textAlign: TextAlign.left,
+                  style: Theme
+                      .of(context)
+                      .textTheme
+                      .headline5,
+                ),
+                const Spacer(),
+                TextButton(
+                    onPressed: getInfo,
+                    child: AnimatedBuilder(
+                        animation: animation,
+                        builder: (context, widget) =>
+                            Transform.rotate(angle: animation.value * pi,
+                                child: Icon(Icons.keyboard_arrow_down))
+                    )
+                )
+              ],
             ),
             SizeTransition(
               sizeFactor: animation,
               axisAlignment: 1.0,
-              child: SizedBox(
-                height: 50,
-              ),
+              child: SizedBox(child: busStopInfo),
             )
           ],
+          crossAxisAlignment: CrossAxisAlignment.start,
         ),
       ),
     );

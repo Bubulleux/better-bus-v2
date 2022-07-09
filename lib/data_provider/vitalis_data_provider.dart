@@ -30,6 +30,8 @@ class VitalisDataProvider {
     return {"Authorization": token!};
   }
 
+
+
   static Future<List<BusStop>?> getStops() async {
     Uri uri = Uri.parse("https://releases-uxb3m2jh5q-ew.a.run.app/stops");
 
@@ -51,32 +53,53 @@ class VitalisDataProvider {
         ));
       }
       return output;
+    } else {
+      throw ApiProviderException(res);
     }
-    return null;
   }
 
   static Future<List<BusLine>?> getLines(BusStop stop) async {
-    Uri uri = Uri.parse("https://releases-uxb3m2jh5q-ew.a.run.app/stops");
+    Uri uri = Uri.parse("https://releases-uxb3m2jh5q-ew.a.run.app/gtfs/Line/getStationLines.json");
+    uri = uri.replace(queryParameters: {
+      "station": stop.name,
+      "networks": "[1]",
+    });
 
     http.Response res = await http.get(uri, headers: await getAutHeader());
 
     if (res.statusCode == 200) {
-      Map<String, dynamic> body = jsonDecode(res.body);
-      List<Map<String, dynamic>> rawLines = body[0];
-      List<BusLine> output = [];
-      for(Map<String, dynamic> rawLine in rawLines) {
-        output.add(BusLine(
-          rawLine["line_id"],
-          rawLine["name"],
-          Color(int.parse(rawLine["color"].replaceAll("#", "0xff"))),
-          goDirection: rawLine["direction"]["aller"],
-          backDirection: rawLine["direction"]["retour"],
-        ));
-
+      try {
+        Map<String, dynamic> body = jsonDecode(res.body);
+        List<dynamic> rawLines = body["lines"];
+        List<BusLine> output = [];
+        for (Map<String, dynamic> rawLine in rawLines) {
+          output.add(BusLine(
+            rawLine["line_id"],
+            rawLine["name"],
+            Color(int.parse(rawLine["color"].replaceAll("#", "0xff"))),
+            goDirection: rawLine["direction"]["aller"].cast<String>(),
+            backDirection: rawLine["direction"]["retour"].cast<String>(),
+          ));
+        }
         return output;
+      } on Exception catch(e) {
+        throw ApiProviderException(res, parentException: e);
       }
-
+    } else {
+      throw ApiProviderException(res);
     }
-    return null;
+  }
+}
+
+class ApiProviderException implements Exception {
+  ApiProviderException(this.response, {this.parentException});
+
+  http.Response response;
+  Exception? parentException;
+
+  @override
+  String toString() {
+    return "Http Request exception\nStatus: ${response.statusCode}\nBody:\n${response.body}"
+        "${parentException != null ? '\nParent Exception:\n' + parentException.toString() : ""}";
   }
 }

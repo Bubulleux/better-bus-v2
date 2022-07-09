@@ -20,8 +20,14 @@ class LineWidget extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(2.0),
         child: FittedBox(
-          child: Text(line.id, textAlign: TextAlign.center),
-          fit: dynamicWidth ? BoxFit.fitHeight : BoxFit.scaleDown,
+          child: Text(
+            line.id,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.black,
+            ),
+          ),
+          fit: dynamicWidth ? BoxFit.fitHeight : BoxFit.contain,
         ),
       ),
       decoration: BoxDecoration(
