@@ -7,6 +7,7 @@ import 'package:better_bus_v2/model/clean/bus_stop.dart';
 import 'package:better_bus_v2/views/common/background.dart';
 import 'package:better_bus_v2/views/home_page/search_bar.dart';
 import 'package:better_bus_v2/views/home_page/shortcut_section.dart';
+import 'package:better_bus_v2/views/stop_info/stop_info_page.dart';
 import 'package:flutter/material.dart';
 import 'package:better_bus_v2/model/clean/view_shortcut.dart';
 
@@ -23,7 +24,7 @@ class _HomePageState extends State<HomePage> {
 
   void searchBusStop(BuildContext context) {
     Navigator.push(context, MaterialPageRoute(builder: (context) => SearchPage())).then((value) => {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => ))
+      Navigator.push(context, MaterialPageRoute(builder: (context) => StopInfoPage(value)))
     });
   }
 

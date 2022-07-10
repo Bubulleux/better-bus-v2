@@ -5,6 +5,8 @@ import 'package:better_bus_v2/views/common/line_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../common/content_container.dart';
+
 class ShortcutWidgetRoot extends StatefulWidget {
   const ShortcutWidgetRoot({Key? key}) : super(key: key);
 
@@ -41,39 +43,33 @@ class ShortcutWidget extends StatelessWidget {
       }
     }
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      child: Container(
-        width: double.infinity,
-        height: 100,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-          child: Column(
-            children: [
-              Text(
-                shortcut.shortcutName,
-                style: Theme.of(context).textTheme.headline5,
-              ),
-              const Spacer(),
-              Row(
-                children: [
-                  Text(
-                    shortcut.shortcutName,
-                    style: const TextStyle(fontSize: 15),
-                  ),
-                  const Spacer(),
-                  Wrap(
-                    children: linesWidget,
-                    spacing: 3,
-                  )
-                ],
-              )
-            ],
-          ),
+    return ClickableContentContainer(
+      //padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      height: 100,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+        child: Column(
+          children: [
+            Text(
+              shortcut.shortcutName,
+              style: Theme.of(context).textTheme.headline5,
+            ),
+            const Spacer(),
+            Row(
+              children: [
+                Text(
+                  shortcut.shortcutName,
+                  style: const TextStyle(fontSize: 15),
+                ),
+                const Spacer(),
+                Wrap(
+                  children: linesWidget,
+                  spacing: 3,
+                )
+              ],
+            )
+          ],
         ),
-        decoration: BoxDecoration(
-            color: Theme.of(context).backgroundColor,
-            borderRadius: BorderRadius.circular(40)),
       ),
     );
   }
