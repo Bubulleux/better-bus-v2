@@ -4,10 +4,13 @@ import 'dart:developer';
 
 import 'package:better_bus_v2/model/clean/bus_line.dart';
 import 'package:better_bus_v2/model/clean/bus_stop.dart';
+import 'package:better_bus_v2/model/clean/line_boarding.dart';
+import 'package:better_bus_v2/model/clean/timetable.dart';
 import 'package:better_bus_v2/views/stop_info/next_passage_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 import '../model/clean/next_passage.dart';
 
@@ -103,6 +106,54 @@ class VitalisDataProvider {
           output.add(NextPassage.fromJson(rawPassage));
         }
         return output;
+      } on Exception catch(e) {
+        throw ApiProviderException(res, parentException: e);
+      }
+    } else {
+      throw ApiProviderException(res);
+    }
+  }
+
+  static Future<LineBoarding> getLineBoarding(BusStop stop, BusLine line) async {
+
+    Uri uri = Uri.parse("https://releases-uxb3m2jh5q-ew.a.run.app/gtfs/Station/getBoardingIDs.json");
+    uri = uri.replace(queryParameters: {
+      "station": stop.name,
+      "line": line.id.toString(),
+      "networks": "[1]",
+    });
+
+    http.Response res = await http.get(uri, headers: await getAutHeader());
+
+    if (res.statusCode == 200) {
+      try {
+        Map<String, dynamic> body = jsonDecode(res.body);
+        return LineBoarding.fromJson(body, line);
+      } on Exception catch(e) {
+        throw ApiProviderException(res, parentException: e);
+      }
+    } else {
+      throw ApiProviderException(res);
+    }
+  }
+
+  static Future<Timetable> getTimetable(BusStop stop, BusLine line, int direction, LineBoarding boarding, DateTime date) async {
+    Uri uri = Uri.parse("https://releases-uxb3m2jh5q-ew.a.run.app	/gtfs/Horaire/getHoraire.json");
+    uri = uri.replace(queryParameters: {
+      "boarding_id": stop.id,
+      "date": DateFormat("yyyy-MM-dd").format(date),
+      "direction" : direction.toString(),
+      "line": line.id,
+      "stop_id": jsonEncode((direction == 0 ? boarding.back : boarding.go).values.map((k) => k.toString()).toList()),
+      "networks": "[1]",
+    });
+
+    http.Response res = await http.get(uri, headers: await getAutHeader());
+
+    if (res.statusCode == 200) {
+      try {
+        Map<String, dynamic> body = jsonDecode(res.body);
+        return Timetable.fromJson(body);
       } on Exception catch(e) {
         throw ApiProviderException(res, parentException: e);
       }

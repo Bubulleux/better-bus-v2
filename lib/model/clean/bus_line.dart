@@ -2,7 +2,7 @@ import 'package:better_bus_v2/model/clean/terminal.dart';
 import 'package:flutter/material.dart';
 
 class BusLine {
-  BusLine(this.id, this.fullName, this.color, {this.goDirection, this.backDirection});
+  const BusLine(this.id, this.fullName, this.color, {this.goDirection, this.backDirection});
   BusLine.example() : this("X", "Some Line name", Colors.red);
   BusLine.fromJson(Map<String, dynamic> json):
       this(
@@ -13,11 +13,11 @@ class BusLine {
         backDirection: json["direction"]["retour"].cast<String>(),
       );
 
-  String id;
-  String fullName;
-  Color color;
-  List<String>? goDirection;
-  List<String>? backDirection;
+  final String id;
+  final String fullName;
+  final Color color;
+  final List<String>? goDirection;
+  final List<String>? backDirection;
 
   @override
   bool operator ==(Object other) {

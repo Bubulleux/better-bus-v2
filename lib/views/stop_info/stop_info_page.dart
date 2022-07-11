@@ -1,4 +1,5 @@
 import 'package:better_bus_v2/views/common/background.dart';
+import 'package:better_bus_v2/views/stop_info/timetable_view.dart';
 import 'package:flutter/material.dart';
 
 import '../../model/clean/bus_stop.dart';
@@ -65,7 +66,7 @@ class _StopInfoPageState extends State<StopInfoPage>
               child: TabBarView(
                 children: [
                   NextPassagePage(widget.stop),
-                  Container(),
+                  TimeTableView(widget.stop),
                 ],
                 controller: tabController,
               ),
