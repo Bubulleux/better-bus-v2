@@ -87,8 +87,8 @@ class VitalisDataProvider {
 
     Uri uri = Uri.parse("https://releases-uxb3m2jh5q-ew.a.run.app/gtfs/SIRI/getSIRIWithErrors.json");
     uri = uri.replace(queryParameters: {
-      "max": max,
-      "stopPoint": stop.id,
+      "max": max.toString(),
+      "stopPoint": stop.id.toString(),
       "networks": "[1]",
     });
 
