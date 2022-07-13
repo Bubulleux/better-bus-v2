@@ -15,7 +15,7 @@ class NextPassagePage extends StatefulWidget {
   State<NextPassagePage> createState() => _NextPassagePageState();
 }
 
-class _NextPassagePageState extends State<NextPassagePage> {
+class _NextPassagePageState extends State<NextPassagePage>{
 
   List<NextPassage>? nextPassages;
 
@@ -27,6 +27,11 @@ class _NextPassagePageState extends State<NextPassagePage> {
     return nextPassages!;
   }
 
+  @override
+  void setState(VoidCallback fn) {
+    nextPassages = null;
+    super.setState(fn);
+  }
 
 
   @override

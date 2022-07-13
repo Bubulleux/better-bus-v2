@@ -20,6 +20,14 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.lightGreen,
         backgroundColor: const Color(0xdde4e4e4),
+        textTheme: const TextTheme(
+          bodyMedium: TextStyle(
+            fontSize: 16,
+          ),
+          bodySmall: TextStyle(
+            fontSize: 13
+          )
+        )
       ),
       home: const HomePage(),
     );

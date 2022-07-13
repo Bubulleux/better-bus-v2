@@ -20,4 +20,9 @@ class BusStop {
   final double latitude;
   final double longitude;
   final int id;
+
+  @override
+  bool operator ==(Object other) {
+    return other is BusStop && id == other.id && name == other.name;
+  }
 }

@@ -1,8 +1,10 @@
+import 'package:intl/intl.dart';
+
 class Timetable {
   Timetable(this.schedule, this.terminalLabel);
   Timetable.fromJson(Map<String, dynamic> json)
   :this (
-    json["horaire"].map((value) => BusSchedule.fromJson(value)).toList(),
+    json["horaire"].map((value) => BusSchedule.fromJson(value)).toList().cast<BusSchedule>(),
     { for (var v in json["terminus"]) v["label"] : v["direction"] },
   );
 
@@ -15,7 +17,7 @@ class BusSchedule {
 
   BusSchedule.fromJson(Map<String, dynamic> json)
       : this(
-          DateTime.parse(json["time"]),
+          DateFormat("HH:mm:ss").parse(json["time"]),
           json["label"],
         );
 

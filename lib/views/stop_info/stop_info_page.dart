@@ -1,4 +1,5 @@
 import 'package:better_bus_v2/views/common/background.dart';
+import 'package:better_bus_v2/views/search_page/search_page.dart';
 import 'package:better_bus_v2/views/stop_info/timetable_view.dart';
 import 'package:flutter/material.dart';
 
@@ -17,11 +18,21 @@ class StopInfoPage extends StatefulWidget {
 class _StopInfoPageState extends State<StopInfoPage>
     with SingleTickerProviderStateMixin {
   late final TabController tabController;
+  late BusStop stop;
 
   @override
   void initState() {
     super.initState();
     tabController = TabController(length: 2, vsync: this);
+    stop = widget.stop;
+  }
+
+  void changeBusStop() {
+    Navigator.push(context, MaterialPageRoute(
+      builder: (context) => SearchPage()
+    )).then((value) => setState(() {
+      stop = value;
+    }));
   }
 
   @override
@@ -33,20 +44,18 @@ class _StopInfoPageState extends State<StopInfoPage>
             Padding(
               padding: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
               child: GestureDetector(
-                onTap: () {
-                  print("Search Bar pressed");
-                },
+                onTap: changeBusStop,
                 child: Container(
                   height: 60,
                   padding: EdgeInsets.all(10),
                   child: Row(
                     children: [
                       Text(
-                        widget.stop.name,
+                        stop.name,
                         style: Theme.of(context).textTheme.headline6,
                       ),
-                      Spacer(),
-                      Icon(Icons.search)
+                      const Spacer(),
+                      const Icon(Icons.search)
                     ],
                   ),
                   decoration: BoxDecoration(
@@ -56,8 +65,8 @@ class _StopInfoPageState extends State<StopInfoPage>
               ),
             ),
             TabBar(
-              tabs: const [
-                Tab(text: "! Prochain Passage",),
+              tabs: [
+                Tab(text: "! Prochain Passage ",),
                 Tab(text: "! Tout les horrairs",)
               ],
               controller: tabController,
@@ -65,10 +74,11 @@ class _StopInfoPageState extends State<StopInfoPage>
             Expanded(
               child: TabBarView(
                 children: [
-                  NextPassagePage(widget.stop),
-                  TimeTableView(widget.stop),
+                  NextPassagePage(stop),
+                  TimeTableView(stop),
                 ],
                 controller: tabController,
+                key: ObjectKey(stop),
               ),
             )
           ],

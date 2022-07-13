@@ -138,9 +138,9 @@ class VitalisDataProvider {
   }
 
   static Future<Timetable> getTimetable(BusStop stop, BusLine line, int direction, LineBoarding boarding, DateTime date) async {
-    Uri uri = Uri.parse("https://releases-uxb3m2jh5q-ew.a.run.app	/gtfs/Horaire/getHoraire.json");
+    Uri uri = Uri.parse("https://releases-uxb3m2jh5q-ew.a.run.app/gtfs/Horaire/getHoraire.json");
     uri = uri.replace(queryParameters: {
-      "boarding_id": stop.id,
+      "boarding_id": stop.id.toString(),
       "date": DateFormat("yyyy-MM-dd").format(date),
       "direction" : direction.toString(),
       "line": line.id,
@@ -153,7 +153,8 @@ class VitalisDataProvider {
     if (res.statusCode == 200) {
       try {
         Map<String, dynamic> body = jsonDecode(res.body);
-        return Timetable.fromJson(body);
+        Timetable output = Timetable.fromJson(body);
+        return output;
       } on Exception catch(e) {
         throw ApiProviderException(res, parentException: e);
       }
