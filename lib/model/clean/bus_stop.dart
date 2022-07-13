@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:math';
 
 class BusStop {
   BusStop(this.name, this.id, {this.latitude = 0, this.longitude = 0});
@@ -25,4 +24,8 @@ class BusStop {
   bool operator ==(Object other) {
     return other is BusStop && id == other.id && name == other.name;
   }
+
+  @override
+  int get hashCode => Object.hash(id, name);
+
 }

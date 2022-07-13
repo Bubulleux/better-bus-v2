@@ -121,6 +121,7 @@ class _TimeTableViewState extends State<TimeTableView> with AutomaticKeepAliveCl
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     String? directionString;
     if (boardingSelected != null) {
       directionString = (boardingSelected == 0 ? boarding!.back : boarding!.go)
@@ -157,7 +158,7 @@ class _TimeTableViewState extends State<TimeTableView> with AutomaticKeepAliveCl
     return Container(
       width: double.infinity,
       height: double.infinity,
-      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
       child: Column(
         children: [
           InputDecoration(
@@ -193,7 +194,7 @@ class _TimeTableViewState extends State<TimeTableView> with AutomaticKeepAliveCl
           InputDecoration(
             Row(
               children: [
-                Icon(Icons.directions_bus_outlined),
+                const Icon(Icons.directions_bus_outlined),
                 Expanded(
                     child: Text(
                   directionString ?? " ",
@@ -214,7 +215,7 @@ class _TimeTableViewState extends State<TimeTableView> with AutomaticKeepAliveCl
             child: InputDecoration(
               Row(
                 children: [
-                  Icon(Icons.calendar_month_outlined),
+                  const Icon(Icons.calendar_month_outlined),
                   Expanded(
                       child: Padding(
                     padding: const EdgeInsets.only(left: 5),
@@ -253,7 +254,7 @@ class InputDecoration extends StatelessWidget {
           border: Border.all(color: Theme.of(context).primaryColor),
           borderRadius: BorderRadius.circular(20),
         ),
-        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
         child: child,
       ),
     );
@@ -285,7 +286,7 @@ class TimetableOutput extends StatelessWidget {
     }
 
     return Container(
-      padding: EdgeInsets.only(top: 10),
+      padding: const EdgeInsets.only(top: 10),
       child: Column(
         children: [
           Expanded(

@@ -1,4 +1,3 @@
-import 'dart:ffi';
 
 import 'package:better_bus_v2/data_provider/vitalis_data_provider.dart';
 import 'package:better_bus_v2/model/clean/bus_stop.dart';
@@ -49,18 +48,16 @@ class _StopSearcherState extends State<StopSearcher> {
       );
     }
 
-    return Container(
-      child: Column(
-        children: [
-          Focus(
-            child: searchBar,
-            onFocusChange: fieldFocusChange,
-          ),
-          Container(
-            child: outputWidget,
-          ),
-        ],
-      ),
+    return Column(
+      children: [
+        Focus(
+          child: searchBar,
+          onFocusChange: fieldFocusChange,
+        ),
+        Container(
+          child: outputWidget,
+        ),
+      ],
     );
   }
 }

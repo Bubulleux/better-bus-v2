@@ -60,9 +60,9 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     Widget? output;
     if (busStops == null || validResult == null) {
-      output = LoadingScreen();
+      output = const LoadingScreen();
     } else if (validResult!.isEmpty) {
-      output = NotFoundScreen();
+      output = const NotFoundScreen();
     } else {
       output = StopScreen(validResult!, this);
     }
@@ -77,7 +77,7 @@ class _SearchPageState extends State<SearchPage> {
                 TextField(
                   onChanged: inputChange,
                   decoration: InputDecoration(
-                    border: OutlineInputBorder(),
+                    border: const OutlineInputBorder(),
                     fillColor: Theme
                         .of(context)
                         .backgroundColor,
@@ -183,7 +183,7 @@ class _BusStopWidgetState extends State<BusStopWidget>
   void prepareAnimation() {
     expandController = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 500),
     );
 
     animation = CurvedAnimation(
@@ -259,7 +259,7 @@ class _BusStopWidgetState extends State<BusStopWidget>
         onPressed: widgetPressed,
         style: TextButton.styleFrom(
           alignment: Alignment.centerLeft,
-          padding: EdgeInsets.all(5),
+          padding: const EdgeInsets.all(5),
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           backgroundColor: Theme
               .of(context)
@@ -284,7 +284,7 @@ class _BusStopWidgetState extends State<BusStopWidget>
                         animation: animation,
                         builder: (context, widget) =>
                             Transform.rotate(angle: animation.value * pi,
-                                child: Icon(Icons.keyboard_arrow_down))
+                                child: const Icon(Icons.keyboard_arrow_down))
                     )
                 )
               ],

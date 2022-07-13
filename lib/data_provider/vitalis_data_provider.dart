@@ -1,14 +1,9 @@
 import 'dart:convert';
-import 'dart:ffi';
-import 'dart:developer';
 
 import 'package:better_bus_v2/model/clean/bus_line.dart';
 import 'package:better_bus_v2/model/clean/bus_stop.dart';
 import 'package:better_bus_v2/model/clean/line_boarding.dart';
 import 'package:better_bus_v2/model/clean/timetable.dart';
-import 'package:better_bus_v2/views/stop_info/next_passage_view.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 

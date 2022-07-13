@@ -1,15 +1,11 @@
 
 import 'dart:ui';
 
-import 'package:better_bus_v2/data_provider/gps_data.dart';
-import 'package:better_bus_v2/data_provider/vitalis_data_provider.dart';
-import 'package:better_bus_v2/model/clean/bus_stop.dart';
 import 'package:better_bus_v2/views/common/background.dart';
 import 'package:better_bus_v2/views/home_page/search_bar.dart';
 import 'package:better_bus_v2/views/home_page/shortcut_section.dart';
 import 'package:better_bus_v2/views/stop_info/stop_info_page.dart';
 import 'package:flutter/material.dart';
-import 'package:better_bus_v2/model/clean/view_shortcut.dart';
 
 import '../search_page/search_page.dart';
 
@@ -23,7 +19,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
 
   void searchBusStop(BuildContext context) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => SearchPage())).then((value){
+    Navigator.push(context, MaterialPageRoute(builder: (context) => const SearchPage())).then((value){
       if (value == null) {
         return;
       }
@@ -44,12 +40,12 @@ class _HomePageState extends State<HomePage> {
                 Container(
                   decoration:
                       BoxDecoration(borderRadius: BorderRadius.circular(40)),
-                  child: SearchBar(),
+                  child: const SearchBar(),
                 ),
                 TextButton(
                     onPressed: () => {searchBusStop(context)},
-                    child: Text("Go Search")),
-                ShortcutWidgetRoot(),
+                    child: const Text("Go Search")),
+                const ShortcutWidgetRoot(),
               ],
             ),
           ),

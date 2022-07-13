@@ -18,7 +18,7 @@ class _SearchBarState extends State<SearchBar> {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
           child: Column(
-            children: [
+            children: const [
               TextField(
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
@@ -32,6 +32,6 @@ class _SearchBarState extends State<SearchBar> {
             color: Theme.of(context).backgroundColor,
             borderRadius: BorderRadius.circular(40)),
       ),
-    );;
+    );
   }
 }

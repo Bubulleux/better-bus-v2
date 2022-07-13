@@ -23,7 +23,7 @@ class LineWidget extends StatelessWidget {
           child: Text(
             line.id,
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.black,
             ),
           ),

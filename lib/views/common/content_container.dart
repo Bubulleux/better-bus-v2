@@ -41,7 +41,7 @@ class ClickableContentContainer extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed ?? (() {}),
         onLongPress: onLongPressed,
-        child: Container(
+        child: SizedBox(
           height: height,
           width: double.infinity,
           //decoration: commonDecoration(context),

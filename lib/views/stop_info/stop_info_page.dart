@@ -1,4 +1,3 @@
-import 'package:better_bus_v2/views/common/background.dart';
 import 'package:better_bus_v2/views/search_page/search_page.dart';
 import 'package:better_bus_v2/views/stop_info/timetable_view.dart';
 import 'package:flutter/material.dart';
@@ -47,12 +46,12 @@ class _StopInfoPageState extends State<StopInfoPage>
         child: Column(
           children: [
             Padding(
-              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 30),
               child: GestureDetector(
                 onTap: changeBusStop,
                 child: Container(
                   height: 60,
-                  padding: EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(10),
                   child: Row(
                     children: [
                       Text(
@@ -70,7 +69,7 @@ class _StopInfoPageState extends State<StopInfoPage>
               ),
             ),
             TabBar(
-              tabs: [
+              tabs: const [
                 Tab(
                   text: "! Prochain Passage ",
                 ),

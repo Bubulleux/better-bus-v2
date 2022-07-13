@@ -2,7 +2,6 @@ import 'package:better_bus_v2/model/clean/bus_line.dart';
 import 'package:better_bus_v2/model/clean/terminal.dart';
 import 'package:better_bus_v2/model/clean/view_shortcut.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../common/content_container.dart';
@@ -17,7 +16,7 @@ class ShortcutWidgetRoot extends StatefulWidget {
 class _ShortcutWidgetRootState extends State<ShortcutWidgetRoot> {
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: double.infinity,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

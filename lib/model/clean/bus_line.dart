@@ -1,4 +1,3 @@
-import 'package:better_bus_v2/model/clean/terminal.dart';
 import 'package:flutter/material.dart';
 
 class BusLine {
@@ -23,4 +22,8 @@ class BusLine {
   bool operator ==(Object other) {
     return other is BusLine && id == other.id;
   }
+
+  @override
+  int get hashCode => Object.hash(id, fullName);
+
 }

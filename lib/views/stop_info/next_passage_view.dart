@@ -36,7 +36,7 @@ class _NextPassagePageState extends State<NextPassagePage>{
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: double.infinity,
       height: double.infinity,
       child: FutureBuilder<List<NextPassage>>(
@@ -108,7 +108,7 @@ class NextPassageWidget extends StatelessWidget {
     String minuteToWait = "${nextPassage.expectedTime.difference(DateTime.now()).inMinutes} min";
     return Container(
       height: 55,
-      padding: EdgeInsets.symmetric(vertical: 2, horizontal: 5),
+      padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 5),
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(width: 1, color: Theme.of(context).primaryColor)
