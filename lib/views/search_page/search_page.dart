@@ -154,6 +154,8 @@ class BusStopWidget extends StatefulWidget {
   State<BusStopWidget> createState() => _BusStopWidgetState();
 }
 
+
+
 class _BusStopWidgetState extends State<BusStopWidget>
     with SingleTickerProviderStateMixin {
   late AnimationController expandController;
@@ -241,10 +243,12 @@ class _BusStopWidgetState extends State<BusStopWidget>
     } else {
       List<Widget> children = [];
       for (BusLine line in busLines!) {
-        children.add(LineWidget(line, 35));
+        children.add(LineWidget(line, 35, dynamicWidth: true,));
       }
 
-      busStopInfo = Row(
+      busStopInfo = Wrap(
+        spacing: 3,
+        runSpacing: 3,
         children: children,
       );
     }
@@ -296,4 +300,6 @@ class _BusStopWidgetState extends State<BusStopWidget>
       ),
     );
   }
+
+
 }

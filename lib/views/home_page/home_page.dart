@@ -23,8 +23,11 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
 
   void searchBusStop(BuildContext context) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => SearchPage())).then((value) => {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => StopInfoPage(value)))
+    Navigator.push(context, MaterialPageRoute(builder: (context) => SearchPage())).then((value){
+      if (value == null) {
+        return;
+      }
+      Navigator.push(context, MaterialPageRoute(builder: (context) => StopInfoPage(value)));
     });
   }
 

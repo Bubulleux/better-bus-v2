@@ -28,11 +28,16 @@ class _StopInfoPageState extends State<StopInfoPage>
   }
 
   void changeBusStop() {
-    Navigator.push(context, MaterialPageRoute(
-      builder: (context) => SearchPage()
-    )).then((value) => setState(() {
-      stop = value;
-    }));
+    Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const SearchPage()))
+        .then((value) {
+      if (value == null) {
+        return;
+      }
+      setState(() {
+        stop = value;
+      });
+    });
   }
 
   @override
@@ -66,8 +71,12 @@ class _StopInfoPageState extends State<StopInfoPage>
             ),
             TabBar(
               tabs: [
-                Tab(text: "! Prochain Passage ",),
-                Tab(text: "! Tout les horrairs",)
+                Tab(
+                  text: "! Prochain Passage ",
+                ),
+                Tab(
+                  text: "! Tout les horrairs",
+                )
               ],
               controller: tabController,
             ),
