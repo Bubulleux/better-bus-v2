@@ -1,13 +1,21 @@
 import 'dart:math';
 
+import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
 import 'package:better_bus_v2/data_provider/vitalis_data_provider.dart';
 import 'package:better_bus_v2/model/clean/bus_stop.dart';
 import 'package:better_bus_v2/views/common/background.dart';
 import 'package:better_bus_v2/views/common/error_handler.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:location/location.dart';
 
 import '../../model/clean/bus_line.dart';
+
+double getDistanceInKMeter(BusStop stop, LocationData locationData) {
+  double result = GpsDataProvider.calculateDistance(stop.latitude,
+      stop.longitude, locationData.latitude, locationData.longitude);
+  return result;
+}
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
@@ -22,6 +30,7 @@ class _SearchPageState extends State<SearchPage> {
   Map<String, List<BusLine>?> busStopsLines = {};
 
   List<BusStop>? validResult;
+  LocationData? locationData;
 
   @override
   void initState() {
@@ -34,6 +43,12 @@ class _SearchPageState extends State<SearchPage> {
       setState(() {
         busStops = value;
         validResult = List.from(value);
+      });
+    });
+
+    GpsDataProvider.getLocation().then((value) {
+      setState(() {
+        locationData = value;
       });
     });
   }
@@ -78,11 +93,10 @@ class _SearchPageState extends State<SearchPage> {
                   onChanged: inputChange,
                   decoration: InputDecoration(
                     border: const OutlineInputBorder(),
-                    fillColor: Theme
-                        .of(context)
-                        .backgroundColor,
+                    fillColor: Theme.of(context).backgroundColor,
                     filled: true,
                   ),
+                  autofocus: true,
                 ),
                 output,
               ],
@@ -154,8 +168,6 @@ class BusStopWidget extends StatefulWidget {
   State<BusStopWidget> createState() => _BusStopWidgetState();
 }
 
-
-
 class _BusStopWidgetState extends State<BusStopWidget>
     with SingleTickerProviderStateMixin {
   late AnimationController expandController;
@@ -170,8 +182,6 @@ class _BusStopWidgetState extends State<BusStopWidget>
 
   set busLines(List<BusLine>? v) =>
       widget.rootWidget.busStopsLines[widget.stop.name] = v;
-
-  bool getRequestLaunch = false;
 
   @override
   void initState() {
@@ -211,20 +221,23 @@ class _BusStopWidgetState extends State<BusStopWidget>
   }
 
   void getInfo() {
+    GpsDataProvider.getLocation()
+        .then((value) => getDistanceInKMeter(widget.stop, value!));
+
     if (expand) {
       expand = false;
     } else {
       expand = true;
-      if (getRequestLaunch == false) {
-        getRequestLaunch = true;
-        VitalisDataProvider.getLines(widget.stop)
-            .then((value) =>
-        {
-          setState(() => {busLines = value})
-        },
-            onError: ErrorHandler.printError
-        );
-      }
+      VitalisDataProvider.getLines(widget.stop).then(
+          (value) => {
+                setState(() {
+                  if (!mounted) {
+                    return;
+                  }
+                  busLines = value;
+                })
+              },
+          onError: ErrorHandler.printError);
     }
     runExpandCheck();
   }
@@ -235,6 +248,12 @@ class _BusStopWidgetState extends State<BusStopWidget>
 
   @override
   Widget build(BuildContext context) {
+    double? stationDistance;
+    if (widget.rootWidget.locationData != null) {
+      stationDistance =
+          getDistanceInKMeter(widget.stop, widget.rootWidget.locationData!);
+    }
+
     Widget? busStopInfo;
     if (busLines == null) {
       busStopInfo = const Center(
@@ -243,7 +262,11 @@ class _BusStopWidgetState extends State<BusStopWidget>
     } else {
       List<Widget> children = [];
       for (BusLine line in busLines!) {
-        children.add(LineWidget(line, 35, dynamicWidth: true,));
+        children.add(LineWidget(
+          line,
+          35,
+          dynamicWidth: true,
+        ));
       }
 
       busStopInfo = Wrap(
@@ -261,32 +284,35 @@ class _BusStopWidgetState extends State<BusStopWidget>
           alignment: Alignment.centerLeft,
           padding: const EdgeInsets.all(5),
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          backgroundColor: Theme
-              .of(context)
-              .backgroundColor,
+          backgroundColor: Theme.of(context).backgroundColor,
         ),
         child: Column(
           children: [
             Row(
               children: [
-                Text(
-                  widget.stop.name,
-                  textAlign: TextAlign.left,
-                  style: Theme
-                      .of(context)
-                      .textTheme
-                      .headline5,
+                Expanded(
+                  child: Text(
+                    widget.stop.name,
+                    textAlign: TextAlign.left,
+                    style: Theme.of(context).textTheme.headline5,
+                    softWrap: false,
+                    maxLines: 1,
+                    overflow: TextOverflow.fade,
+                  ),
                 ),
-                const Spacer(),
+                Container(
+                  child: stationDistance == null
+                      ? null
+                      : Text(
+                          "${(stationDistance * 10).roundToDouble() / 10} km"),
+                ),
                 TextButton(
                     onPressed: getInfo,
                     child: AnimatedBuilder(
                         animation: animation,
-                        builder: (context, widget) =>
-                            Transform.rotate(angle: animation.value * pi,
-                                child: const Icon(Icons.keyboard_arrow_down))
-                    )
-                )
+                        builder: (context, widget) => Transform.rotate(
+                            angle: animation.value * pi,
+                            child: const Icon(Icons.keyboard_arrow_down))))
               ],
             ),
             SizeTransition(
@@ -300,6 +326,4 @@ class _BusStopWidgetState extends State<BusStopWidget>
       ),
     );
   }
-
-
 }

@@ -49,6 +49,17 @@ class _NextPassagePageState extends State<NextPassagePage>{
                 child: Text("Error"),
               );
             } else if (snapshot.hasData) {
+              if (nextPassages!.isEmpty){
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.error_outline),
+                    Text("! Aucun bus n'est prevus de passer")
+                  ],
+                );
+              }
+
               return NextPassageListWidget(nextPassages!, widget.stop);
             }
           }
@@ -95,8 +106,6 @@ class _NextPassageListWidgetState extends State<NextPassageListWidget> {
     );
   }
 }
-
-
 
 class NextPassageWidget extends StatelessWidget {
   const NextPassageWidget(this.nextPassage, {Key? key}) : super(key: key);
