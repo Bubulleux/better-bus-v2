@@ -5,6 +5,11 @@ class BusStop {
 
   BusStop.example() : this("Bus Stop Name", 10);
 
+  final String name;
+  final double latitude;
+  final double longitude;
+  final int id;
+
   BusStop.fromJson(Map<String, dynamic> json)
       : this(
           json["name"],
@@ -15,10 +20,25 @@ class BusStop {
           longitude: json["lng"],
         );
 
-  final String name;
-  final double latitude;
-  final double longitude;
-  final int id;
+  BusStop.fromCleanJson(Map<String, dynamic> json)
+      : this(
+    json["name"],
+    // String transformation: WyIxMDA3NyIsMV0= -> (base 64) ["10077",1] -> (sub string) 10077
+    json["id"],
+    latitude: json["lat"],
+    longitude: json["long"],
+  );
+
+  Map<String, dynamic> toJson() {
+    return {
+      "name" : name,
+      "lat" : latitude,
+      "long": longitude,
+      "id": id,
+    };
+  }
+
+
 
   @override
   bool operator ==(Object other) {

@@ -8,8 +8,12 @@ import 'package:better_bus_v2/views/common/error_handler.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../model/clean/bus_line.dart';
+
+const historicPrefName = "historic";
+const maxHistoricSize = 20;
 
 double getDistanceInKMeter(BusStop stop, LocationData locationData) {
   double result = GpsDataProvider.calculateDistance(stop.latitude,
@@ -18,7 +22,12 @@ double getDistanceInKMeter(BusStop stop, LocationData locationData) {
 }
 
 class SearchPage extends StatefulWidget {
-  const SearchPage({Key? key}) : super(key: key);
+  const SearchPage(
+      {this.saveInHistoric = true, this.showHistoric = true, Key? key})
+      : super(key: key);
+
+  final bool saveInHistoric;
+  final bool showHistoric;
 
   @override
   State<SearchPage> createState() => _SearchPageState();
@@ -32,49 +41,114 @@ class _SearchPageState extends State<SearchPage> {
   List<BusStop>? validResult;
   LocationData? locationData;
 
+  List<BusStop>? historic;
+  SharedPreferences? preferences;
+
+  TextEditingController textFieldController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
-    VitalisDataProvider.getStops().then((value) {
-      for (BusStop stop in value!) {
-        resultExpand[stop.name] = false;
-        busStopsLines[stop.name] = null;
-      }
-      setState(() {
-        busStops = value;
-        validResult = List.from(value);
-      });
-    });
+    textFieldController.addListener(inputChange);
+    loadPage();
+  }
 
+  Future<void> loadPage() async {
     GpsDataProvider.getLocation().then((value) {
       setState(() {
         locationData = value;
       });
     });
+
+    busStops = await VitalisDataProvider.getStops();
+    for (BusStop stop in busStops!) {
+      resultExpand[stop.name] = false;
+      busStopsLines[stop.name] = null;
+    }
+
+    await loadHistoric();
+
+    validResult = [];
+    inputChange();
+
+    setState(() {});
   }
 
-  void inputChange(String input) {
-    if (validResult == null || busStops == null) {
+  Future<void> loadHistoric() async {
+    if (busStops == null) {
       return;
     }
+    if (!widget.showHistoric){
+      historic = [];
+      return;
+    }
+
+    preferences ??= await SharedPreferences.getInstance();
+    List<String> rawHistoric =
+        preferences!.getStringList(historicPrefName) ?? [];
+    historic = [];
+    for (String stopName in rawHistoric) {
+      int busStopIndex =
+          busStops!.indexWhere((element) => element.name == stopName);
+      historic!.add(busStops![busStopIndex]);
+    }
+    print(historic);
+  }
+
+  Future<void> saveHistoric() async {
+    preferences ??= await SharedPreferences.getInstance();
+    await preferences!.setStringList(
+        historicPrefName, historic!.map((e) => e.name).toList().cast<String>());
+  }
+
+  void addStopInHistoric(BusStop stop) {
+    if (historic == null) {
+      return;
+    }
+
+    historic!.removeWhere((element) => element == stop);
+    historic!.insert(0, stop);
+    while (historic!.length > maxHistoricSize) {
+      historic!.removeLast();
+    }
+  }
+
+  void inputChange() {
+    if (validResult == null || busStops == null || historic == null) {
+      return;
+    }
+    String input = textFieldController.value.text;
     setState(() {
       validResult!.clear();
-      for (BusStop busStop in busStops!) {
-        if (busStop.name.toLowerCase().contains(input.toLowerCase())) {
+      for (BusStop busStop in historic!) {
+        if (busStop.name.toLowerCase().contains(input.toLowerCase())){
           validResult!.add(busStop);
         }
       }
+
+      for (BusStop busStop in busStops!) {
+        if (busStop.name.toLowerCase().contains(input.toLowerCase()) &&
+            !historic!.contains(busStop)) {
+          validResult!.add(busStop);
+        }
+      }
+
+      if (widget.showHistoric) {}
     });
   }
 
   void selectBusStop(BusStop stopSelected) {
+    if (widget.saveInHistoric) {
+      addStopInHistoric(stopSelected);
+      saveHistoric();
+    }
     Navigator.pop(context, stopSelected);
   }
 
   @override
   Widget build(BuildContext context) {
     Widget? output;
-    if (busStops == null || validResult == null) {
+    if (busStops == null || validResult == null || historic == null) {
       output = const LoadingScreen();
     } else if (validResult!.isEmpty) {
       output = const NotFoundScreen();
@@ -90,13 +164,13 @@ class _SearchPageState extends State<SearchPage> {
             child: Column(
               children: [
                 TextField(
-                  onChanged: inputChange,
                   decoration: InputDecoration(
                     border: const OutlineInputBorder(),
                     fillColor: Theme.of(context).backgroundColor,
                     filled: true,
                   ),
                   autofocus: true,
+                  controller: textFieldController,
                 ),
                 output,
               ],
@@ -290,6 +364,14 @@ class _BusStopWidgetState extends State<BusStopWidget>
           children: [
             Row(
               children: [
+                Container(
+                  child: widget.rootWidget.historic!.contains(widget.stop) ?
+                  Padding(
+                    padding: const EdgeInsets.only(right: 5),
+                    child: Icon(Icons.history),
+                  ):
+                  null,
+                ),
                 Expanded(
                   child: Text(
                     widget.stop.name,
