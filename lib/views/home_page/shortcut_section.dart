@@ -25,7 +25,7 @@ class _ShortcutWidgetRootState extends State<ShortcutWidgetRoot> {
 
   void editShortcut(int? index) {
     Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return ViewShortcutEditorPage(index, shortcuts!);
+      return ViewShortcutEditorPage(index == null ? null : shortcuts![index]);
     }));
   }
 

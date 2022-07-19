@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 class Background extends StatelessWidget {
@@ -10,10 +12,15 @@ class Background extends StatelessWidget {
       decoration: const BoxDecoration(
           image: DecorationImage(
               image: AssetImage("assets/images/bg_map.jpg"),
-              fit: BoxFit.cover,
+              repeat: ImageRepeat.repeatY,
+              fit: BoxFit.contain,
               colorFilter:
                   ColorFilter.mode(Color(0xffbbbbbb), BlendMode.multiply))),
-      child: child,
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+        child: child,
+      ),
+
     );
   }
 }

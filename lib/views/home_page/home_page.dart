@@ -1,4 +1,3 @@
-
 import 'dart:ui';
 
 import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
@@ -18,14 +17,15 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   void searchBusStop(BuildContext context) {
-
-    Navigator.push(context, MaterialPageRoute(builder: (context) => const SearchPage())).then((value){
+    Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const SearchPage()))
+        .then((value) {
       if (value == null) {
         return;
       }
-      Navigator.push(context, MaterialPageRoute(builder: (context) => StopInfoPage(value)));
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => StopInfoPage(value)));
     });
   }
 
@@ -40,22 +40,19 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       body: SafeArea(
         child: Background(
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Container(
-                  decoration:
-                      BoxDecoration(borderRadius: BorderRadius.circular(40)),
-                  child: const SearchBar(),
-                ),
-                TextButton(
-                    onPressed: () => {searchBusStop(context)},
-                    child: const Text("Go Search")),
-                const ShortcutWidgetRoot(),
-              ],
-            ),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Container(
+                decoration:
+                    BoxDecoration(borderRadius: BorderRadius.circular(40)),
+                child: const SearchBar(),
+              ),
+              TextButton(
+                  onPressed: () => {searchBusStop(context)},
+                  child: const Text("Go Search")),
+              const ShortcutWidgetRoot(),
+            ],
           ),
         ),
       ),

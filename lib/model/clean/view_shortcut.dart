@@ -4,12 +4,13 @@ import 'bus_stop.dart';
 import 'terminal.dart';
 
 class ViewShortcut {
-  ViewShortcut(this.shortcutName, this.stop, this.lines);
+  ViewShortcut(this.shortcutName, this.isFavorite,  this.stop, this.lines);
 
-  ViewShortcut.example() : this("View Shortcut Name", BusStop.example(), []);
+  ViewShortcut.example() : this("View Shortcut Name", false, BusStop.example(), []);
   factory ViewShortcut.fromJson(Map<String, dynamic> json) {
     return ViewShortcut(
         json["name"],
+        json["isFavorite"],
         json["busStop"],
         json["lines"].map((e) => BusLine.fromJson(e)).toList().cast<BusLine>(),
     );
@@ -18,6 +19,7 @@ class ViewShortcut {
   Map<String, dynamic> toJson() {
     return {
       "name": shortcutName,
+      "isFavorite": isFavorite,
       "busStop": stop.toJson(),
       "lines": lines.map((e) => e.toJson()).toList(),
     };
@@ -26,4 +28,5 @@ class ViewShortcut {
   String shortcutName;
   BusStop stop;
   List<BusLine> lines;
+  bool isFavorite;
 }
