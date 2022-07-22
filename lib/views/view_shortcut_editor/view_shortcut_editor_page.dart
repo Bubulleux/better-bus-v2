@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import '../../model/clean/bus_line.dart';
 
 class ViewShortcutEditorPage extends StatefulWidget {
-  const ViewShortcutEditorPage(this.shortcut,  {Key? key}) : super(key: key);
+  const ViewShortcutEditorPage(this.shortcut, {Key? key}) : super(key: key);
 
   final ViewShortcut? shortcut;
 
@@ -18,7 +18,6 @@ class ViewShortcutEditorPage extends StatefulWidget {
 }
 
 class _ViewShortcutEditorPageState extends State<ViewShortcutEditorPage> {
-
   String shortcutName = "----";
   bool shortcutIsFavorite = false;
   BusStop? shortcutBusStop;
@@ -51,46 +50,72 @@ class _ViewShortcutEditorPageState extends State<ViewShortcutEditorPage> {
     return Scaffold(
       body: Background(
         child: SafeArea(
-          child:
-            Column(
-              children: [
-                TextField(
-                  controller: textFieldNameController,
-                ),
-                Checkbox(value: shortcutIsFavorite, onChanged: (value) {
-                  setState(() => shortcutIsFavorite = value!);
-                }),
-                GestureDetector(
-                  onTap: changeBusStop,
-                  child: Container(
-                    child: Row(
-                      children: [
-                        Text(shortcutBusStop != null ? shortcutBusStop!.name : "! Selection un arret"),
-                        const Icon(Icons.change_circle_outlined),
-                      ],
-                    ),
+          child: Column(
+            children: [
+              TextField(
+                controller: textFieldNameController,
+              ),
+              Checkbox(
+                  value: shortcutIsFavorite,
+                  onChanged: (value) {
+                    setState(() => shortcutIsFavorite = value!);
+                  }),
+              GestureDetector(
+                onTap: changeBusStop,
+                child: Container(
+                  child: Row(
+                    children: [
+                      Text(shortcutBusStop != null
+                          ? shortcutBusStop!.name
+                          : "! Selection un arret"),
+                      const Icon(Icons.change_circle_outlined),
+                    ],
                   ),
                 ),
-                TextButton(onPressed: selectTerminus, child: Text("Select terminus")),
-                Wrap(
-                  children: shortCutBusLines.map((e) => LineWidget(e, 30)).toList(),
-                )
-              ],
-            )
+              ),
+              TextButton(
+                  onPressed: selectTerminus, child: Text("Select terminus")),
+              Wrap(
+                children:
+                    shortCutBusLines.map((e) => LineWidget(e, 30)).toList(),
+              ),
+              const Spacer(),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 5),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      onPressed: cancel,
+                      child: const Text("! Cancel"),
+                    ),
+                    SizedBox(width: 20,),
+                    ElevatedButton(
+                      onPressed: valid,
+                      child: const Text("! Valider"),
+                    )
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
   }
 
   void changeBusStop() {
-    Navigator.push(context, MaterialPageRoute(
-      builder: (context) => const SearchPage(saveInHistoric: false)
-    )).then((value) {
-      if (value == null || !mounted) {
+    Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const SearchPage(saveInHistoric: false)))
+        .then((value) {
+      if (value == null || !mounted || value! == shortcutBusStop) {
         return;
       }
       setState(() {
         shortcutBusStop = value!;
+        shortCutBusLines = [];
       });
     });
   }
@@ -100,15 +125,50 @@ class _ViewShortcutEditorPageState extends State<ViewShortcutEditorPage> {
       return;
     }
 
-    Navigator.push(context,
-    MaterialPageRoute(
-      builder: (context) => TerminusSelectorPage(shortcutBusStop!, previousData: shortCutBusLines,)
-    )).then((value) {
-      if (value == null || !mounted){
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => TerminusSelectorPage(
+                  shortcutBusStop!,
+                  previousData: shortCutBusLines,
+                ))).then((value) {
+      if (value == null || !mounted) {
         return;
       }
       shortCutBusLines = value;
       setState(() {});
     });
+  }
+
+  String? checkError(){
+    if (shortcutName == "") {
+      return "! Donner un nom a votre raccourcie";
+    } else if (shortcutBusStop == null) {
+      return "! Aucun arret de bus n'a été selectioner";
+    } else if (shortCutBusLines.isEmpty){
+      return "! Acune Line n'a été sélectioner";
+    }
+
+  }
+
+  void valid() {
+    String? error = checkError();
+    if (error != null) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Row(
+          children: [
+            Icon(Icons.error_outline),
+            Text(error)
+          ],
+        ),
+      ));
+      return;
+    }
+
+    Navigator.pop(context, ViewShortcut(shortcutName, shortcutIsFavorite, shortcutBusStop!, shortCutBusLines));
+  }
+
+  void cancel() {
+    Navigator.pop(context);
   }
 }

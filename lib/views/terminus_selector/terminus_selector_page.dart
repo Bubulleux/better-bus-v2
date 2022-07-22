@@ -110,12 +110,11 @@ class _TerminusSelectorPageState extends State<TerminusSelectorPage> {
                 ),
               ),
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   ElevatedButton(onPressed: cancel, child: Text("! Anuler")),
-                  Spacer(),
                   ElevatedButton(
                       onPressed: selectAll, child: Text("Tout selection")),
-                  Spacer(),
                   ElevatedButton(onPressed: validate, child: Text("Valider")),
                 ],
               )
@@ -334,6 +333,7 @@ class _TerminusSelectionState extends State<TerminusSelection>
                 children: Iterable<int>.generate(entrySelected.length)
                     .map((int index) {
                   String direction = getDirection(line)[index];
+                  print("Set state");
                   return Row(
                     children: [
                       Checkbox(
