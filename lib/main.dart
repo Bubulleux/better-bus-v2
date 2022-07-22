@@ -27,7 +27,14 @@ class MyApp extends StatelessWidget {
           bodySmall: TextStyle(
             fontSize: 13
           )
-        )
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(40)
+            )
+          )
+        ),
       ),
       home: const HomePage(),
     );

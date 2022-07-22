@@ -24,8 +24,11 @@ class _HomePageState extends State<HomePage> {
       if (value == null) {
         return;
       }
-      Navigator.push(context,
-          MaterialPageRoute(builder: (context) => StopInfoPage(value)));
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => StopInfoPage(value),
+          ));
     });
   }
 
@@ -51,7 +54,7 @@ class _HomePageState extends State<HomePage> {
               TextButton(
                   onPressed: () => {searchBusStop(context)},
                   child: const Text("Go Search")),
-              const ShortcutWidgetRoot(),
+              Expanded(child: const ShortcutWidgetRoot()),
             ],
           ),
         ),

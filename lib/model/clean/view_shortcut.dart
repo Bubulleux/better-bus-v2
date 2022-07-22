@@ -11,8 +11,8 @@ class ViewShortcut {
     return ViewShortcut(
         json["name"],
         json["isFavorite"],
-        json["busStop"],
-        json["lines"].map((e) => BusLine.fromJson(e)).toList().cast<BusLine>(),
+        BusStop.fromCleanJson(json["busStop"]),
+        json["lines"].map((e) => BusLine.fromCleanJson(e)).toList().cast<BusLine>(),
     );
   }
 

@@ -2,13 +2,15 @@ import 'package:better_bus_v2/views/search_page/search_page.dart';
 import 'package:better_bus_v2/views/stop_info/timetable_view.dart';
 import 'package:flutter/material.dart';
 
+import '../../model/clean/bus_line.dart';
 import '../../model/clean/bus_stop.dart';
 import 'next_passage_view.dart';
 
 class StopInfoPage extends StatefulWidget {
-  const StopInfoPage(this.stop, {Key? key}) : super(key: key);
+  const StopInfoPage(this.stop, {this.lines, Key? key}) : super(key: key);
 
   final BusStop stop;
+  final List<BusLine>? lines;
 
   @override
   State<StopInfoPage> createState() => _StopInfoPageState();
