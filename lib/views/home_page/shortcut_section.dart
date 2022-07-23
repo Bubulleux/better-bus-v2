@@ -167,6 +167,7 @@ class ShortcutWidget extends StatelessWidget {
 
     return ClickableContentContainer(
       onLongPressed: onLongPressed,
+      onPressed: onPressed,
       //padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       height: 100,
       child: Padding(

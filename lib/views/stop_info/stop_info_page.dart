@@ -84,7 +84,7 @@ class _StopInfoPageState extends State<StopInfoPage>
             Expanded(
               child: TabBarView(
                 children: [
-                  NextPassagePage(stop),
+                  NextPassagePage(stop, lines: widget.lines),
                   TimeTableView(stop),
                 ],
                 controller: tabController,

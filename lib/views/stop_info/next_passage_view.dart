@@ -4,20 +4,25 @@ import 'package:better_bus_v2/views/common/line_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../../model/clean/bus_line.dart';
 import '../../model/clean/next_passage.dart';
 
 class NextPassagePage extends StatefulWidget {
-  const NextPassagePage(this.stop, {Key? key}) : super(key: key);
+  const NextPassagePage(this.stop, {this.lines, Key? key}) : super(key: key);
 
   final BusStop stop;
+  final List<BusLine>? lines;
 
   @override
   State<NextPassagePage> createState() => _NextPassagePageState();
 }
 
-class _NextPassagePageState extends State<NextPassagePage>{
+class _NextPassagePageState extends State<NextPassagePage> with AutomaticKeepAliveClientMixin, SingleTickerProviderStateMixin{
 
   List<NextPassage>? nextPassages;
+  bool seeAll = false;
+  late AnimationController seeAllAnimationController;
+  late Animation<double> seeAllBtnAnimation;
 
   Future<List<NextPassage>> initData() async {
     if (nextPassages != null) {
@@ -28,8 +33,21 @@ class _NextPassagePageState extends State<NextPassagePage>{
   }
 
   @override
+  void initState() {
+    super.initState();
+    if (widget.lines == null)
+    {
+      seeAll == true;
+    }
+    seeAllAnimationController = AnimationController(vsync: this, duration: Duration(milliseconds: 200));
+    seeAllBtnAnimation = CurvedAnimation(parent: seeAllAnimationController, curve: Curves.easeOut);
+    seeAllAnimationController.value = seeAll ? 0 : 1;
+  }
+
+
+  @override
   void setState(VoidCallback fn) {
-    nextPassages = null;
+    //nextPassages = null;
     super.setState(fn);
   }
 
@@ -39,44 +57,70 @@ class _NextPassagePageState extends State<NextPassagePage>{
     return SizedBox(
       width: double.infinity,
       height: double.infinity,
-      child: FutureBuilder<List<NextPassage>>(
-        future: initData(),
-        initialData: nextPassages,
-        builder: (BuildContext context, AsyncSnapshot<List<NextPassage>> snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.hasError) {
-              return const Center(
-                child: Text("Error"),
-              );
-            } else if (snapshot.hasData) {
-              if (nextPassages!.isEmpty){
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.error_outline),
-                    Text("! Aucun bus n'est prevus de passer")
-                  ],
-                );
-              }
+      child: Column(
+        children: [
+          SizeTransition(
+            sizeFactor: seeAllBtnAnimation,
+            axisAlignment: 1,
+            child: Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(horizontal: 8),
+              child: ElevatedButton(
+                onPressed: () {
+                  seeAll = true;
+                  seeAllAnimationController.reverse();
+                  setState(() {});
+                },
+                child: const Text("! Voire tout"),
+              ),
+            ),
+          ),
+          Expanded(
+            child: FutureBuilder<List<NextPassage>>(
+              future: initData(),
+              initialData: nextPassages,
+              builder: (BuildContext context, AsyncSnapshot<List<NextPassage>> snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  if (snapshot.hasError) {
+                    return const Center(
+                      child: Text("Error"),
+                    );
+                  } else if (snapshot.hasData) {
+                    if (nextPassages!.isEmpty){
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          Icon(Icons.error_outline),
+                          Text("! Aucun bus n'est prevus de passer")
+                        ],
+                      );
+                    }
 
-              return NextPassageListWidget(nextPassages!, widget.stop);
-            }
-          }
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        },
+                    return NextPassageListWidget(nextPassages!, widget.stop,  seeAll ? null : widget.lines);
+                  }
+                }
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              },
+            ),
+          ),
+        ],
       )
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 class NextPassageListWidget extends StatefulWidget {
-  const NextPassageListWidget(this.nextPassages, this.stop, {Key? key}) : super(key: key);
+  const NextPassageListWidget(this.nextPassages, this.stop, this.lines, {Key? key}) : super(key: key);
 
   final List<NextPassage> nextPassages;
   final BusStop stop;
+  final List<BusLine>? lines;
 
   @override
   State<NextPassageListWidget> createState() => _NextPassageListWidgetState();
@@ -97,11 +141,26 @@ class _NextPassageListWidgetState extends State<NextPassageListWidget> {
 
   @override
   Widget build(BuildContext context) {
+
+    List<NextPassage> validNextPassage = List.from(nextPassages);
+    if (widget.lines != null){
+      validNextPassage.removeWhere((element){
+        for(BusLine line in widget.lines!){
+          if (line.id == element.line.id &&
+              (line.goDirection.contains(element.destination) ||
+              line.backDirection.contains(element.destination))){
+            return false;
+          }
+        }
+        return true;
+      });
+    }
+
     return RefreshIndicator(
       onRefresh: refreshData,
       child: ListView.builder(
-        itemCount: nextPassages.length,
-        itemBuilder: (context, index) => NextPassageWidget(nextPassages[index]),
+        itemCount: validNextPassage.length,
+        itemBuilder: (context, index) => NextPassageWidget(validNextPassage[index]),
       ),
     );
   }
