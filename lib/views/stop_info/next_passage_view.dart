@@ -37,7 +37,7 @@ class _NextPassagePageState extends State<NextPassagePage> with AutomaticKeepAli
     super.initState();
     if (widget.lines == null)
     {
-      seeAll == true;
+      seeAll = true;
     }
     seeAllAnimationController = AnimationController(vsync: this, duration: Duration(milliseconds: 200));
     seeAllBtnAnimation = CurvedAnimation(parent: seeAllAnimationController, curve: Curves.easeOut);

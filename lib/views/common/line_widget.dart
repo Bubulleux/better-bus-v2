@@ -11,6 +11,9 @@ class LineWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double colorAverage = (line.color.red + line.color.green + line.color.blue) / (3 * 255);
+    Color textColor = colorAverage < 0.5 ? Colors.white : Colors.black;
+
     return Container(
       constraints: BoxConstraints(
         minWidth: size,
@@ -23,15 +26,16 @@ class LineWidget extends StatelessWidget {
           child: Text(
             line.id,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: Colors.black,
+            style: TextStyle(
+              color: textColor,
+              fontWeight: FontWeight.normal
             ),
           ),
           fit: dynamicWidth ? BoxFit.fitHeight : BoxFit.contain,
         ),
       ),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(3),
+        borderRadius: BorderRadius.circular(5),
         color: line.color,
       ),
     );

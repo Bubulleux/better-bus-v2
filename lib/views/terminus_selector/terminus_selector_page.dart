@@ -114,7 +114,8 @@ class _TerminusSelectorPageState extends State<TerminusSelectorPage> {
                 children: [
                   ElevatedButton(onPressed: cancel, child: Text("! Anuler")),
                   ElevatedButton(
-                      onPressed: selectAll, child: Text("Tout selection")),
+                      onPressed: selectAll, child: Text(allIsSelected ? "! Tout déselectier" : "! Tout selection")
+                  ),
                   ElevatedButton(onPressed: validate, child: Text("Valider")),
                 ],
               )

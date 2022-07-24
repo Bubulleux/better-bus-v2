@@ -6,6 +6,8 @@ import 'package:better_bus_v2/model/clean/bus_line.dart';
 import 'package:better_bus_v2/model/clean/terminal.dart';
 import 'package:better_bus_v2/model/clean/view_shortcut.dart';
 import 'package:better_bus_v2/views/common/context_menu.dart';
+import 'package:better_bus_v2/views/common/decorations.dart';
+import 'package:better_bus_v2/views/common/fake_textfiel.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
 import 'package:better_bus_v2/views/stop_info/stop_info_page.dart';
 import 'package:better_bus_v2/views/view_shortcut_editor/view_shortcut_editor_page.dart';
@@ -155,7 +157,6 @@ class ShortcutWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<BusLine> displayLine = [];
     List<Widget> linesWidget = [];
     for (BusLine line in shortcut.lines) {
       linesWidget.add(LineWidget(
@@ -165,53 +166,64 @@ class ShortcutWidget extends StatelessWidget {
       ));
     }
 
-    return ClickableContentContainer(
-      onLongPressed: onLongPressed,
-      onPressed: onPressed,
-      //padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      height: 100,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (shortcut.isFavorite)
-                  Icon(
-                    Icons.star,
-                    color: Theme.of(context).primaryColorDark,
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: InkWell(
+        onLongPress: onLongPressed,
+        onTap: onPressed,
+        splashColor: Colors.black,
+        borderRadius: CustomDecorations.borderRadius,
+        child: Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).backgroundColor,
+            borderRadius:CustomDecorations.borderRadius,
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (shortcut.isFavorite)
+                    Icon(
+                      Icons.star,
+                      color: Theme.of(context).primaryColorDark,
+                    )
+                  else
+                    Container(),
+                  Text(
+                    shortcut.shortcutName,
+                    style: TextStyle(
+                      fontSize: 25,
+                      fontWeight: shortcut.isFavorite
+                          ? FontWeight.w500
+                          : FontWeight.normal,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Row(
+                children: [
+                  Text(
+                    shortcut.stop.name,
+                    style: const TextStyle(
+                      fontSize: 15,
+                    ),
+                  ),
+                  Expanded(
+                    child: Wrap(
+                      children: linesWidget,
+                      alignment: WrapAlignment.end,
+                      spacing: 3,
+                    ),
                   )
-                else
-                  Container(),
-                Text(
-                  shortcut.shortcutName,
-                  style: TextStyle(
-                    fontSize: 25,
-                    fontWeight: shortcut.isFavorite
-                        ? FontWeight.w500
-                        : FontWeight.normal,
-                  ),
-                ),
-              ],
-            ),
-            const Spacer(),
-            Row(
-              children: [
-                Text(
-                  shortcut.stop.name,
-                  style: const TextStyle(
-                    fontSize: 15,
-                  ),
-                ),
-                const Spacer(),
-                Wrap(
-                  children: linesWidget,
-                  spacing: 3,
-                )
-              ],
-            )
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

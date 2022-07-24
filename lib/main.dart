@@ -1,3 +1,4 @@
+import 'package:better_bus_v2/views/common/decorations.dart';
 import 'package:flutter/material.dart';
 import 'package:better_bus_v2/views/home_page/home_page.dart';
 import 'package:flutter/services.dart';
@@ -20,20 +21,43 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.lightGreen,
         backgroundColor: const Color(0xdde4e4e4),
+
+
         textTheme: const TextTheme(
           bodyMedium: TextStyle(
             fontSize: 16,
           ),
-          bodySmall: TextStyle(
-            fontSize: 13
-          )
+          bodySmall: TextStyle(fontSize: 13),
         ),
+
+
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(40)
-            )
-          )
+              borderRadius: BorderRadius.circular(40),
+            ),
+          ),
+        ),
+
+
+        inputDecorationTheme: InputDecorationTheme(
+          border: OutlineInputBorder(
+            borderRadius: CustomDecorations.borderRadius,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: CustomDecorations.borderRadius,
+            borderSide: BorderSide(
+              color: Colors.lightGreen.shade500,
+            ),
+          ),
+
+          focusedBorder: OutlineInputBorder(
+            borderRadius: CustomDecorations.borderRadius,
+            borderSide: BorderSide(color: Colors.lightGreen.shade400, width: 2),
+          ),
+          labelStyle: const TextStyle(
+            fontSize: 25,
+          ),
         ),
       ),
       home: const HomePage(),

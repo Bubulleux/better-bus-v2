@@ -1,3 +1,4 @@
+import 'package:better_bus_v2/views/common/fake_textfiel.dart';
 import 'package:better_bus_v2/views/search_page/search_page.dart';
 import 'package:better_bus_v2/views/stop_info/timetable_view.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +30,7 @@ class _StopInfoPageState extends State<StopInfoPage>
   }
 
   void changeBusStop() {
+    return;
     Navigator.push(context,
             MaterialPageRoute(builder: (context) => const SearchPage()))
         .then((value) {
@@ -49,26 +51,11 @@ class _StopInfoPageState extends State<StopInfoPage>
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 30),
-              child: GestureDetector(
-                onTap: changeBusStop,
-                child: Container(
-                  height: 60,
-                  padding: const EdgeInsets.all(10),
-                  child: Row(
-                    children: [
-                      Text(
-                        stop.name,
-                        style: Theme.of(context).textTheme.headline6,
-                      ),
-                      const Spacer(),
-                      const Icon(Icons.search)
-                    ],
-                  ),
-                  decoration: BoxDecoration(
-                      border: Border.all(color: Theme.of(context).primaryColor),
-                      borderRadius: BorderRadius.circular(20)),
-                ),
-              ),
+              child: FakeTextField(
+                onPress: changeBusStop,
+                value: stop.name,
+                icon: Icons.search,
+              )
             ),
             TabBar(
               tabs: const [
