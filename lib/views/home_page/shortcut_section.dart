@@ -21,10 +21,10 @@ class ShortcutWidgetRoot extends StatefulWidget {
   const ShortcutWidgetRoot({Key? key}) : super(key: key);
 
   @override
-  State<ShortcutWidgetRoot> createState() => _ShortcutWidgetRootState();
+  State<ShortcutWidgetRoot> createState() => ShortcutWidgetRootState();
 }
 
-class _ShortcutWidgetRootState extends State<ShortcutWidgetRoot> {
+class ShortcutWidgetRootState extends State<ShortcutWidgetRoot> {
   SharedPreferences? preferences;
   List<ViewShortcut>? shortcuts;
 
@@ -103,14 +103,7 @@ class _ShortcutWidgetRootState extends State<ShortcutWidgetRoot> {
     return SizedBox(
       width: double.infinity,
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          TextButton(
-            onPressed: () {
-              editShortcut(null);
-            },
-            child: Text("New Shortcut"),
-          ),
           Expanded(
             child: FutureBuilder<List<ViewShortcut>>(
               future: LocalDataHandler.loadShortcut(),
@@ -167,7 +160,7 @@ class ShortcutWidget extends StatelessWidget {
     }
 
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: InkWell(
         onLongPress: onLongPressed,
         onTap: onPressed,
@@ -191,13 +184,18 @@ class ShortcutWidget extends StatelessWidget {
                     )
                   else
                     Container(),
-                  Text(
-                    shortcut.shortcutName,
-                    style: TextStyle(
-                      fontSize: 25,
-                      fontWeight: shortcut.isFavorite
-                          ? FontWeight.w500
-                          : FontWeight.normal,
+                  Flexible(
+                    child: Text(
+                      shortcut.shortcutName,
+                      style: TextStyle(
+                        fontSize: 25,
+                        fontWeight: shortcut.isFavorite
+                            ? FontWeight.w500
+                            : FontWeight.normal,
+                      ),
+                      softWrap: false,
+                      maxLines: 1,
+                      overflow: TextOverflow.fade,
                     ),
                   ),
                 ],

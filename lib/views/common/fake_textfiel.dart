@@ -35,7 +35,9 @@ class FakeTextField extends StatelessWidget {
             Expanded(
               child: Text(
                 value ?? hint ?? "",
-                style: Theme.of(context).textTheme.headline6,
+                style: value != null ?
+                Theme.of(context).textTheme.headline6:
+                Theme.of(context).inputDecorationTheme.hintStyle,
               ),
             ),
             icon != null ?
