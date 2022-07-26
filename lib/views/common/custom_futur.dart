@@ -1,17 +1,20 @@
+import 'dart:ffi';
+
+import 'package:better_bus_v2/error_handler/custom_error.dart';
 import 'package:flutter/material.dart';
 
 typedef WidgetBuilderData<T> = Widget Function(
     BuildContext context, T data, VoidCallback refresh);
 
 typedef WidgetBuilderError = Widget Function(
-    BuildContext, Exception e, VoidCallback refresh);
+    BuildContext, CustomError e, VoidCallback refresh);
 
 typedef FutureFunction<T> = Future<T> Function();
 
-typedef ExceptionTest<T> = Exception? Function(T data);
+typedef ExceptionTest = CustomError? Function(dynamic data);
 
 typedef WidgetRefresh = RefreshIndicator Function(
-    BuildContext context, FutureFunction future, Widget child);
+    BuildContext context, Widget child, FutureFunction future,);
 
 class CustomFutureBuilder<T> extends StatefulWidget {
   const CustomFutureBuilder({
@@ -19,19 +22,19 @@ class CustomFutureBuilder<T> extends StatefulWidget {
     required this.future,
     required this.onData,
     required this.onError,
-    required this.onLoading,
+    this.onLoading,
     this.initData,
     this.refreshIndicator,
-    this.exceptionTest,
+    this.errorTest,
   }) : super(key: key);
 
   final FutureFunction<T> future;
   final T? initData;
   final WidgetBuilderData onData;
   final WidgetBuilderError onError;
-  final WidgetBuilder onLoading;
+  final WidgetBuilder? onLoading;
   final WidgetRefresh? refreshIndicator;
-  final ExceptionTest<T>? exceptionTest;
+  final ExceptionTest? errorTest;
 
   @override
   State<CustomFutureBuilder> createState() => CustomFutureBuilderState<T>();
@@ -39,55 +42,61 @@ class CustomFutureBuilder<T> extends StatefulWidget {
 
 class CustomFutureBuilderState<T> extends State<CustomFutureBuilder> {
   T? data;
-  Exception? exception;
+  CustomError? error;
 
   @override
   void initState() {
     super.initState();
     data = widget.initData;
+    if (data == null){
+      refresh();
+    }
   }
 
   Future refresh() async {
-    exception = null;
+    error = null;
     try {
       data = await widget.future();
 
       if (data == null){
-        exception = DataIsNull();
-      } else if (widget.exceptionTest != null){
-        exception = widget.exceptionTest!(data);
+        error = DataIsNull().toError();
+      } else if (widget.errorTest != null){
+        error = widget.errorTest!(data);
       }
     } on Exception catch(e) {
       data = null;
-      exception = e;
+      error = e.toError();
     }
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   Widget getRefreshIndicator({required Widget child}) {
     if (widget.refreshIndicator == null) {
       return Container(child:  child,);
     } else {
-      return widget.refreshIndicator!(context, refresh, child);
+      return widget.refreshIndicator!(context, child, refresh);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (exception != null){
-      return widget.onError(context, exception!, refresh);
+    if (error != null){
+      return widget.onError(context, error!, refresh);
     } else if (data != null) {
       return getRefreshIndicator(child: widget.onData(context, data, refresh));
     } else {
-      return widget.onLoading(context);
+      if (widget.onLoading == null) {
+        return Center(child: CircularProgressIndicator());
+      }
+      return widget.onLoading!(context);
     }
   }
 }
 
-class DataIsNull implements Exception {
-
+class DataIsNull implements Exception{
   @override
-  String toString() {
-    return "Data return was null";
-  }
+  String toString() => "Data return are null";
+
 }

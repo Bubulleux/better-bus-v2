@@ -1,5 +1,7 @@
 import 'package:better_bus_v2/data_provider/vitalis_data_provider.dart';
+import 'package:better_bus_v2/error_handler/custom_error.dart';
 import 'package:better_bus_v2/model/clean/bus_stop.dart';
+import 'package:better_bus_v2/views/common/custom_futur.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -19,18 +21,10 @@ class NextPassagePage extends StatefulWidget {
 
 class _NextPassagePageState extends State<NextPassagePage> with AutomaticKeepAliveClientMixin, SingleTickerProviderStateMixin{
 
-  List<NextPassage>? nextPassages;
   bool seeAll = false;
   late AnimationController seeAllAnimationController;
   late Animation<double> seeAllBtnAnimation;
 
-  Future<List<NextPassage>> initData() async {
-    if (nextPassages != null) {
-      return nextPassages!;
-    }
-    nextPassages = await VitalisDataProvider.getNextPassage(widget.stop);
-    return nextPassages!;
-  }
 
   @override
   void initState() {
@@ -47,7 +41,6 @@ class _NextPassagePageState extends State<NextPassagePage> with AutomaticKeepAli
 
   @override
   void setState(VoidCallback fn) {
-    //nextPassages = null;
     super.setState(fn);
   }
 
@@ -76,35 +69,7 @@ class _NextPassagePageState extends State<NextPassagePage> with AutomaticKeepAli
             ),
           ),
           Expanded(
-            child: FutureBuilder<List<NextPassage>>(
-              future: initData(),
-              initialData: nextPassages,
-              builder: (BuildContext context, AsyncSnapshot<List<NextPassage>> snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  if (snapshot.hasError) {
-                    return const Center(
-                      child: Text("Error"),
-                    );
-                  } else if (snapshot.hasData) {
-                    if (nextPassages!.isEmpty){
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
-                          Icon(Icons.error_outline),
-                          Text("! Aucun bus n'est prevus de passer")
-                        ],
-                      );
-                    }
-
-                    return NextPassageListWidget(nextPassages!, widget.stop,  seeAll ? null : widget.lines);
-                  }
-                }
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              },
-            ),
+            child: NextPassageListWidget(widget.stop,  seeAll ? null : widget.lines),
           ),
         ],
       )
@@ -116,9 +81,8 @@ class _NextPassagePageState extends State<NextPassagePage> with AutomaticKeepAli
 }
 
 class NextPassageListWidget extends StatefulWidget {
-  const NextPassageListWidget(this.nextPassages, this.stop, this.lines, {Key? key}) : super(key: key);
+  const NextPassageListWidget(this.stop, this.lines, {Key? key}) : super(key: key);
 
-  final List<NextPassage> nextPassages;
   final BusStop stop;
   final List<BusLine>? lines;
 
@@ -127,28 +91,16 @@ class NextPassageListWidget extends StatefulWidget {
 }
 
 class _NextPassageListWidgetState extends State<NextPassageListWidget> {
-  late List<NextPassage> nextPassages = List.from(widget.nextPassages);
 
 
-  Future<void> refreshData() async {
+  Future<List<NextPassage>> getData() async {
     List<NextPassage> result = await VitalisDataProvider.getNextPassage(widget.stop);
-    if (mounted) {
-      setState(() {
-        nextPassages = result;
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-
-    List<NextPassage> validNextPassage = List.from(nextPassages);
     if (widget.lines != null){
-      validNextPassage.removeWhere((element){
+      result.removeWhere((element){
         for(BusLine line in widget.lines!){
           if (line.id == element.line.id &&
               (line.goDirection.contains(element.destination) ||
-              line.backDirection.contains(element.destination))){
+                  line.backDirection.contains(element.destination))){
             return false;
           }
         }
@@ -156,12 +108,34 @@ class _NextPassageListWidgetState extends State<NextPassageListWidget> {
       });
     }
 
-    return RefreshIndicator(
-      onRefresh: refreshData,
-      child: ListView.builder(
-        itemCount: validNextPassage.length,
-        itemBuilder: (context, index) => NextPassageWidget(validNextPassage[index]),
-      ),
+    return result;
+
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
+    return CustomFutureBuilder<List<NextPassage>>(
+      future: getData,
+      onData: (context, data, refresh) {
+        return ListView.builder(
+          itemCount: data.length,
+          itemBuilder: (context, index) => NextPassageWidget(data[index]),
+        );
+      },
+
+      onError: (context, error, refresh) {
+        return error.build(context, refresh);
+      },
+
+      refreshIndicator: (context, child, refresh) {
+        return RefreshIndicator(child: child, onRefresh: refresh);
+      },
+      errorTest: (data) {
+        if (data.isEmpty){
+          return CustomExceptions.emptyNextPassage;
+        }
+      },
     );
   }
 }
