@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:better_bus_v2/model/clean/bus_line.dart';
 import 'package:better_bus_v2/model/clean/bus_stop.dart';
+import 'package:better_bus_v2/model/clean/info_trafic.dart';
 import 'package:better_bus_v2/model/clean/line_boarding.dart';
 import 'package:better_bus_v2/model/clean/timetable.dart';
 import 'package:http/http.dart' as http;
@@ -157,6 +158,25 @@ class VitalisDataProvider {
       throw ApiProviderException(res);
     }
   }
+
+  static Future<List<InfoTraffic>> getTrafficInfo() async {
+    Uri uri = Uri.parse("https://releases-uxb3m2jh5q-ew.a.run.app/traffics");
+
+
+    List<dynamic> json = await sendRequest(uri);
+    return json.map((e) => InfoTraffic.fromJson(e)).toList();
+  }
+
+  static Future<dynamic> sendRequest(Uri uri) async {
+    http.Response response = await http.get(uri, headers: await getAutHeader());
+    if (response.statusCode == 200) {
+      dynamic output = jsonDecode(response.body);
+      return output;
+    } else {
+      throw ApiProviderException(response);
+    }
+  }
+
 }
 
 class ApiProviderException implements Exception {

@@ -180,13 +180,16 @@ class NextPassageWidget extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(5.0),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(minuteToWait,
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                 ),),
-                const Spacer(),
-                Text(formattedTime),
+                Text(
+                    formattedTime,
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
               ],
             ),
           )

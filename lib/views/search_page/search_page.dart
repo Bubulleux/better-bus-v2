@@ -70,6 +70,9 @@ class _SearchPageState extends State<SearchPage> {
 
     validResult = [];
     inputChange();
+    if (!mounted) {
+      return;
+    }
 
     setState(() {});
   }
@@ -114,7 +117,7 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   void inputChange() {
-    if (validResult == null || busStops == null || historic == null) {
+    if (validResult == null || busStops == null || historic == null || !mounted) {
       return;
     }
     String input = textFieldController.value.text;

@@ -100,38 +100,29 @@ class ShortcutWidgetRootState extends State<ShortcutWidgetRoot> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: Column(
-        children: [
-          Expanded(
-            child: FutureBuilder<List<ViewShortcut>>(
-              future: LocalDataHandler.loadShortcut(),
-              initialData: shortcuts,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  shortcuts = snapshot.data!;
-                  return ListView.builder(
-                    itemCount: shortcuts!.length,
-                    itemBuilder: (context, index) => ShortcutWidget(
-                      shortcut: shortcuts![index],
-                      onPressed: () => showShortcutContent(index),
-                      onLongPressed: () => showContextMenu(index),
-                    ),
-                  );
-                } else if (snapshot.hasError) {
-                  return const Center(
-                    child: Text("! Error"),
-                  );
-                }
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              },
+    return FutureBuilder<List<ViewShortcut>>(
+      future: LocalDataHandler.loadShortcut(),
+      initialData: shortcuts,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          shortcuts = snapshot.data!;
+          return ListView.builder(
+            itemCount: shortcuts!.length,
+            itemBuilder: (context, index) => ShortcutWidget(
+              shortcut: shortcuts![index],
+              onPressed: () => showShortcutContent(index),
+              onLongPressed: () => showContextMenu(index),
             ),
-          ),
-        ],
-      ),
+          );
+        } else if (snapshot.hasError) {
+          return const Center(
+            child: Text("! Error"),
+          );
+        }
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      },
     );
   }
 }
@@ -161,66 +152,69 @@ class ShortcutWidget extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
-      child: InkWell(
-        onLongPress: onLongPressed,
-        onTap: onPressed,
-        splashColor: Colors.black,
-        borderRadius: CustomDecorations.borderRadius,
-        child: Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).backgroundColor,
-            borderRadius:CustomDecorations.borderRadius,
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (shortcut.isFavorite)
-                    Icon(
-                      Icons.star,
-                      color: Theme.of(context).primaryColorDark,
-                    )
-                  else
-                    Container(),
-                  Flexible(
-                    child: Text(
-                      shortcut.shortcutName,
-                      style: TextStyle(
-                        fontSize: 25,
-                        fontWeight: shortcut.isFavorite
-                            ? FontWeight.w500
-                            : FontWeight.normal,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onLongPress: onLongPressed,
+          onTap: onPressed,
+          splashColor: Colors.black,
+          borderRadius: CustomDecorations.borderRadius,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).backgroundColor,
+              borderRadius:CustomDecorations.borderRadius,
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (shortcut.isFavorite)
+                      Icon(
+                        Icons.star,
+                        color: Theme.of(context).primaryColorDark,
+                      )
+                    else
+                      Container(),
+                    Flexible(
+                      child: Text(
+                        shortcut.shortcutName,
+                        style: TextStyle(
+                          fontSize: 25,
+                          fontWeight: shortcut.isFavorite
+                              ? FontWeight.w500
+                              : FontWeight.normal,
+                        ),
+                        softWrap: false,
+                        maxLines: 1,
+                        overflow: TextOverflow.fade,
                       ),
-                      softWrap: false,
-                      maxLines: 1,
-                      overflow: TextOverflow.fade,
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Row(
-                children: [
-                  Text(
-                    shortcut.stop.name,
-                    style: const TextStyle(
-                      fontSize: 15,
+                  ],
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  children: [
+                    Text(
+                      shortcut.stop.name,
+                      style: const TextStyle(
+                        fontSize: 15,
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    child: Wrap(
-                      children: linesWidget,
-                      alignment: WrapAlignment.end,
-                      spacing: 3,
-                    ),
-                  )
-                ],
-              ),
-            ],
+                    Expanded(
+                      child: Wrap(
+                        children: linesWidget,
+                        alignment: WrapAlignment.end,
+                        spacing: 3,
+                      ),
+                    )
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

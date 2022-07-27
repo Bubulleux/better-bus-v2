@@ -195,13 +195,14 @@ class _TimeTableViewState extends State<TimeTableView> with AutomaticKeepAliveCl
             Row(
               children: [
                 const Icon(Icons.directions_bus_outlined),
+                const SizedBox(width: 8,),
                 Expanded(
                     child: Text(
-                  directionString ?? " ",
-                  style: Theme.of(context).textTheme.headline6,
-                  maxLines: 1,
+                  directionString  ?? " ",
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  maxLines: 2,
                   overflow: TextOverflow.fade,
-                  softWrap: false,
+                  softWrap: true,
                 )),
                 TextButton(
                   onPressed: changeDirection,
@@ -221,7 +222,7 @@ class _TimeTableViewState extends State<TimeTableView> with AutomaticKeepAliveCl
                     padding: const EdgeInsets.only(left: 5),
                     child: Text(
                       DateFormat("dd/MM/yyyy").format(selectedDate),
-                      style: Theme.of(context).textTheme.headline6,
+                      style: Theme.of(context).textTheme.headlineSmall,
                     ),
                   )),
                   TextButton(

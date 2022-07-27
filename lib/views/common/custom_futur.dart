@@ -21,7 +21,7 @@ class CustomFutureBuilder<T> extends StatefulWidget {
     Key? key,
     required this.future,
     required this.onData,
-    required this.onError,
+    this.onError,
     this.onLoading,
     this.initData,
     this.refreshIndicator,
@@ -31,7 +31,7 @@ class CustomFutureBuilder<T> extends StatefulWidget {
   final FutureFunction<T> future;
   final T? initData;
   final WidgetBuilderData onData;
-  final WidgetBuilderError onError;
+  final WidgetBuilderError? onError;
   final WidgetBuilder? onLoading;
   final WidgetRefresh? refreshIndicator;
   final ExceptionTest? errorTest;
@@ -83,7 +83,11 @@ class CustomFutureBuilderState<T> extends State<CustomFutureBuilder> {
   @override
   Widget build(BuildContext context) {
     if (error != null){
-      return widget.onError(context, error!, refresh);
+      if (widget.onError != null){
+        return widget.onError!(context, error!, refresh);
+      }
+
+      return error!.build(context, refresh);
     } else if (data != null) {
       return getRefreshIndicator(child: widget.onData(context, data, refresh));
     } else {

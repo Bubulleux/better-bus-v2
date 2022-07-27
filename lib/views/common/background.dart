@@ -14,7 +14,7 @@ class Background extends StatelessWidget {
           decoration: const BoxDecoration(
             image: DecorationImage(
               image: AssetImage("assets/images/bg_map.jpg"),
-              repeat: ImageRepeat.repeatY,
+              repeat: ImageRepeat.repeat,
               fit: BoxFit.contain,
               colorFilter:
                   ColorFilter.mode(Color(0xffbbbbbb), BlendMode.multiply),
