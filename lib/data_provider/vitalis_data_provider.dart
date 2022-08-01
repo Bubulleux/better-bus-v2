@@ -78,7 +78,6 @@ class VitalisDataProvider {
     }
   }
 
-
   static Future<List<NextPassage>> getNextPassage(BusStop stop, {int max = 40}) async {
     if (stop.id == -1) {
       throw "Bus Stop need id";
@@ -91,23 +90,14 @@ class VitalisDataProvider {
       "networks": "[1]",
     });
 
-    http.Response res = await http.get(uri, headers: await getAutHeader());
-
-    if (res.statusCode == 200) {
-      try {
-        Map<String, dynamic> body = jsonDecode(res.body);
-        List<dynamic> rawPassages = body["realtime"];
-        List<NextPassage> output = [];
-        for (Map<String, dynamic> rawPassage in rawPassages) {
-          output.add(NextPassage.fromJson(rawPassage));
-        }
-        return output;
-      } on Exception catch(e) {
-        throw ApiProviderException(res, parentException: e);
-      }
-    } else {
-      throw ApiProviderException(res);
+    Map<String, dynamic> body = await sendRequest(uri);
+    List<dynamic> rawPassages = body["realtime"];
+    List<NextPassage> output = [];
+    for (Map<String, dynamic> rawPassage in rawPassages) {
+      output.add(NextPassage.fromJson(rawPassage));
     }
+
+    return output;
   }
 
   static Future<LineBoarding> getLineBoarding(BusStop stop, BusLine line) async {
@@ -167,14 +157,26 @@ class VitalisDataProvider {
     return json.map((e) => InfoTraffic.fromJson(e)).toList();
   }
 
+  static Future<Map<String, BusLine>> getAllLines() async {
+    Uri uri = Uri.parse("https://releases-uxb3m2jh5q-ew.a.run.app/lines");
+    List<dynamic> json = await sendRequest(uri);
+
+    return { for (Map<String, dynamic>  e in json) e["slug"]: BusLine.fromSimpleJson(e)};
+  }
+
   static Future<dynamic> sendRequest(Uri uri) async {
-    http.Response response = await http.get(uri, headers: await getAutHeader());
-    if (response.statusCode == 200) {
-      dynamic output = jsonDecode(response.body);
-      return output;
-    } else {
-      throw ApiProviderException(response);
+    int status = -1;
+    int countTry = 0;
+    http.Response? response;
+    while (status != 200 && countTry < 3) {
+      response = await http.get(uri, headers: await getAutHeader());
+      status = response.statusCode;
+      if (response.statusCode == 200) {
+        dynamic output = jsonDecode(response.body);
+        return output;
+      }
     }
+    throw ApiProviderException(response!);
   }
 
 }

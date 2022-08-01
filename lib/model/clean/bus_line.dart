@@ -17,6 +17,13 @@ class BusLine {
           backDirection: json["direction"]["retour"].cast<String>(),
         );
 
+  BusLine.fromSimpleJson(Map<String, dynamic> json)
+      : this(
+    json["slug"],
+    json["name"],
+    Color(int.parse(json["color"].replaceAll("#", "0xff"))),
+  );
+
   BusLine.fromCleanJson(Map<String, dynamic> json)
       : this(
           json["id"],
