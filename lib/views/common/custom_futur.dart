@@ -26,6 +26,7 @@ class CustomFutureBuilder<T> extends StatefulWidget {
     this.initData,
     this.refreshIndicator,
     this.errorTest,
+    this.automaticRefresh,
   }) : super(key: key);
 
   final FutureFunction<T> future;
@@ -35,6 +36,7 @@ class CustomFutureBuilder<T> extends StatefulWidget {
   final WidgetBuilder? onLoading;
   final WidgetRefresh? refreshIndicator;
   final ExceptionTest? errorTest;
+  final Duration? automaticRefresh;
 
   @override
   State<CustomFutureBuilder> createState() => CustomFutureBuilderState<T>();
@@ -54,6 +56,7 @@ class CustomFutureBuilderState<T> extends State<CustomFutureBuilder> {
   }
 
   Future refresh() async {
+    print("Refresh");
     error = null;
     try {
       data = await widget.future();
@@ -64,9 +67,18 @@ class CustomFutureBuilderState<T> extends State<CustomFutureBuilder> {
         error = widget.errorTest!(data);
       }
     } on Exception catch(e) {
-      data = null;
       error = e.toError();
+    } on Error catch(e) {
+      error = e is CustomError ? e : CustomError(e.toString(), Icons.error, false);
     }
+    if (error != null) {
+      data = null;
+    }
+
+    if (data != null && widget.automaticRefresh != null) {
+      Future.delayed(widget.automaticRefresh!, refresh);
+    }
+
     if (mounted) {
       setState(() {});
     }
@@ -82,14 +94,22 @@ class CustomFutureBuilderState<T> extends State<CustomFutureBuilder> {
 
   @override
   Widget build(BuildContext context) {
+    void retry() {
+      setState(() {
+        data = null;
+        error = null;
+      });
+      refresh();
+    }
+
     if (error != null){
       if (widget.onError != null){
-        return widget.onError!(context, error!, refresh);
+        return widget.onError!(context, error!, retry);
       }
 
-      return error!.build(context, refresh);
+      return error!.build(context, retry);
     } else if (data != null) {
-      return getRefreshIndicator(child: widget.onData(context, data, refresh));
+      return getRefreshIndicator(child: widget.onData(context, data, retry));
     } else {
       if (widget.onLoading == null) {
         return Center(child: CircularProgressIndicator());

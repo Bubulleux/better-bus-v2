@@ -45,7 +45,7 @@ extension ToError on Exception{
 }
 
 
-class CustomExceptions{
+class CustomErros{
   static final emptyNextPassage = CustomError(
     "! Aucun Bus n'est prevue pour le moment",
     Icons.bus_alert,
@@ -56,5 +56,11 @@ class CustomExceptions{
     "! Aucun Bus n'est prevue ce jours la",
     Icons.bus_alert,
     false,
+  );
+
+  static final noInternet = CustomError(
+    "! Aucun connection internet n'a été trouver veuillez allumier votre wifi ou vos donnée mobil",
+    Icons.signal_wifi_connected_no_internet_4,
+    true,
   );
 }

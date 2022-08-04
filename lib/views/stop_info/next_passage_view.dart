@@ -133,9 +133,10 @@ class _NextPassageListWidgetState extends State<NextPassageListWidget> {
       },
       errorTest: (data) {
         if (data.isEmpty){
-          return CustomExceptions.emptyNextPassage;
+          return CustomErros.emptyNextPassage;
         }
       },
+      automaticRefresh: Duration(minutes: 1),
     );
   }
 }
