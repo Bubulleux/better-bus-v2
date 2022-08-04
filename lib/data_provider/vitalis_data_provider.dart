@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:better_bus_v2/error_handler/custom_error.dart';
 import 'package:better_bus_v2/model/clean/bus_line.dart';
 import 'package:better_bus_v2/model/clean/bus_stop.dart';
 import 'package:better_bus_v2/model/clean/info_trafic.dart';
@@ -9,11 +10,16 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 import '../model/clean/next_passage.dart';
+import 'connectivity_checker.dart';
 
 class VitalisDataProvider {
   static String? token;
 
   static Future<void> getToken() async {
+    if (!await ConnectivityChecker.isConnected()) {
+      return;
+    }
+
     Uri uri = Uri.parse("https://www.vitalis-poitiers.fr/horaires/");
     http.Response res = await http.get(uri);
 
@@ -32,24 +38,16 @@ class VitalisDataProvider {
     return {"Authorization": token!};
   }
 
-
-
   static Future<List<BusStop>?> getStops() async {
     Uri uri = Uri.parse("https://releases-uxb3m2jh5q-ew.a.run.app/stops");
 
-    http.Response res = await http.get(uri, headers: await getAutHeader());
+    List<dynamic> body = await sendRequest(uri);
+    List<BusStop> output = [];
+    for (Map<String, dynamic> rawStop in body) {
 
-    if (res.statusCode == 200) {
-      List<dynamic> body = jsonDecode(res.body);
-      List<BusStop> output = [];
-      for (Map<String, dynamic> rawStop in body) {
-
-        output.add(BusStop.fromJson(rawStop));
-      }
-      return output;
-    } else {
-      throw ApiProviderException(res);
+      output.add(BusStop.fromJson(rawStop));
     }
+    return output;
   }
 
   static Future<List<BusLine>?> getLines(BusStop stop) async {
@@ -59,23 +57,13 @@ class VitalisDataProvider {
       "networks": "[1]",
     });
 
-    http.Response res = await http.get(uri, headers: await getAutHeader());
-
-    if (res.statusCode == 200) {
-      try {
-        Map<String, dynamic> body = jsonDecode(res.body);
-        List<dynamic> rawLines = body["lines"];
-        List<BusLine> output = [];
-        for (Map<String, dynamic> rawLine in rawLines) {
-          output.add(BusLine.fromJson(rawLine));
-        }
-        return output;
-      } on Exception catch(e) {
-        throw ApiProviderException(res, parentException: e);
-      }
-    } else {
-      throw ApiProviderException(res);
+    Map<String, dynamic> body = await sendRequest(uri);
+    List<dynamic> rawLines = body["lines"];
+    List<BusLine> output = [];
+    for (Map<String, dynamic> rawLine in rawLines) {
+      output.add(BusLine.fromJson(rawLine));
     }
+    return output;
   }
 
   static Future<List<NextPassage>> getNextPassage(BusStop stop, {int max = 40}) async {
@@ -109,18 +97,8 @@ class VitalisDataProvider {
       "networks": "[1]",
     });
 
-    http.Response res = await http.get(uri, headers: await getAutHeader());
-
-    if (res.statusCode == 200) {
-      try {
-        Map<String, dynamic> body = jsonDecode(res.body);
-        return LineBoarding.fromJson(body, line);
-      } on Exception catch(e) {
-        throw ApiProviderException(res, parentException: e);
-      }
-    } else {
-      throw ApiProviderException(res);
-    }
+    Map<String, dynamic> body = await sendRequest(uri);
+    return LineBoarding.fromJson(body, line);
   }
 
   static Future<Timetable> getTimetable(BusStop stop, BusLine line, int direction, LineBoarding boarding, DateTime date) async {
@@ -134,24 +112,13 @@ class VitalisDataProvider {
       "networks": "[1]",
     });
 
-    http.Response res = await http.get(uri, headers: await getAutHeader());
-
-    if (res.statusCode == 200) {
-      try {
-        Map<String, dynamic> body = jsonDecode(res.body);
-        Timetable output = Timetable.fromJson(body);
-        return output;
-      } on Exception catch(e) {
-        throw ApiProviderException(res, parentException: e);
-      }
-    } else {
-      throw ApiProviderException(res);
-    }
+    Map<String, dynamic> body = await sendRequest(uri);
+    Timetable output = Timetable.fromJson(body);
+    return output;
   }
 
   static Future<List<InfoTraffic>> getTrafficInfo() async {
     Uri uri = Uri.parse("https://releases-uxb3m2jh5q-ew.a.run.app/traffics");
-
 
     List<dynamic> json = await sendRequest(uri);
     return json.map((e) => InfoTraffic.fromJson(e)).toList();
@@ -159,8 +126,8 @@ class VitalisDataProvider {
 
   static Future<Map<String, BusLine>> getAllLines() async {
     Uri uri = Uri.parse("https://releases-uxb3m2jh5q-ew.a.run.app/lines");
-    List<dynamic> json = await sendRequest(uri);
 
+    List<dynamic> json = await sendRequest(uri);
     return { for (Map<String, dynamic>  e in json) e["slug"]: BusLine.fromSimpleJson(e)};
   }
 
@@ -168,12 +135,22 @@ class VitalisDataProvider {
     int status = -1;
     int countTry = 0;
     http.Response? response;
+
+    if (!await ConnectivityChecker.isConnected()) {
+      throw CustomErros.noInternet;
+    }
+
     while (status != 200 && countTry < 3) {
+      countTry += 1;
       response = await http.get(uri, headers: await getAutHeader());
       status = response.statusCode;
       if (response.statusCode == 200) {
         dynamic output = jsonDecode(response.body);
         return output;
+      }
+
+      if (response.statusCode == 401) {
+        await getToken();
       }
     }
     throw ApiProviderException(response!);
