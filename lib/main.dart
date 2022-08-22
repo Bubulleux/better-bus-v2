@@ -60,6 +60,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
+      locale: Locale("fr"),
       home: const HomePage(),
     );
   }
