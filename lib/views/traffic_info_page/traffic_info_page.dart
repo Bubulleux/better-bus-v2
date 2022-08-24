@@ -22,6 +22,18 @@ class TrafficInfoPageState extends State<TrafficInfoPage> {
     List<InfoTraffic> infoList = await VitalisDataProvider.getTrafficInfo();
     Map<String, BusLine> busLines = await VitalisDataProvider.getAllLines();
     infoList.removeWhere((element) => !element.isDisplay);
+    infoList.sort(
+        (a, b) {
+          int compareValue = (a.isActive  ? 1 : 0).compareTo(b.isActive ? 1 : 0);
+          if (compareValue != 0) return compareValue;
+
+          compareValue = (-(a.linesId?.length ?? -1)).compareTo(-(b.linesId?.length ?? -1));
+
+          return compareValue;
+        },
+
+    );
+    infoList = infoList.reversed.toList();
     return InfoTrafficObject(infoList, busLines);
   }
 

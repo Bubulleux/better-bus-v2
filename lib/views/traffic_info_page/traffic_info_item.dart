@@ -1,5 +1,6 @@
 import 'package:better_bus_v2/model/clean/info_trafic.dart';
 import 'package:better_bus_v2/views/common/decorations.dart';
+import 'package:better_bus_v2/views/common/extendable_view.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
 import 'package:better_bus_v2/views/traffic_info_page/traffic_info_page.dart';
 import 'package:flutter/material.dart';
@@ -8,13 +9,26 @@ import 'package:intl/intl.dart';
 
 import '../../model/clean/bus_line.dart';
 
-class TrafficInfoItem extends StatelessWidget {
+class TrafficInfoItem extends StatefulWidget{
   const TrafficInfoItem(this.infoTraffic, this.busLines, {Key? key}) : super(key: key);
 
   final InfoTraffic infoTraffic;
   final Map<String, BusLine> busLines;
 
   static final dateFormat = DateFormat("dd/MM/yy");
+
+  @override
+  State<TrafficInfoItem> createState() => _TrafficInfoItemState();
+}
+
+class _TrafficInfoItemState extends State<TrafficInfoItem> with SingleTickerProviderStateMixin{
+  late ExpandableWidgetController expandableController;
+
+  @override
+  void initState() {
+    super.initState();
+    expandableController = ExpandableWidgetController(root: this);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,10 +41,9 @@ class TrafficInfoItem extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              infoTraffic.title,
+              widget.infoTraffic.title,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                color: infoTraffic.isActive ? Theme.of(context).primaryColorDark : null,
-                fontWeight: infoTraffic.isActive ? FontWeight.bold : FontWeight.normal,
+                fontWeight: widget.infoTraffic.isActive ? FontWeight.bold : FontWeight.normal,
               ),
             ),
             const SizedBox(
@@ -40,10 +53,10 @@ class TrafficInfoItem extends StatelessWidget {
               alignment: WrapAlignment.start,
               spacing: 5,
               runSpacing: 5,
-              children: infoTraffic.linesId
-                      ?.map((e) => busLines[e] != null
+              children: widget.infoTraffic.linesId
+                      ?.map((e) => widget.busLines[e] != null
                           ? LineWidget(
-                              busLines[e]!,
+                              widget.busLines[e]!,
                               25,
                               dynamicWidth: true,
                             )
@@ -53,28 +66,36 @@ class TrafficInfoItem extends StatelessWidget {
             ),
             SizedBox(
               width: double.infinity,
-              child: infoTraffic.stopTime.difference(infoTraffic.startTime).compareTo(const Duration(days: 1)) > 0
+              child: widget.infoTraffic.stopTime.difference(widget.infoTraffic.startTime).compareTo(const Duration(days: 1)) > 0
                   ? Wrap(
                       alignment: WrapAlignment.spaceBetween,
                       children: [
                         Text(
-                          dateFormat.format(infoTraffic.startTime),
+                          TrafficInfoItem.dateFormat.format(widget.infoTraffic.startTime),
                           style: Theme.of(context).textTheme.headlineSmall,
                         ),
-                        Icon(Icons.arrow_right_alt, color: Theme.of(context).primaryColorDark),
+                        const Icon(Icons.keyboard_double_arrow_right),
                         Text(
-                          dateFormat.format(infoTraffic.stopTime),
+                          TrafficInfoItem.dateFormat.format(widget.infoTraffic.stopTime),
                           style: Theme.of(context).textTheme.headlineSmall,
                         )
                       ],
                     )
                   : Text(
-                      dateFormat.format(infoTraffic.stopTime),
+                      TrafficInfoItem.dateFormat.format(widget.infoTraffic.stopTime),
                       style: Theme.of(context).textTheme.headlineSmall,
                       textAlign: TextAlign.center,
                     ),
             ),
-            HtmlWidget(infoTraffic.content),
+            ExpendableWidget(
+                child:
+                  HtmlWidget(
+                      widget.infoTraffic.content
+                  ),
+                controller: expandableController,
+            ),
+            ExpendableWidgetButton(expandableController)
+
           ],
         ),
       ),
