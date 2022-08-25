@@ -6,6 +6,7 @@ import 'package:better_bus_v2/views/home_page/shortcut_section.dart';
 import 'package:better_bus_v2/views/stop_info/stop_info_page.dart';
 import 'package:better_bus_v2/views/traffic_info_page/traffic_info_page.dart';
 import 'package:flutter/material.dart';
+import 'package:home_widget/home_widget.dart';
 
 import '../common/fake_textfiel.dart';
 import '../search_page/search_page.dart';
@@ -49,6 +50,18 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     GpsDataProvider.askForGPS();
+    HomeWidget.widgetClicked.listen(launchWithWidget);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    HomeWidget.widgetClicked.listen(launchWithWidget);
+  }
+
+  void launchWithWidget(Uri? uri) {
+    print("launch with widget");
+    print(uri);
   }
 
   @override

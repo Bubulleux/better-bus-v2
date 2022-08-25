@@ -3,11 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:better_bus_v2/views/home_page/home_page.dart';
 import 'package:flutter/services.dart';
 import 'package:better_bus_v2/views/widget/example.dart' as example;
+import 'package:home_widget/home_widget.dart';
 
 void main() {
-  example.main();
-  return;
-
+  HomeWidget.updateWidget(name: "HomeWidgetExampleProvider");
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
