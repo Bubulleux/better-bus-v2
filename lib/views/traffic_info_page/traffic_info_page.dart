@@ -27,7 +27,7 @@ class TrafficInfoPageState extends State<TrafficInfoPage> {
           int compareValue = (a.isActive  ? 1 : 0).compareTo(b.isActive ? 1 : 0);
           if (compareValue != 0) return compareValue;
 
-          compareValue = (-(a.linesId?.length ?? -1)).compareTo(-(b.linesId?.length ?? -1));
+          compareValue = ((a.linesId != null ? 0 : 1)).compareTo(b.linesId != null ? 0 : 1);
 
           return compareValue;
         },

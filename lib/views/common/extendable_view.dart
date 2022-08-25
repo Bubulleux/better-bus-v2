@@ -73,9 +73,11 @@ class _ExpendableWidgetState extends State<ExpendableWidget>{
 }
 
 class ExpendableWidgetButton extends StatefulWidget {
-  const ExpendableWidgetButton(this.controller, {Key? key}) : super(key: key);
+  const ExpendableWidgetButton(this.controller, {this.height, this.width, Key? key}) : super(key: key);
 
   final ExpandableWidgetController controller;
+  final double? height;
+  final double? width;
 
   @override
   State<ExpendableWidgetButton> createState() => _ExpendableWidgetButtonState();
@@ -92,15 +94,22 @@ class _ExpendableWidgetButtonState extends State<ExpendableWidgetButton> {
 
   @override
   Widget build(BuildContext context) {
-    return TextButton(
+    return SizedBox(
+      width: widget.width,
+      height: widget.height,
+      child: TextButton(
         onPressed: widget.controller.tickAnimation,
         child: AnimatedBuilder(
           animation: animation,
           builder: (context, widget) => Transform.rotate(
             angle:  animation.value * pi,
-            child: const Icon(Icons.keyboard_arrow_down),
+            child: const FittedBox(
+              fit: BoxFit.fill,
+              child: const Icon(Icons.keyboard_arrow_down,)
+            ),
           ),
         )
+      ),
     );
   }
 }

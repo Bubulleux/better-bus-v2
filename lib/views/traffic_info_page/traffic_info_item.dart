@@ -34,69 +34,76 @@ class _TrafficInfoItemState extends State<TrafficInfoItem> with SingleTickerProv
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Container(
-        decoration: CustomDecorations.of(context).boxBackground,
-        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              widget.infoTraffic.title,
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: widget.infoTraffic.isActive ? FontWeight.bold : FontWeight.normal,
-              ),
-            ),
-            const SizedBox(
-              height: 5,
-            ),
-            Wrap(
-              alignment: WrapAlignment.start,
-              spacing: 5,
-              runSpacing: 5,
-              children: widget.infoTraffic.linesId
-                      ?.map((e) => widget.busLines[e] != null
-                          ? LineWidget(
-                              widget.busLines[e]!,
-                              25,
-                              dynamicWidth: true,
-                            )
-                          : Container())
-                      .toList() ??
-                  [],
-            ),
-            SizedBox(
-              width: double.infinity,
-              child: widget.infoTraffic.stopTime.difference(widget.infoTraffic.startTime).compareTo(const Duration(days: 1)) > 0
-                  ? Wrap(
-                      alignment: WrapAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          TrafficInfoItem.dateFormat.format(widget.infoTraffic.startTime),
-                          style: Theme.of(context).textTheme.headlineSmall,
-                        ),
-                        const Icon(Icons.keyboard_double_arrow_right),
-                        Text(
-                          TrafficInfoItem.dateFormat.format(widget.infoTraffic.stopTime),
-                          style: Theme.of(context).textTheme.headlineSmall,
-                        )
-                      ],
-                    )
-                  : Text(
-                      TrafficInfoItem.dateFormat.format(widget.infoTraffic.stopTime),
-                      style: Theme.of(context).textTheme.headlineSmall,
-                      textAlign: TextAlign.center,
-                    ),
-            ),
-            ExpendableWidget(
-                child:
-                  HtmlWidget(
-                      widget.infoTraffic.content
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: CustomDecorations.borderRadius,
+          onTap: () {expandableController.tickAnimation();},
+          splashColor: Colors.black,
+          child: Container(
+            decoration: CustomDecorations.of(context).boxBackground,
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.infoTraffic.title,
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: widget.infoTraffic.isActive ? FontWeight.bold : FontWeight.normal,
                   ),
-                controller: expandableController,
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                SizedBox(
+                  width: double.infinity,
+                  child: widget.infoTraffic.stopTime.difference(widget.infoTraffic.startTime).compareTo(const Duration(days: 1)) > 0
+                      ? Wrap(
+                    alignment: WrapAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        TrafficInfoItem.dateFormat.format(widget.infoTraffic.startTime),
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      const Icon(Icons.keyboard_double_arrow_right),
+                      Text(
+                        TrafficInfoItem.dateFormat.format(widget.infoTraffic.stopTime),
+                        style: Theme.of(context).textTheme.titleLarge,
+                      )
+                    ],
+                  )
+                      : Text(
+                    TrafficInfoItem.dateFormat.format(widget.infoTraffic.stopTime),
+                    style: Theme.of(context).textTheme.titleLarge,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                const SizedBox(height: 5,),
+                Wrap(
+                  alignment: WrapAlignment.start,
+                  spacing: 5,
+                  runSpacing: 5,
+                  children: widget.infoTraffic.linesId
+                          ?.map((e) => widget.busLines[e] != null
+                              ? LineWidget(
+                                  widget.busLines[e]!,
+                                  25,
+                                  dynamicWidth: true,
+                                )
+                              : Container())
+                          .toList() ??
+                      [],
+                ),
+                ExpendableWidget(
+                    child:
+                      HtmlWidget(
+                          widget.infoTraffic.content
+                      ),
+                    controller: expandableController,
+                ),
+              ],
             ),
-            ExpendableWidgetButton(expandableController)
-
-          ],
+          ),
         ),
       ),
     );
