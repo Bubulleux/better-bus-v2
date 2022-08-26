@@ -22,8 +22,13 @@ class HomeWidgetExampleProvider : HomeWidgetProvider() {
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray, widgetData: SharedPreferences) {
         appWidgetIds.forEach { widgetId ->
 
-            val rowShorcuts = widgetData.getString("shortcuts", "1;2;3") ?: ""
-            val shortcuts: Array<String> = rowShorcuts.split(";").toTypedArray()
+            val rowShorcuts = widgetData.getString("shortcuts", "") ?: ""
+            var shortcuts: Array<String> = rowShorcuts.split(";").toTypedArray()
+            if (shortcuts.size == 1 && shortcuts[0] == "")
+            {
+                shortcuts = emptyArray<String>()
+            }
+
             val intent = Intent(context, StackWidgetService::class.java).apply {
                 // Add the widget ID to the intent extras.
                 putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
@@ -49,9 +54,9 @@ class HomeWidgetExampleProvider : HomeWidgetProvider() {
             )
 
             val views = RemoteViews(context.packageName, R.layout.example_layout).apply {
-                setTextViewText(R.id.widget_title, _intent.type.toString())
                 setPendingIntentTemplate(R.id.widget_list, pendingIntent)
                 setRemoteAdapter(R.id.widget_list, intent)
+                setEmptyView(R.id.widget_list, R.id.list_empty)
 
 
             }
