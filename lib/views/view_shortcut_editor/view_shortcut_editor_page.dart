@@ -94,7 +94,7 @@ class _ViewShortcutEditorPageState extends State<ViewShortcutEditorPage> {
                   child: FakeTextField(
                     onPress: changeBusStop,
                     value: shortcutBusStop?.name,
-                    prefixIcon: Icons.directions_bus_outlined,
+                    prefixIcon: Icon(Icons.directions_bus_outlined),
                     icon: Icons.change_circle_outlined,
                   ),
                 ),

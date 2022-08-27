@@ -8,6 +8,7 @@ class FakeTextField extends StatelessWidget {
     this.hint,
     this.icon,
     this.prefixIcon,
+    this.backgroundColor,
     required this.onPress,
 
   }) : super(key: key);
@@ -15,8 +16,9 @@ class FakeTextField extends StatelessWidget {
   final String? value;
   final String? hint;
   final IconData? icon;
-  final IconData? prefixIcon;
+  final Icon? prefixIcon;
   final VoidCallback onPress;
+  final Color? backgroundColor;
 
   @override
   Widget build(BuildContext context) {
@@ -29,9 +31,7 @@ class FakeTextField extends StatelessWidget {
         padding: const EdgeInsets.all(10),
         child: Row(
           children: [
-            prefixIcon != null ?
-                Icon(prefixIcon):
-                Container(),
+            prefixIcon ?? Container(),
             Expanded(
               child: Text(
                 value ?? hint ?? "",
@@ -50,7 +50,9 @@ class FakeTextField extends StatelessWidget {
             Container(),
           ],
         ),
-        decoration: CustomDecorations.of(context).boxOutlined,
+        decoration: CustomDecorations.of(context).boxOutlined.copyWith(
+          color: backgroundColor,
+        ),
       ),
     );
   }
