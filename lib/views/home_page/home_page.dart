@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:home_widget/home_widget.dart';
 
 import '../common/fake_textfiel.dart';
-import '../search_page/search_page.dart';
+import '../stops_search_page/stops_search_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
