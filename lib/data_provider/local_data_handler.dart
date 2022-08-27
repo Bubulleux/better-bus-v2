@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:home_widget/home_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../model/clean/view_shortcut.dart';
@@ -32,6 +33,11 @@ class LocalDataHandler {
 
     List<String> shortcutJson = shortcuts.map((shortcut) =>
         jsonEncode(shortcut.toJson())).toList();
+
+    List<String> favoriteShortcut = shortcuts.where((element) => element.isFavorite).map((element) =>
+      element.shortcutName).toList();
     preferences!.setStringList("shortcuts", shortcutJson);
+    HomeWidget.saveWidgetData("shortcuts", favoriteShortcut.join(";"));
+    HomeWidget.updateWidget(name: "HomeWidgetExampleProvider");
   }
 }

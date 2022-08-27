@@ -1,4 +1,6 @@
 import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
+import 'package:better_bus_v2/data_provider/local_data_handler.dart';
+import 'package:better_bus_v2/model/clean/view_shortcut.dart';
 import 'package:better_bus_v2/views/common/background.dart';
 import 'package:better_bus_v2/views/common/decorations.dart';
 import 'package:better_bus_v2/views/home_page/navigation_bar.dart';
@@ -56,12 +58,32 @@ class _HomePageState extends State<HomePage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    HomeWidget.initiallyLaunchedFromHomeWidget().then(launchWithWidget);
     HomeWidget.widgetClicked.listen(launchWithWidget);
   }
 
   void launchWithWidget(Uri? uri) {
-    print("launch with widget");
     print(uri);
+    if (uri != null && uri.scheme == "app") {
+      if (uri.host == "openshortcut"){
+        launchShortcutByWidget(uri.pathSegments[0]);
+      }
+    }
+  }
+
+  void launchShortcutByWidget(String shortcutName) async {
+    print(shortcutName);
+    List<ViewShortcut> shortcuts = await LocalDataHandler.loadShortcut();
+    int shortcutIndex = shortcuts.indexWhere((element) => element.shortcutName == shortcutName);
+    if (shortcutIndex == -1) {
+      return;
+    }
+    ViewShortcut shortcut = shortcuts[shortcutIndex];
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => StopInfoPage(shortcut.stop, lines: shortcut.lines,),
+        ));
   }
 
   @override
