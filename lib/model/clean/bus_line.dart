@@ -1,3 +1,4 @@
+import 'package:better_bus_v2/helper.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -12,7 +13,7 @@ class BusLine {
       : this(
           json["line_id"],
           json["name"],
-          Color(int.parse(json["color"].replaceAll("#", "0xff"))),
+          colorFromHex(json["color"]),
           goDirection: json["direction"]["aller"].cast<String>(),
           backDirection: json["direction"]["retour"].cast<String>(),
         );
