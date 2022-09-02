@@ -1,5 +1,6 @@
 import 'package:better_bus_v2/model/clean/route.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
+import 'package:better_bus_v2/views/route_detail_page/route_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -49,6 +50,10 @@ class _RouteItemWidgetState extends State<RouteItemWidget> {
     );
   }
 
+  void showDetail() {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => RouteDetailPage(widget.vitalisRoute)));
+  }
+
   @override
   Widget build(BuildContext context) {
     Duration timeTravel = widget.vitalisRoute.timeTravel;
@@ -57,7 +62,7 @@ class _RouteItemWidgetState extends State<RouteItemWidget> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: GestureDetector(
-        onTap: () {},
+        onTap: showDetail,
         child: Container(
           decoration: CustomDecorations.of(context).boxBackground,
           width: double.infinity,

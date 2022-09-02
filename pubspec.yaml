@@ -41,6 +41,7 @@ dependencies:
   flutter_widget_from_html: ^0.8.5
   connectivity_plus: ^2.3.6
   home_widget: ^0.1.6
+  url_launcher: ^6.1.5
 
 dev_dependencies:
   flutter_test:
