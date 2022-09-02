@@ -60,11 +60,13 @@ class _RouteItemWidgetState extends State<RouteItemWidget> {
 
 
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: EdgeInsets.symmetric(vertical: 5),
       child: GestureDetector(
         onTap: showDetail,
         child: Container(
-          decoration: CustomDecorations.of(context).boxBackground,
+          decoration: CustomDecorations.of(context).boxOutlined.copyWith(
+            color: Theme.of(context).primaryColorLight.withAlpha(150),
+          ),
           width: double.infinity,
           padding: EdgeInsets.all(8),
           child: Column(
@@ -75,9 +77,9 @@ class _RouteItemWidgetState extends State<RouteItemWidget> {
                 child: Wrap(
                   alignment: WrapAlignment.spaceBetween,
                   children: [
-                    Text(timeFormat.format((widget.vitalisRoute.itinerary[0].startTime))),
+                    Text(timeFormat.format((widget.vitalisRoute.itinerary[0].startTime.toLocal()))),
                     const Icon(Icons.keyboard_double_arrow_right),
-                    Text(timeFormat.format(widget.vitalisRoute.itinerary.last.endTime)),
+                    Text(timeFormat.format(widget.vitalisRoute.itinerary.last.endTime.toLocal())),
                   ],
                 ),
               ),

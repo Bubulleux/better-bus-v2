@@ -46,9 +46,9 @@ class RouteStepPage extends StatelessWidget {
             width: double.infinity,
             child: Wrap(
               children: [
-                Text(DateFormat("Hm").format(busRoute.itinerary[index].startTime)),
+                Text(DateFormat("Hm").format(busRoute.itinerary[index].startTime.toLocal())),
                 const Icon(Icons.keyboard_double_arrow_right),
-                Text(DateFormat("Hm").format(busRoute.itinerary[index].endTime)),
+                Text(DateFormat("Hm").format(busRoute.itinerary[index].endTime.toLocal())),
               ],
               alignment: WrapAlignment.spaceBetween,
             ),

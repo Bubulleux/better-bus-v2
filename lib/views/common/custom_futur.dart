@@ -109,7 +109,7 @@ class CustomFutureBuilderState<T> extends State<CustomFutureBuilder> {
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      getOnLoadingScreen();
+      return getOnLoadingScreen();
     }
 
     if (error != null){

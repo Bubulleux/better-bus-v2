@@ -152,7 +152,7 @@ class VitalisDataProvider {
     return output;
   }
 
-  static Future<List<VitalisRoute>> getVitalisRoute(MapPlace start, MapPlace end, DateTime date, bool isDeparture, {int count = 5}) async {
+  static Future<List<VitalisRoute>> getVitalisRoute(MapPlace start, MapPlace end, DateTime date, String timeType, {int count = 5}) async {
     Uri uri = Uri.parse("https://releases-uxb3m2jh5q-ew.a.run.app/gtfs/Itinerary/getItineraries.json");
     uri = uri.replace(queryParameters: {
       "start": "[${start.latitude},${start.longitude}]",
@@ -161,9 +161,11 @@ class VitalisDataProvider {
       "end_name": end.title,
       "count": count.toString(),
       "date": (date.millisecondsSinceEpoch / 1000).round().toString(),
-      "date_type": isDeparture ? "departure" : "arrival",
+      "date_type": timeType,
       "networks": "[1]",
     });
+
+    print(date.millisecondsSinceEpoch / 1000);
 
     dynamic rawJson = await sendRequest(uri);
     if (rawJson is Map<String, dynamic>){
