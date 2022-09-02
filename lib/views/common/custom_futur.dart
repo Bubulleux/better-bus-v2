@@ -45,6 +45,7 @@ class CustomFutureBuilder<T> extends StatefulWidget {
 class CustomFutureBuilderState<T> extends State<CustomFutureBuilder> {
   T? data;
   CustomError? error;
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -55,15 +56,26 @@ class CustomFutureBuilderState<T> extends State<CustomFutureBuilder> {
     }
   }
 
-  Future refresh() async {
-    print("Refresh");
+  Future refresh() async{
+    setState(() {
+      isLoading = true;
+    });
+    await hideRefresh();
+    if (mounted) {
+      setState(() {
+        isLoading = false;
+      });
+    }
+
+  }
+
+  Future hideRefresh() async {
     error = null;
+
     try {
       data = await widget.future();
 
-      if (data == null){
-        error = DataIsNull().toError();
-      } else if (widget.errorTest != null){
+      if (widget.errorTest != null){
         error = widget.errorTest!(data);
       }
     } on Exception catch(e) {
@@ -71,11 +83,9 @@ class CustomFutureBuilderState<T> extends State<CustomFutureBuilder> {
     } on Error catch(e) {
       error = e is CustomError ? e : CustomError(e.toString(), Icons.error, false);
     }
-    if (error != null) {
-      data = null;
-    }
 
-    if (data != null && widget.automaticRefresh != null) {
+
+    if (error == null && widget.automaticRefresh != null) {
       Future.delayed(widget.automaticRefresh!, refresh);
     }
 
@@ -88,39 +98,31 @@ class CustomFutureBuilderState<T> extends State<CustomFutureBuilder> {
     if (widget.refreshIndicator == null) {
       return Container(child:  child,);
     } else {
-      return widget.refreshIndicator!(context, child, refresh);
+      return widget.refreshIndicator!(context, child, hideRefresh);
     }
+  }
+
+  Widget getOnLoadingScreen() {
+    return widget.onLoading != null ? widget.onLoading!(context) : const Center(child: CircularProgressIndicator());
   }
 
   @override
   Widget build(BuildContext context) {
-    void retry() {
-      setState(() {
-        data = null;
-        error = null;
-      });
-      refresh();
+    if (isLoading) {
+      getOnLoadingScreen();
     }
 
     if (error != null){
       if (widget.onError != null){
-        return widget.onError!(context, error!, retry);
+        return widget.onError!(context, error!, refresh);
       }
 
-      return error!.build(context, retry);
+      return error!.build(context, refresh);
+
     } else if (data != null) {
-      return getRefreshIndicator(child: widget.onData(context, data, retry));
-    } else {
-      if (widget.onLoading == null) {
-        return Center(child: CircularProgressIndicator());
-      }
-      return widget.onLoading!(context);
+      return getRefreshIndicator(child: widget.onData(context, data, refresh));
     }
+
+    return Container();
   }
-}
-
-class DataIsNull implements Exception{
-  @override
-  String toString() => "Data return are null";
-
 }

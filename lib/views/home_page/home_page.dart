@@ -1,10 +1,13 @@
 import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
 import 'package:better_bus_v2/data_provider/local_data_handler.dart';
+import 'package:better_bus_v2/data_provider/vitalis_data_provider.dart';
+import 'package:better_bus_v2/model/clean/bus_stop.dart';
 import 'package:better_bus_v2/model/clean/view_shortcut.dart';
 import 'package:better_bus_v2/views/common/background.dart';
 import 'package:better_bus_v2/views/common/decorations.dart';
 import 'package:better_bus_v2/views/home_page/navigation_bar.dart';
 import 'package:better_bus_v2/views/home_page/shortcut_section.dart';
+import 'package:better_bus_v2/views/route_page/route_page.dart';
 import 'package:better_bus_v2/views/stop_info/stop_info_page.dart';
 import 'package:better_bus_v2/views/traffic_info_page/traffic_info_page.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +28,7 @@ class _HomePageState extends State<HomePage> {
 
   void searchBusStop() {
     Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const SearchPage()))
+        MaterialPageRoute(builder: (context) => const SearchPage()))
         .then((value) {
       if (value == null) {
         return;
@@ -48,6 +51,12 @@ class _HomePageState extends State<HomePage> {
     ));
   }
 
+  void goToRoutePage() {
+    Navigator.push(context, MaterialPageRoute(
+      builder: (context) => const RoutePage(),
+    ));
+  }
+
   @override
   void initState() {
     super.initState();
@@ -65,7 +74,7 @@ class _HomePageState extends State<HomePage> {
   void launchWithWidget(Uri? uri) {
     print(uri);
     if (uri != null && uri.scheme == "app") {
-      if (uri.host == "openshortcut"){
+      if (uri.host == "openshortcut") {
         launchShortcutByWidget(uri.pathSegments[0]);
       }
     }
@@ -98,20 +107,26 @@ class _HomePageState extends State<HomePage> {
               children: [
                 Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  decoration: CustomDecorations.of(context).boxBackground,
+                  const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  decoration: CustomDecorations
+                      .of(context)
+                      .boxBackground,
                   child: Row(
                     children: [
                       Expanded(
                         child: Text(
                           "! Racourcies:",
-                          style: Theme.of(context).textTheme.headlineSmall,
+                          style: Theme
+                              .of(context)
+                              .textTheme
+                              .headlineSmall,
                         ),
                       ),
                       TextButton(onPressed: newShortcut, child: Icon(Icons.add))
                     ],
                   ),
                 ),
+
                 Expanded(
                   child: ShortcutWidgetRoot(key: shortcutSection),
                 )
@@ -126,6 +141,11 @@ class _HomePageState extends State<HomePage> {
             label: "! Rechercher",
             icon: Icons.search,
             onPress: searchBusStop,
+          ),
+          CustomNavigationItem(
+            label: "! Itinéraire",
+            icon: Icons.route,
+            onPress: goToRoutePage,
           ),
           CustomNavigationItem(
             label: "! Info Trafic",
