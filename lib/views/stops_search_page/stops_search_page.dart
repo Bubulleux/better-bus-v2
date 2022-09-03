@@ -1,16 +1,10 @@
-import 'dart:math';
 
 import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
-import 'package:better_bus_v2/data_provider/vitalis_data_provider.dart';
 import 'package:better_bus_v2/model/clean/bus_stop.dart';
 import 'package:better_bus_v2/views/common/background.dart';
-import 'package:better_bus_v2/views/common/error_handler.dart';
-import 'package:better_bus_v2/views/common/line_widget.dart';
 import 'package:better_bus_v2/views/stops_search_page/search_bus_stop_view.dart';
-import 'package:better_bus_v2/views/stops_search_page/stop_bus_item_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../model/clean/bus_line.dart';
 

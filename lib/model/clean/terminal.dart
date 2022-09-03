@@ -1,4 +1,3 @@
-import 'package:better_bus_v2/model/clean/bus_stop.dart';
 
 import 'bus_line.dart';
 

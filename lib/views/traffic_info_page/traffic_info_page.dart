@@ -5,8 +5,6 @@ import 'package:better_bus_v2/views/common/custom_futur.dart';
 import 'package:better_bus_v2/views/common/decorations.dart';
 import 'package:better_bus_v2/views/traffic_info_page/traffic_info_item.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/date_symbol_data_file.dart';
-import 'package:intl/intl.dart';
 
 import '../../model/clean/bus_line.dart';
 import '../../model/clean/info_trafic.dart';

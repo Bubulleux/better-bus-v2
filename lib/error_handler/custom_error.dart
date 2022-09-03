@@ -17,7 +17,7 @@ class CustomError extends Error{
           if (retry != null && canBeRetry)
             ElevatedButton(
               onPressed: retry,
-              child: Text("! Re-esaiyer"),
+              child: const Text("! Re-esaiyer"),
             )
           else
             Container()

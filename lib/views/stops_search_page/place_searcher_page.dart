@@ -59,7 +59,7 @@ class _PlaceSearcherPageState extends State<PlaceSearcherPage> with TickerProvid
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: Container(
                     decoration: CustomDecorations.of(context).boxBackground,
-                    padding: EdgeInsets.all(5),
+                    padding: const EdgeInsets.all(5),
                     child: TabBar(
                       tabs: [
                         Tab(

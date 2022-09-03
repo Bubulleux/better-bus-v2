@@ -166,7 +166,7 @@ class _TimeTableViewState extends State<TimeTableView> with AutomaticKeepAliveCl
               isExpanded: true,
               onChanged: selectLine,
               underline: Container(),
-              hint: Text("! Selectioner un ligne"),
+              hint: const Text("! Selectioner un ligne"),
               value: busLineSelected,
               items: (busLines ?? [])
                   .map<DropdownMenuItem<BusLine>>((BusLine value) {

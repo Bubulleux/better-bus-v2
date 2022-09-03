@@ -2,7 +2,6 @@ import 'package:better_bus_v2/views/common/decorations.dart';
 import 'package:flutter/material.dart';
 import 'package:better_bus_v2/views/home_page/home_page.dart';
 import 'package:flutter/services.dart';
-import 'package:better_bus_v2/views/widget/example.dart' as example;
 import 'package:home_widget/home_widget.dart';
 
 void main() {
@@ -64,7 +63,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      locale: Locale("fr"),
+      locale: const Locale("fr"),
       home: const HomePage(),
     );
   }

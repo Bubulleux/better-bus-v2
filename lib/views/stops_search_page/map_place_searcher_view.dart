@@ -5,7 +5,6 @@ import 'package:better_bus_v2/views/common/custom_futur.dart';
 import 'package:better_bus_v2/views/common/decorations.dart';
 import 'package:better_bus_v2/views/stops_search_page/map_place_item_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:location/location.dart';
 
 import '../../model/clean/map_place.dart';
@@ -67,7 +66,7 @@ class _MapPlaceSearcherViewState extends State<MapPlaceSearcherView> {
                 )),
                 child: Container(
                   decoration: CustomDecorations.of(context).boxBackground,
-                  padding: EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(8),
                   child: Row(
                     children: [
                       const Icon(Icons.my_location),
@@ -104,6 +103,7 @@ class _MapPlaceSearcherViewState extends State<MapPlaceSearcherView> {
               if (data != null && data.length == 0) {
                 return CustomErrors.searchPlaceNoResult;
               }
+              return null;
             },
           ),
         ),

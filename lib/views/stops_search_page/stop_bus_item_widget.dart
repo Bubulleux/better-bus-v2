@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:better_bus_v2/views/common/decorations.dart';
 import 'package:better_bus_v2/views/stops_search_page/stops_search_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 
 import '../../data_provider/gps_data_provider.dart';
 import '../../data_provider/vitalis_data_provider.dart';
@@ -128,7 +127,7 @@ class _BusStopWidgetState extends State<BusStopWidget> with SingleTickerProvider
         onTap: widget.onPressed,
         child: Container(
           decoration: CustomDecorations.of(context).boxBackground,
-          padding: EdgeInsets.all(5),
+          padding: const EdgeInsets.all(5),
           child: Column(
             children: [
               Row(

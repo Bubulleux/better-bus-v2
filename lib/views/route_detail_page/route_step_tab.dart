@@ -1,5 +1,4 @@
 import 'package:better_bus_v2/data_provider/maps_redirector.dart';
-import 'package:better_bus_v2/model/clean/bus_line.dart';
 import 'package:better_bus_v2/model/clean/route.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
 import 'package:flutter/material.dart';
@@ -38,7 +37,7 @@ class RouteStepPage extends StatelessWidget {
 
 
     return Padding(
-      padding: EdgeInsets.all(8),
+      padding: const EdgeInsets.all(8),
       child: Column(
         children: [
           title,
@@ -57,7 +56,7 @@ class RouteStepPage extends StatelessWidget {
           body,
           busRoute.itinerary[index].lines == null?
               ElevatedButton(
-                child: Text("! Voire sur maps"),
+                child: const Text("! Voire sur maps"),
                 onPressed: () => MapsRouter.routeToMap(
                     busRoute.polyLines[index].lineString[busRoute.polyLines[index].lineString.length - 2],
                     busRoute.polyLines[index].lineString[busRoute.polyLines[index].lineString.length - 1]),

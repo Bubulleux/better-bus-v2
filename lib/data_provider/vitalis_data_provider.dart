@@ -165,8 +165,6 @@ class VitalisDataProvider {
       "networks": "[1]",
     });
 
-    print(date.millisecondsSinceEpoch / 1000);
-
     dynamic rawJson = await sendRequest(uri);
     if (rawJson is Map<String, dynamic>){
       return [];

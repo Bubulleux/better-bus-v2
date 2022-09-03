@@ -88,10 +88,10 @@ class _CustomContextMenuState extends State<CustomContextMenu> {
                         child: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 10),
                           child: ListView.separated(
-                            physics: NeverScrollableScrollPhysics(),
+                            physics: const NeverScrollableScrollPhysics(),
                             shrinkWrap: true,
                             separatorBuilder: (context, index) =>
-                                Divider(color: Colors.black),
+                                const Divider(color: Colors.black),
                             itemCount: widget.actions.length,
                             itemBuilder: (context, index) {
                               ContextMenuAction e = widget.actions[index];
@@ -117,7 +117,7 @@ class _CustomContextMenuState extends State<CustomContextMenu> {
                                     shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(3)),
                                     padding:
-                                        EdgeInsets.symmetric(horizontal: 10),
+                                        const EdgeInsets.symmetric(horizontal: 10),
                                     tapTargetSize:
                                         MaterialTapTargetSize.shrinkWrap),
                               );

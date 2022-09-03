@@ -1,5 +1,3 @@
-import 'package:better_bus_v2/model/clean/bus_line.dart';
-import 'package:better_bus_v2/views/route_page/route_page.dart';
 import 'package:flutter/material.dart';
 import 'package:better_bus_v2/helper.dart';
 
@@ -17,7 +15,7 @@ class VitalisRoute {
   List<PolyLine> polyLines;
 
   Duration get timeTravel  {
-    Duration sum = Duration();
+    Duration sum = const Duration();
     for(RoutePassage passage in itinerary) {
       sum += passage.travelTime;
     }

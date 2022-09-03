@@ -54,7 +54,7 @@ class _ViewShortcutEditorPageState extends State<ViewShortcutEditorPage> {
       body: Background(
         child: SafeArea(
           child: Container(
-            padding: EdgeInsets.all(15),
+            padding: const EdgeInsets.all(15),
             color: Theme.of(context).backgroundColor,
             child: Column(
               children: [
@@ -64,7 +64,7 @@ class _ViewShortcutEditorPageState extends State<ViewShortcutEditorPage> {
                     controller: textFieldNameController,
                     style:Theme.of(context).textTheme.headline5,
                     decoration:
-                        InputDecoration(labelText: "! Nom du Racourcie"),
+                        const InputDecoration(labelText: "! Nom du Racourcie"),
                   ),
                 ),
                 Padding(
@@ -79,14 +79,14 @@ class _ViewShortcutEditorPageState extends State<ViewShortcutEditorPage> {
                       borderRadius: CustomDecorations.borderRadius,
                       child: Container(
                         decoration: CustomDecorations.of(context).boxOutlined,
-                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                         child: Row(
                           children: [
                             Text(
                               "Mettre en Favorie",
                               style: Theme.of(context).textTheme.headline5,
                             ),
-                            Spacer(),
+                            const Spacer(),
                             Icon(shortcutIsFavorite ? Icons.star : Icons.star_outline, color: Theme.of(context).primaryColor,)
                           ],
                         ),
@@ -99,7 +99,7 @@ class _ViewShortcutEditorPageState extends State<ViewShortcutEditorPage> {
                   child: FakeTextField(
                     onPress: changeBusStop,
                     value: shortcutBusStop?.name,
-                    prefixIcon: Icon(Icons.directions_bus_outlined),
+                    prefixIcon: const Icon(Icons.directions_bus_outlined),
                     icon: Icons.change_circle_outlined,
                     hint: "! Selectioner un Arrét de bus",
                   ),
@@ -109,7 +109,7 @@ class _ViewShortcutEditorPageState extends State<ViewShortcutEditorPage> {
                   child: Container(
                     decoration: CustomDecorations.of(context).boxOutlined,
                     width: double.infinity,
-                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -136,7 +136,7 @@ class _ViewShortcutEditorPageState extends State<ViewShortcutEditorPage> {
                         Center(
                           child: ElevatedButton(
                             onPressed: selectTerminus,
-                            child: Text("!Changer les direction"),
+                            child: const Text("!Changer les direction"),
                           ),
                         )
                       ],
@@ -153,7 +153,7 @@ class _ViewShortcutEditorPageState extends State<ViewShortcutEditorPage> {
                         onPressed: cancel,
                         child: const Text("! Cancel"),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 20,
                       ),
                       ElevatedButton(
@@ -215,6 +215,7 @@ class _ViewShortcutEditorPageState extends State<ViewShortcutEditorPage> {
     } else if (shortCutBusLines.isEmpty) {
       return "! Acune Line n'a été sélectioner";
     }
+    return null;
   }
 
   void valid() {

@@ -1,21 +1,15 @@
-import 'dart:convert';
-import 'dart:ui';
 
 import 'package:better_bus_v2/data_provider/local_data_handler.dart';
 import 'package:better_bus_v2/model/clean/bus_line.dart';
-import 'package:better_bus_v2/model/clean/terminal.dart';
 import 'package:better_bus_v2/model/clean/view_shortcut.dart';
 import 'package:better_bus_v2/views/common/context_menu.dart';
 import 'package:better_bus_v2/views/common/decorations.dart';
-import 'package:better_bus_v2/views/common/fake_textfiel.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
 import 'package:better_bus_v2/views/stop_info/stop_info_page.dart';
 import 'package:better_bus_v2/views/view_shortcut_editor/view_shortcut_editor_page.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../common/content_container.dart';
 
 class ShortcutWidgetRoot extends StatefulWidget {
   const ShortcutWidgetRoot({Key? key}) : super(key: key);

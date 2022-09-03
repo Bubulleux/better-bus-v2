@@ -5,7 +5,6 @@ import 'package:better_bus_v2/views/common/custom_futur.dart';
 import 'package:better_bus_v2/views/common/decorations.dart';
 import 'package:better_bus_v2/views/common/fake_textfiel.dart';
 import 'package:better_bus_v2/views/common/labeled_radio.dart';
-import 'package:better_bus_v2/views/place_search_page/place_search_page.dart';
 import 'package:better_bus_v2/views/route_page/route_widget_item.dart';
 import 'package:better_bus_v2/views/stops_search_page/place_searcher_page.dart';
 import 'package:flutter/material.dart';
@@ -19,8 +18,6 @@ class RoutePage extends StatefulWidget {
   @override
   State<RoutePage> createState() => _RoutePageState();
 }
-
-enum RouteTime { startAt, ArriveAt }
 
 class _RoutePageState extends State<RoutePage> {
   MapPlace? startPlace;
@@ -59,7 +56,7 @@ class _RoutePageState extends State<RoutePage> {
   }
 
   Future<MapPlace?> getPlace() async {
-    MapPlace? place = await Navigator.push(context, MaterialPageRoute(builder: (context) => PlaceSearcherPage()));
+    MapPlace? place = await Navigator.push(context, MaterialPageRoute(builder: (context) => const PlaceSearcherPage()));
     return place;
   }
 
@@ -106,7 +103,7 @@ class _RoutePageState extends State<RoutePage> {
   }
 
   Future<List<VitalisRoute>?> getRoutes() async {
-    if (startPlace == null || endPlace == null || timeType == null) {
+    if (startPlace == null || endPlace == null) {
       return null;
     }
     String date = DateFormat("dd-MM-yyyy").format(routeDateTime) + " ${routeTimeOfDay.hour}:${routeTimeOfDay.minute}";
@@ -121,7 +118,7 @@ class _RoutePageState extends State<RoutePage> {
       body: SafeArea(
         child: Background(
           child: Container(
-            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
             width: double.infinity,
             child: Column(
               children: [
@@ -133,7 +130,7 @@ class _RoutePageState extends State<RoutePage> {
                       blurRadius: 7,
                     )
                   ]),
-                  padding: EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(8),
                   child: Column(
                     children: [
                       FakeTextField(
@@ -147,14 +144,14 @@ class _RoutePageState extends State<RoutePage> {
                         icon: Icons.search,
                         value: startPlace?.title,
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 5,
                       ),
                       FakeTextField(
                         onPress: getStopPlace,
                         backgroundColor: Theme.of(context).backgroundColor,
                         hint: "! Arivée",
-                        prefixIcon: Icon(Icons.flag, color: Colors.red),
+                        prefixIcon: const Icon(Icons.flag, color: Colors.red),
                         icon: Icons.search,
                         value: endPlace?.title,
                       ),
@@ -176,7 +173,7 @@ class _RoutePageState extends State<RoutePage> {
                               ),
                             ],
                           ),
-                          Spacer(),
+                          const Spacer(),
                           Padding(
                             padding: const EdgeInsets.only(right: 15),
                             child: ElevatedButton(
@@ -186,10 +183,10 @@ class _RoutePageState extends State<RoutePage> {
                                     routeTimeOfDay.format(context),
                                     style: Theme.of(context).textTheme.titleLarge,
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 10,
                                   ),
-                                  Icon(Icons.edit)
+                                  const Icon(Icons.edit)
                                 ],
                               ),
                               onPressed: setTime,
@@ -199,8 +196,8 @@ class _RoutePageState extends State<RoutePage> {
                       ),
                       Row(
                         children: [
-                          Text("! A quelle date?"),
-                          Spacer(),
+                          const Text("! A quelle date?"),
+                          const Spacer(),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: ElevatedButton(
@@ -210,10 +207,10 @@ class _RoutePageState extends State<RoutePage> {
                                     DateFormat("dd/MM/yy").format(routeDateTime),
                                     style: Theme.of(context).textTheme.titleLarge,
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 10,
                                   ),
-                                  Icon(Icons.edit)
+                                  const Icon(Icons.edit)
                                 ],
                               ),
                               onPressed: setTime,
@@ -224,11 +221,11 @@ class _RoutePageState extends State<RoutePage> {
                     ],
                   ),
                 ),
-                SizedBox(height: 5,),
+                const SizedBox(height: 5,),
                 Expanded(
                   child: Container(
                     decoration: CustomDecorations.of(context).boxBackground,
-                    padding: EdgeInsets.symmetric(horizontal: 25),
+                    padding: const EdgeInsets.symmetric(horizontal: 25),
                     child: CustomFutureBuilder<List<VitalisRoute>?>(
                       key: futureBuilderKey,
                       future: getRoutes,
@@ -236,7 +233,6 @@ class _RoutePageState extends State<RoutePage> {
                         if (data == null) {
                           return Container();
                         }
-                        print("Route Found: ${data.length}");
                         return ListView.builder(
                           itemBuilder: (context, index) => RouteItemWidget(data[index]),
                           itemCount: data!.length,

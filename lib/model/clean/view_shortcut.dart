@@ -1,7 +1,6 @@
 import 'package:better_bus_v2/model/clean/bus_line.dart';
 
 import 'bus_stop.dart';
-import 'terminal.dart';
 
 class ViewShortcut {
   ViewShortcut(this.shortcutName, this.isFavorite,  this.stop, this.lines);

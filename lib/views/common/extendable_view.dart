@@ -105,7 +105,7 @@ class _ExpendableWidgetButtonState extends State<ExpendableWidgetButton> {
             angle:  animation.value * pi,
             child: const FittedBox(
               fit: BoxFit.fill,
-              child: const Icon(Icons.keyboard_arrow_down,)
+              child: Icon(Icons.keyboard_arrow_down,)
             ),
           ),
         )

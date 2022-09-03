@@ -24,7 +24,7 @@ class MapPlaceItemWidget extends StatelessWidget {
         onTap: clickCallback,
         child: Container(
           decoration: CustomDecorations.of(context).boxBackground,
-          padding: EdgeInsets.all(8),
+          padding: const EdgeInsets.all(8),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

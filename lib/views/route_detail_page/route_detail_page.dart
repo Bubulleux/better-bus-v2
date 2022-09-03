@@ -35,13 +35,13 @@ class _RouteDetailPageState extends State<RouteDetailPage> with SingleTickerProv
 
     widget.busRoute.itinerary.asMap().forEach((i, element) {
       if (element.lines == null) {
-        tabs.add(Tab(icon: Icon(Icons.directions_walk),));
+        tabs.add(const Tab(icon: Icon(Icons.directions_walk),));
       } else {
         tabs.add(Tab(child:
         Column(
           children: [
             LineWidget.fromRouteLine(element.lines!, 20),
-            Icon(Icons.directions_bus),
+            const Icon(Icons.directions_bus),
           ],
         )
         ));
@@ -57,7 +57,7 @@ class _RouteDetailPageState extends State<RouteDetailPage> with SingleTickerProv
             Row(
               children: [
                 TextButton(
-                  child: Icon(Icons.chevron_left),
+                  child: const Icon(Icons.chevron_left),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
                 Expanded(
@@ -69,7 +69,7 @@ class _RouteDetailPageState extends State<RouteDetailPage> with SingleTickerProv
                       controller: tabController,
                       // indicatorSize: TabBarIndicatorSize.tab,
                       isScrollable: true,
-                      labelPadding: EdgeInsets.all(8),
+                      labelPadding: const EdgeInsets.all(8),
                       indicator: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
                         color: Theme.of(context).primaryColor,
@@ -79,7 +79,7 @@ class _RouteDetailPageState extends State<RouteDetailPage> with SingleTickerProv
                 ),
               ],
             ),
-            Divider(),
+            const Divider(),
             Expanded(
               child: TabBarView(
                 controller: tabController,
@@ -88,15 +88,15 @@ class _RouteDetailPageState extends State<RouteDetailPage> with SingleTickerProv
             ),
             Container(
               width: double.infinity,
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
               child: Wrap(
                 alignment: WrapAlignment.spaceBetween,
                 children: [
                   tabController.index != 0 ?
-                  ElevatedButton(onPressed: () => tabController.animateTo(tabController.index - 1), child: Text("! Présedent")):
+                  ElevatedButton(onPressed: () => tabController.animateTo(tabController.index - 1), child: const Text("! Présedent")):
                   Container(width: 5,),
                   tabController.index != widget.busRoute.itinerary.length -1 ?
-                  ElevatedButton(onPressed: () => tabController.animateTo(tabController.index + 1), child: Text("! Suivent")):
+                  ElevatedButton(onPressed: () => tabController.animateTo(tabController.index + 1), child: const Text("! Suivent")):
                   Container(width: 5,),
                 ],
               ),

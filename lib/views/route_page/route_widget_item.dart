@@ -60,7 +60,7 @@ class _RouteItemWidgetState extends State<RouteItemWidget> {
 
 
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 5),
+      padding: const EdgeInsets.symmetric(vertical: 5),
       child: GestureDetector(
         onTap: showDetail,
         child: Container(
@@ -68,12 +68,12 @@ class _RouteItemWidgetState extends State<RouteItemWidget> {
             color: Theme.of(context).primaryColorLight.withAlpha(150),
           ),
           width: double.infinity,
-          padding: EdgeInsets.all(8),
+          padding: const EdgeInsets.all(8),
           child: Column(
             children: [
               Container(
                 width: double.infinity,
-                padding: EdgeInsets.symmetric(horizontal: 50),
+                padding: const EdgeInsets.symmetric(horizontal: 50),
                 child: Wrap(
                   alignment: WrapAlignment.spaceBetween,
                   children: [
@@ -89,7 +89,7 @@ class _RouteItemWidgetState extends State<RouteItemWidget> {
                 child: getRouteSchema(),
               ),
               const Divider(),
-              Container(
+              SizedBox(
                 width: double.infinity,
                 child: Wrap(
                   alignment: WrapAlignment.spaceBetween,

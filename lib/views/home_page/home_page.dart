@@ -1,7 +1,5 @@
 import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
 import 'package:better_bus_v2/data_provider/local_data_handler.dart';
-import 'package:better_bus_v2/data_provider/vitalis_data_provider.dart';
-import 'package:better_bus_v2/model/clean/bus_stop.dart';
 import 'package:better_bus_v2/model/clean/view_shortcut.dart';
 import 'package:better_bus_v2/views/common/background.dart';
 import 'package:better_bus_v2/views/common/decorations.dart';
@@ -13,7 +11,6 @@ import 'package:better_bus_v2/views/traffic_info_page/traffic_info_page.dart';
 import 'package:flutter/material.dart';
 import 'package:home_widget/home_widget.dart';
 
-import '../common/fake_textfiel.dart';
 import '../stops_search_page/stops_search_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -72,7 +69,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   void launchWithWidget(Uri? uri) {
-    print(uri);
     if (uri != null && uri.scheme == "app") {
       if (uri.host == "openshortcut") {
         launchShortcutByWidget(uri.pathSegments[0]);
@@ -81,7 +77,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   void launchShortcutByWidget(String shortcutName) async {
-    print(shortcutName);
     List<ViewShortcut> shortcuts = await LocalDataHandler.loadShortcut();
     int shortcutIndex = shortcuts.indexWhere((element) => element.shortcutName == shortcutName);
     if (shortcutIndex == -1) {
@@ -122,7 +117,7 @@ class _HomePageState extends State<HomePage> {
                               .headlineSmall,
                         ),
                       ),
-                      TextButton(onPressed: newShortcut, child: Icon(Icons.add))
+                      TextButton(onPressed: newShortcut, child: const Icon(Icons.add))
                     ],
                   ),
                 ),

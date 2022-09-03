@@ -2,11 +2,9 @@ import 'package:better_bus_v2/model/clean/info_trafic.dart';
 import 'package:better_bus_v2/views/common/decorations.dart';
 import 'package:better_bus_v2/views/common/extendable_view.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
-import 'package:better_bus_v2/views/traffic_info_page/traffic_info_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:intl/intl.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../model/clean/bus_line.dart';
@@ -50,7 +48,7 @@ class _TrafficInfoItemState extends State<TrafficInfoItem> with SingleTickerProv
           splashColor: Colors.black,
           child: Container(
             decoration: CustomDecorations.of(context).boxBackground,
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:better_bus_v2/data_provider/vitalis_data_provider.dart';
 import 'package:better_bus_v2/model/clean/bus_line.dart';
-import 'package:better_bus_v2/model/clean/line_boarding.dart';
 import 'package:better_bus_v2/views/common/background.dart';
 import 'package:better_bus_v2/views/common/content_container.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
@@ -99,7 +98,7 @@ class _TerminusSelectorPageState extends State<TerminusSelectorPage> {
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       if (snapshot.hasError) {
-                        return Text("!Error");
+                        return const Text("!Error");
                       } else {
                         List<BusLine> lines = snapshot.data!;
                         return getListView(lines);
@@ -112,11 +111,11 @@ class _TerminusSelectorPageState extends State<TerminusSelectorPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  ElevatedButton(onPressed: cancel, child: Text("! Anuler")),
+                  ElevatedButton(onPressed: cancel, child: const Text("! Anuler")),
                   ElevatedButton(
                       onPressed: selectAll, child: Text(allIsSelected ? "! Tout déselectier" : "! Tout selection")
                   ),
-                  ElevatedButton(onPressed: validate, child: Text("Valider")),
+                  ElevatedButton(onPressed: validate, child: const Text("Valider")),
                 ],
               )
             ],
@@ -191,7 +190,7 @@ class _TerminusSelectorPageState extends State<TerminusSelectorPage> {
                           padding: const EdgeInsets.only(left: 8),
                           child: Text(
                             line.fullName,
-                            style: TextStyle(fontSize: 15),
+                            style: const TextStyle(fontSize: 15),
                           ),
                         ),
                       ),
@@ -242,7 +241,7 @@ class _TerminusSelectionState extends State<TerminusSelection>
 
   void prepareAnimations() {
     expandController =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 500));
+        AnimationController(vsync: this, duration: const Duration(milliseconds: 500));
     animation = CurvedAnimation(
       parent: expandController,
       curve: Curves.fastOutSlowIn,
@@ -279,6 +278,7 @@ class _TerminusSelectionState extends State<TerminusSelection>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     List<String> getDirection(BusLine _line) =>
         widget.isGo ? _line.goDirection : _line.backDirection;
 
@@ -334,7 +334,6 @@ class _TerminusSelectionState extends State<TerminusSelection>
                 children: Iterable<int>.generate(entrySelected.length)
                     .map((int index) {
                   String direction = getDirection(line)[index];
-                  print("Set state");
                   return Row(
                     children: [
                       Checkbox(

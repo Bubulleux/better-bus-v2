@@ -155,6 +155,7 @@ class SearchBusStopViewState extends State<SearchBusStopView>{
         if (data.length == 0) {
           return CustomErrors.searchError;
         }
+        return null;
       },
     );
   }

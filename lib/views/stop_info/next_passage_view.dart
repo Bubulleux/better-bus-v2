@@ -33,7 +33,7 @@ class _NextPassagePageState extends State<NextPassagePage> with AutomaticKeepAli
     {
       seeAll = true;
     }
-    seeAllAnimationController = AnimationController(vsync: this, duration: Duration(milliseconds: 200));
+    seeAllAnimationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 200));
     seeAllBtnAnimation = CurvedAnimation(parent: seeAllAnimationController, curve: Curves.easeOut);
     seeAllAnimationController.value = seeAll ? 0 : 1;
   }
@@ -47,6 +47,7 @@ class _NextPassagePageState extends State<NextPassagePage> with AutomaticKeepAli
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return SizedBox(
       width: double.infinity,
       height: double.infinity,
@@ -57,7 +58,7 @@ class _NextPassagePageState extends State<NextPassagePage> with AutomaticKeepAli
             axisAlignment: 1,
             child: Container(
               width: double.infinity,
-              padding: EdgeInsets.symmetric(horizontal: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 8),
               child: ElevatedButton(
                 onPressed: () {
                   seeAll = true;
@@ -135,8 +136,9 @@ class _NextPassageListWidgetState extends State<NextPassageListWidget> {
         if (data.isEmpty){
           return CustomErrors.emptyNextPassage;
         }
+        return null;
       },
-      automaticRefresh: Duration(minutes: 1),
+      automaticRefresh: const Duration(minutes: 1),
     );
   }
 }
