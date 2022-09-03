@@ -290,7 +290,6 @@ class _TerminusSelectionState extends State<TerminusSelection>
     if (entrySelected.isEmpty) {
       return Container();
     }
-
     return Column(
       children: [
         Row(
