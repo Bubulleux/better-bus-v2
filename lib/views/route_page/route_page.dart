@@ -7,6 +7,7 @@ import 'package:better_bus_v2/views/common/fake_textfiel.dart';
 import 'package:better_bus_v2/views/common/labeled_radio.dart';
 import 'package:better_bus_v2/views/place_search_page/place_search_page.dart';
 import 'package:better_bus_v2/views/route_page/route_widget_item.dart';
+import 'package:better_bus_v2/views/stops_search_page/place_searcher_page.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -58,7 +59,7 @@ class _RoutePageState extends State<RoutePage> {
   }
 
   Future<MapPlace?> getPlace() async {
-    MapPlace? place = await Navigator.push(context, MaterialPageRoute(builder: (context) => PlaceSearchPage()));
+    MapPlace? place = await Navigator.push(context, MaterialPageRoute(builder: (context) => PlaceSearcherPage()));
     return place;
   }
 

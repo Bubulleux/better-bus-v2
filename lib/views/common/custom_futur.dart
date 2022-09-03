@@ -42,7 +42,7 @@ class CustomFutureBuilder<T> extends StatefulWidget {
   State<CustomFutureBuilder> createState() => CustomFutureBuilderState<T>();
 }
 
-class CustomFutureBuilderState<T> extends State<CustomFutureBuilder> {
+class CustomFutureBuilderState<T> extends State<CustomFutureBuilder>{
   T? data;
   CustomError? error;
   bool isLoading = false;
@@ -70,10 +70,10 @@ class CustomFutureBuilderState<T> extends State<CustomFutureBuilder> {
   }
 
   Future hideRefresh() async {
-    error = null;
 
     try {
       data = await widget.future();
+      error = null;
 
       if (widget.errorTest != null){
         error = widget.errorTest!(data);

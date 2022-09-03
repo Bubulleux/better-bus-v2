@@ -181,7 +181,7 @@ class VitalisDataProvider {
     http.Response? response;
 
     if (!await ConnectivityChecker.isConnected()) {
-      throw CustomErros.noInternet;
+      throw CustomErrors.noInternet;
     }
 
     while (status != 200 && countTry < 3) {

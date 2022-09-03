@@ -45,7 +45,7 @@ extension ToError on Exception{
 }
 
 
-class CustomErros{
+class CustomErrors{
   static final emptyNextPassage = CustomError(
     "! Aucun Bus n'est prevue pour le moment",
     Icons.bus_alert,
@@ -63,4 +63,17 @@ class CustomErros{
     Icons.signal_wifi_connected_no_internet_4,
     true,
   );
+
+  static final searchError = CustomError(
+    "! Aucun n'arret de bus n'a été trouver revoyer votre recherche",
+    Icons.search_off,
+    false,
+  );
+
+  static final searchPlaceNoResult = CustomError(
+    "! Aucun location n'a été trouvez veuillez réessier",
+    Icons.location_off,
+    false,
+  );
 }
+
