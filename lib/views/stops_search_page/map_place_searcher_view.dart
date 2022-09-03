@@ -46,11 +46,11 @@ class _MapPlaceSearcherViewState extends State<MapPlaceSearcherView> {
 
   @override
   void didUpdateWidget(covariant MapPlaceSearcherView oldWidget) {
-    super.didChangeDependencies();
     if (oldWidget.search != widget.search) {
       // setState(() {});
       futureStateKey.currentState?.hideRefresh();
     }
+    super.didUpdateWidget(oldWidget);
   }
 
   @override

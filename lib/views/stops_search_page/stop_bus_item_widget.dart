@@ -1,7 +1,9 @@
 import 'dart:math';
 
+import 'package:better_bus_v2/views/common/decorations.dart';
 import 'package:better_bus_v2/views/stops_search_page/stops_search_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 
 import '../../data_provider/gps_data_provider.dart';
 import '../../data_provider/vitalis_data_provider.dart';
@@ -98,7 +100,10 @@ class _BusStopWidgetState extends State<BusStopWidget> with SingleTickerProvider
     Widget? busStopInfo;
     if (busLines == null) {
       busStopInfo = const Center(
-        child: CircularProgressIndicator(),
+        child: Padding(
+          padding: EdgeInsets.all(8.0),
+          child: CircularProgressIndicator(),
+        ),
       );
     } else {
       List<Widget> children = [];
@@ -119,54 +124,55 @@ class _BusStopWidgetState extends State<BusStopWidget> with SingleTickerProvider
 
     return Padding(
       padding: const EdgeInsets.all(3.0),
-      child: OutlinedButton(
-        onPressed: widget.onPressed,
-        style: TextButton.styleFrom(
-          alignment: Alignment.centerLeft,
-          padding: const EdgeInsets.all(5),
-          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          backgroundColor: Theme.of(context).backgroundColor,
-        ),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Container(
-                  child: widget.inHistoric
-                      ? const Padding(
-                          padding: EdgeInsets.only(right: 5),
-                          child: Icon(Icons.history),
-                        )
-                      : null,
-                ),
-                Expanded(
-                  child: Text(
-                    widget.stop.name,
-                    textAlign: TextAlign.left,
-                    style: Theme.of(context).textTheme.headline5,
-                    softWrap: false,
-                    maxLines: 1,
-                    overflow: TextOverflow.fade,
+      child: InkWell(
+        onTap: widget.onPressed,
+        child: Container(
+          decoration: CustomDecorations.of(context).boxBackground,
+          padding: EdgeInsets.all(5),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Container(
+                    child: widget.inHistoric
+                        ? Padding(
+                            padding: const EdgeInsets.only(right: 5),
+                            child: Icon(Icons.history, color: Theme.of(context).primaryColor,),
+                          )
+                        : null,
                   ),
+                  Expanded(
+                    child: Text(
+                      widget.stop.name,
+                      textAlign: TextAlign.left,
+                      style: Theme.of(context).textTheme.headline5,
+                      softWrap: false,
+                      maxLines: 1,
+                      overflow: TextOverflow.fade,
+                    ),
+                  ),
+                  Container(
+                    child: widget.stopDistance == null ? null : Text("${widget.stopDistance} km", style: TextStyle(color: Theme.of(context).primaryColorDark),),
+                  ),
+                  TextButton(
+                      onPressed: getInfo,
+                      child: AnimatedBuilder(
+                          animation: animation,
+                          builder: (context, widget) => Transform.rotate(
+                              angle: animation.value * pi, child: const Icon(Icons.keyboard_arrow_down))))
+                ],
+              ),
+              SizeTransition(
+                sizeFactor: animation,
+                axisAlignment: 1.0,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: busStopInfo,
                 ),
-                Container(
-                  child: widget.stopDistance == null ? null : Text("${widget.stopDistance} km"),
-                ),
-                TextButton(
-                    onPressed: getInfo,
-                    child: AnimatedBuilder(
-                        animation: animation,
-                        builder: (context, widget) => Transform.rotate(
-                            angle: animation.value * pi, child: const Icon(Icons.keyboard_arrow_down))))
-              ],
-            ),
-            SizeTransition(
-              sizeFactor: animation,
-              axisAlignment: 1.0,
-              child: SizedBox(child: busStopInfo),
-            )
-          ],
-          crossAxisAlignment: CrossAxisAlignment.start,
+              )
+            ],
+            crossAxisAlignment: CrossAxisAlignment.start,
+          ),
         ),
       ),
     );

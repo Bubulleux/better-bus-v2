@@ -189,7 +189,7 @@ class VitalisDataProvider {
       response = await http.get(uri, headers: needToken ? await getAutHeader() : null);
       status = response.statusCode;
       if (response.statusCode == 200) {
-        dynamic output = jsonDecode(response.body);
+        dynamic output = jsonDecode(utf8.decode(response.bodyBytes));
         return output;
       }
 

@@ -25,7 +25,7 @@ class FakeTextField extends StatelessWidget {
     return InkWell(
       onTap: onPress,
       borderRadius: CustomDecorations.borderRadius,
-      splashColor: Colors.black,
+      // splashColor: Colors.black,
       child: Container(
         height: 60,
         padding: const EdgeInsets.all(10),
@@ -38,6 +38,9 @@ class FakeTextField extends StatelessWidget {
                 style: value != null ?
                 Theme.of(context).textTheme.headline6:
                 Theme.of(context).inputDecorationTheme.hintStyle,
+                maxLines: 1,
+                softWrap: false,
+                overflow: TextOverflow.fade,
               ),
             ),
             icon != null ?

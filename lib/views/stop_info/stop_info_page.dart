@@ -30,7 +30,6 @@ class _StopInfoPageState extends State<StopInfoPage>
   }
 
   void changeBusStop() {
-    return;
     Navigator.push(context,
             MaterialPageRoute(builder: (context) => const SearchPage()))
         .then((value) {
@@ -71,7 +70,7 @@ class _StopInfoPageState extends State<StopInfoPage>
             Expanded(
               child: TabBarView(
                 children: [
-                  NextPassagePage(stop, lines: widget.lines),
+                  NextPassagePage(stop, lines: widget.stop == stop? widget.lines : null),
                   TimeTableView(stop),
                 ],
                 controller: tabController,

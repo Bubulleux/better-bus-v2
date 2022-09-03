@@ -2,6 +2,7 @@ import 'package:better_bus_v2/data_provider/vitalis_data_provider.dart';
 import 'package:better_bus_v2/model/clean/info_trafic.dart';
 import 'package:better_bus_v2/views/common/background.dart';
 import 'package:better_bus_v2/views/common/custom_futur.dart';
+import 'package:better_bus_v2/views/common/decorations.dart';
 import 'package:better_bus_v2/views/traffic_info_page/traffic_info_item.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_file.dart';
@@ -52,7 +53,15 @@ class TrafficInfoPageState extends State<TrafficInfoPage> {
             padding: const EdgeInsets.all(8.0),
             child: Column(
               children: [
-                Text("Info Trafic:"),
+                Container(
+                  width: double.infinity,
+                  alignment: Alignment.center,
+                  decoration: CustomDecorations.of(context).boxBackground,
+                  child: Text(
+                    "! Info trafic:",
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                ),
                 Expanded(
                   child: CustomFutureBuilder<InfoTrafficObject>(
                     future: getAllInformation,

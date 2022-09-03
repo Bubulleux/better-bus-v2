@@ -6,6 +6,8 @@ import 'package:better_bus_v2/views/traffic_info_page/traffic_info_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../model/clean/bus_line.dart';
 
@@ -28,6 +30,12 @@ class _TrafficInfoItemState extends State<TrafficInfoItem> with SingleTickerProv
   void initState() {
     super.initState();
     expandableController = ExpandableWidgetController(root: this);
+  }
+
+  @override
+  void dispose() {
+    expandableController.dispose();
+    super.dispose();
   }
 
   @override
@@ -97,7 +105,10 @@ class _TrafficInfoItemState extends State<TrafficInfoItem> with SingleTickerProv
                 ExpendableWidget(
                     child:
                       HtmlWidget(
-                          widget.infoTraffic.content
+                        widget.infoTraffic.content,
+                        onTapUrl: (url) {
+                          return launchUrlString(url, mode: LaunchMode.externalApplication);
+                        },
                       ),
                     controller: expandableController,
                 ),

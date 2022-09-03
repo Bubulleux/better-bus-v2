@@ -52,6 +52,7 @@ class _PlaceSearcherPageState extends State<PlaceSearcherPage> with TickerProvid
                     filled: true,
                     fillColor: Theme.of(context).backgroundColor,
                   ),
+                  autofocus: true,
                   controller: textEditingController,
                 ),
                 Padding(

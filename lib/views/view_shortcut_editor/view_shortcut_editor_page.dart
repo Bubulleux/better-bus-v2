@@ -69,23 +69,28 @@ class _ViewShortcutEditorPageState extends State<ViewShortcutEditorPage> {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    decoration: CustomDecorations.of(context).boxOutlined,
-                    padding: EdgeInsets.symmetric(horizontal: 8),
-                    child: Row(
-                      children: [
-                        Text(
-                          "Mettre en Favorie",
-                          style: Theme.of(context).textTheme.headline5,
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: () =>
+                      setState(() {
+                        shortcutIsFavorite = !shortcutIsFavorite;
+                      }),
+                      borderRadius: CustomDecorations.borderRadius,
+                      child: Container(
+                        decoration: CustomDecorations.of(context).boxOutlined,
+                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                        child: Row(
+                          children: [
+                            Text(
+                              "Mettre en Favorie",
+                              style: Theme.of(context).textTheme.headline5,
+                            ),
+                            Spacer(),
+                            Icon(shortcutIsFavorite ? Icons.star : Icons.star_outline, color: Theme.of(context).primaryColor,)
+                          ],
                         ),
-                        Spacer(),
-                        Checkbox(
-                          value: shortcutIsFavorite,
-                          onChanged: (value) {
-                            setState(() => shortcutIsFavorite = value!);
-                          },
-                        ),
-                      ],
+                      ),
                     ),
                   ),
                 ),
@@ -96,6 +101,7 @@ class _ViewShortcutEditorPageState extends State<ViewShortcutEditorPage> {
                     value: shortcutBusStop?.name,
                     prefixIcon: Icon(Icons.directions_bus_outlined),
                     icon: Icons.change_circle_outlined,
+                    hint: "! Selectioner un Arrét de bus",
                   ),
                 ),
                 Padding(

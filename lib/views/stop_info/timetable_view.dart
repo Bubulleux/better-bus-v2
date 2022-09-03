@@ -166,6 +166,7 @@ class _TimeTableViewState extends State<TimeTableView> with AutomaticKeepAliveCl
               isExpanded: true,
               onChanged: selectLine,
               underline: Container(),
+              hint: Text("! Selectioner un ligne"),
               value: busLineSelected,
               items: (busLines ?? [])
                   .map<DropdownMenuItem<BusLine>>((BusLine value) {
@@ -316,9 +317,11 @@ class TimetableOutput extends StatelessWidget {
                   padding: const EdgeInsets.only(bottom: 5),
                   child: Container(
                     decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        border:
-                            Border.all(color: Theme.of(context).primaryColor)),
+                      borderRadius: BorderRadius.circular(15),
+                      border: Border.all(color: Theme.of(context).primaryColor),
+                      color: index % 2 == 0 ? Theme.of(context).primaryColorLight : null,
+                    ),
+
                     child: IntrinsicHeight(
                       child: Row(
                         children: [
