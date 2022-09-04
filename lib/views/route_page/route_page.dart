@@ -11,6 +11,7 @@ import 'package:better_bus_v2/views/stops_search_page/place_searcher_page.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../../app_constante/AppString.dart';
 import '../../model/clean/map_place.dart';
 
 class RoutePage extends StatefulWidget {
@@ -137,7 +138,7 @@ class _RoutePageState extends State<RoutePage> {
                       FakeTextField(
                         onPress: getStartPlace,
                         backgroundColor: Theme.of(context).backgroundColor,
-                        hint: "! Depart",
+                        hint: AppString.startLabel,
                         prefixIcon: const Icon(
                           Icons.flag,
                           color: Colors.green,
@@ -151,7 +152,7 @@ class _RoutePageState extends State<RoutePage> {
                       FakeTextField(
                         onPress: getStopPlace,
                         backgroundColor: Theme.of(context).backgroundColor,
-                        hint: "! Arivée",
+                        hint: AppString.endLabel,
                         prefixIcon: const Icon(Icons.flag, color: Colors.red),
                         icon: Icons.search,
                         value: endPlace?.title,
@@ -164,13 +165,13 @@ class _RoutePageState extends State<RoutePage> {
                                 value: "departure",
                                 groupValue: timeType,
                                 onChanged: setRouteTime,
-                                label: "! Partir à",
+                                label: AppString.departureAt,
                               ),
                               LabeledRadio<String>(
                                 value: "arrival",
                                 groupValue: timeType,
                                 onChanged: setRouteTime,
-                                label: "! Arriver à",
+                                label: AppString.arrivalAt,
                               ),
                             ],
                           ),
@@ -197,7 +198,7 @@ class _RoutePageState extends State<RoutePage> {
                       ),
                       Row(
                         children: [
-                          const Text("! A quelle date?"),
+                          const Text(AppString.routeWhenDate),
                           const Spacer(),
                           Padding(
                             padding: const EdgeInsets.all(8.0),

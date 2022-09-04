@@ -1,3 +1,4 @@
+import 'package:better_bus_v2/app_constante/AppString.dart';
 import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
 import 'package:better_bus_v2/data_provider/local_data_handler.dart';
 import 'package:better_bus_v2/model/clean/view_shortcut.dart';
@@ -110,7 +111,7 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       Expanded(
                         child: Text(
-                          "! Racourcies:",
+                          AppString.shortcut,
                           style: Theme
                               .of(context)
                               .textTheme
@@ -133,17 +134,17 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: CustomNavigationBar(
         child: [
           CustomNavigationItem(
-            label: "! Rechercher",
+            label: AppString.search_label,
             icon: Icons.search,
             onPress: searchBusStop,
           ),
           CustomNavigationItem(
-            label: "! Itinéraire",
+            label: AppString.route_label,
             icon: Icons.route,
             onPress: goToRoutePage,
           ),
           CustomNavigationItem(
-            label: "! Info Trafic",
+            label: AppString.trafic_info_label,
             icon: Icons.bus_alert,
             onPress: goToTrafficInfo,
           )

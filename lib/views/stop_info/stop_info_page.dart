@@ -1,3 +1,4 @@
+import 'package:better_bus_v2/app_constante/AppString.dart';
 import 'package:better_bus_v2/views/common/fake_textfiel.dart';
 import 'package:better_bus_v2/views/stops_search_page/stops_search_page.dart';
 import 'package:better_bus_v2/views/stop_info/timetable_view.dart';
@@ -59,10 +60,10 @@ class _StopInfoPageState extends State<StopInfoPage>
             TabBar(
               tabs: const [
                 Tab(
-                  text: "! Prochain Passage ",
+                  text: AppString.nextPassage,
                 ),
                 Tab(
-                  text: "! Tout les horrairs",
+                  text: AppString.allSchredule,
                 )
               ],
               controller: tabController,

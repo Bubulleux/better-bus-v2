@@ -8,6 +8,7 @@ import 'package:better_bus_v2/views/stops_search_page/stops_search_page.dart';
 import 'package:better_bus_v2/views/terminus_selector/terminus_selector_page.dart';
 import 'package:flutter/material.dart';
 
+import '../../app_constante/AppString.dart';
 import '../../model/clean/bus_line.dart';
 
 class ViewShortcutEditorPage extends StatefulWidget {
@@ -64,7 +65,7 @@ class _ViewShortcutEditorPageState extends State<ViewShortcutEditorPage> {
                     controller: textFieldNameController,
                     style:Theme.of(context).textTheme.headline5,
                     decoration:
-                        const InputDecoration(labelText: "! Nom du Racourcie"),
+                        const InputDecoration(labelText: AppString.shortcutNameLabel),
                   ),
                 ),
                 Padding(
@@ -101,7 +102,7 @@ class _ViewShortcutEditorPageState extends State<ViewShortcutEditorPage> {
                     value: shortcutBusStop?.name,
                     prefixIcon: const Icon(Icons.directions_bus_outlined),
                     icon: Icons.change_circle_outlined,
-                    hint: "! Selectioner un Arrét de bus",
+                    hint: AppString.selectBusStop,
                   ),
                 ),
                 Padding(
@@ -114,7 +115,7 @@ class _ViewShortcutEditorPageState extends State<ViewShortcutEditorPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "! Direction: ",
+                          AppString.directionLabel,
                           style: Theme.of(context).textTheme.headline5,
                         ),
                         const SizedBox(
@@ -130,13 +131,13 @@ class _ViewShortcutEditorPageState extends State<ViewShortcutEditorPage> {
                                 .toList(),
                           )
                         else
-                          const Center(child: Text("! Aucun Direction n'a été selectioner"))
+                          const Center(child: Text(AppString.emptyDirectionSelection))
                         ,
                         const VerticalDivider(),
                         Center(
                           child: ElevatedButton(
                             onPressed: selectTerminus,
-                            child: const Text("!Changer les direction"),
+                            child: const Text(AppString.changeDirection),
                           ),
                         )
                       ],
@@ -151,14 +152,14 @@ class _ViewShortcutEditorPageState extends State<ViewShortcutEditorPage> {
                     children: [
                       ElevatedButton(
                         onPressed: cancel,
-                        child: const Text("! Cancel"),
+                        child: const Text(AppString.cancel_label),
                       ),
                       const SizedBox(
                         width: 20,
                       ),
                       ElevatedButton(
                         onPressed: valid,
-                        child: const Text("! Valider"),
+                        child: const Text(AppString.validateLabel),
                       )
                     ],
                   ),
@@ -211,11 +212,11 @@ class _ViewShortcutEditorPageState extends State<ViewShortcutEditorPage> {
 
   String? checkError() {
     if (shortcutName == "") {
-      return "! Donner un nom a votre raccourcie";
+      return AppString.setShortcutName;
     } else if (shortcutBusStop == null) {
-      return "! Aucun arret de bus n'a été selectioner";
+      return AppString.emptyStopSelection;
     } else if (shortCutBusLines.isEmpty) {
-      return "! Acune Line n'a été sélectioner";
+      return AppString.emptyLineSelection;
     }
     return null;
   }

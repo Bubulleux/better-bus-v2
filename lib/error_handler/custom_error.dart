@@ -1,3 +1,4 @@
+import 'package:better_bus_v2/app_constante/AppString.dart';
 import 'package:flutter/material.dart';
 
 class CustomError extends Error{
@@ -17,7 +18,7 @@ class CustomError extends Error{
         if (retry != null && canBeRetry)
           ElevatedButton(
             onPressed: retry,
-            child: const Text("! Re-esaiyer"),
+            child: const Text(AppString.retry),
           )
         else
           Container()
@@ -46,43 +47,43 @@ extension ToError on Exception{
 
 class CustomErrors{
   static final emptyNextPassage = CustomError(
-    "! Aucun Bus n'est prevue pour le moment",
+    "Aucun Bus n'est prevue pour le moment",
     Icons.bus_alert,
     false,
   );
 
   static final emptyPassage = CustomError(
-    "! Aucun Bus n'est prevue ce jours la",
+    "Aucun Bus n'est prevue ce jours la",
     Icons.bus_alert,
     false,
   );
 
   static final noInternet = CustomError(
-    "! Aucun connection internet n'a été trouver veuillez allumier votre wifi ou vos donnée mobil",
+    "Aucun connection internet n'a été trouver veuillez allumier votre wifi ou vos donnée mobil",
     Icons.signal_wifi_connected_no_internet_4,
     true,
   );
 
   static final searchError = CustomError(
-    "! Aucun n'arret de bus n'a été trouver revoyer votre recherche",
+    "Aucun n'arret de bus n'a été trouver revoyer votre recherche",
     Icons.search_off,
     false,
   );
 
   static final searchPlaceNoResult = CustomError(
-    "! Aucun location n'a été trouvez veuillez réessier",
+    "Aucun location n'a été trouvez veuillez réessier",
     Icons.location_off,
     false,
   );
 
   static final routeInputError = CustomError(
-    "! Les information rensigné ne sont pas compléte",
+    "Les information rensigné ne sont pas compléte",
     Icons.search_off,
     false,
   );
 
   static final routeResultEmpty = CustomError(
-    "! Aucun n'itinéraire a été trouver",
+    "Aucun n'itinéraire a été trouver",
     Icons.search_off,
     false,
   );

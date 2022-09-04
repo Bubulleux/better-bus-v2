@@ -5,6 +5,7 @@ import 'package:better_bus_v2/views/common/line_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../../app_constante/AppString.dart';
 import '../../model/clean/bus_line.dart';
 import '../../model/clean/bus_stop.dart';
 
@@ -65,7 +66,7 @@ class _TimeTableViewState extends State<TimeTableView> with AutomaticKeepAliveCl
   Widget timetableEmpty = Column(
     mainAxisAlignment: MainAxisAlignment.center,
     crossAxisAlignment: CrossAxisAlignment.center,
-    children: const [Icon(Icons.error_outline), Text("! Aucun Bus Ne passera se jours la sur cette ligne")],
+    children: const [Icon(Icons.error_outline), Text(AppString.noBusToday)],
   );
 
   void changeDirection() {
@@ -93,7 +94,7 @@ class _TimeTableViewState extends State<TimeTableView> with AutomaticKeepAliveCl
     if (boarding!.go.isEmpty || boarding!.back.isEmpty) {
       ScaffoldMessenger.of(context).removeCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text("! Il n'y a qu'une seul direction"),
+        content: Text(AppString.onlyOneDirection),
       ));
     }
   }
@@ -162,7 +163,7 @@ class _TimeTableViewState extends State<TimeTableView> with AutomaticKeepAliveCl
               isExpanded: true,
               onChanged: selectLine,
               underline: Container(),
-              hint: const Text("! Selectioner un ligne"),
+              hint: const Text(AppString.selectALine),
               value: busLineSelected,
               items: (busLines ?? []).map<DropdownMenuItem<BusLine>>((BusLine value) {
                 return DropdownMenuItem<BusLine>(

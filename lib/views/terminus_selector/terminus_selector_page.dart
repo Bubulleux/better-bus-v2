@@ -7,6 +7,7 @@ import 'package:better_bus_v2/views/common/content_container.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
 import 'package:flutter/material.dart';
 
+import '../../app_constante/AppString.dart';
 import '../../model/clean/bus_stop.dart';
 
 class TerminusSelectorPage extends StatefulWidget {
@@ -98,7 +99,7 @@ class _TerminusSelectorPageState extends State<TerminusSelectorPage> {
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       if (snapshot.hasError) {
-                        return const Text("!Error");
+                        return const Text(AppString.error_label);
                       } else {
                         List<BusLine> lines = snapshot.data!;
                         return getListView(lines);
@@ -111,11 +112,11 @@ class _TerminusSelectorPageState extends State<TerminusSelectorPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  ElevatedButton(onPressed: cancel, child: const Text("! Anuler")),
+                  ElevatedButton(onPressed: cancel, child: const Text(AppString.cancel_label)),
                   ElevatedButton(
-                      onPressed: selectAll, child: Text(allIsSelected ? "! Tout déselectier" : "! Tout selection")
+                      onPressed: selectAll, child: Text(allIsSelected ? AppString.unSelectAll : AppString.selectAll)
                   ),
-                  ElevatedButton(onPressed: validate, child: const Text("Valider")),
+                  ElevatedButton(onPressed: validate, child: const Text(AppString.validateLabel)),
                 ],
               )
             ],

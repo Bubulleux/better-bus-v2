@@ -1,3 +1,4 @@
+import 'package:better_bus_v2/app_constante/AppString.dart';
 import 'package:better_bus_v2/model/clean/route.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
 import 'package:better_bus_v2/views/route_detail_page/route_step_tab.dart';
@@ -93,10 +94,10 @@ class _RouteDetailPageState extends State<RouteDetailPage> with SingleTickerProv
                 alignment: WrapAlignment.spaceBetween,
                 children: [
                   tabController.index != 0 ?
-                  ElevatedButton(onPressed: () => tabController.animateTo(tabController.index - 1), child: const Text("! Présedent")):
+                  ElevatedButton(onPressed: () => tabController.animateTo(tabController.index - 1), child: const Text(AppString.previous_label)):
                   Container(width: 5,),
                   tabController.index != widget.busRoute.itinerary.length -1 ?
-                  ElevatedButton(onPressed: () => tabController.animateTo(tabController.index + 1), child: const Text("! Suivent")):
+                  ElevatedButton(onPressed: () => tabController.animateTo(tabController.index + 1), child: const Text(AppString.next_label)):
                   Container(width: 5,),
                 ],
               ),

@@ -1,3 +1,4 @@
+import 'package:better_bus_v2/app_constante/AppString.dart';
 import 'package:better_bus_v2/data_provider/local_data_handler.dart';
 import 'package:better_bus_v2/model/clean/bus_line.dart';
 import 'package:better_bus_v2/model/clean/view_shortcut.dart';
@@ -55,12 +56,12 @@ class ShortcutWidgetRootState extends State<ShortcutWidgetRoot> {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Row(
         children: [
-          const Text("! Le racourcie a bien été supprimer"),
+          const Text(AppString.delete_shortcut_notif),
           const Spacer(),
           TextButton(
             onPressed: cancel,
             child: Text(
-              "! Annuler",
+              AppString.cancel_label,
               style: TextStyle(color: Theme.of(context).primaryColor),
             ),
           )
@@ -75,8 +76,8 @@ class ShortcutWidgetRootState extends State<ShortcutWidgetRoot> {
     CustomContextMenu.show(
       context,
       [
-        ContextMenuAction("! Modifier", Icons.edit_outlined, action: () => editShortcut(index)),
-        ContextMenuAction("! Supprimer", Icons.delete, isDangerous: true, action: () => removeShortcut(index))
+        ContextMenuAction(AppString.modify_label, Icons.edit_outlined, action: () => editShortcut(index)),
+        ContextMenuAction(AppString.delete_label, Icons.delete, isDangerous: true, action: () => removeShortcut(index))
       ],
     );
   }
@@ -106,20 +107,19 @@ class ShortcutWidgetRootState extends State<ShortcutWidgetRoot> {
             return Center(
               child: Container(
                 decoration: CustomDecorations.of(context).boxBackground,
-                padding: EdgeInsets.all(8),
+                padding: const EdgeInsets.all(8),
                 child: RichText(
                     text: TextSpan(
                         children: const [
                       TextSpan(
-                        text:"! Aucun racourcie n'a été crée pour le moment.",
+                        text: AppString.empty_shorcut,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
                         ),
                       ),
                       TextSpan(
-                        text: "\nLes Racourice vous permet d'accéeder plus facilement a certaine information."
-                            "\nVoue pouvez en crée en Appuient sur le +",
+                        text: AppString.empyy_shortcut_advice,
                       )
                     ],
                         style: TextStyle(
@@ -138,7 +138,7 @@ class ShortcutWidgetRootState extends State<ShortcutWidgetRoot> {
           );
         } else if (snapshot.hasError) {
           return const Center(
-            child: Text("! Error"),
+            child: Text(AppString.error_label),
           );
         }
         return const Center(

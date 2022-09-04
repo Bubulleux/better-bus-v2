@@ -1,3 +1,4 @@
+import 'package:better_bus_v2/app_constante/AppString.dart';
 import 'package:better_bus_v2/data_provider/maps_redirector.dart';
 import 'package:better_bus_v2/model/clean/route.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
@@ -16,17 +17,17 @@ class RouteStepPage extends StatelessWidget {
     Widget body;
     if (busRoute.itinerary[index].lines == null) {
       if (index == busRoute.itinerary.length -1) {
-        title = Text("! marcher jusqu'a l'adress ${busRoute.itinerary[index].endPlace}", style: Theme.of(context).textTheme.titleLarge,);
+        title = Text("${AppString.walk_to_place} ${busRoute.itinerary[index].endPlace}", style: Theme.of(context).textTheme.titleLarge,);
       } else {
-        title = Text("! Marcher jusqu'a l'arret ${busRoute.itinerary[index].endPlace}", style: Theme.of(context).textTheme.titleLarge,);
+        title = Text("${AppString.walk_to_stop} ${busRoute.itinerary[index].endPlace}", style: Theme.of(context).textTheme.titleLarge,);
       }
       body = Text(busRoute.itinerary[index].instruction);
     } else {
       title = RichText(text: TextSpan(
         children: [
-          TextSpan(text: "!A l'arret ${busRoute.itinerary[index].startPlace} prendre la ligne "),
+          TextSpan(text: AppString.AtTheStopTakeLine.replaceFirst("{#}", busRoute.itinerary[index].startPlace)),
           WidgetSpan(child: LineWidget.fromRouteLine(busRoute.itinerary[index].lines!, 25)),
-          TextSpan(text: "! Et aller jusqua l'arret ${busRoute.itinerary[index].endPlace}"),
+          TextSpan(text: AppString.andGoToStop + busRoute.itinerary[index].endPlace),
         ],
         style: Theme.of(context).textTheme.titleLarge!.copyWith(
           fontWeight: FontWeight.normal,
@@ -56,7 +57,7 @@ class RouteStepPage extends StatelessWidget {
           body,
           busRoute.itinerary[index].lines == null?
               ElevatedButton(
-                child: const Text("! Voire sur maps"),
+                child: const Text(AppString.seeOnMaps),
                 onPressed: () => MapsRouter.routeToMap(
                     busRoute.polyLines[index].lineString[busRoute.polyLines[index].lineString.length - 2],
                     busRoute.polyLines[index].lineString[busRoute.polyLines[index].lineString.length - 1]),

@@ -7,6 +7,7 @@ import 'package:better_bus_v2/views/stops_search_page/map_place_item_widget.dart
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 
+import '../../app_constante/AppString.dart';
 import '../../model/clean/map_place.dart';
 
 typedef PlaceCallback = void Function(MapPlace place);
@@ -59,7 +60,7 @@ class _MapPlaceSearcherViewState extends State<MapPlaceSearcherView> {
         locationData != null
             ? GestureDetector(
                 onTap: () => widget.placeCallback(MapPlace(
-                  title: "! Ma position",
+                  title: AppString.myPosition,
                   type: "location",
                   latitude: locationData!.latitude!,
                   longitude: locationData!.longitude!,
@@ -74,7 +75,7 @@ class _MapPlaceSearcherViewState extends State<MapPlaceSearcherView> {
                         width: 10,
                       ),
                       Text(
-                        "! Ma position",
+                        AppString.myPosition,
                         style: Theme.of(context).textTheme.titleLarge,
                       )
                     ],

@@ -1,3 +1,4 @@
+import 'package:better_bus_v2/app_constante/AppString.dart';
 import 'package:better_bus_v2/data_provider/vitalis_data_provider.dart';
 import 'package:better_bus_v2/error_handler/custom_error.dart';
 import 'package:better_bus_v2/model/clean/bus_stop.dart';
@@ -65,7 +66,7 @@ class _NextPassagePageState extends State<NextPassagePage> with AutomaticKeepAli
                   seeAllAnimationController.reverse();
                   setState(() {});
                 },
-                child: const Text("! Voire tout"),
+                child: const Text(AppString.seeAllLabel),
               ),
             ),
           ),
