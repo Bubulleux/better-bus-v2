@@ -1,4 +1,3 @@
-
 import 'package:better_bus_v2/data_provider/local_data_handler.dart';
 import 'package:better_bus_v2/model/clean/bus_line.dart';
 import 'package:better_bus_v2/model/clean/view_shortcut.dart';
@@ -9,7 +8,6 @@ import 'package:better_bus_v2/views/stop_info/stop_info_page.dart';
 import 'package:better_bus_v2/views/view_shortcut_editor/view_shortcut_editor_page.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 
 class ShortcutWidgetRoot extends StatefulWidget {
   const ShortcutWidgetRoot({Key? key}) : super(key: key);
@@ -61,7 +59,10 @@ class ShortcutWidgetRootState extends State<ShortcutWidgetRoot> {
           const Spacer(),
           TextButton(
             onPressed: cancel,
-            child: const Text("! Annuler"),
+            child: Text(
+              "! Annuler",
+              style: TextStyle(color: Theme.of(context).primaryColor),
+            ),
           )
         ],
       ),
@@ -71,20 +72,21 @@ class ShortcutWidgetRootState extends State<ShortcutWidgetRoot> {
   }
 
   void showContextMenu(int index) {
-    CustomContextMenu.show(context,
-        [
-          ContextMenuAction("! Modifier", Icons.edit_outlined,
-              action: () => editShortcut(index)),
-          ContextMenuAction("! Supprimer", Icons.delete,
-              isDangerous: true, action: () => removeShortcut(index))
-        ],
+    CustomContextMenu.show(
+      context,
+      [
+        ContextMenuAction("! Modifier", Icons.edit_outlined, action: () => editShortcut(index)),
+        ContextMenuAction("! Supprimer", Icons.delete, isDangerous: true, action: () => removeShortcut(index))
+      ],
     );
   }
 
   void showShortcutContent(int index) {
-    Navigator.push(context, MaterialPageRoute(
-      builder: (context) => StopInfoPage(shortcuts![index].stop, lines: shortcuts![index].lines),
-    ));
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => StopInfoPage(shortcuts![index].stop, lines: shortcuts![index].lines),
+        ));
   }
 
   @override
@@ -100,6 +102,32 @@ class ShortcutWidgetRootState extends State<ShortcutWidgetRoot> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           shortcuts = snapshot.data!;
+          if (shortcuts!.isEmpty) {
+            return Center(
+              child: Container(
+                decoration: CustomDecorations.of(context).boxBackground,
+                padding: EdgeInsets.all(8),
+                child: RichText(
+                    text: TextSpan(
+                        children: const [
+                      TextSpan(
+                        text:"! Aucun racourcie n'a été crée pour le moment.",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                        ),
+                      ),
+                      TextSpan(
+                        text: "\nLes Racourice vous permet d'accéeder plus facilement a certaine information."
+                            "\nVoue pouvez en crée en Appuient sur le +",
+                      )
+                    ],
+                        style: TextStyle(
+                          color: Colors.black.withAlpha(150),
+                        ))),
+              ),
+            );
+          }
           return ListView.builder(
             itemCount: shortcuts!.length,
             itemBuilder: (context, index) => ShortcutWidget(
@@ -156,7 +184,7 @@ class ShortcutWidget extends StatelessWidget {
           child: Container(
             decoration: BoxDecoration(
               color: Theme.of(context).backgroundColor,
-              borderRadius:CustomDecorations.borderRadius,
+              borderRadius: CustomDecorations.borderRadius,
             ),
             padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
             child: Column(
@@ -176,9 +204,7 @@ class ShortcutWidget extends StatelessWidget {
                         shortcut.shortcutName,
                         style: TextStyle(
                           fontSize: 25,
-                          fontWeight: shortcut.isFavorite
-                              ? FontWeight.w500
-                              : FontWeight.normal,
+                          fontWeight: shortcut.isFavorite ? FontWeight.w500 : FontWeight.normal,
                         ),
                         softWrap: false,
                         maxLines: 1,

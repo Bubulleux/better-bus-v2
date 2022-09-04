@@ -15,7 +15,7 @@ class TrafficInfoItem extends StatefulWidget{
   final InfoTraffic infoTraffic;
   final Map<String, BusLine> busLines;
 
-  static final dateFormat = DateFormat("dd/MM/yy");
+  static final dateFormat = DateFormat("EE d MMM", "fr");
 
   @override
   State<TrafficInfoItem> createState() => _TrafficInfoItemState();

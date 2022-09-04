@@ -17,7 +17,7 @@ class TimeTableView extends StatefulWidget {
   State<TimeTableView> createState() => _TimeTableViewState();
 }
 
-class _TimeTableViewState extends State<TimeTableView> with AutomaticKeepAliveClientMixin{
+class _TimeTableViewState extends State<TimeTableView> with AutomaticKeepAliveClientMixin {
   List<BusLine>? busLines;
   BusLine? busLineSelected;
 
@@ -65,10 +65,7 @@ class _TimeTableViewState extends State<TimeTableView> with AutomaticKeepAliveCl
   Widget timetableEmpty = Column(
     mainAxisAlignment: MainAxisAlignment.center,
     crossAxisAlignment: CrossAxisAlignment.center,
-    children: const [
-      Icon(Icons.error_outline),
-      Text("! Aucun Bus Ne passera se jours la sur cette ligne")
-    ],
+    children: const [Icon(Icons.error_outline), Text("! Aucun Bus Ne passera se jours la sur cette ligne")],
   );
 
   void changeDirection() {
@@ -103,6 +100,7 @@ class _TimeTableViewState extends State<TimeTableView> with AutomaticKeepAliveCl
 
   void selectDate() {
     showDatePicker(
+            locale: const Locale("fr", "FR"),
             context: context,
             initialDate: selectedDate,
             firstDate: DateTime.now().subtract(const Duration(days: 365)),
@@ -124,16 +122,14 @@ class _TimeTableViewState extends State<TimeTableView> with AutomaticKeepAliveCl
     super.build(context);
     String? directionString;
     if (boardingSelected != null) {
-      directionString = (boardingSelected == 0 ? boarding!.back : boarding!.go)
-          .keys
-          .join(" | ");
+      directionString = (boardingSelected == 0 ? boarding!.back : boarding!.go).keys.join(" | ");
     }
 
     Widget timeTableBody = Container();
     if (busLineSelected != null && boardingSelected != null) {
       timeTableBody = FutureBuilder(
-        future: VitalisDataProvider.getTimetable(widget.stop, busLineSelected!,
-            boardingSelected!, boarding!, selectedDate),
+        future:
+            VitalisDataProvider.getTimetable(widget.stop, busLineSelected!, boardingSelected!, boarding!, selectedDate),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.hasError) {
@@ -168,8 +164,7 @@ class _TimeTableViewState extends State<TimeTableView> with AutomaticKeepAliveCl
               underline: Container(),
               hint: const Text("! Selectioner un ligne"),
               value: busLineSelected,
-              items: (busLines ?? [])
-                  .map<DropdownMenuItem<BusLine>>((BusLine value) {
+              items: (busLines ?? []).map<DropdownMenuItem<BusLine>>((BusLine value) {
                 return DropdownMenuItem<BusLine>(
                   value: value,
                   child: Row(
@@ -196,10 +191,12 @@ class _TimeTableViewState extends State<TimeTableView> with AutomaticKeepAliveCl
             Row(
               children: [
                 const Icon(Icons.directions_bus_outlined),
-                const SizedBox(width: 8,),
+                const SizedBox(
+                  width: 8,
+                ),
                 Expanded(
                     child: Text(
-                  directionString  ?? " ",
+                  directionString ?? " ",
                   style: Theme.of(context).textTheme.bodyMedium,
                   maxLines: 2,
                   overflow: TextOverflow.fade,
@@ -239,7 +236,6 @@ class _TimeTableViewState extends State<TimeTableView> with AutomaticKeepAliveCl
       ),
     );
   }
-
 }
 
 class InputDecoration extends StatelessWidget {
@@ -321,7 +317,6 @@ class TimetableOutput extends StatelessWidget {
                       border: Border.all(color: Theme.of(context).primaryColor),
                       color: index % 2 == 0 ? Theme.of(context).primaryColorLight : null,
                     ),
-
                     child: IntrinsicHeight(
                       child: Row(
                         children: [
@@ -331,8 +326,7 @@ class TimetableOutput extends StatelessWidget {
                             decoration: BoxDecoration(
                                 color: Theme.of(context).primaryColor,
                                 borderRadius: const BorderRadius.only(
-                                    topLeft: Radius.circular(15),
-                                    bottomLeft: Radius.circular(15))),
+                                    topLeft: Radius.circular(15), bottomLeft: Radius.circular(15))),
                             alignment: Alignment.centerRight,
                             padding: const EdgeInsets.only(right: 3),
                             child: Text(
@@ -363,10 +357,7 @@ class TimetableOutput extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
               width: double.infinity,
-              decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor,
-                borderRadius: BorderRadius.circular(20)
-              ),
+              decoration: BoxDecoration(color: Theme.of(context).primaryColor, borderRadius: BorderRadius.circular(20)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: labelsPassage,

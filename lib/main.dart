@@ -3,13 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:better_bus_v2/views/home_page/home_page.dart';
 import 'package:flutter/services.dart';
 import 'package:home_widget/home_widget.dart';
+import 'package:intl/intl.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
   HomeWidget.updateWidget(name: "HomeWidgetExampleProvider");
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+
   runApp(const MyApp());
+
 }
 
 class MyApp extends StatelessWidget {
@@ -63,7 +67,14 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      locale: const Locale("fr"),
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate
+      ],
+      supportedLocales: const [
+      Locale('fr', ""),
+        Locale('en', ""),
+    ],
+      // locale: const Locale('fr', ""),
       home: const HomePage(),
     );
   }

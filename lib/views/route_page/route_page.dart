@@ -1,4 +1,5 @@
 import 'package:better_bus_v2/data_provider/vitalis_data_provider.dart';
+import 'package:better_bus_v2/error_handler/custom_error.dart';
 import 'package:better_bus_v2/model/clean/route.dart';
 import 'package:better_bus_v2/views/common/background.dart';
 import 'package:better_bus_v2/views/common/custom_futur.dart';
@@ -213,7 +214,7 @@ class _RoutePageState extends State<RoutePage> {
                                   const Icon(Icons.edit)
                                 ],
                               ),
-                              onPressed: setTime,
+                              onPressed: setDate,
                             ),
                           ),
                         ],
@@ -230,13 +231,18 @@ class _RoutePageState extends State<RoutePage> {
                       key: futureBuilderKey,
                       future: getRoutes,
                       onData: (context, data, refresh) {
-                        if (data == null) {
-                          return Container();
-                        }
                         return ListView.builder(
                           itemBuilder: (context, index) => RouteItemWidget(data[index]),
                           itemCount: data!.length,
                         );
+                      },
+                      errorTest: (data) {
+                        if (data == null) {
+                          return CustomErrors.routeInputError;
+                        } else if (data!.isEmpty) {
+                          return CustomErrors.routeResultEmpty;
+                        }
+                        return null;
                       },
                     ),
                   ),

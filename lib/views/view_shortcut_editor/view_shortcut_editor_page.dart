@@ -172,6 +172,7 @@ class _ViewShortcutEditorPageState extends State<ViewShortcutEditorPage> {
   }
 
   void changeBusStop() {
+    FocusScope.of(context).unfocus();
     Navigator.push(
             context,
             MaterialPageRoute(
@@ -188,6 +189,7 @@ class _ViewShortcutEditorPageState extends State<ViewShortcutEditorPage> {
   }
 
   void selectTerminus() {
+    FocusScope.of(context).unfocus();
     if (shortcutBusStop == null) {
       return;
     }

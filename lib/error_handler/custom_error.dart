@@ -9,20 +9,19 @@ class CustomError extends Error{
   final bool canBeRetry;
 
   Widget build(BuildContext context, VoidCallback? retry){
-    return Center(
-      child: Column(
-        children: [
-          Icon(icon ?? Icons.error),
-          Text(content),
-          if (retry != null && canBeRetry)
-            ElevatedButton(
-              onPressed: retry,
-              child: const Text("! Re-esaiyer"),
-            )
-          else
-            Container()
-        ],
-      ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(icon ?? Icons.error, size: 40,),
+        Text(content, style: Theme.of(context).textTheme.titleLarge, textAlign: TextAlign.center,),
+        if (retry != null && canBeRetry)
+          ElevatedButton(
+            onPressed: retry,
+            child: const Text("! Re-esaiyer"),
+          )
+        else
+          Container()
+      ],
     );
   }
 
@@ -73,6 +72,18 @@ class CustomErrors{
   static final searchPlaceNoResult = CustomError(
     "! Aucun location n'a été trouvez veuillez réessier",
     Icons.location_off,
+    false,
+  );
+
+  static final routeInputError = CustomError(
+    "! Les information rensigné ne sont pas compléte",
+    Icons.search_off,
+    false,
+  );
+
+  static final routeResultEmpty = CustomError(
+    "! Aucun n'itinéraire a été trouver",
+    Icons.search_off,
     false,
   );
 }

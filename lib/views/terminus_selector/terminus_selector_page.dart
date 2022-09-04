@@ -351,11 +351,7 @@ class _TerminusSelectionState extends State<TerminusSelection>
           )
         else
           Container(),
-        Container(
-          width: double.infinity,
-          height: 1,
-          color: Colors.black,
-        )
+        const Divider(),
       ],
     );
   }
