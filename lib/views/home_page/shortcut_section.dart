@@ -56,12 +56,12 @@ class ShortcutWidgetRootState extends State<ShortcutWidgetRoot> {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Row(
         children: [
-          const Text(AppString.delete_shortcut_notif),
+          const Text(AppString.deleteShortcutNotification),
           const Spacer(),
           TextButton(
             onPressed: cancel,
             child: Text(
-              AppString.cancel_label,
+              AppString.cancelLabel,
               style: TextStyle(color: Theme.of(context).primaryColor),
             ),
           )
@@ -76,8 +76,8 @@ class ShortcutWidgetRootState extends State<ShortcutWidgetRoot> {
     CustomContextMenu.show(
       context,
       [
-        ContextMenuAction(AppString.modify_label, Icons.edit_outlined, action: () => editShortcut(index)),
-        ContextMenuAction(AppString.delete_label, Icons.delete, isDangerous: true, action: () => removeShortcut(index))
+        ContextMenuAction(AppString.modifyLabel, Icons.edit_outlined, action: () => editShortcut(index)),
+        ContextMenuAction(AppString.deleteLabel, Icons.delete, isDangerous: true, action: () => removeShortcut(index))
       ],
     );
   }
@@ -112,14 +112,14 @@ class ShortcutWidgetRootState extends State<ShortcutWidgetRoot> {
                     text: TextSpan(
                         children: const [
                       TextSpan(
-                        text: AppString.empty_shorcut,
+                        text: AppString.emptyShortcut,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
                         ),
                       ),
                       TextSpan(
-                        text: AppString.empyy_shortcut_advice,
+                        text: AppString.emptyShortcutAdvice,
                       )
                     ],
                         style: TextStyle(
@@ -138,7 +138,7 @@ class ShortcutWidgetRootState extends State<ShortcutWidgetRoot> {
           );
         } else if (snapshot.hasError) {
           return const Center(
-            child: Text(AppString.error_label),
+            child: Text(AppString.errorLabel),
           );
         }
         return const Center(

@@ -63,7 +63,7 @@ class _StopInfoPageState extends State<StopInfoPage>
                   text: AppString.nextPassage,
                 ),
                 Tab(
-                  text: AppString.allSchredule,
+                  text: AppString.allSchedule,
                 )
               ],
               controller: tabController,

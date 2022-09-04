@@ -152,7 +152,7 @@ class _ViewShortcutEditorPageState extends State<ViewShortcutEditorPage> {
                     children: [
                       ElevatedButton(
                         onPressed: cancel,
-                        child: const Text(AppString.cancel_label),
+                        child: const Text(AppString.cancelLabel),
                       ),
                       const SizedBox(
                         width: 20,

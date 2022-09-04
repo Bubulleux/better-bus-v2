@@ -134,17 +134,17 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: CustomNavigationBar(
         child: [
           CustomNavigationItem(
-            label: AppString.search_label,
+            label: AppString.searchLabel,
             icon: Icons.search,
             onPress: searchBusStop,
           ),
           CustomNavigationItem(
-            label: AppString.route_label,
+            label: AppString.routeLabel,
             icon: Icons.route,
             onPress: goToRoutePage,
           ),
           CustomNavigationItem(
-            label: AppString.trafic_info_label,
+            label: AppString.trafficInfoLabel,
             icon: Icons.bus_alert,
             onPress: goToTrafficInfo,
           )

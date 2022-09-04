@@ -94,10 +94,10 @@ class _RouteDetailPageState extends State<RouteDetailPage> with SingleTickerProv
                 alignment: WrapAlignment.spaceBetween,
                 children: [
                   tabController.index != 0 ?
-                  ElevatedButton(onPressed: () => tabController.animateTo(tabController.index - 1), child: const Text(AppString.previous_label)):
+                  ElevatedButton(onPressed: () => tabController.animateTo(tabController.index - 1), child: const Text(AppString.previousLabel)):
                   Container(width: 5,),
                   tabController.index != widget.busRoute.itinerary.length -1 ?
-                  ElevatedButton(onPressed: () => tabController.animateTo(tabController.index + 1), child: const Text(AppString.next_label)):
+                  ElevatedButton(onPressed: () => tabController.animateTo(tabController.index + 1), child: const Text(AppString.nextLabel)):
                   Container(width: 5,),
                 ],
               ),

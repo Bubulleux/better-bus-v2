@@ -99,7 +99,7 @@ class _TerminusSelectorPageState extends State<TerminusSelectorPage> {
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       if (snapshot.hasError) {
-                        return const Text(AppString.error_label);
+                        return const Text(AppString.errorLabel);
                       } else {
                         List<BusLine> lines = snapshot.data!;
                         return getListView(lines);
@@ -112,7 +112,7 @@ class _TerminusSelectorPageState extends State<TerminusSelectorPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  ElevatedButton(onPressed: cancel, child: const Text(AppString.cancel_label)),
+                  ElevatedButton(onPressed: cancel, child: const Text(AppString.cancelLabel)),
                   ElevatedButton(
                       onPressed: selectAll, child: Text(allIsSelected ? AppString.unSelectAll : AppString.selectAll)
                   ),
