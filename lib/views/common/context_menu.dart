@@ -65,64 +65,61 @@ class _CustomContextMenuState extends State<CustomContextMenu> {
       builder: (context, child) => Scaffold(
         backgroundColor: Colors.transparent,
         body: SafeArea(
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: blurAnimation!.value, sigmaY: blurAnimation!.value),
-            child: GestureDetector(
-              onTap: () => {Navigator.pop(context)},
-              child: Container(
-                height: double.infinity,
-                width: double.infinity,
-                color: backgroundAnimation!.value,
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: FractionalTranslation(
-                    translation: menuAnimation!.value!,
-                    child: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Container(
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: Theme.of(context).backgroundColor,
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          child: ListView.separated(
-                            physics: const NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            separatorBuilder: (context, index) =>
-                                const Divider(color: Colors.black),
-                            itemCount: widget.actions.length,
-                            itemBuilder: (context, index) {
-                              ContextMenuAction e = widget.actions[index];
-                              return TextButton(
-                                onPressed: () => actionPressed(e.action),
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      e.icon,
-                                      size: 30,
-                                    ),
-                                    Text(e.actionName,
-                                        style: const TextStyle(
-                                          fontSize: 30,
-                                          fontWeight: FontWeight.normal,
-                                        ))
-                                  ],
-                                ),
-                                style: TextButton.styleFrom(
-                                    primary: e.isDangerous
-                                        ? const Color(0xffff0000)
-                                        : Colors.black,
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(3)),
-                                    padding:
-                                        const EdgeInsets.symmetric(horizontal: 10),
-                                    tapTargetSize:
-                                        MaterialTapTargetSize.shrinkWrap),
-                              );
-                            },
-                          ),
+          child: GestureDetector(
+            onTap: () => {Navigator.pop(context)},
+            child: Container(
+              height: double.infinity,
+              width: double.infinity,
+              color: backgroundAnimation!.value,
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: FractionalTranslation(
+                  translation: menuAnimation!.value!,
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: Theme.of(context).backgroundColor,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: ListView.separated(
+                          physics: const NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          separatorBuilder: (context, index) =>
+                              const Divider(color: Colors.black),
+                          itemCount: widget.actions.length,
+                          itemBuilder: (context, index) {
+                            ContextMenuAction e = widget.actions[index];
+                            return TextButton(
+                              onPressed: () => actionPressed(e.action),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    e.icon,
+                                    size: 30,
+                                  ),
+                                  Text(e.actionName,
+                                      style: const TextStyle(
+                                        fontSize: 30,
+                                        fontWeight: FontWeight.normal,
+                                      ))
+                                ],
+                              ),
+                              style: TextButton.styleFrom(
+                                  primary: e.isDangerous
+                                      ? const Color(0xffff0000)
+                                      : Colors.black,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(3)),
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 10),
+                                  tapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap),
+                            );
+                          },
                         ),
                       ),
                     ),

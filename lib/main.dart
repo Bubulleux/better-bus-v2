@@ -8,11 +8,9 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 void main() {
   HomeWidget.updateWidget(name: "HomeWidgetExampleProvider");
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setPreferredOrientations(
-      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
   runApp(const MyApp());
-
 }
 
 class MyApp extends StatelessWidget {
@@ -27,16 +25,12 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.lightGreen,
         primaryColorLight: const Color(0xffe6eee5),
         backgroundColor: const Color(0xdde4e4e4),
-
-
         textTheme: const TextTheme(
           bodyMedium: TextStyle(
             fontSize: 16,
           ),
           bodySmall: TextStyle(fontSize: 13),
         ),
-
-
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
             shape: RoundedRectangleBorder(
@@ -44,8 +38,6 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ),
-
-
         inputDecorationTheme: InputDecorationTheme(
           border: OutlineInputBorder(
             borderRadius: CustomDecorations.borderRadius,
@@ -56,7 +48,6 @@ class MyApp extends StatelessWidget {
               color: Colors.lightGreen.shade500,
             ),
           ),
-
           focusedBorder: OutlineInputBorder(
             borderRadius: CustomDecorations.borderRadius,
             borderSide: BorderSide(color: Colors.lightGreen.shade400, width: 2),
@@ -66,13 +57,11 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate
-      ],
+      localizationsDelegates: const [GlobalMaterialLocalizations.delegate],
       supportedLocales: const [
-      Locale('fr', ""),
+        Locale('fr', ""),
         Locale('en', ""),
-    ],
+      ],
       // locale: const Locale('fr', ""),
       home: const HomePage(),
     );

@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../model/clean/view_shortcut.dart';
 
-class LocalDataHandler {
+class  LocalDataHandler {
   static SharedPreferences? preferences;
 
   static Future checkPreferences() async {
@@ -37,7 +37,10 @@ class LocalDataHandler {
     List<String> favoriteShortcut = shortcuts.where((element) => element.isFavorite).map((element) =>
       element.shortcutName).toList();
     preferences!.setStringList("shortcuts", shortcutJson);
-    HomeWidget.saveWidgetData("shortcuts", favoriteShortcut.join(";"));
-    HomeWidget.updateWidget(name: "HomeWidgetExampleProvider");
+    HomeWidget.saveWidgetData<String>("shortcuts", favoriteShortcut.join(";")).then((saved) {
+      print(saved);
+      HomeWidget.updateWidget(name: "HomeWidgetExampleProvider");
+    }
+    );
   }
 }

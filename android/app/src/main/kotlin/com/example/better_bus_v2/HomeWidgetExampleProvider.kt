@@ -40,11 +40,13 @@ class HomeWidgetExampleProvider : HomeWidgetProvider() {
 //                context,
 //                MainActivity::class.java,
 //            )
-            var flags = PendingIntent.FLAG_UPDATE_CURRENT
+            var flags = android.app.PendingIntent.FLAG_UPDATE_CURRENT
+            if (Build.VERSION.SDK_INT >= 23) {
+                flags = flags or android.app.PendingIntent.FLAG_MUTABLE
+            }
 
             var _intent = android.content.Intent(context, MainActivity::class.java).apply {
                 action = "es.antonborri.home_widget.action.LAUNCH"
-                data = null
             }
             val pendingIntent = PendingIntent.getActivity(
                 context,
@@ -57,6 +59,7 @@ class HomeWidgetExampleProvider : HomeWidgetProvider() {
                 setPendingIntentTemplate(R.id.widget_list, pendingIntent)
                 setRemoteAdapter(R.id.widget_list, intent)
                 setEmptyView(R.id.widget_list, R.id.list_empty)
+//                setTextViewText(R.id.widget_title, shortcuts.size.toString())
 
 
             }
@@ -94,7 +97,6 @@ class StackRemoteViewsFactory(
         // source. Heavy lifting, for example downloading or creating content
         // etc, should be deferred to onDataSetChanged() or getViewAt(). Taking
         // more than 20 seconds in this call will result in an ANR.
-        print("Coucou")
         shortcutNames = intent.getStringArrayExtra("shortcuts") ?: emptyArray<String>()
 
     }
