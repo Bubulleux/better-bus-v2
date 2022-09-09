@@ -37,10 +37,7 @@ class  LocalDataHandler {
     List<String> favoriteShortcut = shortcuts.where((element) => element.isFavorite).map((element) =>
       element.shortcutName).toList();
     preferences!.setStringList("shortcuts", shortcutJson);
-    HomeWidget.saveWidgetData<String>("shortcuts", favoriteShortcut.join(";")).then((saved) {
-      print(saved);
-      HomeWidget.updateWidget(name: "HomeWidgetExampleProvider");
-    }
-    );
+    HomeWidget.saveWidgetData<String>("shortcuts", favoriteShortcut.join(";"));
+    HomeWidget.updateWidget(name: "HomeWidgetExampleProvider");
   }
 }
