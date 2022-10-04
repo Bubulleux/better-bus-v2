@@ -2,6 +2,7 @@ package com.example.better_bus_v2
 
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
+import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.Intent
@@ -11,35 +12,32 @@ import android.net.Uri
 import es.antonborri.home_widget.HomeWidgetBackgroundIntent
 import es.antonborri.home_widget.HomeWidgetLaunchIntent
 import es.antonborri.home_widget.HomeWidgetProvider
+import es.antonborri.home_widget.HomeWidgetPlugin
 import android.widget.RemoteViews
 import android.os.Build
 
 
 
 
-class HomeWidgetExampleProvider : HomeWidgetProvider() {
+class HomeWidgetExampleProvider : AppWidgetProvider() {
 
-    override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray, widgetData: SharedPreferences) {
+    override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
+//        val widgetData: android.content.SharedPreferences = HomeWidgetPlugin.getData(context)
         appWidgetIds.forEach { widgetId ->
 
-            val rowShorcuts = widgetData.getString("shortcuts", "") ?: ""
-            var shortcuts: Array<String> = rowShorcuts.split(";").toTypedArray()
-            if (shortcuts.size == 1 && shortcuts[0] == "")
-            {
-                shortcuts = emptyArray<String>()
-            }
+//            val rowShorcuts = widgetData.getString("shortcuts", "") ?: ""
+//            var shortcuts: Array<String> = rowShorcuts.split(";").toTypedArray()
+//            if (shortcuts.size == 1 && shortcuts[0] == "")
+//            {
+//                shortcuts = emptyArray<String>()
+//            }
 
             val intent = Intent(context, StackWidgetService::class.java).apply {
-                // Add the widget ID to the intent extras.
                 putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
-                putExtra("shortcuts", shortcuts)
+//                putExtra("shortcuts", shortcuts)
                 data = Uri.parse(toUri(Intent.URI_INTENT_SCHEME))
             }
 
-//            val pendingIntent = HomeWidgetLaunchIntent.getActivity(
-//                context,
-//                MainActivity::class.java,
-//            )
             var flags = android.app.PendingIntent.FLAG_UPDATE_CURRENT
             if (Build.VERSION.SDK_INT >= 23) {
                 flags = flags or android.app.PendingIntent.FLAG_MUTABLE
@@ -56,14 +54,12 @@ class HomeWidgetExampleProvider : HomeWidgetProvider() {
             )
 
             val views = RemoteViews(context.packageName, R.layout.example_layout).apply {
-                setPendingIntentTemplate(R.id.widget_list, pendingIntent)
                 setRemoteAdapter(R.id.widget_list, intent)
                 setEmptyView(R.id.widget_list, R.id.list_empty)
+                setPendingIntentTemplate(R.id.widget_list, pendingIntent)
 //                setTextViewText(R.id.widget_title, shortcuts.size.toString())
-
-
             }
-
+            appWidgetManager.notifyAppWidgetViewDataChanged(widgetId, R.id.widget_list)
             appWidgetManager.updateAppWidget(widgetId, views)
         }
     }
@@ -97,7 +93,7 @@ class StackRemoteViewsFactory(
         // source. Heavy lifting, for example downloading or creating content
         // etc, should be deferred to onDataSetChanged() or getViewAt(). Taking
         // more than 20 seconds in this call will result in an ANR.
-        shortcutNames = intent.getStringArrayExtra("shortcuts") ?: emptyArray<String>()
+//        shortcutNames = intent.getStringArrayExtra("shortcuts") ?: emptyArray<String>()
 
     }
 
@@ -140,12 +136,15 @@ class StackRemoteViewsFactory(
     }
 
     override fun onDataSetChanged() {
-        // This is triggered when you call AppWidgetManager notifyAppWidgetViewDataChanged
-        // on the collection view corresponding to this factory. You can do heaving lifting in
-        // here, synchronously. For example, if you need to process an image, fetch something
-        // from the network, etc., it is ok to do it here, synchronously. The widget will remain
-        // in its current state while work is being done here, so you don't need to worry about
-        // locking up the widget.
+        val widgetData: android.content.SharedPreferences = HomeWidgetPlugin.getData(context)
+
+        val rowShorcuts = widgetData.getString("shortcuts", "") ?: ""
+        var shortcuts: Array<String> = rowShorcuts.split(";").toTypedArray()
+        if (shortcuts.size == 1 && shortcuts[0] == "")
+        {
+            shortcuts = emptyArray<String>()
+        }
+        shortcutNames = shortcuts
     }
     override fun getLoadingView(): RemoteViews? {
         // You can create a custom loading view (for instance when getViewAt() is slow.) If you
@@ -164,7 +163,4 @@ class StackRemoteViewsFactory(
     override fun hasStableIds(): Boolean {
         return true
     }
-
-
-
 }
