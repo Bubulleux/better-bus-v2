@@ -8,7 +8,7 @@ import 'package:better_bus_v2/views/stops_search_page/stops_search_page.dart';
 import 'package:better_bus_v2/views/terminus_selector/terminus_selector_page.dart';
 import 'package:flutter/material.dart';
 
-import '../../app_constante/AppString.dart';
+import '../../app_constante/app_string.dart';
 import '../../model/clean/bus_line.dart';
 
 class ViewShortcutEditorPage extends StatefulWidget {

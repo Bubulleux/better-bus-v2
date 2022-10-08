@@ -6,7 +6,7 @@ import 'package:better_bus_v2/views/stops_search_page/map_place_searcher_view.da
 import 'package:better_bus_v2/views/stops_search_page/search_bus_stop_view.dart';
 import 'package:flutter/material.dart';
 
-import '../../app_constante/AppString.dart';
+import '../../app_constante/app_string.dart';
 
 class PlaceSearcherPage extends StatefulWidget {
   const PlaceSearcherPage({Key? key}) : super(key: key);

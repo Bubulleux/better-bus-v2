@@ -7,7 +7,7 @@ import 'package:better_bus_v2/views/stops_search_page/map_place_item_widget.dart
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 
-import '../../app_constante/AppString.dart';
+import '../../app_constante/app_string.dart';
 import '../../model/clean/map_place.dart';
 
 typedef PlaceCallback = void Function(MapPlace place);

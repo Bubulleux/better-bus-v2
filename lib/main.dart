@@ -2,14 +2,11 @@ import 'package:better_bus_v2/views/common/decorations.dart';
 import 'package:flutter/material.dart';
 import 'package:better_bus_v2/views/home_page/home_page.dart';
 import 'package:flutter/services.dart';
-import 'package:home_widget/home_widget.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
-  HomeWidget.updateWidget(name: "HomeWidgetExampleProvider");
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-
   runApp(const MyApp());
 }
 

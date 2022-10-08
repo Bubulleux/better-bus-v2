@@ -24,7 +24,6 @@ class MainActivity: FlutterActivity() {
                 call, result ->
             if (call.method == "updateWidget") {
                 val n = updateWidgets()
-                print("Widget Updated")
                 result.success(n)
             }
             result.notImplemented()

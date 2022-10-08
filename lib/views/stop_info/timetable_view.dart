@@ -5,7 +5,7 @@ import 'package:better_bus_v2/views/common/line_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../../app_constante/AppString.dart';
+import '../../app_constante/app_string.dart';
 import '../../model/clean/bus_line.dart';
 import '../../model/clean/bus_stop.dart';
 

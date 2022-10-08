@@ -1,4 +1,4 @@
-import 'package:better_bus_v2/app_constante/AppString.dart';
+import 'package:better_bus_v2/app_constante/app_string.dart';
 import 'package:better_bus_v2/data_provider/local_data_handler.dart';
 import 'package:better_bus_v2/model/clean/bus_line.dart';
 import 'package:better_bus_v2/model/clean/view_shortcut.dart';
@@ -22,6 +22,7 @@ class ShortcutWidgetRootState extends State<ShortcutWidgetRoot> {
   List<ViewShortcut>? shortcuts;
 
   void editShortcut(int? index) {
+
     Navigator.push(context, MaterialPageRoute(builder: (context) {
       return ViewShortcutEditorPage(index == null ? null : shortcuts![index]);
     })).then((value) {
@@ -83,6 +84,7 @@ class ShortcutWidgetRootState extends State<ShortcutWidgetRoot> {
   }
 
   void showShortcutContent(int index) {
+
     Navigator.push(
         context,
         MaterialPageRoute(

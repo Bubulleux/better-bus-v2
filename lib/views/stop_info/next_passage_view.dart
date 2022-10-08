@@ -1,4 +1,4 @@
-import 'package:better_bus_v2/app_constante/AppString.dart';
+import 'package:better_bus_v2/app_constante/app_string.dart';
 import 'package:better_bus_v2/data_provider/vitalis_data_provider.dart';
 import 'package:better_bus_v2/error_handler/custom_error.dart';
 import 'package:better_bus_v2/model/clean/bus_stop.dart';
@@ -26,6 +26,8 @@ class _NextPassagePageState extends State<NextPassagePage> with AutomaticKeepAli
   late AnimationController seeAllAnimationController;
   late Animation<double> seeAllBtnAnimation;
 
+  GlobalKey<NextPassageListWidgetState> nextPassageWidgetKey = GlobalKey<NextPassageListWidgetState>();
+
 
   @override
   void initState() {
@@ -45,7 +47,6 @@ class _NextPassagePageState extends State<NextPassagePage> with AutomaticKeepAli
     super.setState(fn);
   }
 
-
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -64,6 +65,7 @@ class _NextPassagePageState extends State<NextPassagePage> with AutomaticKeepAli
                 onPressed: () {
                   seeAll = true;
                   seeAllAnimationController.reverse();
+                  nextPassageWidgetKey.currentState!.refresh();
                   setState(() {});
                 },
                 child: const Text(AppString.seeAllLabel),
@@ -71,7 +73,7 @@ class _NextPassagePageState extends State<NextPassagePage> with AutomaticKeepAli
             ),
           ),
           Expanded(
-            child: NextPassageListWidget(widget.stop,  seeAll ? null : widget.lines),
+            child: NextPassageListWidget(widget.stop,  seeAll ? null : widget.lines, key: nextPassageWidgetKey,),
           ),
         ],
       )
@@ -89,11 +91,16 @@ class NextPassageListWidget extends StatefulWidget {
   final List<BusLine>? lines;
 
   @override
-  State<NextPassageListWidget> createState() => _NextPassageListWidgetState();
+  State<NextPassageListWidget> createState() => NextPassageListWidgetState();
 }
 
-class _NextPassageListWidgetState extends State<NextPassageListWidget> {
+class NextPassageListWidgetState extends State<NextPassageListWidget> {
 
+  final GlobalKey<CustomFutureBuilderState<List<NextPassage>>> futureBuilderKey = GlobalKey<CustomFutureBuilderState<List<NextPassage>>>();
+
+  void refresh() {
+    futureBuilderKey.currentState!.refresh();
+  }
 
   Future<List<NextPassage>> getData() async {
     List<NextPassage> result = await VitalisDataProvider.getNextPassage(widget.stop);
@@ -116,9 +123,9 @@ class _NextPassageListWidgetState extends State<NextPassageListWidget> {
 
   @override
   Widget build(BuildContext context) {
-
     return CustomFutureBuilder<List<NextPassage>>(
       future: getData,
+      key: futureBuilderKey,
       onData: (context, data, refresh) {
         return ListView.builder(
           itemCount: data.length,

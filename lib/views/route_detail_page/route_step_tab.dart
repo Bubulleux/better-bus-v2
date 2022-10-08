@@ -1,4 +1,4 @@
-import 'package:better_bus_v2/app_constante/AppString.dart';
+import 'package:better_bus_v2/app_constante/app_string.dart';
 import 'package:better_bus_v2/data_provider/maps_redirector.dart';
 import 'package:better_bus_v2/model/clean/route.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';

@@ -1,5 +1,5 @@
 
-import 'package:better_bus_v2/app_constante/AppString.dart';
+import 'package:better_bus_v2/app_constante/app_string.dart';
 import 'package:better_bus_v2/data_provider/vitalis_data_provider.dart';
 import 'package:better_bus_v2/model/clean/bus_stop.dart';
 import 'package:flutter/material.dart';
