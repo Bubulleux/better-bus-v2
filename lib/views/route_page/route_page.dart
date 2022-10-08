@@ -227,14 +227,18 @@ class _RoutePageState extends State<RoutePage> {
                 Expanded(
                   child: Container(
                     decoration: CustomDecorations.of(context).boxBackground,
-                    padding: const EdgeInsets.symmetric(horizontal: 25),
+                    // padding: const EdgeInsets.symmetric(horizontal: 5),
                     child: CustomFutureBuilder<List<VitalisRoute>?>(
                       key: futureBuilderKey,
                       future: getRoutes,
                       onData: (context, data, refresh) {
-                        return ListView.builder(
-                          itemBuilder: (context, index) => RouteItemWidget(data[index]),
-                          itemCount: data!.length,
+                        return ClipRRect(
+                          borderRadius: CustomDecorations.borderRadius,
+                          child: ListView.builder(
+                            padding: EdgeInsets.symmetric(horizontal: 5),
+                            itemBuilder: (context, index) => RouteItemWidget(data[index]),
+                            itemCount: data!.length,
+                          ),
                         );
                       },
                       errorTest: (data) {
