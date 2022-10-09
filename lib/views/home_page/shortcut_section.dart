@@ -5,7 +5,6 @@ import 'package:better_bus_v2/model/clean/view_shortcut.dart';
 import 'package:better_bus_v2/views/common/context_menu.dart';
 import 'package:better_bus_v2/views/common/decorations.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
-import 'package:better_bus_v2/views/shortcuts_order_editor/shortcut_order_editor_page.dart';
 import 'package:better_bus_v2/views/stop_info/stop_info_page.dart';
 import 'package:better_bus_v2/views/view_shortcut_editor/view_shortcut_editor_page.dart';
 import 'package:flutter/material.dart';
@@ -22,8 +21,24 @@ class ShortcutWidgetRootState extends State<ShortcutWidgetRoot> {
   SharedPreferences? preferences;
   List<ViewShortcut>? shortcuts;
 
-  void editShortcut(int? index) {
+  final DecorationTween decorationTweenReorder = DecorationTween(
+      begin: BoxDecoration(
+        borderRadius: CustomDecorations.borderRadius,
+      ),
+      end: BoxDecoration(
+        borderRadius: CustomDecorations.borderRadius,
+          boxShadow: const [
+            BoxShadow(
+                color: Color(0x60303030),
+                blurRadius: 20,
+                spreadRadius: 1,
+                offset: Offset(0, 6)
+            )
+          ]
+      )
+  );
 
+  void editShortcut(int? index) {
     Navigator.push(context, MaterialPageRoute(builder: (context) {
       return ViewShortcutEditorPage(index == null ? null : shortcuts![index]);
     })).then((value) {
@@ -35,19 +50,6 @@ class ShortcutWidgetRootState extends State<ShortcutWidgetRoot> {
       } else {
         shortcuts![index] = value;
       }
-      LocalDataHandler.saveShortcuts(shortcuts!);
-      setState(() {});
-    });
-  }
-
-  void editShortcutOrder() {
-    Navigator.push(context, MaterialPageRoute(builder: (conte) {
-      return ShortcutOrderEditorPage(shortcuts!);
-    })).then((value) {
-      if (value == null || !mounted) {
-        return;
-      }
-      shortcuts = value;
       LocalDataHandler.saveShortcuts(shortcuts!);
       setState(() {});
     });
@@ -98,7 +100,6 @@ class ShortcutWidgetRootState extends State<ShortcutWidgetRoot> {
   }
 
   void showShortcutContent(int index) {
-
     Navigator.push(
         context,
         MaterialPageRoute(
@@ -144,14 +145,33 @@ class ShortcutWidgetRootState extends State<ShortcutWidgetRoot> {
               ),
             );
           }
-          return ListView.builder(
-            itemCount: shortcuts!.length,
-            itemBuilder: (context, index) => ShortcutWidget(
-              shortcut: shortcuts![index],
-              onPressed: () => showShortcutContent(index),
-              onLongPressed: () => showContextMenu(index),
-            ),
-          );
+          return ReorderableListView.builder(
+              itemCount: shortcuts!.length,
+              itemBuilder: (context, index) => ShortcutWidget(
+                    key: ObjectKey(shortcuts![index]),
+                    shortcut: shortcuts![index],
+                    onPressed: () => showShortcutContent(index),
+                    onLongPressed: () => showContextMenu(index),
+                  ),
+              proxyDecorator: (Widget child, int index, Animation<double> animation) {
+
+                return Material(
+                  color: Colors.transparent,
+                  child: DecoratedBoxTransition(
+                    decoration: decorationTweenReorder.animate(animation),
+                    child: child,
+                  ),
+                );
+              },
+              onReorder: (int oldIndex, int newIndex) {
+                if (oldIndex < newIndex) {
+                  newIndex -= 1;
+                }
+                final ViewShortcut item = shortcuts!.removeAt(oldIndex);
+                shortcuts!.insert(newIndex, item);
+                LocalDataHandler.saveShortcuts(shortcuts!);
+                setState(() {});
+              });
         } else if (snapshot.hasError) {
           return const Center(
             child: Text(AppString.errorLabel),
@@ -193,7 +213,6 @@ class ShortcutWidget extends StatelessWidget {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onLongPress: onLongPressed,
           onTap: onPressed,
           splashColor: Colors.black,
           borderRadius: CustomDecorations.borderRadius,
@@ -202,21 +221,23 @@ class ShortcutWidget extends StatelessWidget {
               color: Theme.of(context).backgroundColor,
               borderRadius: CustomDecorations.borderRadius,
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
             child: Column(
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    if (shortcut.isFavorite)
-                      Icon(
-                        Icons.star,
-                        color: Theme.of(context).primaryColorDark,
-                      )
-                    else
-                      Container(),
-                    Flexible(
-                      child: Text(
+                SizedBox(
+                  width: double.infinity,
+                  child: Wrap(
+                    alignment: WrapAlignment.spaceBetween,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      if (shortcut.isFavorite)
+                        Icon(
+                          Icons.star,
+                          color: Theme.of(context).primaryColorDark,
+                        )
+                      else
+                        Container(width: 0),
+                      Text(
                         shortcut.shortcutName,
                         style: TextStyle(
                           fontSize: 25,
@@ -226,8 +247,9 @@ class ShortcutWidget extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.fade,
                       ),
-                    ),
-                  ],
+                      IconButton(onPressed: onLongPressed, icon: const Icon(Icons.more_vert), padding: EdgeInsets.zero,)
+                    ],
+                  ),
                 ),
                 const SizedBox(
                   height: 10,

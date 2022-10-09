@@ -127,7 +127,7 @@ class _BusStopWidgetState extends State<BusStopWidget> with SingleTickerProvider
         onTap: widget.onPressed,
         child: Container(
           decoration: CustomDecorations.of(context).boxBackground,
-          padding: const EdgeInsets.all(5),
+          padding: const EdgeInsets.all(8),
           child: Column(
             children: [
               Row(
@@ -141,17 +141,22 @@ class _BusStopWidgetState extends State<BusStopWidget> with SingleTickerProvider
                         : null,
                   ),
                   Expanded(
-                    child: Text(
-                      widget.stop.name,
-                      textAlign: TextAlign.left,
-                      style: Theme.of(context).textTheme.headline5,
-                      softWrap: false,
-                      maxLines: 1,
-                      overflow: TextOverflow.fade,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.stop.name,
+                          textAlign: TextAlign.left,
+                          style: Theme.of(context).textTheme.headline6,
+                          softWrap: false,
+                          maxLines: 1,
+                          overflow: TextOverflow.fade,
+                        ),
+                        Container(
+                          child: widget.stopDistance == null ? null : Text("${widget.stopDistance} km", style: TextStyle(color: Theme.of(context).primaryColorDark, fontSize: 13),),
+                        ),
+                      ],
                     ),
-                  ),
-                  Container(
-                    child: widget.stopDistance == null ? null : Text("${widget.stopDistance} km", style: TextStyle(color: Theme.of(context).primaryColorDark),),
                   ),
                   TextButton(
                       onPressed: getInfo,

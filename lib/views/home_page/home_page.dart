@@ -43,10 +43,6 @@ class _HomePageState extends State<HomePage> {
     shortcutSection.currentState!.editShortcut(null);
   }
 
-  void editShortcutOrder() {
-    shortcutSection.currentState!.editShortcutOrder();
-  }
-
   void goToTrafficInfo() {
     Navigator.push(context, MaterialPageRoute(
       builder: (context) => const TrafficInfoPage(),
@@ -122,8 +118,7 @@ class _HomePageState extends State<HomePage> {
                               .headlineSmall,
                         ),
                       ),
-                      TextButton(onPressed: newShortcut, child: const Icon(Icons.add)),
-                      TextButton(onPressed: editShortcutOrder, child: const Icon(Icons.edit))
+                      IconButton(onPressed: newShortcut, icon: const Icon(Icons.add)),
                     ],
                   ),
                 ),
