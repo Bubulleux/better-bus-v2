@@ -5,6 +5,7 @@ import 'package:better_bus_v2/model/clean/view_shortcut.dart';
 import 'package:better_bus_v2/views/common/context_menu.dart';
 import 'package:better_bus_v2/views/common/decorations.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
+import 'package:better_bus_v2/views/shortcuts_order_editor/shortcut_order_editor_page.dart';
 import 'package:better_bus_v2/views/stop_info/stop_info_page.dart';
 import 'package:better_bus_v2/views/view_shortcut_editor/view_shortcut_editor_page.dart';
 import 'package:flutter/material.dart';
@@ -34,6 +35,19 @@ class ShortcutWidgetRootState extends State<ShortcutWidgetRoot> {
       } else {
         shortcuts![index] = value;
       }
+      LocalDataHandler.saveShortcuts(shortcuts!);
+      setState(() {});
+    });
+  }
+
+  void editShortcutOrder() {
+    Navigator.push(context, MaterialPageRoute(builder: (conte) {
+      return ShortcutOrderEditorPage(shortcuts!);
+    })).then((value) {
+      if (value == null || !mounted) {
+        return;
+      }
+      shortcuts = value;
       LocalDataHandler.saveShortcuts(shortcuts!);
       setState(() {});
     });
