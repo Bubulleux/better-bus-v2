@@ -40,17 +40,41 @@ class CustomFutureBuilder<T> extends StatefulWidget {
   State<CustomFutureBuilder> createState() => CustomFutureBuilderState<T>();
 }
 
-class CustomFutureBuilderState<T> extends State<CustomFutureBuilder>{
+class CustomFutureBuilderState<T> extends State<CustomFutureBuilder> with WidgetsBindingObserver{
   T? data;
   CustomError? error;
   bool isLoading = false;
+  AppLifecycleState? _notification;
+  bool needRefresh = false;
+
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     data = widget.initData;
     if (data == null){
       refresh();
+    }
+
+    if (widget.automaticRefresh != null) {
+      Future.delayed(widget.automaticRefresh!, autoRefresh);
+    }
+  }
+
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    _notification = state;
+    if (state == AppLifecycleState.resumed && needRefresh) {
+      autoRefresh();
     }
   }
 
@@ -67,6 +91,19 @@ class CustomFutureBuilderState<T> extends State<CustomFutureBuilder>{
 
   }
 
+  Future autoRefresh() async {
+    if (_notification == AppLifecycleState.paused) {
+      needRefresh = true;
+      return;
+    }
+
+    await hideRefresh();
+    needRefresh = false;
+    if (widget.automaticRefresh != null && error == null) {
+      Future.delayed(widget.automaticRefresh!, autoRefresh);
+    }
+  }
+
   Future hideRefresh() async {
 
     try {
@@ -80,11 +117,6 @@ class CustomFutureBuilderState<T> extends State<CustomFutureBuilder>{
       error = e.toError();
     } on Error catch(e) {
       error = e is CustomError ? e : CustomError(e.toString(), Icons.error, false);
-    }
-
-
-    if (error == null && widget.automaticRefresh != null) {
-      Future.delayed(widget.automaticRefresh!, refresh);
     }
 
     if (mounted) {

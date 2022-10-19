@@ -146,7 +146,7 @@ class NextPassageListWidgetState extends State<NextPassageListWidget> {
         }
         return null;
       },
-      automaticRefresh: const Duration(minutes: 1),
+      automaticRefresh: const Duration(seconds: 30),
     );
   }
 }
