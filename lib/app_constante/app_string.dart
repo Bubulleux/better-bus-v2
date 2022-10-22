@@ -59,4 +59,7 @@ class AppString{
   static const setShortcutName = "Donner un nom a votre raccourcie";
   static const emptyStopSelection = "Aucun arret de bus n'a été selectioner";
   static const emptyLineSelection = "Acune Line n'a été sélectioner";
+
+
+  static const selectLine = "Selectioner les lignes qui vous interesse";
 }

@@ -4,6 +4,7 @@ import 'package:better_bus_v2/custom_home_widget.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../model/clean/bus_line.dart';
 import '../model/clean/view_shortcut.dart';
 
 class  LocalDataHandler {
@@ -42,4 +43,22 @@ class  LocalDataHandler {
     // HomeWidget.updateWidget(name: "HomeWidgetExampleProvider");
     CustomHomeWidgetRequest.updateWidget();
   }
+
+  static Future<Set<String>> loadInterestedLine() async {
+    await checkPreferences();
+
+    List<String>? lines = preferences!.getStringList("interested-lines");
+    if (lines == null || lines.isEmpty) {
+      return {};
+    }
+
+    return lines.toSet();
+  }
+
+  static Future<void> saveInterestedLines(Set<String> lines) async {
+    await checkPreferences();
+
+    preferences!.setStringList("interested-lines", lines.toList());
+  }
+
 }

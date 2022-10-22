@@ -4,6 +4,7 @@ import 'package:better_bus_v2/model/clean/info_trafic.dart';
 import 'package:better_bus_v2/views/common/background.dart';
 import 'package:better_bus_v2/views/common/custom_futur.dart';
 import 'package:better_bus_v2/views/common/decorations.dart';
+import 'package:better_bus_v2/views/interest_line_page/interest_lines_page.dart';
 import 'package:better_bus_v2/views/traffic_info_page/traffic_info_item.dart';
 import 'package:flutter/material.dart';
 
@@ -42,6 +43,10 @@ class TrafficInfoPageState extends State<TrafficInfoPage> {
   void initState() {
     super.initState();
   }
+  
+  void goSetting() {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => InterestLinePage()));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,11 +59,18 @@ class TrafficInfoPageState extends State<TrafficInfoPage> {
               children: [
                 Container(
                   width: double.infinity,
-                  alignment: Alignment.center,
                   decoration: CustomDecorations.of(context).boxBackground,
-                  child: Text(
-                    AppString.trafficInfoTitle,
-                    style: Theme.of(context).textTheme.headlineSmall,
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  child: Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    alignment: WrapAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        AppString.trafficInfoTitle,
+                        style: Theme.of(context).textTheme.headlineSmall,
+                      ),
+                      IconButton(onPressed: goSetting, icon: const Icon(Icons.settings))
+                    ],
                   ),
                 ),
                 Expanded(

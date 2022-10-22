@@ -9,7 +9,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../model/clean/bus_line.dart';
 
-class TrafficInfoItem extends StatefulWidget{
+class TrafficInfoItem extends StatefulWidget {
   const TrafficInfoItem(this.infoTraffic, this.busLines, {Key? key}) : super(key: key);
 
   final InfoTraffic infoTraffic;
@@ -21,7 +21,7 @@ class TrafficInfoItem extends StatefulWidget{
   State<TrafficInfoItem> createState() => _TrafficInfoItemState();
 }
 
-class _TrafficInfoItemState extends State<TrafficInfoItem> with SingleTickerProviderStateMixin{
+class _TrafficInfoItemState extends State<TrafficInfoItem> with SingleTickerProviderStateMixin {
   late ExpandableWidgetController expandableController;
 
   @override
@@ -44,7 +44,9 @@ class _TrafficInfoItemState extends State<TrafficInfoItem> with SingleTickerProv
         color: Colors.transparent,
         child: InkWell(
           borderRadius: CustomDecorations.borderRadius,
-          onTap: () {expandableController.tickAnimation();},
+          onTap: () {
+            expandableController.tickAnimation();
+          },
           splashColor: Colors.black,
           child: Container(
             decoration: CustomDecorations.of(context).boxBackground,
@@ -55,36 +57,41 @@ class _TrafficInfoItemState extends State<TrafficInfoItem> with SingleTickerProv
                 Text(
                   widget.infoTraffic.title,
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: widget.infoTraffic.isActive ? FontWeight.bold : FontWeight.normal,
-                  ),
+                        fontWeight: widget.infoTraffic.isActive ? FontWeight.bold : FontWeight.normal,
+                      ),
                 ),
                 const SizedBox(
                   height: 5,
                 ),
                 SizedBox(
                   width: double.infinity,
-                  child: widget.infoTraffic.stopTime.difference(widget.infoTraffic.startTime).compareTo(const Duration(days: 1)) > 0
+                  child: widget.infoTraffic.stopTime
+                              .difference(widget.infoTraffic.startTime)
+                              .compareTo(const Duration(days: 1)) >
+                          0
                       ? Wrap(
-                    alignment: WrapAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        TrafficInfoItem.dateFormat.format(widget.infoTraffic.startTime),
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                      const Icon(Icons.keyboard_double_arrow_right),
-                      Text(
-                        TrafficInfoItem.dateFormat.format(widget.infoTraffic.stopTime),
-                        style: Theme.of(context).textTheme.titleLarge,
-                      )
-                    ],
-                  )
+                          alignment: WrapAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              TrafficInfoItem.dateFormat.format(widget.infoTraffic.startTime),
+                              style: Theme.of(context).textTheme.titleLarge,
+                            ),
+                            const Icon(Icons.keyboard_double_arrow_right),
+                            Text(
+                              TrafficInfoItem.dateFormat.format(widget.infoTraffic.stopTime),
+                              style: Theme.of(context).textTheme.titleLarge,
+                            )
+                          ],
+                        )
                       : Text(
-                    TrafficInfoItem.dateFormat.format(widget.infoTraffic.stopTime),
-                    style: Theme.of(context).textTheme.titleLarge,
-                    textAlign: TextAlign.center,
-                  ),
+                          TrafficInfoItem.dateFormat.format(widget.infoTraffic.stopTime),
+                          style: Theme.of(context).textTheme.titleLarge,
+                          textAlign: TextAlign.center,
+                        ),
                 ),
-                const SizedBox(height: 5,),
+                const SizedBox(
+                  height: 5,
+                ),
                 Wrap(
                   alignment: WrapAlignment.start,
                   spacing: 5,
@@ -101,14 +108,13 @@ class _TrafficInfoItemState extends State<TrafficInfoItem> with SingleTickerProv
                       [],
                 ),
                 ExpendableWidget(
-                    child:
-                      HtmlWidget(
-                        widget.infoTraffic.content,
-                        onTapUrl: (url) {
-                          return launchUrlString(url, mode: LaunchMode.externalApplication);
-                        },
-                      ),
-                    controller: expandableController,
+                  child: HtmlWidget(
+                    widget.infoTraffic.content,
+                    onTapUrl: (url) {
+                      return launchUrlString(url, mode: LaunchMode.externalApplication);
+                    },
+                  ),
+                  controller: expandableController,
                 ),
               ],
             ),
