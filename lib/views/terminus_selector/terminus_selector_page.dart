@@ -34,23 +34,10 @@ class _TerminusSelectorPageState extends State<TerminusSelectorPage> {
       return validBusLine!;
     }
 
-    List<BusLine> stopLines =
-        await VitalisDataProvider.getLines(widget.stop) ?? [];
+    List<BusLine> stopLines = await VitalisDataProvider.getLines(widget.stop) ?? [];
+    stopLines.sort();
     selectedTerminus = [];
-    // List<LineBoarding> lineBoarding = await Future.wait<LineBoarding>(stopLines
-    //     .map((line) => VitalisDataProvider.getLineBoarding(widget.stop, line)));
-    //
-    // List<BusLine> result = [];
-    // for (int i = 0; i < stopLines.length; i++) {
-    //   result.add(BusLine(
-    //       stopLines[i].id, stopLines[i].fullName, stopLines[i].color,
-    //       goDirection: lineBoarding[i].go.keys.toList(),
-    //       backDirection: lineBoarding[i].back.keys.toList()));
-    //   selectedTerminus.add([
-    //     [ for(String _ in lineBoarding[i].go.keys) false],
-    //     [ for(String _ in lineBoarding[i].back.keys) false],
-    //   ]);
-    // }
+
 
     for (int i = 0; i < stopLines.length; i++) {
       int previousLineIndex = widget.previousData
@@ -72,6 +59,7 @@ class _TerminusSelectorPageState extends State<TerminusSelectorPage> {
 
         }).toList(),
       ]);
+      setState(() {});
     }
 
     validBusLine = stopLines;

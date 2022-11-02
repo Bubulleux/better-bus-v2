@@ -24,8 +24,8 @@ class AppString{
 
   static const walkToPlace = "Marcher jusqu'a l'adress";
   static const walkToStop = "Marcher jusqu'a l'arret";
-  static const atTheStopTakeLine = "A l'arret {#} prend la ligne";
-  static const andGoToStop = "Et aller jusqu'à l'arret ";
+  static const atTheStopTakeLine = "A l'arret {#} prend la ligne ";
+  static const andGoToStop = " et aller jusqu'à l'arret ";
   static const seeOnMaps = "Voir sur maps";
 
   static const startLabel = "Départ";

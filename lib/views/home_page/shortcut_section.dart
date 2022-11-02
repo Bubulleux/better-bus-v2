@@ -25,18 +25,9 @@ class ShortcutWidgetRootState extends State<ShortcutWidgetRoot> {
       begin: BoxDecoration(
         borderRadius: CustomDecorations.borderRadius,
       ),
-      end: BoxDecoration(
-        borderRadius: CustomDecorations.borderRadius,
-          boxShadow: const [
-            BoxShadow(
-                color: Color(0x60303030),
-                blurRadius: 20,
-                spreadRadius: 1,
-                offset: Offset(0, 6)
-            )
-          ]
-      )
-  );
+      end: BoxDecoration(borderRadius: CustomDecorations.borderRadius, boxShadow: const [
+        BoxShadow(color: Color(0x60303030), blurRadius: 20, spreadRadius: 1, offset: Offset(0, 6))
+      ]));
 
   void editShortcut(int? index) {
     Navigator.push(context, MaterialPageRoute(builder: (context) {
@@ -154,7 +145,6 @@ class ShortcutWidgetRootState extends State<ShortcutWidgetRoot> {
                     onLongPressed: () => showContextMenu(index),
                   ),
               proxyDecorator: (Widget child, int index, Animation<double> animation) {
-
                 return Material(
                   color: Colors.transparent,
                   child: DecoratedBoxTransition(
@@ -200,12 +190,9 @@ class ShortcutWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<Widget> linesWidget = [];
+    shortcut.lines.sort();
     for (BusLine line in shortcut.lines) {
-      linesWidget.add(LineWidget(
-        line,
-        25,
-        dynamicWidth: true,
-      ));
+      linesWidget.add(LineWidget(line, 25, dynamicWidth: true));
     }
 
     return Padding(
@@ -247,7 +234,11 @@ class ShortcutWidget extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.fade,
                       ),
-                      IconButton(onPressed: onLongPressed, icon: const Icon(Icons.more_vert), padding: EdgeInsets.zero,)
+                      IconButton(
+                        onPressed: onLongPressed,
+                        icon: const Icon(Icons.more_vert),
+                        padding: EdgeInsets.zero,
+                      )
                     ],
                   ),
                 ),

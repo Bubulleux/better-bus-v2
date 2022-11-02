@@ -2,7 +2,7 @@ import 'package:better_bus_v2/helper.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-class BusLine {
+class BusLine extends Comparable<BusLine>{
   BusLine(this.id, this.fullName, this.color,
       {this.goDirection = const [],
       this.backDirection = const []});
@@ -90,5 +90,54 @@ class BusLine {
     backDir.sort();
 
     return Object.hash(id, fullName, color, goDir, backDir);
+  }
+
+  static List<String> parseId(String id) {
+    List<String> parsedId = [];
+    String currentElement = "";
+    bool currentElementIsInt = false;
+
+    for (int i = 0; i < id.length; i++) {
+      String char = id[i];
+      bool isInt = int.tryParse(char) != null;
+      if (currentElement != ""  && currentElementIsInt != isInt) {
+        parsedId.add(currentElement);
+        currentElement = "";
+      }
+
+      currentElement += char;
+      currentElementIsInt = isInt;
+    }
+    parsedId.add(currentElement);
+
+    return parsedId;
+  }
+
+  @override
+  int compareTo(BusLine other){
+    return compareID(id, other.id);
+  }
+
+  static int compareID(String a, String b) {
+    List<String> parsedA = parseId(a);
+    List<String> parsedB = parseId(b);
+
+    List<Function> compareFunctions = [
+      (List<String> id) => int.tryParse(id[0]) ?? int.tryParse(id[0]) ?? double.infinity,
+      (List<String> id) => id.length == 1  && id[0].length == 1 ? id[0].codeUnits[0] : double.infinity,
+      (List<String> id) => id[0] == "N" ? int.parse(id[1]) : double.infinity,
+      (List<String> id) => id[0] == "S" ? int.parse(id[1]) : double.infinity,
+      (List<String> id) => id[0] == "P" ? int.parse(id[1]) : double.infinity,
+      (List<String> id) => id[0][0] == "f" ? 0 : 1,
+    ];
+
+    for (Function compareFunction in compareFunctions) {
+      int compareValue = compareFunction(parsedA).compareTo(compareFunction(parsedB));
+      if (compareValue != 0) {
+        return compareValue;
+      }
+    }
+
+    return 0;
   }
 }

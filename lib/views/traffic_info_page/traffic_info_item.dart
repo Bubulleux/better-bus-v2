@@ -38,6 +38,12 @@ class _TrafficInfoItemState extends State<TrafficInfoItem> with SingleTickerProv
 
   @override
   Widget build(BuildContext context) {
+    List<BusLine> itemLines = [];
+    for (String lineID in widget.infoTraffic.linesId ?? []) {
+      itemLines.add(widget.busLines[lineID]!);
+    }
+    itemLines.sort();
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Material(
@@ -96,16 +102,7 @@ class _TrafficInfoItemState extends State<TrafficInfoItem> with SingleTickerProv
                   alignment: WrapAlignment.start,
                   spacing: 5,
                   runSpacing: 5,
-                  children: widget.infoTraffic.linesId
-                          ?.map((e) => widget.busLines[e] != null
-                              ? LineWidget(
-                                  widget.busLines[e]!,
-                                  25,
-                                  dynamicWidth: true,
-                                )
-                              : Container())
-                          .toList() ??
-                      [],
+                  children: itemLines.map((e) => LineWidget(e, 25, dynamicWidth: true)).toList(),
                 ),
                 ExpendableWidget(
                   child: HtmlWidget(

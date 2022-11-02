@@ -4,7 +4,6 @@ import 'package:better_bus_v2/custom_home_widget.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../model/clean/bus_line.dart';
 import '../model/clean/view_shortcut.dart';
 
 class  LocalDataHandler {
@@ -37,7 +36,7 @@ class  LocalDataHandler {
         jsonEncode(shortcut.toJson())).toList();
 
     List<String> favoriteShortcut = shortcuts.where((element) => element.isFavorite).map((element) =>
-      element.shortcutName).toList();
+    element.shortcutName).toList();
     preferences!.setStringList("shortcuts", shortcutJson);
     HomeWidget.saveWidgetData<String>("shortcuts", favoriteShortcut.join(";"));
     // HomeWidget.updateWidget(name: "HomeWidgetExampleProvider");

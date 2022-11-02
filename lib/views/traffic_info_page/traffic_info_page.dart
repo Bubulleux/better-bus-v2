@@ -8,6 +8,7 @@ import 'package:better_bus_v2/views/interest_line_page/interest_lines_page.dart'
 import 'package:better_bus_v2/views/traffic_info_page/traffic_info_item.dart';
 import 'package:flutter/material.dart';
 
+import '../../data_provider/local_data_handler.dart';
 import '../../model/clean/bus_line.dart';
 import '../../model/clean/info_trafic.dart';
 
@@ -19,18 +20,29 @@ class TrafficInfoPage extends StatefulWidget {
 }
 
 class TrafficInfoPageState extends State<TrafficInfoPage> {
+
+  late final GlobalKey<CustomFutureBuilderState> futureBuilderKey;
+
   Future<InfoTrafficObject> getAllInformation() async{
     List<InfoTraffic> infoList = await VitalisDataProvider.getTrafficInfo();
     Map<String, BusLine> busLines = await VitalisDataProvider.getAllLines();
+    Set<String> favoriteLines = await LocalDataHandler.loadInterestedLine();
+
+
     infoList.removeWhere((element) => !element.isDisplay);
     infoList.sort(
         (a, b) {
-          int compareValue = (a.isActive  ? 1 : 0).compareTo(b.isActive ? 1 : 0);
-          if (compareValue != 0) return compareValue;
-
-          compareValue = ((a.linesId != null ? 0 : 1)).compareTo(b.linesId != null ? 0 : 1);
-
-          return compareValue;
+          List<int> compareValues = [
+            (favoriteLines.intersection(a.linesId?.toSet() ?? {}).length).compareTo(favoriteLines.intersection(b.linesId?.toSet() ?? {}).length),
+            (a.isActive  ? 1 : 0).compareTo(b.isActive ? 1 : 0),
+            ((a.linesId != null ? 0 : 1)).compareTo(b.linesId != null ? 0 : 1),
+          ];
+          for (int compareValues in compareValues) {
+            if (compareValues != 0) {
+              return compareValues;
+            }
+          }
+          return 0;
         },
 
     );
@@ -42,10 +54,11 @@ class TrafficInfoPageState extends State<TrafficInfoPage> {
   @override
   void initState() {
     super.initState();
+    futureBuilderKey = GlobalKey();
   }
   
   void goSetting() {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) => InterestLinePage()));
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => InterestLinePage())).then((value) => futureBuilderKey.currentState?.refresh());
   }
 
   @override
@@ -76,6 +89,7 @@ class TrafficInfoPageState extends State<TrafficInfoPage> {
                 Expanded(
                   child: CustomFutureBuilder<InfoTrafficObject>(
                     future: getAllInformation,
+                    key: futureBuilderKey,
                     onData: (context,  data, refresh) => ListView.builder(
                       itemCount: data.infoList.length,
                       itemBuilder: (context, index) => TrafficInfoItem(data.infoList[index], data.busLines),

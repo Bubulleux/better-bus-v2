@@ -86,6 +86,7 @@ class _BusStopWidgetState extends State<BusStopWidget> with SingleTickerProvider
                     return;
                   }
                   busLines = value;
+                  busLines?.sort();
                 })
               },
           onError: ErrorHandler.printError);
@@ -95,7 +96,6 @@ class _BusStopWidgetState extends State<BusStopWidget> with SingleTickerProvider
 
   @override
   Widget build(BuildContext context) {
-
     Widget? busStopInfo;
     if (busLines == null) {
       busStopInfo = const Center(
@@ -107,11 +107,7 @@ class _BusStopWidgetState extends State<BusStopWidget> with SingleTickerProvider
     } else {
       List<Widget> children = [];
       for (BusLine line in busLines!) {
-        children.add(LineWidget(
-          line,
-          35,
-          dynamicWidth: true,
-        ));
+        children.add(LineWidget(line, 35, dynamicWidth: true));
       }
 
       busStopInfo = Wrap(
@@ -136,7 +132,10 @@ class _BusStopWidgetState extends State<BusStopWidget> with SingleTickerProvider
                     child: widget.inHistoric
                         ? Padding(
                             padding: const EdgeInsets.only(right: 5),
-                            child: Icon(Icons.history, color: Theme.of(context).primaryColor,),
+                            child: Icon(
+                              Icons.history,
+                              color: Theme.of(context).primaryColor,
+                            ),
                           )
                         : null,
                   ),
@@ -153,7 +152,12 @@ class _BusStopWidgetState extends State<BusStopWidget> with SingleTickerProvider
                           overflow: TextOverflow.fade,
                         ),
                         Container(
-                          child: widget.stopDistance == null ? null : Text("${widget.stopDistance} km", style: TextStyle(color: Theme.of(context).primaryColorDark, fontSize: 13),),
+                          child: widget.stopDistance == null
+                              ? null
+                              : Text(
+                                  "${widget.stopDistance} km",
+                                  style: TextStyle(color: Theme.of(context).primaryColorDark, fontSize: 13),
+                                ),
                         ),
                       ],
                     ),

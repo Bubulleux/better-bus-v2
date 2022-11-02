@@ -37,6 +37,7 @@ class _TimeTableViewState extends State<TimeTableView> with AutomaticKeepAliveCl
       if (mounted) {
         setState(() {
           busLines = value;
+          busLines?.sort();
         });
       }
     });

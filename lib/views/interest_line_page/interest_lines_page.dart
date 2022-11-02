@@ -20,10 +20,13 @@ class _InterestLinePageState extends State<InterestLinePage> {
 
   Future<List<BusLine>> getLines() async {
     linesSelected = await LocalDataHandler.loadInterestedLine();
-    return (await VitalisDataProvider.getAllLines()).values.toList();
+    List<BusLine> busLines = (await VitalisDataProvider.getAllLines()).values.toList();
+    busLines.sort();
+    return busLines;
   }
 
   void cancel() {
+    // BusLine.compare("12", "12e");
     Navigator.pop(context);
   }
 
