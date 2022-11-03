@@ -13,8 +13,9 @@ import '../../model/clean/bus_line.dart';
 import '../../model/clean/info_trafic.dart';
 
 class TrafficInfoPage extends StatefulWidget {
-  const TrafficInfoPage({Key? key}) : super(key: key);
+  const TrafficInfoPage({this.focus, Key? key}) : super(key: key);
 
+  final int? focus;
   @override
   State<TrafficInfoPage> createState() => TrafficInfoPageState();
 }

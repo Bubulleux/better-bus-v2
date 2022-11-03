@@ -60,4 +60,18 @@ class  LocalDataHandler {
     preferences!.setStringList("interested-lines", lines.toList());
   }
 
+  static Future<Set<int>?> loadAlreadyPushNotification() async {
+    await checkPreferences();
+
+    List<String>? lines = preferences!.getStringList("already-push-notification");
+
+    return lines?.map((e) => int.parse(e)).toSet();
+  }
+
+  static Future<void> saveAlreadyPushNotification(Set<int> lines) async {
+    await checkPreferences();
+
+    preferences!.setStringList("already-push-notification", lines.map((e) => e.toString()).toList());
+  }
+
 }

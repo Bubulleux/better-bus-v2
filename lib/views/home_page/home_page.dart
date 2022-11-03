@@ -1,6 +1,7 @@
 import 'package:better_bus_v2/app_constante/app_string.dart';
 import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
 import 'package:better_bus_v2/data_provider/local_data_handler.dart';
+import 'package:better_bus_v2/info_traffic_notification.dart';
 import 'package:better_bus_v2/model/clean/view_shortcut.dart';
 import 'package:better_bus_v2/views/common/background.dart';
 import 'package:better_bus_v2/views/common/decorations.dart';
@@ -10,7 +11,9 @@ import 'package:better_bus_v2/views/route_page/route_page.dart';
 import 'package:better_bus_v2/views/stop_info/stop_info_page.dart';
 import 'package:better_bus_v2/views/traffic_info_page/traffic_info_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:home_widget/home_widget.dart';
+import 'package:workmanager/workmanager.dart';
 
 import '../stops_search_page/stops_search_page.dart';
 
@@ -23,6 +26,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   GlobalKey<ShortcutWidgetRootState> shortcutSection = GlobalKey();
+  late FlutterLocalNotificationsPlugin flip;
 
   void searchBusStop() {
     Navigator.push(context,
@@ -60,6 +64,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     GpsDataProvider.askForGPS();
     HomeWidget.widgetClicked.listen(launchWithWidget);
+    initNotification();
   }
 
   @override
@@ -69,12 +74,24 @@ class _HomePageState extends State<HomePage> {
     HomeWidget.widgetClicked.listen(launchWithWidget);
   }
 
+
   void launchWithWidget(Uri? uri) {
     if (uri != null && uri.scheme == "app") {
       if (uri.host == "openshortcut") {
         launchShortcutByWidget(uri.pathSegments[0]);
       }
     }
+  }
+
+  void checkIfAppIsNotificationLaunched() async{
+    print("Check Notification");
+    NotificationAppLaunchDetails? launchNotificationDetails =
+      await FlutterLocalNotificationsPlugin().getNotificationAppLaunchDetails();
+    if (launchNotificationDetails == null || launchNotificationDetails.notificationResponse == null){
+      return;
+    }
+    print(launchNotificationDetails);
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => TrafficInfoPage(focus: launchNotificationDetails.notificationResponse!.id)));
   }
 
   void launchShortcutByWidget(String shortcutName) async {
@@ -89,6 +106,42 @@ class _HomePageState extends State<HomePage> {
         MaterialPageRoute(
           builder: (context) => StopInfoPage(shortcut.stop, lines: shortcut.lines,),
         ));
+  }
+
+  void initNotification() async {
+    flip = FlutterLocalNotificationsPlugin();
+
+    // app_icon needs to be a added as a drawable
+    // resource to the Android head project.
+    var android = AndroidInitializationSettings('@mipmap/ic_launcher');
+
+    // initialise settings for both Android and iOS device.
+    var settings = InitializationSettings(android: android);
+    await flip.initialize(settings);
+  }
+
+  void pushNotification() async {
+
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        DateTime.now().millisecond.toString(),
+        DateTime.now().millisecond.toString(),
+        channelDescription: 'your channel description',
+        importance: Importance.max,
+        priority: Priority.max
+    );
+
+    // initialise channel platform for both Android and iOS device.
+    var platformChannelSpecifics = NotificationDetails(
+        android: androidPlatformChannelSpecifics,
+    );
+    await flip.show(DateTime.now().millisecond, 'GeeksforGeeks',
+        'Your are one step away to connect with GeeksforGeeks ${DateTime.now().millisecond.toString()}',
+        platformChannelSpecifics);
+  }
+
+  void pushNotificationWithDelay() {
+    print("WorkManager add task");
+    Workmanager().registerOneOffTask("test-somethin", "i try something", initialDelay: const Duration(seconds: 10));
   }
 
   @override
@@ -119,6 +172,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       IconButton(onPressed: newShortcut, icon: const Icon(Icons.add)),
+                      IconButton(onPressed: pushNotificationWithDelay, icon: Icon(Icons.notification_add))
                     ],
                   ),
                 ),

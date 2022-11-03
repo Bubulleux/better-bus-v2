@@ -1,13 +1,30 @@
+import 'package:better_bus_v2/info_traffic_notification.dart';
 import 'package:better_bus_v2/views/common/decorations.dart';
 import 'package:flutter/material.dart';
 import 'package:better_bus_v2/views/home_page/home_page.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:workmanager/workmanager.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  flutterLocalNotificationsPlugin.
+    resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.requestPermission();
+
+  Workmanager().initialize(callbackDispatcher, isInDebugMode: false);
+  Workmanager().registerPeriodicTask("check-traffic-info", "check-traffic-info", frequency: const Duration(minutes: 15));
+
   runApp(const MyApp());
+}
+
+void callbackDispatcher() {
+  Workmanager().executeTask((taskName, inputData) {
+    return checkInfoTraffic();
+  });
 }
 
 class MyApp extends StatelessWidget {
@@ -54,7 +71,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      localizationsDelegates: const [GlobalMaterialLocalizations.delegate],
+      localizationsDelegates: GlobalMaterialLocalizations.delegates,
       supportedLocales: const [
         Locale('fr', ""),
         Locale('en', ""),

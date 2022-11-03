@@ -62,4 +62,6 @@ class AppString{
 
 
   static const selectLine = "Selectioner les lignes qui vous interesse";
+
+  static String appName = "Better Bus Poitiers";
 }
