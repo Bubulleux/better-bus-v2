@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:better_bus_v2/error_handler/custom_error.dart';
 import 'package:better_bus_v2/model/clean/bus_line.dart';
 import 'package:better_bus_v2/model/clean/bus_stop.dart';
-import 'package:better_bus_v2/model/clean/info_trafic.dart';
+import 'package:better_bus_v2/model/clean/info_traffic.dart';
 import 'package:better_bus_v2/model/clean/line_boarding.dart';
 import 'package:better_bus_v2/model/clean/map_place.dart';
 import 'package:better_bus_v2/model/clean/route.dart';
@@ -133,7 +133,7 @@ class VitalisDataProvider {
     return { for (Map<String, dynamic>  e in json) e["slug"]: BusLine.fromSimpleJson(e)};
   }
 
-  static Future<List<MapPlace>> getPlaceAutocomplet(String input) async{
+  static Future<List<MapPlace>> getPlaceAutoComplete(String input) async{
     Uri uri = Uri.parse("https://autosuggest.search.hereapi.com/v1/autosuggest");
     uri = uri.replace(queryParameters: {
       // "types": "address,place",

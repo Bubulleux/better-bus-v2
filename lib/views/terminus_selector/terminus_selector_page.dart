@@ -7,7 +7,7 @@ import 'package:better_bus_v2/views/common/content_container.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
 import 'package:flutter/material.dart';
 
-import '../../app_constante/app_string.dart';
+import '../../app_constant/app_string.dart';
 import '../../model/clean/bus_stop.dart';
 
 class TerminusSelectorPage extends StatefulWidget {

@@ -1,4 +1,7 @@
 class AppString{
+
+  static String appName = "Better Bus Poitiers";
+
   static const retry = "Re-esaiyer";
   static const findStop = "Chercher un arret";
 
@@ -54,6 +57,7 @@ class AppString{
   static const shortcutNameLabel = "Nom du Racourcie";
   static const selectBusStop = "Selectioner un Arrét de bus";
   static const directionLabel = "Direction:";
+  static const addToFavorite = "Mettre en Favorie";
   static const emptyDirectionSelection = "Aucun Direction n'a été sélectioner";
   static const changeDirection = "Changer les direction";
   static const setShortcutName = "Donner un nom a votre raccourcie";
@@ -63,5 +67,5 @@ class AppString{
 
   static const selectLine = "Selectioner les lignes qui vous interesse";
 
-  static String appName = "Better Bus Poitiers";
+
 }

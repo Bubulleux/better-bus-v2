@@ -1,7 +1,7 @@
 import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
 import 'package:better_bus_v2/data_provider/vitalis_data_provider.dart';
 import 'package:better_bus_v2/error_handler/custom_error.dart';
-import 'package:better_bus_v2/views/common/custom_futur.dart';
+import 'package:better_bus_v2/views/common/custom_future.dart';
 import 'package:better_bus_v2/views/stops_search_page/stop_bus_item_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';

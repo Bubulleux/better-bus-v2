@@ -1,13 +1,13 @@
 import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
 import 'package:better_bus_v2/data_provider/vitalis_data_provider.dart';
 import 'package:better_bus_v2/error_handler/custom_error.dart';
-import 'package:better_bus_v2/views/common/custom_futur.dart';
+import 'package:better_bus_v2/views/common/custom_future.dart';
 import 'package:better_bus_v2/views/common/decorations.dart';
 import 'package:better_bus_v2/views/stops_search_page/map_place_item_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 
-import '../../app_constante/app_string.dart';
+import '../../app_constant/app_string.dart';
 import '../../model/clean/map_place.dart';
 
 typedef PlaceCallback = void Function(MapPlace place);
@@ -30,7 +30,7 @@ class _MapPlaceSearcherViewState extends State<MapPlaceSearcherView> {
     if (widget.search == "") {
       return null;
     }
-    List<MapPlace> output = await VitalisDataProvider.getPlaceAutocomplet(widget.search);
+    List<MapPlace> output = await VitalisDataProvider.getPlaceAutoComplete(widget.search);
     if (widget.search == ""){
       return null;
     }

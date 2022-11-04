@@ -59,10 +59,9 @@ class _CustomContextMenuState extends State<CustomContextMenu> {
                 ],
               ),
               style: TextButton.styleFrom(
-                  primary: e.isDangerous
+                  foregroundColor: e.isDangerous
                       ? const Color(0xffff0000)
-                      : Colors.black,
-                  shape: RoundedRectangleBorder(
+                      : Colors.black, shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(3)),
                   padding:
                   const EdgeInsets.symmetric(horizontal: 10),

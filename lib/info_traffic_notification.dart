@@ -1,16 +1,12 @@
-import 'package:async/async.dart';
 import 'package:better_bus_v2/data_provider/connectivity_checker.dart';
 import 'package:better_bus_v2/data_provider/local_data_handler.dart';
 import 'package:better_bus_v2/data_provider/vitalis_data_provider.dart';
-import 'package:better_bus_v2/model/clean/bus_line.dart';
-import 'package:better_bus_v2/model/clean/info_trafic.dart';
+import 'package:better_bus_v2/model/clean/info_traffic.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-import 'app_constante/app_string.dart';
 
 Future<bool> checkInfoTraffic() async {
   if (!await ConnectivityChecker.isConnected()) {
-    print("Error no internet connection");
     return false;
   }
 

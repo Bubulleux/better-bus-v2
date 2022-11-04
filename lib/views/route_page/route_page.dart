@@ -2,16 +2,16 @@ import 'package:better_bus_v2/data_provider/vitalis_data_provider.dart';
 import 'package:better_bus_v2/error_handler/custom_error.dart';
 import 'package:better_bus_v2/model/clean/route.dart';
 import 'package:better_bus_v2/views/common/background.dart';
-import 'package:better_bus_v2/views/common/custom_futur.dart';
+import 'package:better_bus_v2/views/common/custom_future.dart';
 import 'package:better_bus_v2/views/common/decorations.dart';
-import 'package:better_bus_v2/views/common/fake_textfiel.dart';
+import 'package:better_bus_v2/views/common/fake_text_field.dart';
 import 'package:better_bus_v2/views/common/labeled_radio.dart';
 import 'package:better_bus_v2/views/route_page/route_widget_item.dart';
 import 'package:better_bus_v2/views/stops_search_page/place_searcher_page.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../../app_constante/app_string.dart';
+import '../../app_constant/app_string.dart';
 import '../../model/clean/map_place.dart';
 
 class RoutePage extends StatefulWidget {
@@ -235,7 +235,7 @@ class _RoutePageState extends State<RoutePage> {
                         return ClipRRect(
                           borderRadius: CustomDecorations.borderRadius,
                           child: ListView.builder(
-                            padding: EdgeInsets.symmetric(horizontal: 5),
+                            padding: const EdgeInsets.symmetric(horizontal: 5),
                             itemBuilder: (context, index) => RouteItemWidget(data[index]),
                             itemCount: data!.length,
                           ),

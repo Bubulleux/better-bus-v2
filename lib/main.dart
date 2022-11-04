@@ -15,7 +15,7 @@ void main() {
   flutterLocalNotificationsPlugin.
     resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.requestPermission();
 
-  Workmanager().initialize(callbackDispatcher, isInDebugMode: false);
+  Workmanager().initialize(callbackDispatcher);
   Workmanager().registerPeriodicTask("check-traffic-info", "check-traffic-info", frequency: const Duration(minutes: 15));
 
   runApp(const MyApp());

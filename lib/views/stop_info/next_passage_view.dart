@@ -1,8 +1,8 @@
-import 'package:better_bus_v2/app_constante/app_string.dart';
+import 'package:better_bus_v2/app_constant/app_string.dart';
 import 'package:better_bus_v2/data_provider/vitalis_data_provider.dart';
 import 'package:better_bus_v2/error_handler/custom_error.dart';
 import 'package:better_bus_v2/model/clean/bus_stop.dart';
-import 'package:better_bus_v2/views/common/custom_futur.dart';
+import 'package:better_bus_v2/views/common/custom_future.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';

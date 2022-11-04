@@ -48,7 +48,7 @@ class ClickableContentContainer extends StatelessWidget {
           child: child,
         ),
         style: ElevatedButton.styleFrom(
-          primary: Theme.of(context).backgroundColor,
+          backgroundColor: Theme.of(context).backgroundColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(40),
           ),

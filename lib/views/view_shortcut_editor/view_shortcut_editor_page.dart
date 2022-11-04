@@ -2,13 +2,13 @@ import 'package:better_bus_v2/model/clean/bus_stop.dart';
 import 'package:better_bus_v2/model/clean/view_shortcut.dart';
 import 'package:better_bus_v2/views/common/background.dart';
 import 'package:better_bus_v2/views/common/decorations.dart';
-import 'package:better_bus_v2/views/common/fake_textfiel.dart';
+import 'package:better_bus_v2/views/common/fake_text_field.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
 import 'package:better_bus_v2/views/stops_search_page/stops_search_page.dart';
 import 'package:better_bus_v2/views/terminus_selector/terminus_selector_page.dart';
 import 'package:flutter/material.dart';
 
-import '../../app_constante/app_string.dart';
+import '../../app_constant/app_string.dart';
 import '../../model/clean/bus_line.dart';
 
 class ViewShortcutEditorPage extends StatefulWidget {
@@ -84,7 +84,7 @@ class _ViewShortcutEditorPageState extends State<ViewShortcutEditorPage> {
                         child: Row(
                           children: [
                             Text(
-                              "Mettre en Favorie",
+                              AppString.addToFavorite,
                               style: Theme.of(context).textTheme.headline5,
                             ),
                             const Spacer(),

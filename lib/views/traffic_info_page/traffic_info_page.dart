@@ -1,8 +1,8 @@
-import 'package:better_bus_v2/app_constante/app_string.dart';
+import 'package:better_bus_v2/app_constant/app_string.dart';
 import 'package:better_bus_v2/data_provider/vitalis_data_provider.dart';
-import 'package:better_bus_v2/model/clean/info_trafic.dart';
+import 'package:better_bus_v2/model/clean/info_traffic.dart';
 import 'package:better_bus_v2/views/common/background.dart';
-import 'package:better_bus_v2/views/common/custom_futur.dart';
+import 'package:better_bus_v2/views/common/custom_future.dart';
 import 'package:better_bus_v2/views/common/decorations.dart';
 import 'package:better_bus_v2/views/interest_line_page/interest_lines_page.dart';
 import 'package:better_bus_v2/views/traffic_info_page/traffic_info_item.dart';
@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 
 import '../../data_provider/local_data_handler.dart';
 import '../../model/clean/bus_line.dart';
-import '../../model/clean/info_trafic.dart';
 
 class TrafficInfoPage extends StatefulWidget {
   const TrafficInfoPage({this.focus, Key? key}) : super(key: key);
@@ -59,7 +58,7 @@ class TrafficInfoPageState extends State<TrafficInfoPage> {
   }
   
   void goSetting() {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) => InterestLinePage())).then((value) => futureBuilderKey.currentState?.refresh());
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const InterestLinePage())).then((value) => futureBuilderKey.currentState?.refresh());
   }
 
   @override
@@ -74,7 +73,7 @@ class TrafficInfoPageState extends State<TrafficInfoPage> {
                 Container(
                   width: double.infinity,
                   decoration: CustomDecorations.of(context).boxBackground,
-                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: Wrap(
                     crossAxisAlignment: WrapCrossAlignment.center,
                     alignment: WrapAlignment.spaceBetween,

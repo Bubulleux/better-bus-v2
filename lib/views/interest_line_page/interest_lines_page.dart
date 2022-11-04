@@ -1,8 +1,8 @@
-import 'package:better_bus_v2/app_constante/app_string.dart';
+import 'package:better_bus_v2/app_constant/app_string.dart';
 import 'package:better_bus_v2/data_provider/local_data_handler.dart';
 import 'package:better_bus_v2/data_provider/vitalis_data_provider.dart';
 import 'package:better_bus_v2/model/clean/bus_line.dart';
-import 'package:better_bus_v2/views/common/custom_futur.dart';
+import 'package:better_bus_v2/views/common/custom_future.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -118,7 +118,7 @@ class _LineItemState extends State<LineItem> {
       onTap: tap,
       child: Container(
         width: double.infinity,
-        padding: EdgeInsets.all(3),
+        padding: const EdgeInsets.all(3),
         child: Row(
           children: [
             LineWidget(widget.line, 40),

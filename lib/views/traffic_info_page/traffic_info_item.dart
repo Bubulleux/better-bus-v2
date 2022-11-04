@@ -1,4 +1,4 @@
-import 'package:better_bus_v2/model/clean/info_trafic.dart';
+import 'package:better_bus_v2/model/clean/info_traffic.dart';
 import 'package:better_bus_v2/views/common/decorations.dart';
 import 'package:better_bus_v2/views/common/extendable_view.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
