@@ -1,6 +1,6 @@
 class AppString{
 
-  static String appName = "Better Bus Poitiers";
+  static String appName = "Better Bus";
 
   static const retry = "Re-esaiyer";
   static const findStop = "Chercher un arret";
