@@ -33,9 +33,10 @@ class TrafficInfoPageState extends State<TrafficInfoPage> {
     infoList.sort(
         (a, b) {
           List<int> compareValues = [
-            (favoriteLines.intersection(a.linesId?.toSet() ?? {}).length).compareTo(favoriteLines.intersection(b.linesId?.toSet() ?? {}).length),
             (a.isActive  ? 1 : 0).compareTo(b.isActive ? 1 : 0),
             ((a.linesId != null ? 0 : 1)).compareTo(b.linesId != null ? 0 : 1),
+            (favoriteLines.intersection(a.linesId?.toSet() ?? {}).length).compareTo(favoriteLines.intersection(b.linesId?.toSet() ?? {}).length),
+            BusLine.compareID((b.linesId?[0] ?? ""), (a.linesId?[0] ?? ""))
           ];
           for (int compareValues in compareValues) {
             if (compareValues != 0) {

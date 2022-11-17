@@ -15,15 +15,19 @@ void main() {
   flutterLocalNotificationsPlugin.
     resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.requestPermission();
 
-  Workmanager().initialize(callbackDispatcher);
-  Workmanager().registerPeriodicTask("check-traffic-info", "check-traffic-info", frequency: const Duration(minutes: 15));
-
+  Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
+  Workmanager().registerPeriodicTask("check-traffic-info", "checkTrafficInfo", frequency: const Duration(minutes: 15));
+  checkInfoTraffic();
   runApp(const MyApp());
 }
 
 void callbackDispatcher() {
   Workmanager().executeTask((taskName, inputData) {
     return checkInfoTraffic();
+    switch (taskName) {
+      case "checkTrafficInfo":
+    }
+    return Future.value(true);
   });
 }
 

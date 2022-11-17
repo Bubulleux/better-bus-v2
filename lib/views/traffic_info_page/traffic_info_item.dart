@@ -42,7 +42,6 @@ class _TrafficInfoItemState extends State<TrafficInfoItem> with SingleTickerProv
     for (String lineID in widget.infoTraffic.linesId ?? []) {
       itemLines.add(widget.busLines[lineID]!);
     }
-    itemLines.sort();
 
     return Padding(
       padding: const EdgeInsets.all(8.0),

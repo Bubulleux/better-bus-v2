@@ -1,3 +1,5 @@
+import 'package:better_bus_v2/model/clean/bus_line.dart';
+
 class InfoTraffic {
   InfoTraffic({
     required this.id,
@@ -11,7 +13,9 @@ class InfoTraffic {
     required this.linesId,
     required this.isActive,
     required this.isDisplay,
-  });
+  }) {
+    linesId?.sort(BusLine.compareID);
+  }
 
   InfoTraffic.fromJson(Map<String, dynamic> json): this(
     id: json["info_id"],

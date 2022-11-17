@@ -6,18 +6,14 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 
 Future<bool> checkInfoTraffic() async {
-  if (!await ConnectivityChecker.isConnected()) {
-    return false;
-  }
 
-  List<InfoTraffic> infoTraffics = await VitalisDataProvider.getTrafficInfo();
-  Set<String> interestedBusLines = await LocalDataHandler.loadInterestedLine();
-  Set<int>? alreadyPushNotifications = await LocalDataHandler.loadAlreadyPushNotification();
+
 
   FlutterLocalNotificationsPlugin flip = FlutterLocalNotificationsPlugin();
   var android = const AndroidInitializationSettings('@mipmap/ic_launcher');
   var settings = InitializationSettings(android: android);
   await flip.initialize(settings);
+
   var androidPlatformChannelSpecifics = const AndroidNotificationDetails(
       "info-traffic",
       "info-traffic",
@@ -27,6 +23,17 @@ Future<bool> checkInfoTraffic() async {
   var platformChannelSpecifics = NotificationDetails(
     android: androidPlatformChannelSpecifics,
   );
+
+  if (!await ConnectivityChecker.isConnected()) {
+    await flip.show(99, "Connection Error",
+        null,
+        platformChannelSpecifics);
+  }
+
+  List<InfoTraffic> infoTraffics = await VitalisDataProvider.getTrafficInfo();
+  Set<String> interestedBusLines = await LocalDataHandler.loadInterestedLine();
+  Set<int>? alreadyPushNotifications = await LocalDataHandler.loadAlreadyPushNotification();
+
 
   alreadyPushNotifications ??= {};
   for (InfoTraffic infoTraffic in infoTraffics) {
