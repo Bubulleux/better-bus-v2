@@ -1,3 +1,4 @@
+import 'package:better_bus_v2/data_provider/local_data_handler.dart';
 import 'package:better_bus_v2/info_traffic_notification.dart';
 import 'package:better_bus_v2/views/common/decorations.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +7,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:workmanager/workmanager.dart';
+
+@pragma('vm:entry-point')
+void callbackDispatcher() {
+  Workmanager().executeTask((taskName, inputData) async {
+    await LocalDataHandler.addLog("Work Manager Manage");
+    return checkInfoTraffic();
+  });
+}
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,25 +25,13 @@ void main() {
     resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.requestPermission();
 
   Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
-  Workmanager().registerPeriodicTask("check-traffic-info", "checkTrafficInfo", frequency: const Duration(minutes: 15));
-  checkInfoTraffic();
   runApp(const MyApp());
-}
-
-void callbackDispatcher() {
-  Workmanager().executeTask((taskName, inputData) {
-    return checkInfoTraffic();
-    switch (taskName) {
-      case "checkTrafficInfo":
-    }
-    return Future.value(true);
-  });
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

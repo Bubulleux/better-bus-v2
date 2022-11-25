@@ -121,7 +121,9 @@ class BusLine extends Comparable<BusLine>{
   static int compareID(String a, String b) {
     List<String> parsedA = parseId(a);
     List<String> parsedB = parseId(b);
-
+    if (a.isEmpty ||b.isEmpty) {
+      return a.compareTo(b);
+    }
     List<Function> compareFunctions = [
       (List<String> id) => int.tryParse(id[0]) ?? int.tryParse(id[0]) ?? double.infinity,
       (List<String> id) => id.length == 1  && id[0].length == 1 ? id[0].codeUnits[0] : double.infinity,

@@ -1,3 +1,4 @@
+import 'package:better_bus_v2/data_provider/local_data_handler.dart';
 import 'package:better_bus_v2/error_handler/custom_error.dart';
 import 'package:flutter/material.dart';
 
@@ -114,6 +115,7 @@ class CustomFutureBuilderState<T> extends State<CustomFutureBuilder> with Widget
         error = widget.errorTest!(data);
       }
     } on Exception catch(e) {
+      LocalDataHandler.addLog(e.toString());
       error = e.toError();
     } on Error catch(e) {
       error = e is CustomError ? e : CustomError(e.toString(), Icons.error, false);

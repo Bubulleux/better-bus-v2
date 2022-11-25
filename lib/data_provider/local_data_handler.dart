@@ -71,7 +71,37 @@ class  LocalDataHandler {
   static Future<void> saveAlreadyPushNotification(Set<int> lines) async {
     await checkPreferences();
 
-    preferences!.setStringList("already-push-notification", lines.map((e) => e.toString()).toList());
+    await preferences!.setStringList("already-push-notification", lines.map((e) => e.toString()).toList());
+  }
+  
+  static Future<List<String>> loadLog() async {
+    await checkPreferences();
+    return preferences!.getStringList("log") ?? [];
+  }
+  
+  static Future<void> addLog(String log) async{
+    await checkPreferences();
+    List<String> previousLog = await loadLog();
+    previousLog.add("[${DateTime.now().toString()}]:\n$log");
+
+    await preferences!.setStringList("log", previousLog);
+  }
+
+  static Future<void> clearLog() async{
+    await checkPreferences();
+
+    await preferences!.setStringList("log", []);
+  }
+
+  static Future<Map<String, String>> getAllPref() async {
+    await checkPreferences();
+    Set<String> keys = preferences!.getKeys();
+    Map<String, String> values = {};
+    for (String key in keys) {
+      values[key] = preferences!.get(key).toString();
+    }
+
+    return values;
   }
 
 }

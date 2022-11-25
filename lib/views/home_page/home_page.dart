@@ -6,12 +6,15 @@ import 'package:better_bus_v2/views/common/background.dart';
 import 'package:better_bus_v2/views/common/decorations.dart';
 import 'package:better_bus_v2/views/home_page/navigation_bar.dart';
 import 'package:better_bus_v2/views/home_page/shortcut_section.dart';
+import 'package:better_bus_v2/views/log_view.dart';
+import 'package:better_bus_v2/views/preferences_view.dart';
 import 'package:better_bus_v2/views/route_page/route_page.dart';
 import 'package:better_bus_v2/views/stop_info/stop_info_page.dart';
 import 'package:better_bus_v2/views/traffic_info_page/traffic_info_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:home_widget/home_widget.dart';
+import 'package:workmanager/workmanager.dart';
 
 import '../stops_search_page/stops_search_page.dart';
 
@@ -62,6 +65,9 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     GpsDataProvider.askForGPS();
     HomeWidget.widgetClicked.listen(launchWithWidget);
+    Workmanager().registerPeriodicTask("check-traffic-info", "checkTrafficInfo",
+        frequency: const Duration(minutes: 15),
+        constraints: Constraints(networkType: NetworkType.connected)).then((value) => LocalDataHandler.addLog("WorkManager Task Init"));
   }
 
   @override
@@ -78,6 +84,17 @@ class _HomePageState extends State<HomePage> {
         launchShortcutByWidget(uri.pathSegments[0]);
       }
     }
+  }
+
+  void gotoLog() {
+    Navigator.push(context, MaterialPageRoute(
+      builder: (context) => const LogView(),
+    ));
+  }
+  void gotoPrefs() {
+    Navigator.push(context, MaterialPageRoute(
+      builder: (context) => const PreferencesView(),
+    ));
   }
 
   void checkIfAppIsNotificationLaunched() async{
@@ -131,6 +148,9 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       IconButton(onPressed: newShortcut, icon: const Icon(Icons.add)),
+                      IconButton(onPressed: gotoLog, icon: const Icon(Icons.newspaper)),
+                      IconButton(onPressed: gotoPrefs, icon: const Icon(Icons.settings)),
+
                     ],
                   ),
                 ),
