@@ -40,17 +40,31 @@ class SearchBusStopViewState extends State<SearchBusStopView>{
   SharedPreferences? preferences;
 
   LocationData? location;
+  Map<int, double>? stopDistance;
 
   late GlobalKey<CustomFutureBuilderState> futureBuilderState;
 
   Future<List<BusStop>> getValidStops() async{
     stops ??= await VitalisDataProvider.getStops();
     historic ??= await getHistoric();
+    location ??= await GpsDataProvider.getLocation();
+
+    if (location != null) {
+      stopDistance = {};
+      for (BusStop stop in stops!) {
+        stopDistance![stop.id] = GpsDataProvider.calculateDistance(stop.latitude, stop.longitude, location!.latitude, location!.longitude);
+      }
+    }
 
     List<BusStop> output = [];
     if (widget.search == null) {
       return output;
     }
+
+    if (location != null) {
+      stops!.sort((a, b) => stopDistance![a.id]!.compareTo(stopDistance![b.id]!));
+    }
+
 
     for (BusStop stops in historic!) {
       if (stops.name.toLowerCase().contains(widget.search!.toLowerCase())) {
@@ -64,11 +78,6 @@ class SearchBusStopViewState extends State<SearchBusStopView>{
       }
     }
     return output;
-  }
-
-  Future getLocation() async {
-    location = await GpsDataProvider.getLocation();
-    setState(() {});
   }
 
   Future<List<BusStop>> getHistoric() async {
@@ -118,7 +127,6 @@ class SearchBusStopViewState extends State<SearchBusStopView>{
   void initState() {
     super.initState();
     futureBuilderState = GlobalKey();
-    getLocation();
   }
 
   @override
@@ -141,8 +149,8 @@ class SearchBusStopViewState extends State<SearchBusStopView>{
             BusStop stop = data[index];
             return BusStopWidget(
               stop: data[index],
-              stopDistance: location != null ?
-              (GpsDataProvider.calculateDistance(location!.latitude, location!.longitude,stop.latitude, stop.longitude)  * 100).roundToDouble() / 100:
+              stopDistance: stopDistance != null ?
+              (stopDistance![stop.id]!  * 100).roundToDouble() / 100:
               null,
               inHistoric: historic!.contains(data[index]),
               onPressed: () => stopSelected(stop),

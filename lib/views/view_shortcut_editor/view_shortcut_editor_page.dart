@@ -53,118 +53,127 @@ class _ViewShortcutEditorPageState extends State<ViewShortcutEditorPage> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Background(
-        child: SafeArea(
-          child: Container(
-            padding: const EdgeInsets.all(15),
-            color: Theme.of(context).backgroundColor,
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextField(
-                    controller: textFieldNameController,
-                    style:Theme.of(context).textTheme.headline5,
-                    decoration:
-                        const InputDecoration(labelText: AppString.shortcutNameLabel),
+        child: Container(
+          color: Theme.of(context).backgroundColor,
+          child: SafeArea(
+            child: Container(
+              padding: const EdgeInsets.all(15),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextField(
+                      controller: textFieldNameController,
+                      style: Theme.of(context).textTheme.headline5,
+                      decoration: const InputDecoration(
+                        labelText: AppString.shortcutNameLabel,
+                      ),
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      onTap: () =>
-                      setState(() {
-                        shortcutIsFavorite = !shortcutIsFavorite;
-                      }),
-                      borderRadius: CustomDecorations.borderRadius,
-                      child: Container(
-                        decoration: CustomDecorations.of(context).boxOutlined,
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                        child: Row(
-                          children: [
-                            Text(
-                              AppString.addToFavorite,
-                              style: Theme.of(context).textTheme.headline5,
-                            ),
-                            const Spacer(),
-                            Icon(shortcutIsFavorite ? Icons.star : Icons.star_outline, color: Theme.of(context).primaryColor,)
-                          ],
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () => setState(() {
+                          shortcutIsFavorite = !shortcutIsFavorite;
+                        }),
+                        borderRadius: CustomDecorations.borderRadius,
+                        child: Container(
+                          decoration: CustomDecorations.of(context).boxOutlined,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 8),
+                          child: Row(
+                            children: [
+                              Text(
+                                AppString.addToFavorite,
+                                style: Theme.of(context).textTheme.headline5,
+                              ),
+                              const Spacer(),
+                              Icon(
+                                shortcutIsFavorite
+                                    ? Icons.star
+                                    : Icons.star_outline,
+                                color: Theme.of(context).primaryColor,
+                              )
+                            ],
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: FakeTextField(
-                    onPress: changeBusStop,
-                    value: shortcutBusStop?.name,
-                    prefixIcon: const Icon(Icons.directions_bus_outlined),
-                    icon: Icons.change_circle_outlined,
-                    hint: AppString.selectBusStop,
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: FakeTextField(
+                      onPress: changeBusStop,
+                      value: shortcutBusStop?.name,
+                      prefixIcon: const Icon(Icons.directions_bus_outlined),
+                      icon: Icons.change_circle_outlined,
+                      hint: AppString.selectBusStop,
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    decoration: CustomDecorations.of(context).boxOutlined,
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      decoration: CustomDecorations.of(context).boxOutlined,
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 6),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            AppString.directionLabel,
+                            style: Theme.of(context).textTheme.headline5,
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          if (shortCutBusLines.isNotEmpty)
+                            Wrap(
+                              runAlignment: WrapAlignment.start,
+                              spacing: 5,
+                              runSpacing: 5,
+                              children: shortCutBusLines
+                                  .map((e) => LineWidget(e, 40))
+                                  .toList(),
+                            )
+                          else
+                            const Center(
+                                child: Text(AppString.emptyDirectionSelection)),
+                          const VerticalDivider(),
+                          Center(
+                            child: ElevatedButton(
+                              onPressed: selectTerminus,
+                              child: const Text(AppString.changeDirection),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  const Spacer(),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 5),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Text(
-                          AppString.directionLabel,
-                          style: Theme.of(context).textTheme.headline5,
+                        ElevatedButton(
+                          onPressed: cancel,
+                          child: const Text(AppString.cancelLabel),
                         ),
                         const SizedBox(
-                          height: 5,
+                          width: 20,
                         ),
-                        if (shortCutBusLines.isNotEmpty)
-                          Wrap(
-                            runAlignment: WrapAlignment.start,
-                            spacing: 5,
-                            runSpacing: 5,
-                            children: shortCutBusLines
-                                .map((e) => LineWidget(e, 40))
-                                .toList(),
-                          )
-                        else
-                          const Center(child: Text(AppString.emptyDirectionSelection))
-                        ,
-                        const VerticalDivider(),
-                        Center(
-                          child: ElevatedButton(
-                            onPressed: selectTerminus,
-                            child: const Text(AppString.changeDirection),
-                          ),
+                        ElevatedButton(
+                          onPressed: valid,
+                          child: const Text(AppString.validateLabel),
                         )
                       ],
                     ),
-                  ),
-                ),
-                const Spacer(),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 5),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      ElevatedButton(
-                        onPressed: cancel,
-                        child: const Text(AppString.cancelLabel),
-                      ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      ElevatedButton(
-                        onPressed: valid,
-                        child: const Text(AppString.validateLabel),
-                      )
-                    ],
-                  ),
-                )
-              ],
+                  )
+                ],
+              ),
             ),
           ),
         ),
@@ -224,8 +233,9 @@ class _ViewShortcutEditorPageState extends State<ViewShortcutEditorPage> {
   void valid() {
     String? error = checkError();
     if (error != null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(error),
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(error),
         ),
       );
       return;

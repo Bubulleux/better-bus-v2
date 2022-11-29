@@ -20,7 +20,7 @@ class _PlaceSearcherPageState extends State<PlaceSearcherPage> with TickerProvid
   late TabController tabController;
 
   void stopCallback(BusStop stop) {
-    Navigator.of(context).pop(MapPlace(title: stop.name, type: "busStop", latitude: stop.latitude, longitude: stop.longitude));
+    Navigator.of(context).pop(MapPlace(title: stop.name, address: "", type: "busStop", latitude: stop.latitude, longitude: stop.longitude));
   }
 
   void placeCallback(MapPlace place){

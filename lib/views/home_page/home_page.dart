@@ -125,62 +125,68 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       body: SafeArea(
         child: Background(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Container(
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  decoration: CustomDecorations
-                      .of(context)
-                      .boxBackground,
-                  child: Row(
+          child: Column(
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
                     children: [
-                      Expanded(
-                        child: Text(
-                          AppString.shortcut,
-                          style: Theme
-                              .of(context)
-                              .textTheme
-                              .headlineSmall,
+                      Container(
+                        padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        decoration: CustomDecorations
+                            .of(context)
+                            .boxBackground,
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                AppString.shortcut,
+                                style: Theme
+                                    .of(context)
+                                    .textTheme
+                                    .headlineSmall,
+                              ),
+                            ),
+                            IconButton(onPressed: newShortcut, icon: const Icon(Icons.add)),
+                            IconButton(onPressed: gotoLog, icon: const Icon(Icons.newspaper)),
+                            IconButton(onPressed: gotoPrefs, icon: const Icon(Icons.settings)),
+
+                          ],
                         ),
                       ),
-                      IconButton(onPressed: newShortcut, icon: const Icon(Icons.add)),
-                      IconButton(onPressed: gotoLog, icon: const Icon(Icons.newspaper)),
-                      IconButton(onPressed: gotoPrefs, icon: const Icon(Icons.settings)),
 
+                      Expanded(
+                        child: ShortcutWidgetRoot(key: shortcutSection),
+                      )
                     ],
                   ),
                 ),
-
-                Expanded(
-                  child: ShortcutWidgetRoot(key: shortcutSection),
-                )
-              ],
-            ),
+              ),
+              CustomNavigationBar(
+                child: [
+                  CustomNavigationItem(
+                    label: AppString.searchLabel,
+                    icon: Icons.search,
+                    onPress: searchBusStop,
+                  ),
+                  CustomNavigationItem(
+                    label: AppString.routeLabel,
+                    icon: Icons.route,
+                    onPress: goToRoutePage,
+                  ),
+                  CustomNavigationItem(
+                    label: AppString.trafficInfoLabel,
+                    icon: Icons.bus_alert,
+                    onPress: goToTrafficInfo,
+                  )
+                ],
+              ),
+            ],
           ),
         ),
-      ),
-      bottomNavigationBar: CustomNavigationBar(
-        child: [
-          CustomNavigationItem(
-            label: AppString.searchLabel,
-            icon: Icons.search,
-            onPress: searchBusStop,
-          ),
-          CustomNavigationItem(
-            label: AppString.routeLabel,
-            icon: Icons.route,
-            onPress: goToRoutePage,
-          ),
-          CustomNavigationItem(
-            label: AppString.trafficInfoLabel,
-            icon: Icons.bus_alert,
-            onPress: goToTrafficInfo,
-          )
-        ],
       ),
     );
   }

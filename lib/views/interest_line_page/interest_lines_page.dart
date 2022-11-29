@@ -52,7 +52,10 @@ class _InterestLinePageState extends State<InterestLinePage> {
           height: double.infinity,
           child: Column(
             children: [
-              const Text(AppString.selectLine),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(AppString.selectLine, style: Theme.of(context).textTheme.headlineSmall),
+              ),
               Expanded(
                 child: CustomFutureBuilder(future: getLines, onData: (context, data, refresh) {
                   return ListView.separated(

@@ -65,7 +65,7 @@ class _RouteItemWidgetState extends State<RouteItemWidget> {
         color: Colors.transparent,
         child: InkWell(
           borderRadius: CustomDecorations.borderRadius,
-          splashColor: Colors.black.withOpacity(150),
+          // splashColor: Colors.black.withOpacity(150),
           onTap: showDetail,
           child: Container(
             decoration: CustomDecorations.of(context).boxOutlined,
