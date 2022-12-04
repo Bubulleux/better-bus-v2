@@ -8,6 +8,7 @@ import 'package:better_bus_v2/views/interest_line_page/interest_lines_page.dart'
 import 'package:better_bus_v2/views/traffic_info_page/traffic_info_item.dart';
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../../data_provider/local_data_handler.dart';
 import '../../model/clean/bus_line.dart';
@@ -23,6 +24,7 @@ class TrafficInfoPage extends StatefulWidget {
 
 class TrafficInfoPageState extends State<TrafficInfoPage> {
   late final GlobalKey<CustomFutureBuilderState> futureBuilderKey;
+  final GlobalKey focusKey = GlobalKey();
 
   Future<InfoTrafficObject> getAllInformation() async {
     List<InfoTraffic> infoList = await VitalisDataProvider.getTrafficInfo();
@@ -36,10 +38,8 @@ class TrafficInfoPageState extends State<TrafficInfoPage> {
           (a.isActive ? 1 : 0).compareTo(b.isActive ? 1 : 0),
           ((a.linesId != null ? 0 : 1)).compareTo(b.linesId != null ? 0 : 1),
           (favoriteLines.intersection(a.linesId?.toSet() ?? {}).length)
-              .compareTo(
-                  favoriteLines.intersection(b.linesId?.toSet() ?? {}).length),
-          BusLine.compareID(
-              (b.linesId?.firstOrNull ?? ""), (a.linesId?.firstOrNull ?? ""))
+              .compareTo(favoriteLines.intersection(b.linesId?.toSet() ?? {}).length),
+          BusLine.compareID((b.linesId?.firstOrNull ?? ""), (a.linesId?.firstOrNull ?? ""))
         ];
         for (int compareValues in compareValues) {
           if (compareValues != 0) {
@@ -65,6 +65,10 @@ class TrafficInfoPageState extends State<TrafficInfoPage> {
         .then((value) => futureBuilderKey.currentState?.refresh());
   }
 
+  void showItem() {
+    Scrollable.ensureVisible(focusKey.currentContext!);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -87,8 +91,10 @@ class TrafficInfoPageState extends State<TrafficInfoPage> {
                         style: Theme.of(context).textTheme.headlineSmall,
                       ),
                       IconButton(
-                          onPressed: goSetting,
-                          icon: const Icon(Icons.settings))
+                        onPressed: showItem,
+                        icon: const Icon(Icons.transfer_within_a_station),
+                      ),
+                      IconButton(onPressed: goSetting, icon: const Icon(Icons.settings))
                     ],
                   ),
                 ),
@@ -96,10 +102,15 @@ class TrafficInfoPageState extends State<TrafficInfoPage> {
                   child: CustomFutureBuilder<InfoTrafficObject>(
                     future: getAllInformation,
                     key: futureBuilderKey,
-                    onData: (context, data, refresh) => ListView.builder(
+                    onData: (context, data, refresh) => ScrollablePositionedList.builder(
                       itemCount: data.infoList.length,
-                      itemBuilder: (context, index) =>
-                          TrafficInfoItem(data.infoList[index], data.busLines),
+                      initialScrollIndex: widget.focus != null ? data.infoList.indexWhere((e) => e.id == widget.focus) : 0,
+                      itemBuilder: (context, index) => TrafficInfoItem(
+                        data.infoList[index],
+                        data.busLines,
+                        // key: data.infoList[index].id == widget.focus ? focusKey : null,
+                        deploy: data.infoList[index].id == widget.focus,
+                      ),
                     ),
                   ),
                 )

@@ -16,7 +16,8 @@ void callbackDispatcher() {
   });
 }
 
-void main() {
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
@@ -25,12 +26,24 @@ void main() {
     resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.requestPermission();
 
   Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
-  runApp(const MyApp());
+  int? notificationID = await checkIfAppIsNotificationLaunched();
+  runApp(MyApp(launchNotificationId:  notificationID,));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+Future<int?> checkIfAppIsNotificationLaunched() async{
+  NotificationAppLaunchDetails? launchNotificationDetails =
+  await FlutterLocalNotificationsPlugin().getNotificationAppLaunchDetails();
+  if (launchNotificationDetails == null || launchNotificationDetails.notificationResponse == null){
+    return null;
+  }
+  return launchNotificationDetails.notificationResponse!.id;
+}
 
+
+class MyApp extends StatelessWidget {
+  const MyApp({this.launchNotificationId, Key? key}) : super(key: key);
+
+  final int? launchNotificationId;
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +91,7 @@ class MyApp extends StatelessWidget {
         Locale('en', ""),
       ],
       // locale: const Locale('fr', ""),
-      home: const HomePage(),
+      home: HomePage(launchNotificationId: launchNotificationId),
     );
   }
 }

@@ -10,10 +10,11 @@ import 'package:url_launcher/url_launcher_string.dart';
 import '../../model/clean/bus_line.dart';
 
 class TrafficInfoItem extends StatefulWidget {
-  const TrafficInfoItem(this.infoTraffic, this.busLines, {Key? key}) : super(key: key);
+  const TrafficInfoItem(this.infoTraffic, this.busLines, {this.deploy = false, Key? key}) : super(key: key);
 
   final InfoTraffic infoTraffic;
   final Map<String, BusLine> busLines;
+  final bool deploy;
 
   static final dateFormat = DateFormat("EE d MMM", "fr");
 
@@ -28,6 +29,9 @@ class _TrafficInfoItemState extends State<TrafficInfoItem> with SingleTickerProv
   void initState() {
     super.initState();
     expandableController = ExpandableWidgetController(root: this);
+    if (widget.deploy) {
+      expandableController.tickAnimation();
+    }
   }
 
   @override
@@ -65,6 +69,7 @@ class _TrafficInfoItemState extends State<TrafficInfoItem> with SingleTickerProv
                         fontWeight: widget.infoTraffic.isActive ? FontWeight.bold : FontWeight.normal,
                       ),
                 ),
+                Text(widget.infoTraffic.id.toString()),
                 const SizedBox(
                   height: 5,
                 ),

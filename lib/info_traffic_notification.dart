@@ -47,7 +47,7 @@ Future<bool> checkInfoTraffic() async {
   }
 
   alreadyPushNotifications = alreadyPushNotifications.intersection(infoTraffics.where((element) => element.isDisplay).map((e) => e.id).toSet());
-  await LocalDataHandler.saveAlreadyPushNotification(alreadyPushNotifications);
+  // await LocalDataHandler.saveAlreadyPushNotification(alreadyPushNotifications);
   await LocalDataHandler.addLog("Notification Routine Success");
   return true;
 }

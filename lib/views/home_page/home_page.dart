@@ -1,6 +1,7 @@
 import 'package:better_bus_v2/app_constant/app_string.dart';
 import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
 import 'package:better_bus_v2/data_provider/local_data_handler.dart';
+import 'package:better_bus_v2/info_traffic_notification.dart';
 import 'package:better_bus_v2/model/clean/view_shortcut.dart';
 import 'package:better_bus_v2/views/common/background.dart';
 import 'package:better_bus_v2/views/common/decorations.dart';
@@ -19,7 +20,9 @@ import 'package:workmanager/workmanager.dart';
 import '../stops_search_page/stops_search_page.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({this.launchNotificationId, Key? key}) : super(key: key);
+
+  final int? launchNotificationId;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -75,7 +78,19 @@ class _HomePageState extends State<HomePage> {
     super.didChangeDependencies();
     HomeWidget.initiallyLaunchedFromHomeWidget().then(launchWithWidget);
     HomeWidget.widgetClicked.listen(launchWithWidget);
+    checkIfAppIsNotificationLaunched();
   }
+
+  Future checkIfAppIsNotificationLaunched() async{
+    NotificationAppLaunchDetails? launchNotificationDetails =
+    await FlutterLocalNotificationsPlugin().getNotificationAppLaunchDetails();
+    LocalDataHandler.addLog("Check Notification");
+    if (launchNotificationDetails == null || launchNotificationDetails.notificationResponse == null){
+      return;
+    }
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => TrafficInfoPage(focus:  widget.launchNotificationId,)));
+  }
+
 
 
   void launchWithWidget(Uri? uri) {
@@ -97,14 +112,7 @@ class _HomePageState extends State<HomePage> {
     ));
   }
 
-  void checkIfAppIsNotificationLaunched() async{
-    NotificationAppLaunchDetails? launchNotificationDetails =
-      await FlutterLocalNotificationsPlugin().getNotificationAppLaunchDetails();
-    if (launchNotificationDetails == null || launchNotificationDetails.notificationResponse == null){
-      return;
-    }
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) => TrafficInfoPage(focus: launchNotificationDetails.notificationResponse!.id)));
-  }
+
 
   void launchShortcutByWidget(String shortcutName) async {
     List<ViewShortcut> shortcuts = await LocalDataHandler.loadShortcut();
@@ -118,6 +126,10 @@ class _HomePageState extends State<HomePage> {
         MaterialPageRoute(
           builder: (context) => StopInfoPage(shortcut.stop, lines: shortcut.lines,),
         ));
+  }
+
+  void launchTestNotification() {
+    checkInfoTraffic();
   }
 
   @override
@@ -151,6 +163,7 @@ class _HomePageState extends State<HomePage> {
                               ),
                             ),
                             IconButton(onPressed: newShortcut, icon: const Icon(Icons.add)),
+                            IconButton(onPressed: launchTestNotification, icon: const Icon(Icons.notification_add)),
                             IconButton(onPressed: gotoLog, icon: const Icon(Icons.newspaper)),
                             IconButton(onPressed: gotoPrefs, icon: const Icon(Icons.settings)),
 
