@@ -1,4 +1,3 @@
-import 'package:better_bus_v2/data_provider/local_data_handler.dart';
 import 'package:better_bus_v2/info_traffic_notification.dart';
 import 'package:better_bus_v2/views/common/decorations.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +10,6 @@ import 'package:workmanager/workmanager.dart';
 @pragma('vm:entry-point')
 void callbackDispatcher() {
   Workmanager().executeTask((taskName, inputData) async {
-    await LocalDataHandler.addLog("Work Manager Manage");
     return checkInfoTraffic();
   });
 }
@@ -26,25 +24,21 @@ void main() async {
     resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.requestPermission();
 
   Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
-  int? notificationID = await checkIfAppIsNotificationLaunched();
-  runApp(MyApp(launchNotificationId:  notificationID,));
-}
-
-Future<int?> checkIfAppIsNotificationLaunched() async{
-  NotificationAppLaunchDetails? launchNotificationDetails =
-  await FlutterLocalNotificationsPlugin().getNotificationAppLaunchDetails();
-  if (launchNotificationDetails == null || launchNotificationDetails.notificationResponse == null){
-    return null;
-  }
-  return launchNotificationDetails.notificationResponse!.id;
+  runApp(MyApp());
 }
 
 
-class MyApp extends StatelessWidget {
-  const MyApp({this.launchNotificationId, Key? key}) : super(key: key);
 
-  final int? launchNotificationId;
 
+class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver{
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -91,7 +85,7 @@ class MyApp extends StatelessWidget {
         Locale('en', ""),
       ],
       // locale: const Locale('fr', ""),
-      home: HomePage(launchNotificationId: launchNotificationId),
+      home: HomePage(),
     );
   }
 }

@@ -4,7 +4,6 @@ import 'package:better_bus_v2/views/common/fake_text_field.dart';
 import 'package:better_bus_v2/views/stops_search_page/stops_search_page.dart';
 import 'package:better_bus_v2/views/stop_info/timetable_view.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 
 import '../../model/clean/bus_line.dart';
 import '../../model/clean/bus_stop.dart';

@@ -6,12 +6,8 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 
 Future<bool> checkInfoTraffic() async {
-  await LocalDataHandler.addLog("Notification Routine Call");
 
   FlutterLocalNotificationsPlugin flip = FlutterLocalNotificationsPlugin();
-  var android = const AndroidInitializationSettings('@mipmap/ic_launcher');
-  var settings = InitializationSettings(android: android);
-  await flip.initialize(settings);
 
   var androidPlatformChannelSpecifics = const AndroidNotificationDetails(
       "info-traffic",
@@ -47,7 +43,6 @@ Future<bool> checkInfoTraffic() async {
   }
 
   alreadyPushNotifications = alreadyPushNotifications.intersection(infoTraffics.where((element) => element.isDisplay).map((e) => e.id).toSet());
-  // await LocalDataHandler.saveAlreadyPushNotification(alreadyPushNotifications);
-  await LocalDataHandler.addLog("Notification Routine Success");
+  await LocalDataHandler.saveAlreadyPushNotification(alreadyPushNotifications);
   return true;
 }

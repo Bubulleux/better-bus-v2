@@ -20,9 +20,7 @@ import 'package:workmanager/workmanager.dart';
 import '../stops_search_page/stops_search_page.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({this.launchNotificationId, Key? key}) : super(key: key);
-
-  final int? launchNotificationId;
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -70,7 +68,8 @@ class _HomePageState extends State<HomePage> {
     HomeWidget.widgetClicked.listen(launchWithWidget);
     Workmanager().registerPeriodicTask("check-traffic-info", "checkTrafficInfo",
         frequency: const Duration(minutes: 15),
-        constraints: Constraints(networkType: NetworkType.connected)).then((value) => LocalDataHandler.addLog("WorkManager Task Init"));
+        constraints: Constraints(networkType: NetworkType.connected));
+    initFlutterNotificationPlugin();
   }
 
   @override
@@ -84,11 +83,24 @@ class _HomePageState extends State<HomePage> {
   Future checkIfAppIsNotificationLaunched() async{
     NotificationAppLaunchDetails? launchNotificationDetails =
     await FlutterLocalNotificationsPlugin().getNotificationAppLaunchDetails();
-    LocalDataHandler.addLog("Check Notification");
-    if (launchNotificationDetails == null || launchNotificationDetails.notificationResponse == null){
+    if (launchNotificationDetails == null) {
       return;
     }
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) => TrafficInfoPage(focus:  widget.launchNotificationId,)));
+    receiveNotification(launchNotificationDetails.notificationResponse);
+  }
+
+  void receiveNotification(NotificationResponse? response) {
+    if (response == null){
+      return;
+    }
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => TrafficInfoPage(focus:  response.id,)));
+  }
+
+  Future initFlutterNotificationPlugin() async {
+    FlutterLocalNotificationsPlugin flip = FlutterLocalNotificationsPlugin();
+    var android = const AndroidInitializationSettings('@mipmap/ic_launcher');
+    var settings = InitializationSettings(android: android);
+    await flip.initialize(settings, onDidReceiveNotificationResponse: receiveNotification);
   }
 
 
