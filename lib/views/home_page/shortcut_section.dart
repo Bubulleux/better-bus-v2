@@ -30,16 +30,15 @@ class ShortcutWidgetRootState extends State<ShortcutWidgetRoot> {
       ]));
 
   void editShortcut(int? index) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return ViewShortcutEditorPage(index == null ? null : shortcuts![index]);
-    })).then((value) {
+    Navigator.of(context).pushNamed(ViewShortcutEditorPage.routeName, arguments: index == null ? null : shortcuts![index])
+        .then((value) {
       if (value == null || !mounted) {
         return;
       }
       if (index == null) {
-        shortcuts!.add(value);
+        shortcuts!.add(value as ViewShortcut);
       } else {
-        shortcuts![index] = value;
+        shortcuts![index] = value as ViewShortcut;
       }
       LocalDataHandler.saveShortcuts(shortcuts!);
       setState(() {});
@@ -91,11 +90,8 @@ class ShortcutWidgetRootState extends State<ShortcutWidgetRoot> {
   }
 
   void showShortcutContent(int index) {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => StopInfoPage(shortcuts![index].stop, lines: shortcuts![index].lines),
-        ));
+    Navigator.of(context).pushNamed(StopInfoPage.routeName,
+        arguments: StopInfoPageArgument(shortcuts![index].stop, shortcuts![index].lines));
   }
 
   @override

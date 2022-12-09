@@ -51,7 +51,7 @@ class _RouteItemWidgetState extends State<RouteItemWidget> {
   }
 
   void showDetail() {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) => RouteDetailPage(widget.vitalisRoute)));
+    Navigator.of(context).pushNamed(RouteDetailPage.routeName, arguments: widget.vitalisRoute);
   }
 
   @override

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 class LogView extends StatelessWidget {
   const LogView({Key? key}) : super(key: key);
+  static const String routeName = "/log";
 
   Future<List<String>> getLog() async {
     List<String> log = await LocalDataHandler.loadLog();

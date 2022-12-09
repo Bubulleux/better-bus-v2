@@ -10,19 +10,25 @@ import 'package:flutter/material.dart';
 import '../../app_constant/app_string.dart';
 import '../../model/clean/bus_stop.dart';
 
-class TerminusSelectorPage extends StatefulWidget {
-  const TerminusSelectorPage(this.stop,
-      {this.previousData = const [], Key? key})
-      : super(key: key);
-
+class TerminusSelectorPageArgument {
   final BusStop stop;
   final List<BusLine> previousData;
+
+  const TerminusSelectorPageArgument(this.stop, this.previousData);
+}
+
+class TerminusSelectorPage extends StatefulWidget {
+  const TerminusSelectorPage({Key? key}) : super(key: key);
+  static const String routeName = "/terminusSelector";
 
   @override
   State<TerminusSelectorPage> createState() => _TerminusSelectorPageState();
 }
 
 class _TerminusSelectorPageState extends State<TerminusSelectorPage> {
+  late BusStop stop;
+  late List<BusLine> previousData;
+
   List<BusLine>? validBusLine;
   List<List<List<bool>>> selectedTerminus = [];
 
@@ -34,13 +40,13 @@ class _TerminusSelectorPageState extends State<TerminusSelectorPage> {
       return validBusLine!;
     }
 
-    List<BusLine> stopLines = await VitalisDataProvider.getLines(widget.stop) ?? [];
+    List<BusLine> stopLines = await VitalisDataProvider.getLines(stop) ?? [];
     stopLines.sort();
     selectedTerminus = [];
 
 
     for (int i = 0; i < stopLines.length; i++) {
-      int previousLineIndex = widget.previousData
+      int previousLineIndex = previousData
           .indexWhere((element) => element.id == stopLines[i].id);
 
       selectedTerminus.add([
@@ -48,14 +54,14 @@ class _TerminusSelectorPageState extends State<TerminusSelectorPage> {
           if (previousLineIndex == -1) {
             return false;
           }
-          return widget.previousData[previousLineIndex].goDirection.contains(e);
+          return previousData[previousLineIndex].goDirection.contains(e);
 
         }).toList(),
         stopLines[i].backDirection.map((e) {
           if (previousLineIndex == -1) {
             return false;
           }
-          return widget.previousData[previousLineIndex].backDirection.contains(e);
+          return previousData[previousLineIndex].backDirection.contains(e);
 
         }).toList(),
       ]);
@@ -69,8 +75,15 @@ class _TerminusSelectorPageState extends State<TerminusSelectorPage> {
   @override
   void initState() {
     super.initState();
-
     getTerminus();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    TerminusSelectorPageArgument argument = ModalRoute.of(context)!.settings.arguments as TerminusSelectorPageArgument;
+    stop = argument.stop;
+    previousData = argument.previousData;
   }
 
   @override

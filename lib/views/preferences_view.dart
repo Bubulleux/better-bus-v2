@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 class PreferencesView extends StatelessWidget {
   const PreferencesView({Key? key}) : super(key: key);
+  static const String routeName = "/preferences";
 
   Future<List<Widget>> getPreferences() async {
     Map<String, String> preferences =  await LocalDataHandler.getAllPref();

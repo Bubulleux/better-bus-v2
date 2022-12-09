@@ -9,11 +9,16 @@ import '../../model/clean/bus_line.dart';
 import '../../model/clean/bus_stop.dart';
 import 'next_passage_view.dart';
 
-class StopInfoPage extends StatefulWidget {
-  const StopInfoPage(this.stop, {this.lines, Key? key}) : super(key: key);
-
+class StopInfoPageArgument {
   final BusStop stop;
   final List<BusLine>? lines;
+
+  const StopInfoPageArgument(this.stop, this.lines);
+}
+
+class StopInfoPage extends StatefulWidget {
+  const StopInfoPage({Key? key}) : super(key: key);
+  static const String routeName = "/stopInfo";
 
   @override
   State<StopInfoPage> createState() => _StopInfoPageState();
@@ -22,21 +27,29 @@ class StopInfoPage extends StatefulWidget {
 class _StopInfoPageState extends State<StopInfoPage> with SingleTickerProviderStateMixin {
   late final TabController tabController;
   late BusStop stop;
+  late List<BusLine>? lines;
 
   @override
   void initState() {
     super.initState();
     tabController = TabController(length: 2, vsync: this);
-    stop = widget.stop;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    StopInfoPageArgument argument = ModalRoute.of(context)!.settings.arguments as StopInfoPageArgument;
+    stop = argument.stop;
+    lines = argument.lines;
   }
 
   void changeBusStop() {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => const SearchPage())).then((value) {
+    Navigator.of(context).pushNamed(SearchPage.routeName).then((value) {
       if (value == null) {
         return;
       }
       setState(() {
-        stop = value;
+        stop = value as BusStop;
       });
     });
   }
@@ -95,7 +108,7 @@ class _StopInfoPageState extends State<StopInfoPage> with SingleTickerProviderSt
             Expanded(
               child: TabBarView(
                 children: [
-                  NextPassagePage(stop, lines: widget.stop == stop ? widget.lines : null),
+                  NextPassagePage(stop, lines: stop == stop ? lines : null),
                   TimeTableView(stop),
                 ],
                 controller: tabController,

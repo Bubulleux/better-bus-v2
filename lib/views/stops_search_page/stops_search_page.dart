@@ -16,19 +16,27 @@ double getDistanceInKMeter(BusStop stop, LocationData locationData) {
   return result;
 }
 
-class SearchPage extends StatefulWidget {
-  const SearchPage(
-      {this.saveInHistoric = true, this.showHistoric = true, Key? key})
-      : super(key: key);
-
+class SearchPageArgument{
   final bool saveInHistoric;
   final bool showHistoric;
+  const SearchPageArgument({this.saveInHistoric = true, this.showHistoric = true});
+}
+
+class SearchPage extends StatefulWidget {
+  const SearchPage({Key? key})
+      : super(key: key);
+  static const String routeName = "/stopSearch";
+
+
 
   @override
   State<SearchPage> createState() => _SearchPageState();
 }
 
 class _SearchPageState extends State<SearchPage> {
+  late bool saveInHistoric;
+  late bool showHistoric;
+
   List<BusStop>? busStops;
   Map<String, bool> resultExpand = {};
   Map<String, List<BusLine>?> busStopsLines = {};
@@ -50,6 +58,14 @@ class _SearchPageState extends State<SearchPage> {
     // loadPage();
 
     searchViewStopKey = GlobalKey();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    SearchPageArgument argument = ModalRoute.of(context)!.settings.arguments as SearchPageArgument? ?? const SearchPageArgument();
+    saveInHistoric = argument.saveInHistoric;
+    showHistoric = argument.saveInHistoric;
   }
 
   void inputChange() {

@@ -2,6 +2,7 @@ import 'package:better_bus_v2/app_constant/app_string.dart';
 import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
 import 'package:better_bus_v2/data_provider/local_data_handler.dart';
 import 'package:better_bus_v2/info_traffic_notification.dart';
+import 'package:better_bus_v2/model/clean/bus_stop.dart';
 import 'package:better_bus_v2/model/clean/view_shortcut.dart';
 import 'package:better_bus_v2/views/common/background.dart';
 import 'package:better_bus_v2/views/common/decorations.dart';
@@ -21,6 +22,7 @@ import '../stops_search_page/stops_search_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
+  static const String routeName = "/";
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -31,17 +33,11 @@ class _HomePageState extends State<HomePage> {
   late FlutterLocalNotificationsPlugin flip;
 
   void searchBusStop() {
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) => const SearchPage()))
-        .then((value) {
+    Navigator.of(context).pushNamed(SearchPage.routeName).then((value) {
       if (value == null) {
         return;
       }
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => StopInfoPage(value),
-          ));
+      Navigator.of(context).pushNamed(StopInfoPage.routeName, arguments: StopInfoPageArgument(value as BusStop, null));
     });
   }
 
@@ -50,15 +46,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   void goToTrafficInfo() {
-    Navigator.push(context, MaterialPageRoute(
-      builder: (context) => const TrafficInfoPage(),
-    ));
+    Navigator.of(context).pushNamed(TrafficInfoPage.routeName);
   }
 
   void goToRoutePage() {
-    Navigator.push(context, MaterialPageRoute(
-      builder: (context) => const RoutePage(),
-    ));
+    Navigator.of(context).pushNamed(RoutePage.routeName);
   }
 
   @override
@@ -93,7 +85,7 @@ class _HomePageState extends State<HomePage> {
     if (response == null){
       return;
     }
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) => TrafficInfoPage(focus:  response.id,)));
+    Navigator.of(context).pushNamed(TrafficInfoPage.routeName, arguments: response.id);
   }
 
   Future initFlutterNotificationPlugin() async {
@@ -114,14 +106,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   void gotoLog() {
-    Navigator.push(context, MaterialPageRoute(
-      builder: (context) => const LogView(),
-    ));
+    Navigator.of(context).pushNamed(LogView.routeName);
   }
   void gotoPrefs() {
-    Navigator.push(context, MaterialPageRoute(
-      builder: (context) => const PreferencesView(),
-    ));
+    Navigator.of(context).pushNamed(PreferencesView.routeName);
   }
 
 
@@ -133,11 +121,8 @@ class _HomePageState extends State<HomePage> {
       return;
     }
     ViewShortcut shortcut = shortcuts[shortcutIndex];
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => StopInfoPage(shortcut.stop, lines: shortcut.lines,),
-        ));
+    Navigator.of(context).pushNamed(StopInfoPage.routeName,
+        arguments: StopInfoPageArgument(shortcut.stop, shortcut.lines));
   }
 
   void launchTestNotification() {

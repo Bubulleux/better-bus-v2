@@ -8,9 +8,9 @@ import 'package:flutter/material.dart';
 
 class RouteDetailPage extends StatefulWidget {
 
-  const RouteDetailPage(this.busRoute, {Key? key}) : super(key: key);
+  const RouteDetailPage({Key? key}) : super(key: key);
 
-  final VitalisRoute busRoute;
+  static const String routeName = "/routeDetail";
 
   @override
   State<RouteDetailPage> createState() => _RouteDetailPageState();
@@ -18,12 +18,19 @@ class RouteDetailPage extends StatefulWidget {
 
 class _RouteDetailPageState extends State<RouteDetailPage> with SingleTickerProviderStateMixin{
   late final TabController tabController;
+  late VitalisRoute busRoute;
 
 
   @override
   void initState() {
     super.initState();
-    tabController = TabController(length: widget.busRoute.itinerary.length, vsync: this);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    busRoute = ModalRoute.of(context)!.settings.arguments as VitalisRoute;
+    tabController = TabController(length: busRoute.itinerary.length, vsync: this);
     tabController.addListener(() {setState(() {});});
   }
 
@@ -34,7 +41,7 @@ class _RouteDetailPageState extends State<RouteDetailPage> with SingleTickerProv
     List<Widget> tabs = [];
     List<Widget> tabContent = [];
 
-    widget.busRoute.itinerary.asMap().forEach((i, element) {
+    busRoute.itinerary.asMap().forEach((i, element) {
       if (element.lines == null) {
         tabs.add(const Tab(icon: Icon(Icons.directions_walk),));
       } else {
@@ -47,7 +54,7 @@ class _RouteDetailPageState extends State<RouteDetailPage> with SingleTickerProv
         )
         ));
       }
-      tabContent.add(RouteStepPage(widget.busRoute, i));
+      tabContent.add(RouteStepPage(busRoute, i));
     });
 
     return Scaffold(
@@ -96,7 +103,7 @@ class _RouteDetailPageState extends State<RouteDetailPage> with SingleTickerProv
                   tabController.index != 0 ?
                   ElevatedButton(onPressed: () => tabController.animateTo(tabController.index - 1), child: const Text(AppString.previousLabel)):
                   Container(width: 5,),
-                  tabController.index != widget.busRoute.itinerary.length -1 ?
+                  tabController.index != busRoute.itinerary.length -1 ?
                   ElevatedButton(onPressed: () => tabController.animateTo(tabController.index + 1), child: const Text(AppString.nextLabel)):
                   Container(width: 5,),
                 ],

@@ -10,6 +10,7 @@ typedef CheckCallBack = void Function(bool checked, BusLine line);
 
 class InterestLinePage extends StatefulWidget {
   const InterestLinePage({Key? key}) : super(key: key);
+  static const String routeName = "/interestedLines";
 
   @override
   State<InterestLinePage> createState() => _InterestLinePageState();

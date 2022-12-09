@@ -16,6 +16,7 @@ import '../../model/clean/map_place.dart';
 
 class RoutePage extends StatefulWidget {
   const RoutePage({Key? key}) : super(key: key);
+  static const String routeName = "/RouteFinder";
 
   @override
   State<RoutePage> createState() => _RoutePageState();
@@ -58,7 +59,8 @@ class _RoutePageState extends State<RoutePage> {
   }
 
   Future<MapPlace?> getPlace() async {
-    MapPlace? place = await Navigator.push(context, MaterialPageRoute(builder: (context) => const PlaceSearcherPage()));
+    // ignore: unnecessary_cast
+    MapPlace? place = await (Navigator.of(context).pushNamed(PlaceSearcherPage.routeName) as Future<dynamic>);
     return place;
   }
 

@@ -10,6 +10,7 @@ import '../../app_constant/app_string.dart';
 
 class PlaceSearcherPage extends StatefulWidget {
   const PlaceSearcherPage({Key? key}) : super(key: key);
+  static const String routeName = "/placeSearcher";
 
   @override
   State<PlaceSearcherPage> createState() => _PlaceSearcherPageState();
@@ -34,10 +35,15 @@ class _PlaceSearcherPageState extends State<PlaceSearcherPage> with TickerProvid
   @override
   void initState() {
     super.initState();
-    textEditingController = TextEditingController();
-    textEditingController.addListener(inputChange);
 
     tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    textEditingController = TextEditingController();
+    textEditingController.addListener(inputChange);
   }
 
   @override

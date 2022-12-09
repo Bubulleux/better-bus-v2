@@ -12,15 +12,18 @@ import '../../app_constant/app_string.dart';
 import '../../model/clean/bus_line.dart';
 
 class ViewShortcutEditorPage extends StatefulWidget {
-  const ViewShortcutEditorPage(this.shortcut, {Key? key}) : super(key: key);
+  const ViewShortcutEditorPage({Key? key}) : super(key: key);
+  static const String routeName = "/shortcutEditor";
 
-  final ViewShortcut? shortcut;
 
   @override
   State<ViewShortcutEditorPage> createState() => _ViewShortcutEditorPageState();
 }
 
 class _ViewShortcutEditorPageState extends State<ViewShortcutEditorPage> {
+
+  late ViewShortcut? shortcut;
+
   String shortcutName = "";
   bool shortcutIsFavorite = false;
   BusStop? shortcutBusStop;
@@ -31,14 +34,17 @@ class _ViewShortcutEditorPageState extends State<ViewShortcutEditorPage> {
   @override
   void initState() {
     super.initState();
-
     textFieldNameController = TextEditingController();
+  }
 
-    if (widget.shortcut != null) {
-      shortcutName = widget.shortcut!.shortcutName;
-      shortcutIsFavorite = widget.shortcut!.isFavorite;
-      shortcutBusStop = widget.shortcut!.stop;
-      shortCutBusLines = widget.shortcut!.lines;
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    shortcut = ModalRoute.of(context)!.settings.arguments as ViewShortcut?;if (shortcut != null) {
+      shortcutName = shortcut!.shortcutName;
+      shortcutIsFavorite = shortcut!.isFavorite;
+      shortcutBusStop = shortcut!.stop;
+      shortCutBusLines = shortcut!.lines;
     }
 
     textFieldNameController.text = shortcutName;
@@ -183,16 +189,13 @@ class _ViewShortcutEditorPageState extends State<ViewShortcutEditorPage> {
 
   void changeBusStop() {
     FocusScope.of(context).unfocus();
-    Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => const SearchPage(saveInHistoric: false)))
-        .then((value) {
-      if (value == null || !mounted || value! == shortcutBusStop) {
+    Navigator.of(context).pushNamed(SearchPage.routeName, arguments: const SearchPageArgument(saveInHistoric: false))
+      .then((value) {
+      if (value == null || !mounted || value == shortcutBusStop) {
         return;
       }
       setState(() {
-        shortcutBusStop = value!;
+        shortcutBusStop = value as BusStop;
         shortCutBusLines = [];
       });
     });
@@ -203,18 +206,13 @@ class _ViewShortcutEditorPageState extends State<ViewShortcutEditorPage> {
     if (shortcutBusStop == null) {
       return;
     }
-
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => TerminusSelectorPage(
-                  shortcutBusStop!,
-                  previousData: shortCutBusLines,
-                ))).then((value) {
+    Navigator.of(context).pushNamed(TerminusSelectorPage.routeName,
+        arguments: TerminusSelectorPageArgument(shortcutBusStop!, shortCutBusLines))
+        .then((value) {
       if (value == null || !mounted) {
         return;
       }
-      shortCutBusLines = value;
+      shortCutBusLines = value as List<BusLine>;
       setState(() {});
     });
   }

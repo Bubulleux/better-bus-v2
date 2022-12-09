@@ -14,15 +14,16 @@ import '../../data_provider/local_data_handler.dart';
 import '../../model/clean/bus_line.dart';
 
 class TrafficInfoPage extends StatefulWidget {
-  const TrafficInfoPage({this.focus, Key? key}) : super(key: key);
+  const TrafficInfoPage({Key? key}) : super(key: key);
+  static const String routeName = "/trafficInfo";
 
-  final int? focus;
 
   @override
   State<TrafficInfoPage> createState() => TrafficInfoPageState();
 }
 
 class TrafficInfoPageState extends State<TrafficInfoPage> {
+  late int? focus;
   late final GlobalKey<CustomFutureBuilderState> futureBuilderKey;
   final GlobalKey focusKey = GlobalKey();
 
@@ -57,6 +58,12 @@ class TrafficInfoPageState extends State<TrafficInfoPage> {
   void initState() {
     super.initState();
     futureBuilderKey = GlobalKey();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    focus = ModalRoute.of(context)!.settings.arguments as int?;
   }
 
   void goSetting() {
@@ -104,12 +111,12 @@ class TrafficInfoPageState extends State<TrafficInfoPage> {
                     key: futureBuilderKey,
                     onData: (context, data, refresh) => ScrollablePositionedList.builder(
                       itemCount: data.infoList.length,
-                      initialScrollIndex: widget.focus != null ? data.infoList.indexWhere((e) => e.id == widget.focus) : 0,
+                      initialScrollIndex: focus != null ? data.infoList.indexWhere((e) => e.id == focus) : 0,
                       itemBuilder: (context, index) => TrafficInfoItem(
                         data.infoList[index],
                         data.busLines,
                         // key: data.infoList[index].id == widget.focus ? focusKey : null,
-                        deploy: data.infoList[index].id == widget.focus,
+                        deploy: data.infoList[index].id == focus,
                       ),
                     ),
                   ),
