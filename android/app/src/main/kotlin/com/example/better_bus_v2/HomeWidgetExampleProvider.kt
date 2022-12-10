@@ -16,9 +16,6 @@ import es.antonborri.home_widget.HomeWidgetPlugin
 import android.widget.RemoteViews
 import android.os.Build
 
-
-
-
 class HomeWidgetExampleProvider : AppWidgetProvider() {
 
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {

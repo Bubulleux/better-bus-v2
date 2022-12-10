@@ -34,7 +34,7 @@ void main() async {
   flutterLocalNotificationsPlugin.
     resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.requestPermission();
 
-  Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
+  Workmanager().initialize(callbackDispatcher);
   runApp(MyApp());
 }
 

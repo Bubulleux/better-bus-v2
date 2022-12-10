@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:text="Racourcis" />
+        android:text="Raccourcis" />
 
     <FrameLayout
             android:layout_width="match_parent"
@@ -28,7 +28,7 @@
             android:textSize="25sp"
             android:textStyle="bold"
             android:gravity="center"
-            android:text="Aucun Racourcie n'a été mis en favorie"
+            android:text="Aucun Raccourcie n'a été mis en favorie"
         />
 
         <ListView
