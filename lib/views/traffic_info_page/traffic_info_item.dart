@@ -9,20 +9,24 @@ import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../model/clean/bus_line.dart';
 
+
+
 class TrafficInfoItem extends StatefulWidget {
-  const TrafficInfoItem(this.infoTraffic, this.busLines, {this.deploy = false, Key? key}) : super(key: key);
+  const TrafficInfoItem(this.infoTraffic, this.busLines, {this.deploy = false, required this.onClick, Key? key}) : super(key: key);
 
   final InfoTraffic infoTraffic;
   final Map<String, BusLine> busLines;
   final bool deploy;
+  final Function onClick;
+
 
   static final dateFormat = DateFormat("EE d MMM", "fr");
 
   @override
-  State<TrafficInfoItem> createState() => _TrafficInfoItemState();
+  State<TrafficInfoItem> createState() => TrafficInfoItemState();
 }
 
-class _TrafficInfoItemState extends State<TrafficInfoItem> with SingleTickerProviderStateMixin {
+class TrafficInfoItemState extends State<TrafficInfoItem> with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   late ExpandableWidgetController expandableController;
 
   @override
@@ -54,7 +58,8 @@ class _TrafficInfoItemState extends State<TrafficInfoItem> with SingleTickerProv
         child: InkWell(
           borderRadius: CustomDecorations.borderRadius,
           onTap: () {
-            expandableController.tickAnimation();
+            // expandableController.tickAnimation();
+            widget.onClick();
           },
           splashColor: Colors.black,
           child: Container(
@@ -77,8 +82,7 @@ class _TrafficInfoItemState extends State<TrafficInfoItem> with SingleTickerProv
                   width: double.infinity,
                   child: widget.infoTraffic.stopTime
                               .difference(widget.infoTraffic.startTime)
-                              .compareTo(const Duration(days: 1)) >
-                          0
+                              .compareTo(const Duration(days: 1)) > 0
                       ? Wrap(
                           alignment: WrapAlignment.spaceBetween,
                           children: [
@@ -124,4 +128,7 @@ class _TrafficInfoItemState extends State<TrafficInfoItem> with SingleTickerProv
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

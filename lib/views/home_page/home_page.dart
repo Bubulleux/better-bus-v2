@@ -85,6 +85,7 @@ class _HomePageState extends State<HomePage> {
     if (response == null){
       return;
     }
+    Navigator.of(context).popUntil((route) => route.settings.name != TrafficInfoPage.routeName);
     Navigator.of(context).pushNamed(TrafficInfoPage.routeName, arguments: response.id);
   }
 
@@ -95,12 +96,10 @@ class _HomePageState extends State<HomePage> {
     await flip.initialize(settings, onDidReceiveNotificationResponse: receiveNotification);
   }
 
-
-
   void launchWithWidget(Uri? uri) {
     if (uri != null && uri.scheme == "app") {
       if (uri.host == "openshortcut") {
-        launchShortcutByWidget(uri.pathSegments[0]);
+        launchShortcutByWidget(uri.pathSegments[0], context);
       }
     }
   }
@@ -112,15 +111,16 @@ class _HomePageState extends State<HomePage> {
     Navigator.of(context).pushNamed(PreferencesView.routeName);
   }
 
-
-
-  void launchShortcutByWidget(String shortcutName) async {
+  void launchShortcutByWidget(String shortcutName, BuildContext context) async {
     List<ViewShortcut> shortcuts = await LocalDataHandler.loadShortcut();
     int shortcutIndex = shortcuts.indexWhere((element) => element.shortcutName == shortcutName);
     if (shortcutIndex == -1) {
       return;
     }
     ViewShortcut shortcut = shortcuts[shortcutIndex];
+
+    Navigator.of(context).popUntil((route) => (route.settings.name != StopInfoPage.routeName ||
+        (route.settings.arguments as StopInfoPageArgument?)?.stop != shortcut.stop));
     Navigator.of(context).pushNamed(StopInfoPage.routeName,
         arguments: StopInfoPageArgument(shortcut.stop, shortcut.lines));
   }

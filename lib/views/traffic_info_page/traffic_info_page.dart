@@ -17,7 +17,6 @@ class TrafficInfoPage extends StatefulWidget {
   const TrafficInfoPage({Key? key}) : super(key: key);
   static const String routeName = "/trafficInfo";
 
-
   @override
   State<TrafficInfoPage> createState() => TrafficInfoPageState();
 }
@@ -26,6 +25,11 @@ class TrafficInfoPageState extends State<TrafficInfoPage> {
   late int? focus;
   late final GlobalKey<CustomFutureBuilderState> futureBuilderKey;
   final GlobalKey focusKey = GlobalKey();
+  final itemScrollController = ItemScrollController();
+  final itemPositionListener = ItemPositionsListener.create();
+  Map<int, GlobalKey<TrafficInfoItemState>>? infoTrafficItemKey;
+
+  List<InfoTraffic>? trafficInfos;
 
   Future<InfoTrafficObject> getAllInformation() async {
     List<InfoTraffic> infoList = await VitalisDataProvider.getTrafficInfo();
@@ -73,7 +77,19 @@ class TrafficInfoPageState extends State<TrafficInfoPage> {
   }
 
   void showItem() {
-    Scrollable.ensureVisible(focusKey.currentContext!);
+    if (focus != null) {
+      itemScrollController.scrollTo(
+          index: trafficInfos!.indexWhere((e) => e.id == focus), duration: Duration(seconds: 1));
+    }
+  }
+
+  void itemClick(int index) {
+    itemScrollController.jumpTo(
+      index: index,
+      alignment:
+          itemPositionListener.itemPositions.value.firstWhere((element) => element.index == index).itemLeadingEdge,
+    );
+    infoTrafficItemKey![index]?.currentState?.expandableController.tickAnimation();
   }
 
   @override
@@ -109,16 +125,25 @@ class TrafficInfoPageState extends State<TrafficInfoPage> {
                   child: CustomFutureBuilder<InfoTrafficObject>(
                     future: getAllInformation,
                     key: futureBuilderKey,
-                    onData: (context, data, refresh) => ScrollablePositionedList.builder(
-                      itemCount: data.infoList.length,
-                      initialScrollIndex: focus != null ? data.infoList.indexWhere((e) => e.id == focus) : 0,
-                      itemBuilder: (context, index) => TrafficInfoItem(
-                        data.infoList[index],
-                        data.busLines,
-                        // key: data.infoList[index].id == widget.focus ? focusKey : null,
-                        deploy: data.infoList[index].id == focus,
-                      ),
-                    ),
+                    onData: (context, data, refresh) {
+                      trafficInfos = data.infoList;
+                      infoTrafficItemKey = {};
+                      trafficInfos!.forEachIndexed((index, element) => infoTrafficItemKey![index] = GlobalKey());
+
+                      return ScrollablePositionedList.builder(
+                        itemCount: data.infoList.length,
+                        initialScrollIndex: focus != null ? trafficInfos!.indexWhere((e) => e.id == focus) : 0,
+                        itemScrollController: itemScrollController,
+                        itemPositionsListener: itemPositionListener,
+                        itemBuilder: (context, index) => TrafficInfoItem(
+                          data.infoList[index],
+                          data.busLines,
+                          onClick: () => itemClick(index),
+                          key: infoTrafficItemKey![index],
+                          deploy: data.infoList[index].id == focus,
+                        ),
+                      );
+                    },
                   ),
                 )
               ],
