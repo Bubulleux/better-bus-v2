@@ -15,32 +15,50 @@ class RouteItemWidget extends StatefulWidget {
   State<RouteItemWidget> createState() => _RouteItemWidgetState();
 }
 
-final DateFormat timeFormat = DateFormat("Hm");
+final DateFormat timeFormat = DateFormat("EE d MMM\nkk:mm", "fr");
 
 class _RouteItemWidgetState extends State<RouteItemWidget> {
-
   Widget getRouteSchema() {
     List<Widget> wrapChildren = [
-      const Icon(Icons.flag, color: Colors.green, size: 15,)
+      const Icon(
+        Icons.flag,
+        color: Colors.green,
+        size: 15,
+      )
     ];
     for (RoutePassage passage in widget.vitalisRoute.itinerary) {
       if (passage.lines == null) {
-        wrapChildren.add(const Icon(Icons.directions_walk, size: 30,));
+        wrapChildren.add(const Icon(
+          Icons.directions_walk,
+          size: 30,
+        ));
       } else {
         wrapChildren.add(Column(
           children: [
             LineWidget.fromRouteLine(passage.lines!, 30),
-            const SizedBox(height: 5,),
-            const Icon(Icons.directions_bus, size: 30,),
+            const SizedBox(
+              height: 5,
+            ),
+            const Icon(
+              Icons.directions_bus,
+              size: 30,
+            ),
           ],
         ));
       }
 
       if (passage != widget.vitalisRoute.itinerary.last) {
-        wrapChildren.add(const Icon(Icons.keyboard_double_arrow_right, size: 20,));
+        wrapChildren.add(const Icon(
+          Icons.keyboard_double_arrow_right,
+          size: 20,
+        ));
       }
     }
-    wrapChildren.add(const Icon(Icons.flag, color: Colors.red, size: 15,));
+    wrapChildren.add(const Icon(
+      Icons.flag,
+      color: Colors.red,
+      size: 15,
+    ));
 
     return Wrap(
       children: wrapChildren,
@@ -57,7 +75,6 @@ class _RouteItemWidgetState extends State<RouteItemWidget> {
   @override
   Widget build(BuildContext context) {
     Duration timeTravel = widget.vitalisRoute.timeTravel;
-
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
@@ -79,9 +96,15 @@ class _RouteItemWidgetState extends State<RouteItemWidget> {
                   child: Wrap(
                     alignment: WrapAlignment.spaceBetween,
                     children: [
-                      Text(timeFormat.format((widget.vitalisRoute.itinerary[0].startTime.toLocal()))),
+                      Text(
+                        timeFormat.format((widget.vitalisRoute.itinerary[0].startTime.toLocal())),
+                        textAlign: TextAlign.center,
+                      ),
                       const Icon(Icons.keyboard_double_arrow_right),
-                      Text(timeFormat.format(widget.vitalisRoute.itinerary.last.endTime.toLocal())),
+                      Text(
+                        timeFormat.format(widget.vitalisRoute.itinerary.last.endTime.toLocal()),
+                        textAlign: TextAlign.center,
+                      ),
                     ],
                   ),
                 ),
@@ -96,24 +119,21 @@ class _RouteItemWidgetState extends State<RouteItemWidget> {
                   child: Wrap(
                     alignment: WrapAlignment.spaceBetween,
                     children: [
-
                       Wrap(
                         children: [
                           const Icon(Icons.directions_bus),
-                          Text("${(widget.vitalisRoute.busDistanceTravel / 100).round()/10} Km"),
+                          Text("${(widget.vitalisRoute.busDistanceTravel / 100).round() / 10} Km"),
                         ],
                       ),
                       Text(
-                        (timeTravel.inHours != 0 ? "${timeTravel.inHours} h ": "") + "${timeTravel.inMinutes % 60} min",
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20
-                        ),
+                        (timeTravel.inHours != 0 ? "${timeTravel.inHours} h " : "") +
+                            "${timeTravel.inMinutes % 60} min",
+                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                       ),
                       Wrap(
                         children: [
                           const Icon(Icons.directions_walk),
-                          Text("${(widget.vitalisRoute.walkDistanceTravel / 100).round()/10} Km"),
+                          Text("${(widget.vitalisRoute.walkDistanceTravel / 100).round() / 10} Km"),
                         ],
                       ),
                     ],
