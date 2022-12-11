@@ -66,6 +66,7 @@ class AppString{
 
 
   static const selectLine = "Selectioner les lignes qui vous interesse";
+  static const enableNotification = "Activer les Notification";
 
 
 }

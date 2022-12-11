@@ -20,11 +20,12 @@ Future<bool> checkInfoTraffic() async {
   );
 
   if (!await ConnectivityChecker.isConnected()) {
-    await flip.show(99, "Connection Error",
-        null,
-        platformChannelSpecifics);
+    return false;
   }
-
+  bool notificationEnable = await LocalDataHandler.getNotificationEnable();
+  if (!notificationEnable) {
+    return true;
+  }
   List<InfoTraffic> infoTraffics = await VitalisDataProvider.getTrafficInfo();
   Set<String> interestedBusLines = await LocalDataHandler.loadInterestedLine();
   Set<int>? alreadyPushNotifications = await LocalDataHandler.loadAlreadyPushNotification();
@@ -43,6 +44,6 @@ Future<bool> checkInfoTraffic() async {
   }
 
   alreadyPushNotifications = alreadyPushNotifications.intersection(infoTraffics.where((element) => element.isDisplay).map((e) => e.id).toSet());
-  // await LocalDataHandler.saveAlreadyPushNotification(alreadyPushNotifications);
+  await LocalDataHandler.saveAlreadyPushNotification(alreadyPushNotifications);
   return true;
 }

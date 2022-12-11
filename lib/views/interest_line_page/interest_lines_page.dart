@@ -18,22 +18,20 @@ class InterestLinePage extends StatefulWidget {
 
 class _InterestLinePageState extends State<InterestLinePage> {
   Set<String> linesSelected = {};
+  bool notificationEnable = true;
 
   Future<List<BusLine>> getLines() async {
     linesSelected = await LocalDataHandler.loadInterestedLine();
+    notificationEnable = await LocalDataHandler.getNotificationEnable();
+    setState(() {});
     List<BusLine> busLines = (await VitalisDataProvider.getAllLines()).values.toList();
     busLines.sort();
     return busLines;
   }
 
-  void cancel() {
-    // BusLine.compare("12", "12e");
-    Navigator.pop(context);
-  }
-
-  void valid() {
+  void save() {
     LocalDataHandler.saveInterestedLines(linesSelected);
-    Navigator.pop(context);
+    LocalDataHandler.setNotificationEnable(notificationEnable);
   }
 
   void linePressed(bool checked, BusLine line) {
@@ -42,6 +40,13 @@ class _InterestLinePageState extends State<InterestLinePage> {
     } else {
       linesSelected.remove(line.id);
     }
+    save();
+  }
+
+  void enableNotification() {
+    notificationEnable = !notificationEnable;
+    save();
+    setState(() {});
   }
 
   @override
@@ -53,34 +58,76 @@ class _InterestLinePageState extends State<InterestLinePage> {
           height: double.infinity,
           child: Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(AppString.selectLine, style: Theme.of(context).textTheme.headlineSmall),
-              ),
-              Expanded(
-                child: CustomFutureBuilder(future: getLines, onData: (context, data, refresh) {
-                  return ListView.separated(
-                    itemCount: data.length,
-                    itemBuilder: (context, index) {
-                      BusLine line = data[index];
-                      return LineItem(line, linesSelected.contains(line.id), linePressed);
-                    },
-                    separatorBuilder: (context, index) {
-                      return const Divider();
-                    },
-                  );
-                }),
-              ),
-              SizedBox(
-                width: double.infinity,
-                child: Wrap(
-                  alignment: WrapAlignment.spaceEvenly,
+              Material(
+                elevation: 5,
+                child: Column(
                   children: [
-                    ElevatedButton(onPressed: cancel, child: const Text(AppString.cancelLabel)),
-                    ElevatedButton(onPressed: valid, child: const Text(AppString.validateLabel))
+                    Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: Row(
+                        children: [
+                          IconButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            icon: const Icon(Icons.chevron_left),
+                          ),
+                          Expanded(child: Text(AppString.selectLine, style: Theme.of(context).textTheme.titleLarge)),
+                        ],
+                      ),
+                    ),
+                    const Divider(),
+                    InkWell(
+                      onTap: enableNotification,
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(3),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.notifications),
+                            const Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 8),
+                                  child: Text(
+                                    AppString.enableNotification,
+                                    softWrap: false,
+                                    overflow: TextOverflow.fade,
+                                    maxLines: 1,
+                                  ),
+                                )),
+                            Checkbox(value: notificationEnable, onChanged: (newValue) => enableNotification())
+                          ],
+                        ),
+                      ),
+                    ),
                   ],
                 ),
-              )
+              ),
+              Expanded(
+                child: CustomFutureBuilder(
+                    future: getLines,
+                    onData: (context, data, refresh) {
+                      return ListView.builder(
+                        itemCount: data.length + 1,
+                        itemBuilder: (context, index) {
+                          if (index == 0) {
+                            return Container();
+                          }
+
+                          BusLine line = data[index - 1];
+                          return LineItem(line, linesSelected.contains(line.id), linePressed);
+                        },
+                      );
+                    }),
+              ),
+              // SizedBox(
+              //   width: double.infinity,
+              //   child: Wrap(
+              //     alignment: WrapAlignment.spaceEvenly,
+              //     children: [
+              //       ElevatedButton(onPressed: cancel, child: const Text(AppString.cancelLabel)),
+              //       ElevatedButton(onPressed: valid, child: const Text(AppString.validateLabel))
+              //     ],
+              //   ),
+              // )
             ],
           ),
         ),
@@ -91,12 +138,11 @@ class _InterestLinePageState extends State<InterestLinePage> {
 
 class LineItem extends StatefulWidget {
   const LineItem(this.line, this.isChecked, this.callBack, {Key? key}) : super(key: key);
-  
+
   final BusLine line;
   final bool isChecked;
   final CheckCallBack callBack;
 
-  
   @override
   State<LineItem> createState() => _LineItemState();
 }
@@ -128,10 +174,14 @@ class _LineItemState extends State<LineItem> {
             LineWidget(widget.line, 40),
             Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.only(left: 8),
-                  child: Text(widget.line.fullName, softWrap: false, overflow: TextOverflow.fade, maxLines: 1,),
-                )
-            ),
+              padding: const EdgeInsets.only(left: 8),
+              child: Text(
+                widget.line.fullName,
+                softWrap: false,
+                overflow: TextOverflow.fade,
+                maxLines: 1,
+              ),
+            )),
             Checkbox(value: isChecked, onChanged: (newValue) => tap())
           ],
         ),
@@ -139,4 +189,3 @@ class _LineItemState extends State<LineItem> {
     );
   }
 }
-

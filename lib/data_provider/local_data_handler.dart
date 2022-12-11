@@ -104,4 +104,14 @@ class  LocalDataHandler {
     return values;
   }
 
+  static Future<bool> getNotificationEnable() async {
+    await checkPreferences();
+    return preferences!.getBool("notificationEnable") ?? true;
+  }
+
+  static Future setNotificationEnable(bool value) async {
+    await checkPreferences();
+    preferences!.setBool("notificationEnable", value);
+  }
+
 }
