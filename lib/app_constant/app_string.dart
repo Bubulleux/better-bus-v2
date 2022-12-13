@@ -68,5 +68,6 @@ class AppString{
   static const selectLine = "Sélectionner les lignes qui vous intéressent :";
   static const enableNotification = "Activer les notifications";
 
-
+  static const notificationBodyMultipleDay = "Du {} au {}.";
+  static const notificationBodyOneDay = "Le {}.";
 }

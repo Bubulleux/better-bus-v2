@@ -129,6 +129,11 @@ class _HomePageState extends State<HomePage> {
     checkInfoTraffic();
   }
 
+  void testNotificationActivation() async{
+    await LocalDataHandler.setLastNotificationPush(DateTime(2022, 11, 10));
+    checkInfoTraffic();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -160,6 +165,7 @@ class _HomePageState extends State<HomePage> {
                               ),
                             ),
                             IconButton(onPressed: newShortcut, icon: const Icon(Icons.add)),
+                            IconButton(onPressed: testNotificationActivation, icon: const Icon(Icons.notifications_active_rounded)),
                             IconButton(onPressed: launchTestNotification, icon: const Icon(Icons.notification_add)),
                             IconButton(onPressed: gotoLog, icon: const Icon(Icons.newspaper)),
                             IconButton(onPressed: gotoPrefs, icon: const Icon(Icons.settings)),

@@ -74,7 +74,7 @@ class TrafficInfoItemState extends State<TrafficInfoItem> with SingleTickerProvi
                         fontWeight: widget.infoTraffic.isActive ? FontWeight.bold : FontWeight.normal,
                       ),
                 ),
-                Text(widget.infoTraffic.id.toString()),
+                // Text(widget.infoTraffic.id.toString()),
                 const SizedBox(
                   height: 5,
                 ),

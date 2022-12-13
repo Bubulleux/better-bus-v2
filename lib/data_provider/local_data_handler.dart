@@ -73,6 +73,17 @@ class  LocalDataHandler {
 
     await preferences!.setStringList("already-push-notification", lines.map((e) => e.toString()).toList());
   }
+
+  static Future<DateTime> getLastNotificationPush() async {
+    await checkPreferences();
+
+    return DateTime.fromMillisecondsSinceEpoch(preferences!.getInt("lastNotificationPush") ?? 0);
+  }
+
+  static Future setLastNotificationPush(DateTime lastNotificationPush) async {
+    await checkPreferences();
+    preferences!.setInt("lastNotificationPush", lastNotificationPush.millisecondsSinceEpoch);
+  }
   
   static Future<List<String>> loadLog() async {
     await checkPreferences();

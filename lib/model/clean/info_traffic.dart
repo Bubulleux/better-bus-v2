@@ -13,6 +13,8 @@ class InfoTraffic {
     required this.linesId,
     required this.isActive,
     required this.isDisplay,
+    required this.createDate,
+    required this.updateDate,
   }) {
     linesId?.sort(BusLine.compareID);
   }
@@ -29,6 +31,8 @@ class InfoTraffic {
     linesId: json["lines"]?.map((e) => e["slug"]).toList().cast<String>(),
     isActive: json["isActive"],
     isDisplay: json["isDisplayable"],
+    createDate: DateTime.parse(json["created_at"]),
+    updateDate: DateTime.parse(json["updated_at"]),
   );
 
   final int id;
@@ -46,5 +50,8 @@ class InfoTraffic {
 
   final bool isDisplay;
   final bool isActive;
+
+  final DateTime updateDate;
+  final DateTime createDate;
 
 }
