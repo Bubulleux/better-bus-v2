@@ -47,43 +47,43 @@ extension ToError on Exception{
 
 class CustomErrors{
   static final emptyNextPassage = CustomError(
-    "Aucun Bus n'est prevue pour le moment",
+    "Aucun bus n'est prévu pour le moment.",
     Icons.bus_alert,
     false,
   );
 
   static final emptyPassage = CustomError(
-    "Aucun Bus n'est prevue ce jours la",
+    "Aucun bus n'est prévu ce jour là.",
     Icons.bus_alert,
     false,
   );
 
   static final noInternet = CustomError(
-    "Aucun connection internet n'a été trouver veuillez allumier votre wifi ou vos donnée mobil",
+    "Aucune connexion internet n'a été trouvée veuillez allumer votre WI-FI ou vos données mobiles.",
     Icons.signal_wifi_connected_no_internet_4,
     true,
   );
 
   static final searchError = CustomError(
-    "Aucun n'arret de bus n'a été trouver revoyer votre recherche",
+    "Aucun arrêt de bus n'a été trouvé faites une nouvelle recherche.",
     Icons.search_off,
     false,
   );
 
   static final searchPlaceNoResult = CustomError(
-    "Aucun location n'a été trouvez veuillez réessier",
+    "Aucune adresse n'a été trouvée veuillez ré-essayer.",
     Icons.location_off,
     false,
   );
 
   static final routeInputError = CustomError(
-    "Les information rensigné ne sont pas compléte",
+    "Les informations renseignées ne sont pas complétes.",
     Icons.search_off,
     false,
   );
 
   static final routeResultEmpty = CustomError(
-    "Aucun n'itinéraire a été trouver",
+    "Aucun itinéraire n'a été trouvé.",
     Icons.search_off,
     false,
   );
