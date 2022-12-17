@@ -1,5 +1,4 @@
 import 'package:better_bus_v2/info_traffic_notification.dart';
-import 'package:better_bus_v2/views/common/decorations.dart';
 import 'package:better_bus_v2/views/interest_line_page/interest_lines_page.dart';
 import 'package:better_bus_v2/views/log_view.dart';
 import 'package:better_bus_v2/views/preferences_view.dart';
@@ -35,7 +34,7 @@ void main() async {
     resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.requestPermission();
 
   Workmanager().initialize(callbackDispatcher);
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 
@@ -67,24 +66,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver{
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(40),
             ),
-          ),
-        ),
-        inputDecorationTheme: InputDecorationTheme(
-          border: OutlineInputBorder(
-            borderRadius: CustomDecorations.borderRadius,
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: CustomDecorations.borderRadius,
-            borderSide: BorderSide(
-              color: Colors.lightGreen.shade500,
-            ),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: CustomDecorations.borderRadius,
-            borderSide: BorderSide(color: Colors.lightGreen.shade400, width: 2),
-          ),
-          labelStyle: const TextStyle(
-            fontSize: 25,
           ),
         ),
       ),

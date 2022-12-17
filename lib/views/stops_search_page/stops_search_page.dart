@@ -2,10 +2,12 @@
 import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
 import 'package:better_bus_v2/model/clean/bus_stop.dart';
 import 'package:better_bus_v2/views/common/background.dart';
+import 'package:better_bus_v2/views/common/custom_text_field.dart';
 import 'package:better_bus_v2/views/stops_search_page/search_bus_stop_view.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 
+import '../../app_constant/app_string.dart';
 import '../../model/clean/bus_line.dart';
 
 
@@ -80,16 +82,12 @@ class _SearchPageState extends State<SearchPage> {
       body: SafeArea(
         child: Background(
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.only(top: 5, left: 5, right: 5),
             child: Column(
               children: [
-                TextField(
-                  decoration: InputDecoration(
-                    border: const OutlineInputBorder(),
-                    fillColor: Theme.of(context).backgroundColor,
-                    filled: true,
-                  ),
+                CustomTextField(
                   autofocus: true,
+                  hint: AppString.searchStopHint,
                   controller: textFieldController,
                 ),
                 Expanded(

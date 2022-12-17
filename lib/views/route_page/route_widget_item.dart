@@ -79,13 +79,13 @@ class _RouteItemWidgetState extends State<RouteItemWidget> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: Material(
-        color: Colors.transparent,
+        borderRadius: CustomDecorations.borderRadius,
+        elevation: 2,
         child: InkWell(
           borderRadius: CustomDecorations.borderRadius,
-          // splashColor: Colors.black.withOpacity(150),
           onTap: showDetail,
           child: Container(
-            decoration: CustomDecorations.of(context).boxOutlined,
+            // decoration: CustomDecorations.of(context).boxOutlined,
             width: double.infinity,
             padding: const EdgeInsets.all(8),
             child: Column(

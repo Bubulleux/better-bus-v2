@@ -47,6 +47,8 @@ class AppString{
   static const selectALine = "Sélectionner une ligne...";
   static const myPosition = "Ma position";
 
+
+  static const searchStopHint = "Rechercher un arrêt";
   static const busStation = "Station de bus";
   static const place = "Adresse";
   static const validateLabel = "Valider";
@@ -70,4 +72,5 @@ class AppString{
 
   static const notificationBodyMultipleDay = "Du {} au {}.";
   static const notificationBodyOneDay = "Le {}.";
+
 }

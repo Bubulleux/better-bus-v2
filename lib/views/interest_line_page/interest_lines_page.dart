@@ -85,7 +85,7 @@ class _InterestLinePageState extends State<InterestLinePage> {
                             const Icon(Icons.notifications),
                             const Expanded(
                                 child: Padding(
-                                  padding: const EdgeInsets.only(left: 8),
+                                  padding: EdgeInsets.only(left: 8),
                                   child: Text(
                                     AppString.enableNotification,
                                     softWrap: false,

@@ -24,36 +24,48 @@ class NormalContentContainer extends StatelessWidget {
   }
 }
 
-class ClickableContentContainer extends StatelessWidget {
-  const ClickableContentContainer(
-      {this.child, this.height, this.onPressed, this.onLongPressed, Key? key})
-      : super(key: key);
+class CustomContentContainer extends StatelessWidget {
+  CustomContentContainer({
+    this.child,
+    this.onTap,
+    this.onLongTap,
+    this.color,
+    EdgeInsets? padding,
+    EdgeInsets? margin,
+    BorderRadius? borderRadius,
+    Key? key,
+  }) : super(key: key) {
+    _padding = padding ?? const EdgeInsets.all(15);
+    _margin = margin ?? EdgeInsets.zero;
+    _borderRadius = borderRadius ?? BorderRadius.circular(20);
+  }
 
   final Widget? child;
-  final double? height;
-  final VoidCallback? onPressed;
-  final VoidCallback? onLongPressed;
+  late final EdgeInsets _padding;
+  late final EdgeInsets _margin;
+  late final BorderRadius _borderRadius;
+  final void Function()? onTap;
+  final void Function()? onLongTap;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      child: ElevatedButton(
-        onPressed: onPressed ?? (() {}),
-        onLongPress: onLongPressed,
-        child: SizedBox(
-          height: height,
-          width: double.infinity,
-          //decoration: commonDecoration(context),
-          child: child,
-        ),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Theme.of(context).backgroundColor,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(40),
+      padding: _margin,
+      child: Material(
+        color: color ?? Theme.of(context).backgroundColor,
+        borderRadius: _borderRadius,
+        elevation: 2,
+        child: InkWell(
+          onTap: onTap,
+          onLongPress: onLongTap,
+          borderRadius: _borderRadius,
+          child: Container(
+            padding: _padding,
+            child: child,
           ),
-        )
         ),
-      );
+      ),
+    );
   }
 }

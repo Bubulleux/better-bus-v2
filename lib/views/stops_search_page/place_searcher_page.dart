@@ -1,6 +1,7 @@
 import 'package:better_bus_v2/model/clean/bus_stop.dart';
 import 'package:better_bus_v2/model/clean/map_place.dart';
 import 'package:better_bus_v2/views/common/background.dart';
+import 'package:better_bus_v2/views/common/custom_text_field.dart';
 import 'package:better_bus_v2/views/common/decorations.dart';
 import 'package:better_bus_v2/views/stops_search_page/map_place_searcher_view.dart';
 import 'package:better_bus_v2/views/stops_search_page/search_bus_stop_view.dart';
@@ -52,16 +53,13 @@ class _PlaceSearcherPageState extends State<PlaceSearcherPage> with TickerProvid
       body: Background(
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.only(top: 5, right: 5, left: 5),
             child: Column(
               children: [
-                TextField(
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Theme.of(context).backgroundColor,
-                  ),
+                CustomTextField(
                   autofocus: true,
                   controller: textEditingController,
+                  hint: AppString.searchLabel,
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),

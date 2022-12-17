@@ -1,7 +1,8 @@
 import 'package:better_bus_v2/model/clean/bus_stop.dart';
 import 'package:better_bus_v2/model/clean/view_shortcut.dart';
 import 'package:better_bus_v2/views/common/background.dart';
-import 'package:better_bus_v2/views/common/decorations.dart';
+import 'package:better_bus_v2/views/common/custom_input_widget.dart';
+import 'package:better_bus_v2/views/common/custom_text_field.dart';
 import 'package:better_bus_v2/views/common/fake_text_field.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
 import 'package:better_bus_v2/views/stops_search_page/stops_search_page.dart';
@@ -66,50 +67,35 @@ class _ViewShortcutEditorPageState extends State<ViewShortcutEditorPage> {
               padding: const EdgeInsets.all(15),
               child: Column(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextField(
-                      controller: textFieldNameController,
-                      style: Theme.of(context).textTheme.headline5,
-                      decoration: const InputDecoration(
-                        labelText: AppString.shortcutNameLabel,
-                      ),
-                    ),
+                  CustomTextField(
+                    controller: textFieldNameController,
+                    label: AppString.shortcutNameLabel,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        onTap: () => setState(() {
-                          shortcutIsFavorite = !shortcutIsFavorite;
-                        }),
-                        borderRadius: CustomDecorations.borderRadius,
-                        child: Container(
-                          decoration: CustomDecorations.of(context).boxOutlined,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 8),
-                          child: Row(
-                            children: [
-                              Text(
-                                AppString.addToFavorite,
-                                style: Theme.of(context).textTheme.headline5,
-                              ),
-                              const Spacer(),
-                              Icon(
-                                shortcutIsFavorite
-                                    ? Icons.star
-                                    : Icons.star_outline,
-                                color: Theme.of(context).primaryColor,
-                              )
-                            ],
+                  CustomInputWidget(
+                    onTap: () => setState(() {
+                      shortcutIsFavorite = !shortcutIsFavorite;
+                    }),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          Text(
+                            AppString.addToFavorite,
+                            style: Theme.of(context).textTheme.headline5,
                           ),
-                        ),
+                          const Spacer(),
+                          Icon(
+                            shortcutIsFavorite
+                                ? Icons.star
+                                : Icons.star_outline,
+                            color: Theme.of(context).primaryColor,
+                          )
+                        ],
                       ),
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.only(top: 5),
                     child: FakeTextField(
                       onPress: changeBusStop,
                       value: shortcutBusStop?.name,
@@ -118,44 +104,37 @@ class _ViewShortcutEditorPageState extends State<ViewShortcutEditorPage> {
                       hint: AppString.selectBusStop,
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      decoration: CustomDecorations.of(context).boxOutlined,
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 6),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            AppString.directionLabel,
-                            style: Theme.of(context).textTheme.headline5,
-                          ),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                          if (shortCutBusLines.isNotEmpty)
-                            Wrap(
-                              runAlignment: WrapAlignment.start,
-                              spacing: 5,
-                              runSpacing: 5,
-                              children: shortCutBusLines
-                                  .map((e) => LineWidget(e, 40))
-                                  .toList(),
-                            )
-                          else
-                            const Center(
-                                child: Text(AppString.emptyDirectionSelection)),
-                          const VerticalDivider(),
-                          Center(
-                            child: ElevatedButton(
-                              onPressed: selectTerminus,
-                              child: const Text(AppString.changeDirection),
-                            ),
+                  CustomInputWidget(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          AppString.directionLabel,
+                          style: Theme.of(context).textTheme.headline5,
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        if (shortCutBusLines.isNotEmpty)
+                          Wrap(
+                            runAlignment: WrapAlignment.start,
+                            spacing: 5,
+                            runSpacing: 5,
+                            children: shortCutBusLines
+                                .map((e) => LineWidget(e, 40))
+                                .toList(),
                           )
-                        ],
-                      ),
+                        else
+                          const Center(
+                              child: Text(AppString.emptyDirectionSelection)),
+                        const VerticalDivider(),
+                        Center(
+                          child: ElevatedButton(
+                            onPressed: selectTerminus,
+                            child: const Text(AppString.changeDirection),
+                          ),
+                        )
+                      ],
                     ),
                   ),
                   const Spacer(),

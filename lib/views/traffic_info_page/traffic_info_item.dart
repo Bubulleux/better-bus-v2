@@ -1,6 +1,5 @@
 import 'package:better_bus_v2/model/clean/info_traffic.dart';
 import 'package:better_bus_v2/views/common/decorations.dart';
-import 'package:better_bus_v2/views/common/extendable_view.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
@@ -12,12 +11,11 @@ import '../../model/clean/bus_line.dart';
 
 
 class TrafficInfoItem extends StatefulWidget {
-  const TrafficInfoItem(this.infoTraffic, this.busLines, {this.deploy = false, required this.onClick, Key? key}) : super(key: key);
+  const TrafficInfoItem(this.infoTraffic, this.busLines,{this.deploy = false, Key? key}) : super(key: key);
 
   final InfoTraffic infoTraffic;
   final Map<String, BusLine> busLines;
   final bool deploy;
-  final Function onClick;
 
 
   static final dateFormat = DateFormat("EE d MMM", "fr");
@@ -27,25 +25,36 @@ class TrafficInfoItem extends StatefulWidget {
 }
 
 class TrafficInfoItemState extends State<TrafficInfoItem> with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
-  late ExpandableWidgetController expandableController;
+  // late ExpandableWidgetController expandableController;
+  late Animation<double> animation;
+  late AnimationController animationController;
 
   @override
   void initState() {
     super.initState();
-    expandableController = ExpandableWidgetController(root: this);
+    // expandableController = ExpandableWidgetController(root: this);
+    // if (widget.deploy) {
+    //   expandableController.tickAnimation();
+    // }
+    animationController = AnimationController(vsync: this, duration: const Duration(seconds: 1));
+    animation = Tween(begin: 15.0, end: 5.0).animate(animationController);
+    animationController.addListener(() {setState(() {});});
     if (widget.deploy) {
-      expandableController.tickAnimation();
+      animationController.forward();
+    } else {
+      animationController.value = 1;
     }
   }
 
   @override
   void dispose() {
-    expandableController.dispose();
+    animationController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     List<BusLine> itemLines = [];
     for (String lineID in widget.infoTraffic.linesId ?? []) {
       itemLines.add(widget.busLines[lineID]!);
@@ -55,74 +64,65 @@ class TrafficInfoItemState extends State<TrafficInfoItem> with SingleTickerProvi
       padding: const EdgeInsets.all(8.0),
       child: Material(
         color: Colors.transparent,
-        child: InkWell(
-          borderRadius: CustomDecorations.borderRadius,
-          onTap: () {
-            // expandableController.tickAnimation();
-            widget.onClick();
-          },
-          splashColor: Colors.black,
-          child: Container(
-            decoration: CustomDecorations.of(context).boxBackground,
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  widget.infoTraffic.title,
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: widget.infoTraffic.isActive ? FontWeight.bold : FontWeight.normal,
+        elevation: animation.value,
+        shape: RoundedRectangleBorder(borderRadius: CustomDecorations.borderRadius),
+        child: Container(
+          decoration: CustomDecorations.of(context).boxBackground,
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                widget.infoTraffic.title,
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: widget.infoTraffic.isActive ? FontWeight.bold : FontWeight.normal,
+                    ),
+              ),
+              // Text(widget.infoTraffic.id.toString()),
+              const SizedBox(
+                height: 5,
+              ),
+              SizedBox(
+                width: double.infinity,
+                child: widget.infoTraffic.stopTime
+                            .difference(widget.infoTraffic.startTime)
+                            .compareTo(const Duration(days: 1)) > 0
+                    ? Wrap(
+                        alignment: WrapAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            TrafficInfoItem.dateFormat.format(widget.infoTraffic.startTime),
+                            style: Theme.of(context).textTheme.titleLarge,
+                          ),
+                          const Icon(Icons.keyboard_double_arrow_right),
+                          Text(
+                            TrafficInfoItem.dateFormat.format(widget.infoTraffic.stopTime),
+                            style: Theme.of(context).textTheme.titleLarge,
+                          )
+                        ],
+                      )
+                    : Text(
+                        TrafficInfoItem.dateFormat.format(widget.infoTraffic.stopTime),
+                        style: Theme.of(context).textTheme.titleLarge,
+                        textAlign: TextAlign.center,
                       ),
-                ),
-                // Text(widget.infoTraffic.id.toString()),
-                const SizedBox(
-                  height: 5,
-                ),
-                SizedBox(
-                  width: double.infinity,
-                  child: widget.infoTraffic.stopTime
-                              .difference(widget.infoTraffic.startTime)
-                              .compareTo(const Duration(days: 1)) > 0
-                      ? Wrap(
-                          alignment: WrapAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              TrafficInfoItem.dateFormat.format(widget.infoTraffic.startTime),
-                              style: Theme.of(context).textTheme.titleLarge,
-                            ),
-                            const Icon(Icons.keyboard_double_arrow_right),
-                            Text(
-                              TrafficInfoItem.dateFormat.format(widget.infoTraffic.stopTime),
-                              style: Theme.of(context).textTheme.titleLarge,
-                            )
-                          ],
-                        )
-                      : Text(
-                          TrafficInfoItem.dateFormat.format(widget.infoTraffic.stopTime),
-                          style: Theme.of(context).textTheme.titleLarge,
-                          textAlign: TextAlign.center,
-                        ),
-                ),
-                const SizedBox(
-                  height: 5,
-                ),
-                Wrap(
-                  alignment: WrapAlignment.start,
-                  spacing: 5,
-                  runSpacing: 5,
-                  children: itemLines.map((e) => LineWidget(e, 25, dynamicWidth: true)).toList(),
-                ),
-                ExpendableWidget(
-                  child: HtmlWidget(
-                    widget.infoTraffic.content,
-                    onTapUrl: (url) {
-                      return launchUrlString(url, mode: LaunchMode.externalApplication);
-                    },
-                  ),
-                  controller: expandableController,
-                ),
-              ],
-            ),
+              ),
+              const SizedBox(
+                height: 5,
+              ),
+              Wrap(
+                alignment: WrapAlignment.start,
+                spacing: 5,
+                runSpacing: 5,
+                children: itemLines.map((e) => LineWidget(e, 25, dynamicWidth: true)).toList(),
+              ),
+              HtmlWidget(
+                widget.infoTraffic.content,
+                onTapUrl: (url) {
+                  return launchUrlString(url, mode: LaunchMode.externalApplication);
+                },
+              ),
+            ],
           ),
         ),
       ),

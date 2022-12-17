@@ -8,7 +8,12 @@ class PreferencesView extends StatelessWidget {
   Future<List<Widget>> getPreferences() async {
     Map<String, String> preferences =  await LocalDataHandler.getAllPref();
     List<Widget> result = [];
-    preferences.forEach((key, value) {result.add(Text("$key:\n $value"));});
+    preferences.forEach((key, value) {
+      if (key.startsWith("cache-") || key == "log") {
+        return;
+      }
+      result.add(Text("$key:\n $value"));
+    });
     return result;
   }
 

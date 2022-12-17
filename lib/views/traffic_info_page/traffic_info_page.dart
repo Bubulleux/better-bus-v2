@@ -1,9 +1,9 @@
 import 'package:better_bus_v2/app_constant/app_string.dart';
 import 'package:better_bus_v2/data_provider/vitalis_data_provider.dart';
 import 'package:better_bus_v2/model/clean/info_traffic.dart';
+import 'package:better_bus_v2/views/common/back_arrow.dart';
 import 'package:better_bus_v2/views/common/background.dart';
 import 'package:better_bus_v2/views/common/custom_future.dart';
-import 'package:better_bus_v2/views/common/decorations.dart';
 import 'package:better_bus_v2/views/interest_line_page/interest_lines_page.dart';
 import 'package:better_bus_v2/views/traffic_info_page/traffic_info_item.dart';
 import 'package:flutter/material.dart';
@@ -25,8 +25,6 @@ class TrafficInfoPageState extends State<TrafficInfoPage> {
   late int? focus;
   late final GlobalKey<CustomFutureBuilderState> futureBuilderKey;
   final GlobalKey focusKey = GlobalKey();
-  final itemScrollController = ItemScrollController();
-  final itemPositionListener = ItemPositionsListener.create();
   Map<int, GlobalKey<TrafficInfoItemState>>? infoTrafficItemKey;
 
   List<InfoTraffic>? trafficInfos;
@@ -76,78 +74,63 @@ class TrafficInfoPageState extends State<TrafficInfoPage> {
         .then((value) => futureBuilderKey.currentState?.refresh());
   }
 
-  void showItem() {
-    if (focus != null) {
-      itemScrollController.scrollTo(
-          index: trafficInfos!.indexWhere((e) => e.id == focus), duration: Duration(seconds: 1));
-    }
-  }
-
-  void itemClick(int index) {
-    itemScrollController.jumpTo(
-      index: index,
-      alignment:
-          itemPositionListener.itemPositions.value.firstWhere((element) => element.index == index).itemLeadingEdge,
-    );
-    infoTrafficItemKey![index]?.currentState?.expandableController.tickAnimation();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Background(
         child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                Container(
-                  width: double.infinity,
-                  decoration: CustomDecorations.of(context).boxBackground,
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Wrap(
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    alignment: WrapAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        AppString.trafficInfoTitle,
-                        style: Theme.of(context).textTheme.headlineSmall,
+          child: Column(
+            children: [
+              Material(
+                elevation: 20,
+                color: Theme.of(context).backgroundColor,
+                child: Column(
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Row(
+                        children: [
+                          const BackArrow(),
+                          Text(
+                            AppString.trafficInfoTitle,
+                            style: Theme.of(context).textTheme.headlineSmall,
+                          ),
+                          const Spacer(),
+                          IconButton(onPressed: goSetting, icon: const Icon(Icons.settings))
+                        ],
                       ),
-                      IconButton(
-                        onPressed: showItem,
-                        icon: const Icon(Icons.transfer_within_a_station),
-                      ),
-                      IconButton(onPressed: goSetting, icon: const Icon(Icons.settings))
-                    ],
-                  ),
+                    ),
+                    Container(
+                      width: double.infinity,
+                      height: 5,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ],
                 ),
-                Expanded(
-                  child: CustomFutureBuilder<InfoTrafficObject>(
-                    future: getAllInformation,
-                    key: futureBuilderKey,
-                    onData: (context, data, refresh) {
-                      trafficInfos = data.infoList;
-                      infoTrafficItemKey = {};
-                      trafficInfos!.forEachIndexed((index, element) => infoTrafficItemKey![index] = GlobalKey());
-
-                      return ScrollablePositionedList.builder(
-                        itemCount: data.infoList.length,
-                        initialScrollIndex: focus != null ? trafficInfos!.indexWhere((e) => e.id == focus) : 0,
-                        itemScrollController: itemScrollController,
-                        itemPositionsListener: itemPositionListener,
-                        itemBuilder: (context, index) => TrafficInfoItem(
-                          data.infoList[index],
-                          data.busLines,
-                          onClick: () => itemClick(index),
-                          key: infoTrafficItemKey![index],
-                          deploy: data.infoList[index].id == focus,
-                        ),
-                      );
-                    },
-                  ),
-                )
-              ],
-            ),
+              ),
+              Expanded(
+                child: CustomFutureBuilder<InfoTrafficObject>(
+                  future: getAllInformation,
+                  key: futureBuilderKey,
+                  onData: (context, data, refresh) {
+                    trafficInfos = data.infoList;
+                    infoTrafficItemKey = {};
+                    trafficInfos!.forEachIndexed((index, element) => infoTrafficItemKey![index] = GlobalKey());
+                    return ScrollablePositionedList.builder(
+                      itemCount: data.infoList.length,
+                      initialScrollIndex: focus != null ? trafficInfos!.indexWhere((e) => e.id == focus) : 0,
+                      itemBuilder: (context, index) => TrafficInfoItem(
+                        data.infoList[index],
+                        data.busLines,
+                        key: infoTrafficItemKey![index],
+                        deploy: data.infoList[index].id == focus,
+                      ),
+                    );
+                  },
+                ),
+              )
+            ],
           ),
         ),
       ),

@@ -69,7 +69,6 @@ class _HomePageState extends State<HomePage> {
     super.didChangeDependencies();
     HomeWidget.initiallyLaunchedFromHomeWidget().then(launchWithWidget);
     HomeWidget.widgetClicked.listen(launchWithWidget);
-    checkIfAppIsNotificationLaunched();
   }
 
   Future checkIfAppIsNotificationLaunched() async{

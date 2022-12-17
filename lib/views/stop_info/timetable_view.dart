@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import '../../app_constant/app_string.dart';
 import '../../model/clean/bus_line.dart';
 import '../../model/clean/bus_stop.dart';
+import '../common/custom_input_widget.dart';
 
 class TimeTableView extends StatefulWidget {
   const TimeTableView(this.stop, {Key? key}) : super(key: key);
@@ -67,7 +68,11 @@ class _TimeTableViewState extends State<TimeTableView> with AutomaticKeepAliveCl
   Widget timetableEmpty = Column(
     mainAxisAlignment: MainAxisAlignment.center,
     crossAxisAlignment: CrossAxisAlignment.center,
-    children: const [Icon(Icons.error_outline), Text(AppString.noBusToday)],
+    children: const [
+      SizedBox(height: 50,
+      width: double.infinity,),
+      Icon(Icons.error_outline),
+      Text(AppString.noBusToday),],
   );
 
   void changeDirection() {
@@ -146,8 +151,11 @@ class _TimeTableViewState extends State<TimeTableView> with AutomaticKeepAliveCl
               return TimetableOutput(timetable);
             }
           }
-          return const Center(
-            child: CircularProgressIndicator(),
+          return const SizedBox(
+            height: 100,
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
           );
         },
       );
@@ -157,64 +165,65 @@ class _TimeTableViewState extends State<TimeTableView> with AutomaticKeepAliveCl
       width: double.infinity,
       height: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-      child: Column(
-        children: [
-          InputDecoration(
-            DropdownButton<BusLine>(
-              isExpanded: true,
-              onChanged: selectLine,
-              underline: Container(),
-              hint: const Text(AppString.selectALine),
-              value: busLineSelected,
-              items: (busLines ?? []).map<DropdownMenuItem<BusLine>>((BusLine value) {
-                return DropdownMenuItem<BusLine>(
-                  value: value,
-                  child: Row(
-                    children: [
-                      LineWidget(value, 30),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 8),
-                          child: Text(
-                            value.fullName,
-                            overflow: TextOverflow.fade,
-                            maxLines: 1,
-                            softWrap: false,
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            CustomInputWidget(
+              child: DropdownButton<BusLine>(
+                isExpanded: true,
+                onChanged: selectLine,
+                underline: Container(),
+                hint: const Text(AppString.selectALine),
+                value: busLineSelected,
+                items: (busLines ?? []).map<DropdownMenuItem<BusLine>>((BusLine value) {
+                  return DropdownMenuItem<BusLine>(
+                    value: value,
+                    child: Row(
+                      children: [
+                        LineWidget(value, 25),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 8),
+                            child: Text(
+                              value.fullName,
+                              overflow: TextOverflow.fade,
+                              maxLines: 1,
+                              softWrap: false,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+            CustomInputWidget(
+              onTap: changeDirection,
+              child: Row(
+                children: [
+                  const Icon(Icons.directions_bus_outlined),
+                  const SizedBox(
+                    width: 8,
                   ),
-                );
-              }).toList(),
+                  Expanded(
+                      child: Text(
+                    directionString ?? " ",
+                    style: Theme.of(context).textTheme.bodyMedium,
+                    maxLines: 2,
+                    overflow: TextOverflow.fade,
+                    softWrap: true,
+                  )),
+                  TextButton(
+                    onPressed: changeDirection,
+                    child: const Icon(Icons.change_circle_outlined),
+                  )
+                ],
+              ),
             ),
-          ),
-          InputDecoration(
-            Row(
-              children: [
-                const Icon(Icons.directions_bus_outlined),
-                const SizedBox(
-                  width: 8,
-                ),
-                Expanded(
-                    child: Text(
-                  directionString ?? " ",
-                  style: Theme.of(context).textTheme.bodyMedium,
-                  maxLines: 2,
-                  overflow: TextOverflow.fade,
-                  softWrap: true,
-                )),
-                TextButton(
-                  onPressed: changeDirection,
-                  child: const Icon(Icons.change_circle_outlined),
-                )
-              ],
-            ),
-          ),
-          GestureDetector(
-            onTap: selectDate,
-            child: InputDecoration(
-              Row(
+            CustomInputWidget(
+              onTap: selectDate,
+              child: Row(
                 children: [
                   const Icon(Icons.calendar_month_outlined),
                   Expanded(
@@ -232,30 +241,9 @@ class _TimeTableViewState extends State<TimeTableView> with AutomaticKeepAliveCl
                 ],
               ),
             ),
-          ),
-          Expanded(child: timeTableBody),
-        ],
-      ),
-    );
-  }
-}
-
-class InputDecoration extends StatelessWidget {
-  const InputDecoration(this.child, {Key? key}) : super(key: key);
-
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: Theme.of(context).primaryColor),
-          borderRadius: BorderRadius.circular(20),
+            timeTableBody,
+          ],
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-        child: child,
       ),
     );
   }
@@ -286,84 +274,81 @@ class TimetableOutput extends StatelessWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.only(top: 10),
+      padding: const EdgeInsets.only(top: 3),
       child: Column(
         children: [
-          Expanded(
-            child: ListView.builder(
-              itemCount: timetableSorted.length,
-              itemBuilder: (context, index) {
-                int key = timetableSorted.keys.elementAt(index);
-                List<Widget> rowContent = [];
-                for (BusSchedule schedule in timetableSorted[key]!) {
-                  rowContent.add(SizedBox(
-                    width: 45,
-                    child: Text.rich(TextSpan(
-                      text: schedule.time.minute.toString(),
-                      children: [
-                        TextSpan(
-                          text: schedule.label,
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                      ],
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    )),
-                  ));
-                }
+          ListView.builder(
+            physics: const ClampingScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: timetableSorted.length,
+            itemBuilder: (context, index) {
+              int key = timetableSorted.keys.elementAt(index);
+              List<Widget> rowContent = [];
+              for (BusSchedule schedule in timetableSorted[key]!) {
+                rowContent.add(SizedBox(
+                  width: 45,
+                  child: Text.rich(TextSpan(
+                    text: schedule.time.minute.toString(),
+                    children: [
+                      TextSpan(
+                        text: schedule.label,
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                    ],
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  )),
+                ));
+              }
 
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 5),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      border: Border.all(color: Theme.of(context).primaryColor),
-                      color: index % 2 == 0 ? Theme.of(context).primaryColorLight : null,
-                    ),
-                    child: IntrinsicHeight(
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 35,
-                            //height: double.infinity,
-                            decoration: BoxDecoration(
-                                color: Theme.of(context).primaryColor,
-                                borderRadius: const BorderRadius.only(
-                                    topLeft: Radius.circular(15), bottomLeft: Radius.circular(15))),
-                            alignment: Alignment.centerRight,
-                            padding: const EdgeInsets.only(right: 3),
-                            child: Text(
-                              key.toString(),
-                              style: Theme.of(context).textTheme.bodyMedium,
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 5),
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    border: Border.all(color: Theme.of(context).primaryColor),
+                    color: index % 2 == 0 ? Theme.of(context).primaryColorLight : null,
+                  ),
+                  child: IntrinsicHeight(
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 35,
+                          //height: double.infinity,
+                          decoration: BoxDecoration(
+                              color: Theme.of(context).primaryColor,
+                              borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(15), bottomLeft: Radius.circular(15))),
+                          alignment: Alignment.centerRight,
+                          padding: const EdgeInsets.only(right: 3),
+                          child: Text(
+                            key.toString(),
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                        ),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 5),
+                            child: Wrap(
+                              direction: Axis.horizontal,
+                              //runSpacing: 20,
+                              children: rowContent,
                             ),
                           ),
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 5),
-                              child: Wrap(
-                                direction: Axis.horizontal,
-                                //runSpacing: 20,
-                                children: rowContent,
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
+                        )
+                      ],
                     ),
                   ),
-                );
-              },
-            ),
+                ),
+              );
+            },
           ),
-          Padding(
-            padding: const EdgeInsets.all(3.0),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-              width: double.infinity,
-              decoration: BoxDecoration(color: Theme.of(context).primaryColor, borderRadius: BorderRadius.circular(20)),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: labelsPassage,
-              ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+            width: double.infinity,
+            decoration: BoxDecoration(color: Theme.of(context).primaryColor, borderRadius: BorderRadius.circular(20)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: labelsPassage,
             ),
           ),
         ],

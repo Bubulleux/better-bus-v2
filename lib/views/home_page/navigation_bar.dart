@@ -7,22 +7,25 @@ class CustomNavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(
-      children: [
-        Container(
-          height: 5,
-          width: double.infinity,
-          color: Theme.of(context).primaryColor,
-        ),
-        Container(
-          width: double.infinity,
-          color: Colors.white,
-          child: Wrap(
-            children: child,
-            alignment: WrapAlignment.spaceAround,
+    return Material(
+      elevation: 5,
+      child: Wrap(
+        children: [
+          Container(
+            height: 5,
+            width: double.infinity,
+            color: Theme.of(context).primaryColor,
           ),
-        ),
-      ],
+          Container(
+            width: double.infinity,
+            color: Colors.white,
+            child: Wrap(
+              children: child,
+              alignment: WrapAlignment.spaceAround,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

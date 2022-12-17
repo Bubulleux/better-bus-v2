@@ -2,6 +2,7 @@ import 'package:better_bus_v2/app_constant/app_string.dart';
 import 'package:better_bus_v2/data_provider/local_data_handler.dart';
 import 'package:better_bus_v2/model/clean/bus_line.dart';
 import 'package:better_bus_v2/model/clean/view_shortcut.dart';
+import 'package:better_bus_v2/views/common/content_container.dart';
 import 'package:better_bus_v2/views/common/context_menu.dart';
 import 'package:better_bus_v2/views/common/decorations.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
@@ -193,74 +194,63 @@ class ShortcutWidget extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onPressed,
-          splashColor: Colors.black,
-          borderRadius: CustomDecorations.borderRadius,
-          child: Container(
-            decoration: BoxDecoration(
-              color: Theme.of(context).backgroundColor,
-              borderRadius: CustomDecorations.borderRadius,
+      child: CustomContentContainer(
+        // padding: const EdgeInsets.all(15),
+        onTap: onPressed,
+        child: Column(
+          children: [
+            SizedBox(
+              width: double.infinity,
+              child: Wrap(
+                alignment: WrapAlignment.spaceBetween,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  if (shortcut.isFavorite)
+                    Icon(
+                      Icons.star,
+                      color: Theme.of(context).primaryColorDark,
+                    )
+                  else
+                    Container(width: 0),
+                  Text(
+                    shortcut.shortcutName,
+                    style: TextStyle(
+                      fontSize: 25,
+                      fontWeight: shortcut.isFavorite ? FontWeight.w500 : FontWeight.normal,
+                    ),
+                    softWrap: false,
+                    maxLines: 1,
+                    overflow: TextOverflow.fade,
+                  ),
+                  IconButton(
+                    onPressed: onLongPressed,
+                    icon: const Icon(Icons.more_vert),
+                    padding: EdgeInsets.zero,
+                  )
+                ],
+              ),
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-            child: Column(
+            const SizedBox(
+              height: 10,
+            ),
+            Row(
               children: [
-                SizedBox(
-                  width: double.infinity,
-                  child: Wrap(
-                    alignment: WrapAlignment.spaceBetween,
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: [
-                      if (shortcut.isFavorite)
-                        Icon(
-                          Icons.star,
-                          color: Theme.of(context).primaryColorDark,
-                        )
-                      else
-                        Container(width: 0),
-                      Text(
-                        shortcut.shortcutName,
-                        style: TextStyle(
-                          fontSize: 25,
-                          fontWeight: shortcut.isFavorite ? FontWeight.w500 : FontWeight.normal,
-                        ),
-                        softWrap: false,
-                        maxLines: 1,
-                        overflow: TextOverflow.fade,
-                      ),
-                      IconButton(
-                        onPressed: onLongPressed,
-                        icon: const Icon(Icons.more_vert),
-                        padding: EdgeInsets.zero,
-                      )
-                    ],
+                Text(
+                  shortcut.stop.name,
+                  style: const TextStyle(
+                    fontSize: 15,
                   ),
                 ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Row(
-                  children: [
-                    Text(
-                      shortcut.stop.name,
-                      style: const TextStyle(
-                        fontSize: 15,
-                      ),
-                    ),
-                    Expanded(
-                      child: Wrap(
-                        children: linesWidget,
-                        alignment: WrapAlignment.end,
-                        spacing: 3,
-                      ),
-                    )
-                  ],
-                ),
+                Expanded(
+                  child: Wrap(
+                    children: linesWidget,
+                    alignment: WrapAlignment.end,
+                    spacing: 3,
+                  ),
+                )
               ],
             ),
-          ),
+          ],
         ),
       ),
     );
