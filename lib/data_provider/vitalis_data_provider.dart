@@ -12,10 +12,14 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 import '../model/clean/next_passage.dart';
+import 'cache_data_provider.dart';
 import 'connectivity_checker.dart';
 
 class VitalisDataProvider {
   static String? token;
+  static CacheDataProvider stopsCache = CacheDataProvider(key: "stops", expiration: const Duration(hours: 5));
+  static CacheDataProvider linesCache = CacheDataProvider(key: "lines", expiration: const Duration(hours: 5));
+  static CacheDataProvider trafficInfoCache = CacheDataProvider(key: "trafficInfo", expiration: const Duration(minutes: 14));
 
   static Future<void> getToken() async {
     if (!await ConnectivityChecker.isConnected()) {
@@ -43,7 +47,7 @@ class VitalisDataProvider {
   static Future<List<BusStop>?> getStops() async {
     Uri uri = Uri.parse("https://releases-uxb3m2jh5q-ew.a.run.app/stops");
 
-    List<dynamic> body = await sendRequest(uri);
+    List<dynamic> body = await sendRequest(uri, cache: stopsCache);
     List<BusStop> output = [];
     for (Map<String, dynamic> rawStop in body) {
 
@@ -122,14 +126,14 @@ class VitalisDataProvider {
   static Future<List<InfoTraffic>> getTrafficInfo() async {
     Uri uri = Uri.parse("https://releases-uxb3m2jh5q-ew.a.run.app/traffics");
 
-    List<dynamic> json = await sendRequest(uri);
+    List<dynamic> json = await sendRequest(uri, cache: trafficInfoCache);
     return json.map((e) => InfoTraffic.fromJson(e)).toList();
   }
 
   static Future<Map<String, BusLine>> getAllLines() async {
     Uri uri = Uri.parse("https://releases-uxb3m2jh5q-ew.a.run.app/lines");
 
-    List<dynamic> json = await sendRequest(uri);
+    List<dynamic> json = await sendRequest(uri, cache: linesCache);
     return { for (Map<String, dynamic>  e in json) e["slug"]: BusLine.fromSimpleJson(e)};
   }
 
@@ -173,10 +177,16 @@ class VitalisDataProvider {
     return json.map((e) => VitalisRoute.fromJson(e)).toList().cast<VitalisRoute>();
   }
 
-  static Future<dynamic> sendRequest(Uri uri, {needToken = true}) async {
+  static Future<dynamic> sendRequest(Uri uri, {needToken = true, CacheDataProvider? cache}) async {
     int status = -1;
     int countTry = 0;
     http.Response? response;
+    if (cache != null){
+      String? cacheData = await cache.getData();
+      if (cacheData != null){
+        return jsonDecode(cacheData);
+      }
+    }
 
     if (!await ConnectivityChecker.isConnected()) {
       throw CustomErrors.noInternet;
@@ -187,7 +197,11 @@ class VitalisDataProvider {
       response = await http.get(uri, headers: needToken ? await getAutHeader() : null);
       status = response.statusCode;
       if (response.statusCode == 200) {
-        dynamic output = jsonDecode(utf8.decode(response.bodyBytes));
+        String body = utf8.decode(response.bodyBytes);
+        dynamic output = jsonDecode(body);
+        if (cache != null) {
+          await cache.setData(body);
+        }
         return output;
       }
 
