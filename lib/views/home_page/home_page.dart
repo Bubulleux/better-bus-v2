@@ -1,10 +1,12 @@
 import 'package:better_bus_v2/app_constant/app_string.dart';
 import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
 import 'package:better_bus_v2/data_provider/local_data_handler.dart';
+import 'package:better_bus_v2/data_provider/version_data_provider.dart';
 import 'package:better_bus_v2/info_traffic_notification.dart';
 import 'package:better_bus_v2/model/clean/bus_stop.dart';
 import 'package:better_bus_v2/model/clean/view_shortcut.dart';
 import 'package:better_bus_v2/views/common/background.dart';
+import 'package:better_bus_v2/views/common/content_container.dart';
 import 'package:better_bus_v2/views/common/decorations.dart';
 import 'package:better_bus_v2/views/home_page/navigation_bar.dart';
 import 'package:better_bus_v2/views/home_page/shortcut_section.dart';
@@ -16,6 +18,7 @@ import 'package:better_bus_v2/views/traffic_info_page/traffic_info_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:home_widget/home_widget.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import 'package:workmanager/workmanager.dart';
 
 import '../stops_search_page/stops_search_page.dart';
@@ -62,6 +65,7 @@ class _HomePageState extends State<HomePage> {
         frequency: const Duration(minutes: 15),
         constraints: Constraints(networkType: NetworkType.connected));
     initFlutterNotificationPlugin();
+    checkIfAppIsNotificationLaunched();
   }
 
   @override
@@ -146,6 +150,30 @@ class _HomePageState extends State<HomePage> {
                   child: Column(
                     mainAxisSize: MainAxisSize.max,
                     children: [
+                      FutureBuilder(
+                        future: VersionDataProvider.checkIfNewVersion(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) {
+                            throw snapshot.error!;
+                          }
+                          if (snapshot.hasData && snapshot.data != null) {
+                            String url = snapshot.data as String;
+                            return CustomContentContainer(
+                              onTap: () => launchUrlString(url, mode: LaunchMode.externalApplication),
+                              margin: const EdgeInsets.only(bottom: 5),
+                              color: Theme.of(context).primaryColor,
+                              child: Row(
+                                children: const [
+                                  Text(AppString.newVersion, style: TextStyle(fontWeight: FontWeight.bold),),
+                                  Spacer(),
+                                  Icon(Icons.download),
+                                ],
+                              ),
+                            );
+                          }
+                          return Container();
+                        },
+                      ),
                       Container(
                         padding:
                         const EdgeInsets.symmetric(horizontal: 10, vertical: 5),

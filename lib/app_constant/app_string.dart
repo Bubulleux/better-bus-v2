@@ -73,4 +73,6 @@ class AppString{
   static const notificationBodyMultipleDay = "Du {} au {}.";
   static const notificationBodyOneDay = "Le {}.";
 
+  static const newVersion = "Une nouvelle version est diponible";
+
 }

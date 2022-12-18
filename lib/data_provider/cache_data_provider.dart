@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 const String cacheDateFile = "date-cache";
 
 class CacheDataProvider {
-  CacheDataProvider({required this.key, required this.expiration});
+  const CacheDataProvider({required this.key, required this.expiration});
 
   final String key;
   final Duration expiration;
