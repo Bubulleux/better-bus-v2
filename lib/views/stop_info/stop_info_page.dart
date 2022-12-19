@@ -51,6 +51,7 @@ class _StopInfoPageState extends State<StopInfoPage> with SingleTickerProviderSt
       }
       setState(() {
         stop = value as BusStop;
+        lines = null;
       });
     });
   }
@@ -112,7 +113,7 @@ class _StopInfoPageState extends State<StopInfoPage> with SingleTickerProviderSt
             Expanded(
               child: TabBarView(
                 children: [
-                  NextPassagePage(stop, lines: stop == stop ? lines : null),
+                  NextPassagePage(stop, lines: lines),
                   TimeTableView(stop),
                 ],
                 controller: tabController,

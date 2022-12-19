@@ -13,7 +13,7 @@ import 'package:better_bus_v2/main.dart';
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(const BetterBusApp());
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);

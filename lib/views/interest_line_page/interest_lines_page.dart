@@ -2,6 +2,7 @@ import 'package:better_bus_v2/app_constant/app_string.dart';
 import 'package:better_bus_v2/data_provider/local_data_handler.dart';
 import 'package:better_bus_v2/data_provider/vitalis_data_provider.dart';
 import 'package:better_bus_v2/model/clean/bus_line.dart';
+import 'package:better_bus_v2/views/common/back_arrow.dart';
 import 'package:better_bus_v2/views/common/custom_future.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
 import 'package:flutter/material.dart';
@@ -64,13 +65,16 @@ class _InterestLinePageState extends State<InterestLinePage> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(5.0),
-                      child: Row(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          IconButton(
-                            onPressed: () => Navigator.of(context).pop(),
-                            icon: const Icon(Icons.chevron_left),
+                          Row(
+                            children: [
+                              const BackArrow(),
+                              Expanded(child: Text(AppString.selectLine, style: Theme.of(context).textTheme.titleLarge)),
+                            ],
                           ),
-                          Expanded(child: Text(AppString.selectLine, style: Theme.of(context).textTheme.titleLarge)),
+                          Text(AppString.interestedLineInfo, style: Theme.of(context).textTheme.bodySmall,),
                         ],
                       ),
                     ),

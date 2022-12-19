@@ -7,7 +7,6 @@ import 'package:better_bus_v2/model/clean/bus_stop.dart';
 import 'package:better_bus_v2/model/clean/view_shortcut.dart';
 import 'package:better_bus_v2/views/common/background.dart';
 import 'package:better_bus_v2/views/common/content_container.dart';
-import 'package:better_bus_v2/views/common/decorations.dart';
 import 'package:better_bus_v2/views/home_page/navigation_bar.dart';
 import 'package:better_bus_v2/views/home_page/shortcut_section.dart';
 import 'package:better_bus_v2/views/log_view.dart';
@@ -62,8 +61,7 @@ class _HomePageState extends State<HomePage> {
     GpsDataProvider.askForGPS();
     HomeWidget.widgetClicked.listen(launchWithWidget);
     Workmanager().registerPeriodicTask("check-traffic-info", "checkTrafficInfo",
-        frequency: const Duration(minutes: 15),
-        constraints: Constraints(networkType: NetworkType.connected));
+        frequency: const Duration(minutes: 15), constraints: Constraints(networkType: NetworkType.connected));
     initFlutterNotificationPlugin();
     checkIfAppIsNotificationLaunched();
   }
@@ -75,9 +73,9 @@ class _HomePageState extends State<HomePage> {
     HomeWidget.widgetClicked.listen(launchWithWidget);
   }
 
-  Future checkIfAppIsNotificationLaunched() async{
+  Future checkIfAppIsNotificationLaunched() async {
     NotificationAppLaunchDetails? launchNotificationDetails =
-    await FlutterLocalNotificationsPlugin().getNotificationAppLaunchDetails();
+        await FlutterLocalNotificationsPlugin().getNotificationAppLaunchDetails();
     if (launchNotificationDetails == null) {
       return;
     }
@@ -85,7 +83,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void receiveNotification(NotificationResponse? response) {
-    if (response == null){
+    if (response == null) {
       return;
     }
     Navigator.of(context).popUntil((route) => route.settings.name != TrafficInfoPage.routeName);
@@ -110,6 +108,7 @@ class _HomePageState extends State<HomePage> {
   void gotoLog() {
     Navigator.of(context).pushNamed(LogView.routeName);
   }
+
   void gotoPrefs() {
     Navigator.of(context).pushNamed(PreferencesView.routeName);
   }
@@ -124,15 +123,15 @@ class _HomePageState extends State<HomePage> {
 
     Navigator.of(context).popUntil((route) => (route.settings.name != StopInfoPage.routeName ||
         (route.settings.arguments as StopInfoPageArgument?)?.stop != shortcut.stop));
-    Navigator.of(context).pushNamed(StopInfoPage.routeName,
-        arguments: StopInfoPageArgument(shortcut.stop, shortcut.lines));
+    Navigator.of(context)
+        .pushNamed(StopInfoPage.routeName, arguments: StopInfoPageArgument(shortcut.stop, shortcut.lines));
   }
 
   void launchTestNotification() {
     checkInfoTraffic();
   }
 
-  void testNotificationActivation() async{
+  void testNotificationActivation() async {
     await LocalDataHandler.setLastNotificationPush(DateTime(2022, 11, 10));
     checkInfoTraffic();
   }
@@ -144,63 +143,58 @@ class _HomePageState extends State<HomePage> {
         child: Background(
           child: Column(
             children: [
+              FutureBuilder(
+                future: VersionDataProvider.checkIfNewVersion(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    throw snapshot.error!;
+                  }
+                  if (snapshot.hasData && snapshot.data != null) {
+                    String url = snapshot.data as String;
+                    return CustomContentContainer(
+                      onTap: () => launchUrlString(url, mode: LaunchMode.externalApplication),
+                      margin: const EdgeInsets.only(top: 5, right: 8, left: 8),
+                      color: Theme.of(context).primaryColor,
+                      child: Row(
+                        children: const [
+                          Text(
+                            AppString.newVersion,
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Spacer(),
+                          Icon(Icons.download),
+                        ],
+                      ),
+                    );
+                  }
+                  return Container();
+                },
+              ),
+              CustomContentContainer(
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                margin: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        AppString.shortcut,
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                    ),
+                    IconButton(onPressed: newShortcut, icon: const Icon(Icons.add)),
+                    // IconButton(onPressed: testNotificationActivation, icon: const Icon(Icons.notifications_active_rounded)),
+                    // IconButton(onPressed: launchTestNotification, icon: const Icon(Icons.notification_add)),
+                    // IconButton(onPressed: gotoLog, icon: const Icon(Icons.newspaper)),
+                    // IconButton(onPressed: gotoPrefs, icon: const Icon(Icons.settings)),
+                  ],
+                ),
+              ),
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: Column(
                     mainAxisSize: MainAxisSize.max,
                     children: [
-                      FutureBuilder(
-                        future: VersionDataProvider.checkIfNewVersion(),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasError) {
-                            throw snapshot.error!;
-                          }
-                          if (snapshot.hasData && snapshot.data != null) {
-                            String url = snapshot.data as String;
-                            return CustomContentContainer(
-                              onTap: () => launchUrlString(url, mode: LaunchMode.externalApplication),
-                              margin: const EdgeInsets.only(bottom: 5),
-                              color: Theme.of(context).primaryColor,
-                              child: Row(
-                                children: const [
-                                  Text(AppString.newVersion, style: TextStyle(fontWeight: FontWeight.bold),),
-                                  Spacer(),
-                                  Icon(Icons.download),
-                                ],
-                              ),
-                            );
-                          }
-                          return Container();
-                        },
-                      ),
-                      Container(
-                        padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                        decoration: CustomDecorations
-                            .of(context)
-                            .boxBackground,
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                AppString.shortcut,
-                                style: Theme
-                                    .of(context)
-                                    .textTheme
-                                    .headlineSmall,
-                              ),
-                            ),
-                            IconButton(onPressed: newShortcut, icon: const Icon(Icons.add)),
-                            IconButton(onPressed: testNotificationActivation, icon: const Icon(Icons.notifications_active_rounded)),
-                            IconButton(onPressed: launchTestNotification, icon: const Icon(Icons.notification_add)),
-                            IconButton(onPressed: gotoLog, icon: const Icon(Icons.newspaper)),
-                            IconButton(onPressed: gotoPrefs, icon: const Icon(Icons.settings)),
-
-                          ],
-                        ),
-                      ),
-
                       Expanded(
                         child: ShortcutWidgetRoot(key: shortcutSection),
                       )

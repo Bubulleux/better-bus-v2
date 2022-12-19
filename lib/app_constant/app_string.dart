@@ -1,6 +1,7 @@
+
 class AppString{
 
-  static String appName = "Better Bus";
+  static const appName = "Better Bus";
 
   static const retry = "Ré-essayer";
   static const findStop = "Chercher un arret";
@@ -74,5 +75,12 @@ class AppString{
   static const notificationBodyOneDay = "Le {}.";
 
   static const newVersion = "Une nouvelle version est diponible";
+
+  static const interestedLineInfo = "Les lignes désignés comme intéresser seront affichées en prioriter sur la page "
+      "des infos traffic et des notification seront envoyées si elle sont activées.";
+
+  static const appInfoPageTitle = "Information Utilies";
+
+  static const appInfo = "Bienvenu sur Better Bus\n";
 
 }

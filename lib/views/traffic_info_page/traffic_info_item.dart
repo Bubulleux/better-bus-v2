@@ -79,9 +79,7 @@ class TrafficInfoItemState extends State<TrafficInfoItem> with SingleTickerProvi
                     ),
               ),
               // Text(widget.infoTraffic.id.toString()),
-              const SizedBox(
-                height: 5,
-              ),
+              const Divider(thickness: 1,),
               SizedBox(
                 width: double.infinity,
                 child: widget.infoTraffic.stopTime

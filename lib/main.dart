@@ -1,4 +1,5 @@
 import 'package:better_bus_v2/info_traffic_notification.dart';
+import 'package:better_bus_v2/views/credit_page.dart';
 import 'package:better_bus_v2/views/interest_line_page/interest_lines_page.dart';
 import 'package:better_bus_v2/views/log_view.dart';
 import 'package:better_bus_v2/views/preferences_view.dart';
@@ -17,6 +18,8 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:workmanager/workmanager.dart';
 
+import 'app_constant/app_string.dart';
+
 @pragma('vm:entry-point')
 void callbackDispatcher() {
   Workmanager().executeTask((taskName, inputData) async {
@@ -34,23 +37,23 @@ void main() async {
     resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.requestPermission();
 
   Workmanager().initialize(callbackDispatcher);
-  runApp(const MyApp());
+  runApp(const BetterBusApp());
 }
 
 
-class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
+class BetterBusApp extends StatefulWidget {
+  const BetterBusApp({Key? key}) : super(key: key);
 
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  State<BetterBusApp> createState() => _BetterBusAppState();
 }
 
-class _MyAppState extends State<MyApp> with WidgetsBindingObserver{
+class _BetterBusAppState extends State<BetterBusApp> with WidgetsBindingObserver{
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: AppString.appName,
       theme: ThemeData(
         primarySwatch: Colors.lightGreen,
         primaryColorLight: const Color(0xffe6eee5),
@@ -96,9 +99,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver{
 
         LogView.routeName: (context) => const LogView(),
         PreferencesView.routeName: (context) => const PreferencesView(),
+
+        AppInfo.routeName: (context) => const AppInfo(),
       },
-      // locale: const Locale('fr', ""),
-      // home: const HomePage(),
     );
   }
 }
