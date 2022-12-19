@@ -1,4 +1,4 @@
-package com.example.better_bus_v2
+package com.bubulle.better_bus_v2
 
 
 import android.app.Activity
@@ -32,9 +32,9 @@ class MainActivity: FlutterActivity() {
 
     fun updateWidgets(): IntArray {
         val widgetManager: AppWidgetManager = AppWidgetManager.getInstance(this)
-        val ids: IntArray = widgetManager.getAppWidgetIds(ComponentName(this, HomeWidgetExampleProvider::class.java))
+        val ids: IntArray = widgetManager.getAppWidgetIds(ComponentName(this, HomeWidgetProvider::class.java))
         if (ids.size > 0) {
-            HomeWidgetExampleProvider().onUpdate(this, widgetManager, ids)
+            HomeWidgetProvider().onUpdate(this, widgetManager, ids)
         }
         return ids
     }

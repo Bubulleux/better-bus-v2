@@ -1,4 +1,4 @@
-package com.example.better_bus_v2
+package com.bubulle.better_bus_v2
 
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
@@ -16,22 +16,13 @@ import es.antonborri.home_widget.HomeWidgetPlugin
 import android.widget.RemoteViews
 import android.os.Build
 
-class HomeWidgetExampleProvider : AppWidgetProvider() {
+class HomeWidgetProvider : AppWidgetProvider() {
 
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
-//        val widgetData: android.content.SharedPreferences = HomeWidgetPlugin.getData(context)
         appWidgetIds.forEach { widgetId ->
-
-//            val rowShorcuts = widgetData.getString("shortcuts", "") ?: ""
-//            var shortcuts: Array<String> = rowShorcuts.split(";").toTypedArray()
-//            if (shortcuts.size == 1 && shortcuts[0] == "")
-//            {
-//                shortcuts = emptyArray<String>()
-//            }
 
             val intent = Intent(context, StackWidgetService::class.java).apply {
                 putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
-//                putExtra("shortcuts", shortcuts)
                 data = Uri.parse(toUri(Intent.URI_INTENT_SCHEME))
             }
 
@@ -50,11 +41,10 @@ class HomeWidgetExampleProvider : AppWidgetProvider() {
                 flags,
             )
 
-            val views = RemoteViews(context.packageName, R.layout.example_layout).apply {
+            val views = RemoteViews(context.packageName, R.layout.widget_root_layout).apply {
                 setRemoteAdapter(R.id.widget_list, intent)
                 setEmptyView(R.id.widget_list, R.id.list_empty)
                 setPendingIntentTemplate(R.id.widget_list, pendingIntent)
-//                setTextViewText(R.id.widget_title, shortcuts.size.toString())
             }
             appWidgetManager.notifyAppWidgetViewDataChanged(widgetId, R.id.widget_list)
             appWidgetManager.updateAppWidget(widgetId, views)
@@ -113,22 +103,11 @@ class StackRemoteViewsFactory(
         val fillInIntent: Intent = Intent().apply {
             data = uri
         }
-//        val pendingIntent = HomeWidgetLaunchIntent.getActivity(
-//            context,
-//            MainActivity::class.java,
-//            uri
-//        )
-
-//        val fillInIntent = HomeWidgetLaunchIntent.getActivity(
-//            context,
-//            MainActivity::class.java,
-//            Uri.parse("app://open-shortcut/${shortcutNames[position]}"))
 
 
         return RemoteViews(context.packageName, R.layout.widget_item).apply {
             setTextViewText(R.id.widget_item, shortcutNames[position])
             setOnClickFillInIntent(R.id.widget_item, fillInIntent)
-//            setOnClickPendingIntent(R.id.widget_item, pendingIntent)
         }
     }
 
