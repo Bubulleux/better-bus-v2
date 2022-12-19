@@ -193,7 +193,7 @@ class ShortcutWidget extends StatelessWidget {
     }
 
     return CustomContentContainer(
-      margin: EdgeInsets.only(bottom: 8),
+      margin: const EdgeInsets.only(bottom: 8),
       onTap: onPressed,
       child: Column(
         children: [

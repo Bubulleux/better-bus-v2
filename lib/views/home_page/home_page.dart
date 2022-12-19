@@ -171,8 +171,8 @@ class _HomePageState extends State<HomePage> {
                 },
               ),
               CustomContentContainer(
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-                margin: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
                 child: Row(
                   children: [
                     Expanded(

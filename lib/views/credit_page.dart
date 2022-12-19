@@ -20,7 +20,7 @@ class AppInfo extends StatelessWidget {
             child: Column(
               children: [
                 CustomContentContainer(
-                  margin: EdgeInsets.only(bottom: 5),
+                  margin: const EdgeInsets.only(bottom: 5),
                   child: Row(
                     children: [
                       const BackArrow(),

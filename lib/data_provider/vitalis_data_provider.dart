@@ -17,9 +17,9 @@ import 'connectivity_checker.dart';
 
 class VitalisDataProvider {
   static String? token;
-  static CacheDataProvider stopsCache = CacheDataProvider(key: "stops", expiration: const Duration(hours: 5));
-  static CacheDataProvider linesCache = CacheDataProvider(key: "lines", expiration: const Duration(hours: 5));
-  static CacheDataProvider trafficInfoCache = CacheDataProvider(key: "trafficInfo", expiration: const Duration(minutes: 14));
+  static CacheDataProvider stopsCache = const CacheDataProvider(key: "stops", expiration: Duration(hours: 5));
+  static CacheDataProvider linesCache = const CacheDataProvider(key: "lines", expiration: Duration(hours: 5));
+  static CacheDataProvider trafficInfoCache = const CacheDataProvider(key: "trafficInfo", expiration: Duration(minutes: 14));
 
   static Future<void> getToken() async {
     if (!await ConnectivityChecker.isConnected()) {
