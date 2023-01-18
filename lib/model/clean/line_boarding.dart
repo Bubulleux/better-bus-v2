@@ -4,20 +4,22 @@ class LineBoarding {
   LineBoarding(this.busStop, this.go, this.back);
 
   LineBoarding.fromJson(Map<String, dynamic> json, BusLine line)
-      : this(
-          int.parse(json["stop_id"]),
-          {
-            for (int i = 0; i < json["boarding_ids"]["aller"].length; i++)
-              line.goDirection[i]: int.parse(json["boarding_ids"]["aller"][i])
-          },
-          {
-            for (int i = 0; i < json["boarding_ids"]["retour"].length; i++)
-              line.backDirection[i]:
-                  int.parse(json["boarding_ids"]["retour"][i])
-          },
-        );
+  {
+    busStop = int.parse(json["stop_id"]);
+    List<String> rawGo = json["boarding_ids"]["aller"].toSet().toList().cast<String>();
+    List<String> rawBack = json["boarding_ids"]["retour"].toSet().toList().cast<String>();
+    go = {
+      for (int i = 0; i < rawGo.length; i++)
+        line.goDirection[i]: int.parse(rawGo[i])
+    };
 
-  int busStop;
-  Map<String, int> go;
-  Map<String, int> back;
+    back = {
+      for (int i = 0; i < rawBack.length; i++)
+        line.backDirection[i]: int.parse(rawBack[i])
+    };
+  }
+
+  late int busStop;
+  late Map<String, int> go;
+  late Map<String, int> back;
 }

@@ -37,6 +37,8 @@ void main() async {
     resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.requestPermission();
 
   Workmanager().initialize(callbackDispatcher);
+  Workmanager().registerPeriodicTask("check-traffic-info", "checkTrafficInfo",
+      frequency: const Duration(minutes: 30));
   runApp(const BetterBusApp());
 }
 

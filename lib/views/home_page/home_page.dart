@@ -18,7 +18,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:url_launcher/url_launcher_string.dart';
-import 'package:workmanager/workmanager.dart';
 
 import '../stops_search_page/stops_search_page.dart';
 
@@ -60,8 +59,6 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     GpsDataProvider.askForGPS();
     HomeWidget.widgetClicked.listen(launchWithWidget);
-    Workmanager().registerPeriodicTask("check-traffic-info", "checkTrafficInfo",
-        frequency: const Duration(minutes: 15), constraints: Constraints(networkType: NetworkType.connected));
     initFlutterNotificationPlugin();
     checkIfAppIsNotificationLaunched();
   }
@@ -182,10 +179,10 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     IconButton(onPressed: newShortcut, icon: const Icon(Icons.add)),
-                    // IconButton(onPressed: testNotificationActivation, icon: const Icon(Icons.notifications_active_rounded)),
-                    // IconButton(onPressed: launchTestNotification, icon: const Icon(Icons.notification_add)),
-                    // IconButton(onPressed: gotoLog, icon: const Icon(Icons.newspaper)),
-                    // IconButton(onPressed: gotoPrefs, icon: const Icon(Icons.settings)),
+                    IconButton(onPressed: testNotificationActivation, icon: const Icon(Icons.notifications_active_rounded)),
+                    IconButton(onPressed: launchTestNotification, icon: const Icon(Icons.notification_add)),
+                    IconButton(onPressed: gotoLog, icon: const Icon(Icons.newspaper)),
+                    IconButton(onPressed: gotoPrefs, icon: const Icon(Icons.settings)),
                   ],
                 ),
               ),
