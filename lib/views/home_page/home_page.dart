@@ -124,10 +124,6 @@ class _HomePageState extends State<HomePage> {
         .pushNamed(StopInfoPage.routeName, arguments: StopInfoPageArgument(shortcut.stop, shortcut.lines));
   }
 
-  void launchTestNotification() {
-    checkInfoTraffic();
-  }
-
   void testNotificationActivation() async {
     await LocalDataHandler.setLastNotificationPush(DateTime(2022, 11, 10));
     checkInfoTraffic();
@@ -179,10 +175,11 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     IconButton(onPressed: newShortcut, icon: const Icon(Icons.add)),
-                    IconButton(onPressed: testNotificationActivation, icon: const Icon(Icons.notifications_active_rounded)),
-                    IconButton(onPressed: launchTestNotification, icon: const Icon(Icons.notification_add)),
-                    IconButton(onPressed: gotoLog, icon: const Icon(Icons.newspaper)),
-                    IconButton(onPressed: gotoPrefs, icon: const Icon(Icons.settings)),
+                    // IconButton(onPressed: testNotificationActivation, icon: const Icon(Icons.notifications_active_rounded)),
+                    // IconButton(onPressed: () => LocalDataHandler.saveAlreadyPushNotification({}), icon: const Icon(Icons.notification_important_rounded)),
+                    // const IconButton(onPressed: CacheDataProvider.emptyCacheData, icon: Icon(Icons.restore_from_trash)),
+                    // IconButton(onPressed: gotoLog, icon: const Icon(Icons.newspaper)),
+                    // IconButton(onPressed: gotoPrefs, icon: const Icon(Icons.settings)),
                   ],
                 ),
               ),

@@ -39,4 +39,15 @@ class CacheDataProvider {
     String rawData = jsonEncode(cacheDataDate.map((key, value) => MapEntry(key, value.millisecondsSinceEpoch)));
     await preferences.setString(cacheDateFile, rawData);
   }
+
+  static Future emptyCacheData() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    await preferences.remove(cacheDateFile);
+    Set<String> keys = preferences.getKeys();
+    for (String key in keys) {
+      if (key.startsWith("cache-")){
+        await preferences.remove(key);
+      }
+    }
+  }
 }

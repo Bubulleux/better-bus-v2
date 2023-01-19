@@ -23,7 +23,12 @@ import 'app_constant/app_string.dart';
 @pragma('vm:entry-point')
 void callbackDispatcher() {
   Workmanager().executeTask((taskName, inputData) async {
-    return checkInfoTraffic();
+    try {
+      await checkInfoTraffic();
+    } catch(e) {
+      return Future.value(false);
+    }
+    return Future.value(true);
   });
 }
 
@@ -38,7 +43,8 @@ void main() async {
 
   Workmanager().initialize(callbackDispatcher);
   Workmanager().registerPeriodicTask("check-traffic-info", "checkTrafficInfo",
-      frequency: const Duration(minutes: 30));
+      frequency: const Duration(minutes: 15));
+  checkInfoTraffic();
   runApp(const BetterBusApp());
 }
 

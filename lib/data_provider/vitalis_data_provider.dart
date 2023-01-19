@@ -125,6 +125,9 @@ class VitalisDataProvider {
 
   static Future<List<InfoTraffic>> getTrafficInfo() async {
     Uri uri = Uri.parse("https://releases-uxb3m2jh5q-ew.a.run.app/traffics");
+    uri = uri.replace(queryParameters: {
+      "displayable": "",
+    });
 
     List<dynamic> json = await sendRequest(uri, cache: trafficInfoCache);
     return json.map((e) => InfoTraffic.fromJson(e)).toList();
