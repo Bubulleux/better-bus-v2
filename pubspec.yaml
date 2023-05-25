@@ -34,7 +34,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   http: ^0.13.6
   cupertino_icons: ^1.0.2
-  intl: ^0.17.0
+  intl: ^0.18.0
   location: ^4.4.0
   shared_preferences: ^2.0.15
   flutter_widget_from_html: ^0.8.5
@@ -47,6 +47,8 @@ dependencies:
   format: ^1.2.0
   package_info_plus: ^3.0.2
   chewie: ^1.5.0
+  flutter_localizations:
+    sdk: flutter
 
 dev_dependencies:
   flutter_test:
