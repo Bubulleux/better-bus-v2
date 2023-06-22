@@ -1,7 +1,8 @@
-# Polique de confidentialité de Better Bus
+# Politique de confidentialité de Better Bus - Poitiers
 
-Cette application ne collecte aucune donnée personnelle.
+Better Bus - Poitiers ne collecte aucune de vos données personnelles.
 
-Certaine donner sont envoyer a Vitalis pour le bon fonctionnement de l'application (localisation) mais elles ne sont aucunement stockées.
+Certaine données sont envoyées à Vitalis pour le bon fonctionnement de l'application (localisation) mais elles ne sont aucunement stockées.
 
-Veuillez voir la politique de protection des données de Vitalis ici : https://www.vitalis-poitiers.fr/protection-des-donnees/
+Veuillez consulter la politique de protection des données de Vitalis ici : https://www.vitalis-poitiers.fr/protection-des-donnees/
+
