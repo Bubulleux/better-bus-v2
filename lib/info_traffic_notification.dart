@@ -25,7 +25,7 @@ Future<bool> checkInfoTraffic() async {
     android: androidPlatformChannelSpecifics,
   );
 
-  var android = const AndroidInitializationSettings('@mipmap/ic_launcher');
+  var android = const AndroidInitializationSettings('@drawable/ic_stat_notification');
   var settings = InitializationSettings(android: android);
   await flip.initialize(settings);
 

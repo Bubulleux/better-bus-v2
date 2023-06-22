@@ -7,6 +7,8 @@ const CacheDataProvider cache = CacheDataProvider(key: "version", expiration: Du
 
 class VersionDataProvider {
   static Future<String?> checkIfNewVersion() async {
+    // Disable this function not nedded afet publication on PlayStore
+    return null;
     Map<String, dynamic> data = await VitalisDataProvider.sendRequest(Uri.parse(versionURL), cache: cache);
     String version = (await PackageInfo.fromPlatform()).version;
     if (data["version"] != version) {
