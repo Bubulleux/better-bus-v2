@@ -156,12 +156,23 @@ class _HomePageState extends State<HomePage> {
         child: Background(
           child: Column(
             children: [
-              CustomContentContainer(
-                margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-                padding: const EdgeInsets.symmetric(horizontal:  8, vertical: 5),
+              Container(
+                color: Colors.white,
+                // margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: Row(
                   children: [
-                    const Text(AppString.appName),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(5),
+                        child: const Image(
+                          width: 30,
+                          image: AssetImage("assets/images/icon.jpg")
+                          ),
+                      ),
+                    ),
+                    const Text(AppString.appName, style: TextStyle(fontWeight: FontWeight.bold),),
                     const Spacer(),
                     IconButton(onPressed: showMore, icon: const Icon(Icons.more_vert))
                   ],
