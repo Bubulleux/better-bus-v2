@@ -7,6 +7,7 @@ import 'package:better_bus_v2/model/clean/bus_stop.dart';
 import 'package:better_bus_v2/model/clean/view_shortcut.dart';
 import 'package:better_bus_v2/views/common/background.dart';
 import 'package:better_bus_v2/views/common/content_container.dart';
+import 'package:better_bus_v2/views/common/context_menu.dart';
 import 'package:better_bus_v2/views/home_page/navigation_bar.dart';
 import 'package:better_bus_v2/views/home_page/shortcut_section.dart';
 import 'package:better_bus_v2/views/log_view.dart';
@@ -17,6 +18,7 @@ import 'package:better_bus_v2/views/traffic_info_page/traffic_info_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:home_widget/home_widget.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../stops_search_page/stops_search_page.dart';
@@ -129,6 +131,24 @@ class _HomePageState extends State<HomePage> {
     checkInfoTraffic();
   }
 
+  void showMore() {
+    CustomContextMenu.show(context,[
+        ContextMenuAction(AppString.privicyPolicy, Icons.privacy_tip, action: showPrivacyPolicy),
+        ContextMenuAction(AppString.sourceCode, Icons.code, action: showSourceCode),
+    ]);
+  }
+
+  void showPrivacyPolicy() {
+    Uri uri = Uri.parse("https://github.com/Bubulleux/better-bus-v2/blob/master/Privacy%20policy.md");
+    launchUrl(uri, mode: LaunchMode.externalApplication);
+  }
+
+  void showSourceCode() {
+    Uri uri = Uri.parse("https://github.com/Bubulleux/better-bus-v2");
+    launchUrl(uri, mode: LaunchMode.externalApplication);
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -136,6 +156,28 @@ class _HomePageState extends State<HomePage> {
         child: Background(
           child: Column(
             children: [
+              Container(
+                color: Colors.white,
+                // margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(5),
+                        child: const Image(
+                          width: 30,
+                          image: AssetImage("assets/images/icon.jpg")
+                          ),
+                      ),
+                    ),
+                    const Text(AppString.appName, style: TextStyle(fontWeight: FontWeight.bold),),
+                    const Spacer(),
+                    IconButton(onPressed: showMore, icon: const Icon(Icons.more_vert))
+                  ],
+                ),
+              ),
               FutureBuilder(
                 future: VersionDataProvider.checkIfNewVersion(),
                 builder: (context, snapshot) {
@@ -148,8 +190,8 @@ class _HomePageState extends State<HomePage> {
                       onTap: () => launchUrlString(url, mode: LaunchMode.externalApplication),
                       margin: const EdgeInsets.only(top: 5, right: 8, left: 8),
                       color: Theme.of(context).primaryColor,
-                      child: Row(
-                        children: const [
+                      child: const Row(
+                        children: [
                           Text(
                             AppString.newVersion,
                             style: TextStyle(fontWeight: FontWeight.bold),
@@ -175,7 +217,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     IconButton(onPressed: newShortcut, icon: const Icon(Icons.add)),
-                    // IconButton(onPressed: testNotificationActivation, icon: const Icon(Icons.notifications_active_rounded)),
+                    IconButton(onPressed: testNotificationActivation, icon: const Icon(Icons.notifications_active_rounded)),
                     // IconButton(onPressed: () => LocalDataHandler.saveAlreadyPushNotification({}), icon: const Icon(Icons.notification_important_rounded)),
                     // const IconButton(onPressed: CacheDataProvider.emptyCacheData, icon: Icon(Icons.restore_from_trash)),
                     // IconButton(onPressed: gotoLog, icon: const Icon(Icons.newspaper)),

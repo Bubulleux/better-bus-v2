@@ -47,15 +47,23 @@ class _CustomContextMenuState extends State<CustomContextMenu> {
               onPressed: () => actionPressed(e.action),
               child: Row(
                 children: [
+                  e.icon != null ?
                   Icon(
                     e.icon,
                     size: 30,
-                  ),
-                  Text(e.actionName,
-                      style: const TextStyle(
-                        fontSize: 30,
-                        fontWeight: FontWeight.normal,
-                      ))
+                  ) : Container(),
+                  Expanded(
+                    //width: double.infinity,
+                    child: FittedBox(
+                      alignment: Alignment.centerLeft,
+                      fit: BoxFit.scaleDown,
+                      child: Text(e.actionName,
+                          style: const TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.normal,
+                          )),
+                    ),
+                  )
                 ],
               ),
               style: TextButton.styleFrom(
@@ -80,7 +88,7 @@ class ContextMenuAction {
       {required this.action, this.isDangerous = false});
 
   String actionName;
-  IconData icon;
+  IconData? icon;
   VoidCallback action;
   bool isDangerous;
 }

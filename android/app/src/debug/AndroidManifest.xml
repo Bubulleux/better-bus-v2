@@ -1,7 +1,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.bubulle.better_bus_v2">
+    package="com.bubulle.better_bus_v2"
+    xmlns:tools="http://schemas.android.com/tools">
+    <application 
+        tools:replace="android:label"
+        android:label="Better Bus Debug">
+    </application>
     <!-- Flutter needs it to communicate with the running application
-         to allow setting breakpoints, to provide hot reload, etc.
+        to allow setting breakpoints, to provide hot reload, etc.
     -->
     <uses-permission android:name="android.permission.INTERNET"/>
 </manifest>

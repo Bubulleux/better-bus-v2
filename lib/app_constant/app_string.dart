@@ -83,4 +83,7 @@ class AppString{
 
   static const appInfo = "Bienvenu sur Better Bus\n";
 
+  static const privicyPolicy = "Politique de confidentialité";
+  static const sourceCode = "Code source";
+
 }

@@ -15,8 +15,8 @@ import 'package:flutter/material.dart';
 import 'package:better_bus_v2/views/home_page/home_page.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:workmanager/workmanager.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'app_constant/app_string.dart';
 
