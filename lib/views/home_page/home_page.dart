@@ -157,7 +157,7 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             children: [
               Container(
-                color: Colors.white,
+                color: Theme.of(context).backgroundColor,
                 // margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: Row(
@@ -172,7 +172,8 @@ class _HomePageState extends State<HomePage> {
                           ),
                       ),
                     ),
-                    const Text(AppString.appName, style: TextStyle(fontWeight: FontWeight.bold),),
+                    const Text("${AppString.appName} - ${AppString.cityName}",
+                      style: TextStyle(fontWeight: FontWeight.bold),),
                     const Spacer(),
                     IconButton(onPressed: showMore, icon: const Icon(Icons.more_vert))
                   ],

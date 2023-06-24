@@ -2,6 +2,7 @@
 class AppString{
 
   static const appName = "Better Bus";
+  static const cityName = "Poitiers";
 
   static const retry = "Ré-essayer";
   static const findStop = "Chercher un arret";
