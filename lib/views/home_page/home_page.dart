@@ -8,6 +8,7 @@ import 'package:better_bus_v2/model/clean/view_shortcut.dart';
 import 'package:better_bus_v2/views/common/background.dart';
 import 'package:better_bus_v2/views/common/content_container.dart';
 import 'package:better_bus_v2/views/common/context_menu.dart';
+import 'package:better_bus_v2/views/common/title_bar.dart';
 import 'package:better_bus_v2/views/home_page/navigation_bar.dart';
 import 'package:better_bus_v2/views/home_page/shortcut_section.dart';
 import 'package:better_bus_v2/views/log_view.dart';
@@ -156,13 +157,9 @@ class _HomePageState extends State<HomePage> {
         child: Background(
           child: Column(
             children: [
-              Container(
-                color: Theme.of(context).backgroundColor,
-                // margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: Row(
-                  children: [
-                    Padding(
+              CustomTitleBar(
+                title: "${AppString.appName} - ${AppString.cityName}",
+                leftChild: Padding(
                       padding: const EdgeInsets.only(right: 8.0),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(5),
@@ -172,12 +169,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                       ),
                     ),
-                    const Text("${AppString.appName} - ${AppString.cityName}",
-                      style: TextStyle(fontWeight: FontWeight.bold),),
-                    const Spacer(),
-                    IconButton(onPressed: showMore, icon: const Icon(Icons.more_vert))
-                  ],
-                ),
+                  rightChild: IconButton(onPressed: showMore, icon: const Icon(Icons.more_vert)),
               ),
               FutureBuilder(
                 future: VersionDataProvider.checkIfNewVersion(),

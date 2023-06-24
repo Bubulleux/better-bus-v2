@@ -4,6 +4,7 @@ import 'package:better_bus_v2/model/clean/info_traffic.dart';
 import 'package:better_bus_v2/views/common/back_arrow.dart';
 import 'package:better_bus_v2/views/common/background.dart';
 import 'package:better_bus_v2/views/common/custom_future.dart';
+import 'package:better_bus_v2/views/common/title_bar.dart';
 import 'package:better_bus_v2/views/interest_line_page/interest_lines_page.dart';
 import 'package:better_bus_v2/views/traffic_info_page/traffic_info_item.dart';
 import 'package:flutter/material.dart';
@@ -81,33 +82,11 @@ class TrafficInfoPageState extends State<TrafficInfoPage> {
         child: SafeArea(
           child: Column(
             children: [
-              Material(
-                elevation: 20,
-                color: Theme.of(context).backgroundColor,
-                child: Column(
-                  children: [
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Row(
-                        children: [
-                          const BackArrow(),
-                          Text(
-                            AppString.trafficInfoTitle,
-                            style: Theme.of(context).textTheme.headlineSmall,
-                          ),
-                          const Spacer(),
-                          IconButton(onPressed: goSetting, icon: const Icon(Icons.settings))
-                        ],
-                      ),
-                    ),
-                    Container(
-                      width: double.infinity,
-                      height: 5,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                  ],
-                ),
+              CustomTitleBar(
+                title: AppString.trafficInfoTitle,
+                leftChild: BackArrow(),
+                rightChild: IconButton(onPressed: goSetting, 
+                  icon: const Icon(Icons.settings)),
               ),
               Expanded(
                 child: CustomFutureBuilder<InfoTrafficObject>(
