@@ -56,7 +56,7 @@ class AppString{
   static const validateLabel = "Valider";
   static const  selectAll= "Tout sélectionner";
   static const unSelectAll = "Tout déselectier";
-  static const trafficInfoTitle = "Info trafic:";
+  static const trafficInfoTitle = "Info trafic :";
 
   static const shortcutNameLabel = "Nom du raccourci";
   static const selectBusStop = "Sélectionner un arrêt de bus";
@@ -86,5 +86,4 @@ class AppString{
 
   static const privicyPolicy = "Politique de confidentialité";
   static const sourceCode = "Code source";
-
 }
