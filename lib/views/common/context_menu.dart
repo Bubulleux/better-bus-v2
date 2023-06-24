@@ -54,14 +54,17 @@ class _CustomContextMenuState extends State<CustomContextMenu> {
                   ) : Container(),
                   Expanded(
                     //width: double.infinity,
-                    child: FittedBox(
-                      alignment: Alignment.centerLeft,
-                      fit: BoxFit.scaleDown,
-                      child: Text(e.actionName,
-                          style: const TextStyle(
-                            fontSize: 30,
-                            fontWeight: FontWeight.normal,
-                          )),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: FittedBox(
+                        alignment: Alignment.centerLeft,
+                        fit: BoxFit.scaleDown,
+                        child: Text(e.actionName,
+                            style: const TextStyle(
+                              fontSize: 30,
+                              fontWeight: FontWeight.normal,
+                            )),
+                      ),
                     ),
                   )
                 ],
