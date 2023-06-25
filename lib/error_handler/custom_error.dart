@@ -87,5 +87,11 @@ class CustomErrors{
     Icons.search_off,
     false,
   );
+
+  static final noCloseStop = CustomError(
+    "Aucun arret de bus a été trover a proximité",
+    Icons.wrong_location,
+    false,
+  );
 }
 

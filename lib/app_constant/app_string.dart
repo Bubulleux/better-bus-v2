@@ -10,6 +10,7 @@ class AppString{
   static const shortcut = "Raccourcis :";
 
   static const searchLabel = "Rechercher";
+  static const closestStopLabel = "Mon arret";
   static const routeLabel = "Itinéraire";
   static const trafficInfoLabel = "Info Trafic";
 
@@ -86,4 +87,6 @@ class AppString{
 
   static const privicyPolicy = "Politique de confidentialité";
   static const sourceCode = "Code source";
+
+  static const myStop = "Mon arret";
 }

@@ -6,6 +6,7 @@ import 'package:better_bus_v2/info_traffic_notification.dart';
 import 'package:better_bus_v2/model/clean/bus_stop.dart';
 import 'package:better_bus_v2/model/clean/view_shortcut.dart';
 import 'package:better_bus_v2/views/common/background.dart';
+import 'package:better_bus_v2/views/common/closestStopDialog.dart';
 import 'package:better_bus_v2/views/common/content_container.dart';
 import 'package:better_bus_v2/views/common/context_menu.dart';
 import 'package:better_bus_v2/views/common/title_bar.dart';
@@ -19,6 +20,7 @@ import 'package:better_bus_v2/views/traffic_info_page/traffic_info_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:home_widget/home_widget.dart';
+import 'package:location/location.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -55,6 +57,10 @@ class _HomePageState extends State<HomePage> {
 
   void goToRoutePage() {
     Navigator.of(context).pushNamed(RoutePage.routeName);
+  }
+
+  Future findClosestStop() async{
+    ClosestStopDialog.show(context);
   }
 
   @override
@@ -239,6 +245,11 @@ class _HomePageState extends State<HomePage> {
                     onPress: searchBusStop,
                   ),
                   CustomNavigationItem(
+                    label: AppString.closestStopLabel,
+                    icon: Icons.location_searching,
+                    onPress: findClosestStop,
+                  ),
+                  CustomNavigationItem(
                     label: AppString.routeLabel,
                     icon: Icons.route,
                     onPress: goToRoutePage,
@@ -256,4 +267,5 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+
 }
