@@ -33,15 +33,14 @@ class MapPlaceItemWidget extends StatelessWidget {
               RichText(
                   text: TextSpan(
                 children: [
+                  inHistoric ? 
                   WidgetSpan(
-                    child: inHistoric
-                        ? Padding(
+                    child: Padding(
                             padding: const EdgeInsets.only(right: 5),
                             child: Icon(Icons.history,
                                 color: Theme.of(context).primaryColor),
                           )
-                        : Container(),
-                  ),
+                  ) : const TextSpan(),
                   TextSpan(text: place.title),
                 ],
                 style: Theme.of(context).textTheme.titleLarge,

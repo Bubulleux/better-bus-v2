@@ -20,7 +20,6 @@ import 'package:better_bus_v2/views/traffic_info_page/traffic_info_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:home_widget/home_widget.dart';
-import 'package:location/location.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -216,7 +215,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     IconButton(onPressed: newShortcut, icon: const Icon(Icons.add)),
-                    IconButton(onPressed: testNotificationActivation, icon: const Icon(Icons.notifications_active_rounded)),
+                    // IconButton(onPressed: testNotificationActivation, icon: const Icon(Icons.notifications_active_rounded)),
                     // IconButton(onPressed: () => LocalDataHandler.saveAlreadyPushNotification({}), icon: const Icon(Icons.notification_important_rounded)),
                     // const IconButton(onPressed: CacheDataProvider.emptyCacheData, icon: Icon(Icons.restore_from_trash)),
                     // IconButton(onPressed: gotoLog, icon: const Icon(Icons.newspaper)),

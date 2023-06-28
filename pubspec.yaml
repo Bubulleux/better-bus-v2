@@ -77,7 +77,7 @@ flutter:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
   assets:
-    - assets/images/bg_map.jpg
+    - assets/images/bg_map.png
     - assets/images/icon.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see

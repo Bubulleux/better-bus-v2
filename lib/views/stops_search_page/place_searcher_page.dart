@@ -67,11 +67,11 @@ class _PlaceSearcherPageState extends State<PlaceSearcherPage> with TickerProvid
                     decoration: CustomDecorations.of(context).boxBackground,
                     padding: const EdgeInsets.all(5),
                     child: TabBar(
-                      tabs: [
+                      tabs: const [
                         Tab(
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
+                            children: [
                               Icon(Icons.directions_bus),
                               Text(AppString.busStation),
                             ],
@@ -80,7 +80,7 @@ class _PlaceSearcherPageState extends State<PlaceSearcherPage> with TickerProvid
                         Tab(
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
+                            children: [
                               Icon(Icons.location_on),
                               Text(AppString.place),
                             ],
