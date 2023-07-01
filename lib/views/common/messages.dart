@@ -32,7 +32,6 @@ class _MessageViewState extends State<MessageView> {
           children: [
             CustomTitleBar(
               title: message.title,
-              leftChild: const BackArrow(),
             ),
             Expanded(
               child: ClipRect(

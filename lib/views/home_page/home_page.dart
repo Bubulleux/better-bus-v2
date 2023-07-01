@@ -9,6 +9,7 @@ import 'package:better_bus_v2/views/common/background.dart';
 import 'package:better_bus_v2/views/common/closestStopDialog.dart';
 import 'package:better_bus_v2/views/common/content_container.dart';
 import 'package:better_bus_v2/views/common/context_menu.dart';
+import 'package:better_bus_v2/views/common/messages.dart';
 import 'package:better_bus_v2/views/common/title_bar.dart';
 import 'package:better_bus_v2/views/home_page/navigation_bar.dart';
 import 'package:better_bus_v2/views/home_page/shortcut_section.dart';
@@ -43,7 +44,8 @@ class _HomePageState extends State<HomePage> {
       if (value == null) {
         return;
       }
-      Navigator.of(context).pushNamed(StopInfoPage.routeName, arguments: StopInfoPageArgument(value as BusStop, null));
+      Navigator.of(context).pushNamed(StopInfoPage.routeName,
+          arguments: StopInfoPageArgument(value as BusStop, null));
     });
   }
 
@@ -59,7 +61,7 @@ class _HomePageState extends State<HomePage> {
     Navigator.of(context).pushNamed(RoutePage.routeName);
   }
 
-  Future findClosestStop() async{
+  Future findClosestStop() async {
     ClosestStopDialog.show(context);
   }
 
@@ -70,6 +72,7 @@ class _HomePageState extends State<HomePage> {
     HomeWidget.widgetClicked.listen(launchWithWidget);
     initFlutterNotificationPlugin();
     checkIfAppIsNotificationLaunched();
+    checkIfFisrtTimeOpenningApp();
   }
 
   @override
@@ -81,7 +84,8 @@ class _HomePageState extends State<HomePage> {
 
   Future checkIfAppIsNotificationLaunched() async {
     NotificationAppLaunchDetails? launchNotificationDetails =
-        await FlutterLocalNotificationsPlugin().getNotificationAppLaunchDetails();
+        await FlutterLocalNotificationsPlugin()
+            .getNotificationAppLaunchDetails();
     if (launchNotificationDetails == null) {
       return;
     }
@@ -92,15 +96,28 @@ class _HomePageState extends State<HomePage> {
     if (response == null) {
       return;
     }
-    Navigator.of(context).popUntil((route) => route.settings.name != TrafficInfoPage.routeName);
-    Navigator.of(context).pushNamed(TrafficInfoPage.routeName, arguments: response.id);
+    Navigator.of(context)
+        .popUntil((route) => route.settings.name != TrafficInfoPage.routeName);
+    Navigator.of(context)
+        .pushNamed(TrafficInfoPage.routeName, arguments: response.id);
+  }
+
+  void checkIfFisrtTimeOpenningApp() async {
+    bool showImportantMessage = await LocalDataHandler.showImportantMessage();
+    if (!showImportantMessage) {
+      return;
+    }
+    Navigator.of(context)
+        .pushNamed(MessageView.routeName, arguments: Messages.importantMessage)
+        .then((value) => LocalDataHandler.stopShowingImportantMessage());
   }
 
   Future initFlutterNotificationPlugin() async {
     FlutterLocalNotificationsPlugin flip = FlutterLocalNotificationsPlugin();
     var android = const AndroidInitializationSettings('@mipmap/ic_launcher');
     var settings = InitializationSettings(android: android);
-    await flip.initialize(settings, onDidReceiveNotificationResponse: receiveNotification);
+    await flip.initialize(settings,
+        onDidReceiveNotificationResponse: receiveNotification);
   }
 
   void launchWithWidget(Uri? uri) {
@@ -121,16 +138,19 @@ class _HomePageState extends State<HomePage> {
 
   void launchShortcutByWidget(String shortcutName, BuildContext context) async {
     List<ViewShortcut> shortcuts = await LocalDataHandler.loadShortcut();
-    int shortcutIndex = shortcuts.indexWhere((element) => element.shortcutName == shortcutName);
+    int shortcutIndex =
+        shortcuts.indexWhere((element) => element.shortcutName == shortcutName);
     if (shortcutIndex == -1) {
       return;
     }
     ViewShortcut shortcut = shortcuts[shortcutIndex];
 
-    Navigator.of(context).popUntil((route) => (route.settings.name != StopInfoPage.routeName ||
-        (route.settings.arguments as StopInfoPageArgument?)?.stop != shortcut.stop));
-    Navigator.of(context)
-        .pushNamed(StopInfoPage.routeName, arguments: StopInfoPageArgument(shortcut.stop, shortcut.lines));
+    Navigator.of(context).popUntil((route) =>
+        (route.settings.name != StopInfoPage.routeName ||
+            (route.settings.arguments as StopInfoPageArgument?)?.stop !=
+                shortcut.stop));
+    Navigator.of(context).pushNamed(StopInfoPage.routeName,
+        arguments: StopInfoPageArgument(shortcut.stop, shortcut.lines));
   }
 
   void testNotificationActivation() async {
@@ -139,9 +159,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   void showMore() {
-    CustomContextMenu.show(context,[
-        ContextMenuAction(AppString.privicyPolicy, Icons.privacy_tip, action: showPrivacyPolicy),
-        ContextMenuAction(AppString.sourceCode, Icons.code, action: showSourceCode),
+    CustomContextMenu.show(context, [
+      ContextMenuAction(AppString.privicyPolicy, Icons.privacy_tip,
+          action: showPrivacyPolicy),
+      ContextMenuAction(AppString.sourceCode, Icons.code,
+          action: showSourceCode),
     ]);
   }
 
@@ -150,7 +172,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   void showPrivacyPolicy() {
-    Uri uri = Uri.parse("https://github.com/Bubulleux/better-bus-v2/blob/master/Privacy%20policy.md");
+    Uri uri = Uri.parse(
+        "https://github.com/Bubulleux/better-bus-v2/blob/master/Privacy%20policy.md");
     launchUrl(uri, mode: LaunchMode.externalApplication);
   }
 
@@ -158,7 +181,6 @@ class _HomePageState extends State<HomePage> {
     Uri uri = Uri.parse("https://github.com/Bubulleux/better-bus-v2");
     launchUrl(uri, mode: LaunchMode.externalApplication);
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -170,16 +192,15 @@ class _HomePageState extends State<HomePage> {
               CustomTitleBar(
                 title: "${AppString.appName} - ${AppString.cityName}",
                 leftChild: Padding(
-                      padding: const EdgeInsets.only(right: 8.0),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(5),
-                        child: const Image(
-                          width: 30,
-                          image: AssetImage("assets/images/icon.jpg")
-                          ),
-                      ),
-                    ),
-                rightChild: IconButton(onPressed: goToSetting, icon: const Icon(Icons.settings)),
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(5),
+                    child: const Image(
+                        width: 30, image: AssetImage("assets/images/icon.jpg")),
+                  ),
+                ),
+                rightChild: IconButton(
+                    onPressed: goToSetting, icon: const Icon(Icons.settings)),
               ),
               FutureBuilder(
                 future: VersionDataProvider.checkIfNewVersion(),
@@ -190,7 +211,8 @@ class _HomePageState extends State<HomePage> {
                   if (snapshot.hasData && snapshot.data != null) {
                     String url = snapshot.data as String;
                     return CustomContentContainer(
-                      onTap: () => launchUrlString(url, mode: LaunchMode.externalApplication),
+                      onTap: () => launchUrlString(url,
+                          mode: LaunchMode.externalApplication),
                       margin: const EdgeInsets.only(top: 5, right: 8, left: 8),
                       color: Theme.of(context).primaryColor,
                       child: const Row(
@@ -209,7 +231,8 @@ class _HomePageState extends State<HomePage> {
                 },
               ),
               CustomContentContainer(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                 margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
                 child: Row(
                   children: [
@@ -219,7 +242,8 @@ class _HomePageState extends State<HomePage> {
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
                     ),
-                    IconButton(onPressed: newShortcut, icon: const Icon(Icons.add)),
+                    IconButton(
+                        onPressed: newShortcut, icon: const Icon(Icons.add)),
                     // IconButton(onPressed: testNotificationActivation, icon: const Icon(Icons.notifications_active_rounded)),
                     // IconButton(onPressed: () => LocalDataHandler.saveAlreadyPushNotification({}), icon: const Icon(Icons.notification_important_rounded)),
                     // const IconButton(onPressed: CacheDataProvider.emptyCacheData, icon: Icon(Icons.restore_from_trash)),
@@ -271,5 +295,4 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-
 }

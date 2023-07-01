@@ -125,4 +125,13 @@ class  LocalDataHandler {
     preferences!.setBool("notificationEnable", value);
   }
 
+    static Future<bool> showImportantMessage() async {
+      await checkPreferences();
+      return preferences!.getBool("showImportantMessage") ?? true;
+    }
+
+    static Future stopShowingImportantMessage() async {
+      await checkPreferences();
+      preferences!.setBool("showImportantMessage", false);
+    }
 }
