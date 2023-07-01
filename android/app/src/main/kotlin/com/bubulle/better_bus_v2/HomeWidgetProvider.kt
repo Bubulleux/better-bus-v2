@@ -40,14 +40,21 @@ class HomeWidgetProvider : AppWidgetProvider() {
                 _intent,
                 flags,
             )
+            val myStopPendingIntent = HomeWidgetLaunchIntent.getActivity(
+                    context,
+                    MainActivity::class.java,
+                    Uri.parse("app://openmystop"))
 
             val views = RemoteViews(context.packageName, R.layout.widget_root_layout).apply {
                 setRemoteAdapter(R.id.widget_list, intent)
                 setEmptyView(R.id.widget_list, R.id.list_empty)
                 setPendingIntentTemplate(R.id.widget_list, pendingIntent)
+                setOnClickPendingIntent(R.id.my_stop_button, myStopPendingIntent)
             }
             appWidgetManager.notifyAppWidgetViewDataChanged(widgetId, R.id.widget_list)
             appWidgetManager.updateAppWidget(widgetId, views)
+
+
         }
     }
 }

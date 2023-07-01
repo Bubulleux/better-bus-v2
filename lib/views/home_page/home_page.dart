@@ -125,6 +125,9 @@ class _HomePageState extends State<HomePage> {
       if (uri.host == "openshortcut") {
         launchShortcutByWidget(uri.pathSegments[0], context);
       }
+      if (uri.host == "openmystop") {
+        findClosestStop();
+      }
     }
   }
 
