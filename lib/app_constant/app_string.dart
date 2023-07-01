@@ -87,6 +87,15 @@ class AppString{
 
   static const privicyPolicy = "Politique de confidentialité";
   static const sourceCode = "Code source";
+  static const makeTips = "Faire un don";
+  static const emptyCache = "Vider le cache";
+  static const messageToVitalis = "Message pour Vitalis";
+  static const importantMessage = "Message important";
+  static const notificationSetting = "Paramètre de notification";
 
   static const myStop = "Mon arret";
+
+  static const settings = "Paramètre";
+
+  static const close = "Fermer";
 }

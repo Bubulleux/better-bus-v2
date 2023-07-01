@@ -15,6 +15,7 @@ import 'package:better_bus_v2/views/home_page/shortcut_section.dart';
 import 'package:better_bus_v2/views/log_view.dart';
 import 'package:better_bus_v2/views/preferences_view.dart';
 import 'package:better_bus_v2/views/route_page/route_page.dart';
+import 'package:better_bus_v2/views/setting_page/setting_page.dart';
 import 'package:better_bus_v2/views/stop_info/stop_info_page.dart';
 import 'package:better_bus_v2/views/traffic_info_page/traffic_info_page.dart';
 import 'package:flutter/material.dart';
@@ -144,6 +145,10 @@ class _HomePageState extends State<HomePage> {
     ]);
   }
 
+  void goToSetting() {
+    Navigator.of(context).pushNamed(SettingPage.routeName);
+  }
+
   void showPrivacyPolicy() {
     Uri uri = Uri.parse("https://github.com/Bubulleux/better-bus-v2/blob/master/Privacy%20policy.md");
     launchUrl(uri, mode: LaunchMode.externalApplication);
@@ -174,7 +179,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                       ),
                     ),
-                  rightChild: IconButton(onPressed: showMore, icon: const Icon(Icons.more_vert)),
+                rightChild: IconButton(onPressed: goToSetting, icon: const Icon(Icons.settings)),
               ),
               FutureBuilder(
                 future: VersionDataProvider.checkIfNewVersion(),

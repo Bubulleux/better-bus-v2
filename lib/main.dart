@@ -1,10 +1,12 @@
 import 'package:better_bus_v2/info_traffic_notification.dart';
+import 'package:better_bus_v2/views/common/messages.dart';
 import 'package:better_bus_v2/views/credit_page.dart';
 import 'package:better_bus_v2/views/interest_line_page/interest_lines_page.dart';
 import 'package:better_bus_v2/views/log_view.dart';
 import 'package:better_bus_v2/views/preferences_view.dart';
 import 'package:better_bus_v2/views/route_detail_page/route_detail_page.dart';
 import 'package:better_bus_v2/views/route_page/route_page.dart';
+import 'package:better_bus_v2/views/setting_page/setting_page.dart';
 import 'package:better_bus_v2/views/stop_info/stop_info_page.dart';
 import 'package:better_bus_v2/views/stops_search_page/place_searcher_page.dart';
 import 'package:better_bus_v2/views/stops_search_page/stops_search_page.dart';
@@ -90,6 +92,9 @@ class _BetterBusAppState extends State<BetterBusApp> with WidgetsBindingObserver
       initialRoute: "/",
       routes: {
         HomePage.routeName: (context) => const HomePage(),
+
+        SettingPage.routeName: (context) => const SettingPage(),
+        MessageView.routeName: (context) => const MessageView(),
 
         SearchPage.routeName: (context) => const SearchPage(),
         PlaceSearcherPage.routeName: (context) => const PlaceSearcherPage(),
