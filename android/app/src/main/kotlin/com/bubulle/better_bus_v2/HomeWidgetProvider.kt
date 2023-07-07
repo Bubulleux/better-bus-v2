@@ -75,6 +75,7 @@ class StackRemoteViewsFactory(
 ) : RemoteViewsService.RemoteViewsFactory {
 
     private lateinit var shortcutNames: Array<String>
+    private lateinit var shortcutIds: Array<String>
     private val appWidgetId: Int = intent.getIntExtra(
         AppWidgetManager.EXTRA_APPWIDGET_ID,
         AppWidgetManager.INVALID_APPWIDGET_ID
@@ -105,7 +106,7 @@ class StackRemoteViewsFactory(
         // and set the text based on the position.
 
 
-        val uri: Uri = Uri.parse("app://openShortcut/${shortcutNames[position]}")
+        val uri: Uri = Uri.parse("app://openShortcut/${shortcutIds[position]}")
 
         val fillInIntent: Intent = Intent().apply {
             data = uri
@@ -123,11 +124,14 @@ class StackRemoteViewsFactory(
 
         val rowShorcuts = widgetData.getString("shortcuts", "") ?: ""
         var shortcuts: Array<String> = rowShorcuts.split(";").toTypedArray()
+        val rowIds = widgetData.getString("shortcutsIds", "") ?: ""
+        var ids: Array<String> = rowIds.split(";").toTypedArray()
         if (shortcuts.size == 1 && shortcuts[0] == "")
         {
             shortcuts = emptyArray<String>()
         }
         shortcutNames = shortcuts
+        shortcutIds = ids
     }
     override fun getLoadingView(): RemoteViews? {
         // You can create a custom loading view (for instance when getViewAt() is slow.) If you

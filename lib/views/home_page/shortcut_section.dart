@@ -26,12 +26,20 @@ class ShortcutWidgetRootState extends State<ShortcutWidgetRoot> {
       begin: BoxDecoration(
         borderRadius: CustomDecorations.borderRadius,
       ),
-      end: BoxDecoration(borderRadius: CustomDecorations.borderRadius, boxShadow: const [
-        BoxShadow(color: Color(0x60303030), blurRadius: 20, spreadRadius: 1, offset: Offset(0, 6))
-      ]));
+      end: BoxDecoration(
+          borderRadius: CustomDecorations.borderRadius,
+          boxShadow: const [
+            BoxShadow(
+                color: Color(0x60303030),
+                blurRadius: 20,
+                spreadRadius: 1,
+                offset: Offset(0, 6))
+          ]));
 
   void editShortcut(int? index) {
-    Navigator.of(context).pushNamed(ViewShortcutEditorPage.routeName, arguments: index == null ? null : shortcuts![index])
+    Navigator.of(context)
+        .pushNamed(ViewShortcutEditorPage.routeName,
+            arguments: index == null ? null : shortcuts![index])
         .then((value) {
       if (value == null || !mounted) {
         return;
@@ -84,15 +92,18 @@ class ShortcutWidgetRootState extends State<ShortcutWidgetRoot> {
     CustomContextMenu.show(
       context,
       [
-        ContextMenuAction(AppString.modifyLabel, Icons.edit_outlined, action: () => editShortcut(index)),
-        ContextMenuAction(AppString.deleteLabel, Icons.delete, isDangerous: true, action: () => removeShortcut(index))
+        ContextMenuAction(AppString.modifyLabel, Icons.edit_outlined,
+            action: () => editShortcut(index)),
+        ContextMenuAction(AppString.deleteLabel, Icons.delete,
+            isDangerous: true, action: () => removeShortcut(index))
       ],
     );
   }
 
   void showShortcutContent(int index) {
     Navigator.of(context).pushNamed(StopInfoPage.routeName,
-        arguments: StopInfoPageArgument(shortcuts![index].stop, shortcuts![index].lines));
+        arguments: StopInfoPageArgument(
+            shortcuts![index].stop, shortcuts![index].lines));
   }
 
   @override
@@ -141,7 +152,8 @@ class ShortcutWidgetRootState extends State<ShortcutWidgetRoot> {
                     onPressed: () => showShortcutContent(index),
                     onLongPressed: () => showContextMenu(index),
                   ),
-              proxyDecorator: (Widget child, int index, Animation<double> animation) {
+              proxyDecorator:
+                  (Widget child, int index, Animation<double> animation) {
                 return Material(
                   color: Colors.transparent,
                   child: DecoratedBoxTransition(
@@ -214,7 +226,9 @@ class ShortcutWidget extends StatelessWidget {
                   shortcut.shortcutName,
                   style: TextStyle(
                     fontSize: 25,
-                    fontWeight: shortcut.isFavorite ? FontWeight.w500 : FontWeight.normal,
+                    fontWeight: shortcut.isFavorite
+                        ? FontWeight.w500
+                        : FontWeight.normal,
                   ),
                   softWrap: false,
                   maxLines: 1,

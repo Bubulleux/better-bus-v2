@@ -1,8 +1,14 @@
 import 'package:better_bus_v2/app_constant/app_string.dart';
+import 'package:better_bus_v2/data_provider/cache_data_provider.dart';
+import 'package:better_bus_v2/data_provider/local_data_handler.dart';
+import 'package:better_bus_v2/info_traffic_notification.dart';
 import 'package:better_bus_v2/views/common/back_arrow.dart';
 import 'package:better_bus_v2/views/common/messages.dart';
 import 'package:better_bus_v2/views/common/title_bar.dart';
 import 'package:better_bus_v2/views/interest_line_page/interest_lines_page.dart';
+import 'package:better_bus_v2/views/log_view.dart';
+import 'package:better_bus_v2/views/preferences_view.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -45,6 +51,64 @@ class _SettingPageState extends State<SettingPage> {
         .pushNamed(MessageView.routeName, arguments: Messages.toVitalis);
   }
 
+  void emptyCache() {
+    CacheDataProvider.emptyCacheData();
+  }
+
+  void testNotificationActivation() async {
+    await LocalDataHandler.setLastNotificationPush(DateTime(2022, 11, 10));
+    checkInfoTraffic();
+  }
+
+  void gotoLog() {
+    Navigator.of(context).pushNamed(LogView.routeName);
+  }
+
+  void gotoPrefs() {
+    Navigator.of(context).pushNamed(PreferencesView.routeName);
+  }
+
+  List<SettingEntry> getOptions() {
+    List<SettingEntry> options = [
+      SettingEntry(
+        AppString.notificationSetting,
+        onClick: gotToNotificationSetting,
+      ),
+      SettingEntry(
+        AppString.privicyPolicy,
+        onClick: showPrivacyPolicy,
+      ),
+      SettingEntry(
+        AppString.sourceCode,
+        onClick: showSourceCode,
+      ),
+      SettingEntry(
+        AppString.makeTips,
+        onClick: makeATip,
+      ),
+      SettingEntry(
+        AppString.importantMessage,
+        onClick: goToImportantMessage,
+      ),
+      SettingEntry(
+        AppString.messageToVitalis,
+        onClick: goToMessageToVitalis,
+      ),
+      SettingEntry(
+        AppString.emptyCache,
+        onClick: emptyCache,
+      ),
+    ];
+    if (!kDebugMode) return options;
+    options += [
+      SettingEntry(
+        "See shared prefs",
+        onClick: gotoPrefs,
+      )
+    ];
+    return options;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,32 +120,7 @@ class _SettingPageState extends State<SettingPage> {
       ),
       Expanded(
           child: ListView(
-        children: [
-          SettingEntry(
-            AppString.notificationSetting,
-            onClick: gotToNotificationSetting,
-          ),
-          SettingEntry(
-            AppString.privicyPolicy,
-            onClick: showPrivacyPolicy,
-          ),
-          SettingEntry(
-            AppString.sourceCode,
-            onClick: showSourceCode,
-          ),
-          SettingEntry(
-            AppString.makeTips,
-            onClick: makeATip,
-          ),
-          SettingEntry(
-            AppString.importantMessage,
-            onClick: goToImportantMessage,
-          ),
-          SettingEntry(
-            AppString.messageToVitalis,
-            onClick: goToMessageToVitalis,
-          ),
-        ],
+        children: getOptions(),
       ))
     ])));
   }

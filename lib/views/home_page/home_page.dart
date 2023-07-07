@@ -131,18 +131,9 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  void gotoLog() {
-    Navigator.of(context).pushNamed(LogView.routeName);
-  }
-
-  void gotoPrefs() {
-    Navigator.of(context).pushNamed(PreferencesView.routeName);
-  }
-
-  void launchShortcutByWidget(String shortcutName, BuildContext context) async {
+  void launchShortcutByWidget(String shortcutRowId, BuildContext context) async {
     List<ViewShortcut> shortcuts = await LocalDataHandler.loadShortcut();
-    int shortcutIndex =
-        shortcuts.indexWhere((element) => element.shortcutName == shortcutName);
+    int shortcutIndex = int.parse(shortcutRowId);
     if (shortcutIndex == -1) {
       return;
     }
@@ -156,33 +147,8 @@ class _HomePageState extends State<HomePage> {
         arguments: StopInfoPageArgument(shortcut.stop, shortcut.lines));
   }
 
-  void testNotificationActivation() async {
-    await LocalDataHandler.setLastNotificationPush(DateTime(2022, 11, 10));
-    checkInfoTraffic();
-  }
-
-  void showMore() {
-    CustomContextMenu.show(context, [
-      ContextMenuAction(AppString.privicyPolicy, Icons.privacy_tip,
-          action: showPrivacyPolicy),
-      ContextMenuAction(AppString.sourceCode, Icons.code,
-          action: showSourceCode),
-    ]);
-  }
-
   void goToSetting() {
     Navigator.of(context).pushNamed(SettingPage.routeName);
-  }
-
-  void showPrivacyPolicy() {
-    Uri uri = Uri.parse(
-        "https://github.com/Bubulleux/better-bus-v2/blob/master/Privacy%20policy.md");
-    launchUrl(uri, mode: LaunchMode.externalApplication);
-  }
-
-  void showSourceCode() {
-    Uri uri = Uri.parse("https://github.com/Bubulleux/better-bus-v2");
-    launchUrl(uri, mode: LaunchMode.externalApplication);
   }
 
   @override
@@ -247,11 +213,6 @@ class _HomePageState extends State<HomePage> {
                     ),
                     IconButton(
                         onPressed: newShortcut, icon: const Icon(Icons.add)),
-                    // IconButton(onPressed: testNotificationActivation, icon: const Icon(Icons.notifications_active_rounded)),
-                    // IconButton(onPressed: () => LocalDataHandler.saveAlreadyPushNotification({}), icon: const Icon(Icons.notification_important_rounded)),
-                    // const IconButton(onPressed: CacheDataProvider.emptyCacheData, icon: Icon(Icons.restore_from_trash)),
-                    // IconButton(onPressed: gotoLog, icon: const Icon(Icons.newspaper)),
-                    // IconButton(onPressed: gotoPrefs, icon: const Icon(Icons.settings)),
                   ],
                 ),
               ),

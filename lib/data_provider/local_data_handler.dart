@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../model/clean/view_shortcut.dart';
 
-class  LocalDataHandler {
+class LocalDataHandler {
   static SharedPreferences? preferences;
 
   static Future checkPreferences() async {
@@ -32,13 +32,22 @@ class  LocalDataHandler {
   static Future<void> saveShortcuts(List<ViewShortcut> shortcuts) async {
     await checkPreferences();
 
-    List<String> shortcutJson = shortcuts.map((shortcut) =>
-        jsonEncode(shortcut.toJson())).toList();
+    List<String> shortcutJson =
+        shortcuts.map((shortcut) => jsonEncode(shortcut.toJson())).toList();
 
-    List<String> favoriteShortcut = shortcuts.where((element) => element.isFavorite).map((element) =>
-    element.shortcutName).toList();
+    List<String> favoriteShortcut = [];
+    List<int> favoriteShortcutIds = [];
+    for (int i = 0; i < shortcuts.length; i++) {
+      ViewShortcut shortcut = shortcuts[i];
+      if (!shortcut.isFavorite) continue;
+      favoriteShortcut.add(shortcut.shortcutName);
+      favoriteShortcutIds.add(i);
+    }
+
     preferences!.setStringList("shortcuts", shortcutJson);
     HomeWidget.saveWidgetData<String>("shortcuts", favoriteShortcut.join(";"));
+    HomeWidget.saveWidgetData<String>(
+        "shortcutsIds", favoriteShortcutIds.join(";"));
     // HomeWidget.updateWidget(name: "HomeWidgetExampleProvider");
     CustomHomeWidgetRequest.updateWidget();
   }
@@ -63,7 +72,8 @@ class  LocalDataHandler {
   static Future<Set<int>?> loadAlreadyPushNotification() async {
     await checkPreferences();
 
-    List<String>? lines = preferences!.getStringList("already-push-notification");
+    List<String>? lines =
+        preferences!.getStringList("already-push-notification");
 
     return lines?.map((e) => int.parse(e)).toSet();
   }
@@ -71,26 +81,29 @@ class  LocalDataHandler {
   static Future<void> saveAlreadyPushNotification(Set<int> lines) async {
     await checkPreferences();
 
-    await preferences!.setStringList("already-push-notification", lines.map((e) => e.toString()).toList());
+    await preferences!.setStringList(
+        "already-push-notification", lines.map((e) => e.toString()).toList());
   }
 
   static Future<DateTime> getLastNotificationPush() async {
     await checkPreferences();
 
-    return DateTime.fromMillisecondsSinceEpoch(preferences!.getInt("lastNotificationPush") ?? 0);
+    return DateTime.fromMillisecondsSinceEpoch(
+        preferences!.getInt("lastNotificationPush") ?? 0);
   }
 
   static Future setLastNotificationPush(DateTime lastNotificationPush) async {
     await checkPreferences();
-    preferences!.setInt("lastNotificationPush", lastNotificationPush.millisecondsSinceEpoch);
+    preferences!.setInt(
+        "lastNotificationPush", lastNotificationPush.millisecondsSinceEpoch);
   }
-  
+
   static Future<List<String>> loadLog() async {
     await checkPreferences();
     return preferences!.getStringList("log") ?? [];
   }
-  
-  static Future<void> addLog(String log) async{
+
+  static Future<void> addLog(String log) async {
     await checkPreferences();
     List<String> previousLog = await loadLog();
     previousLog.add("[${DateTime.now().toString()}]:\n$log");
@@ -98,7 +111,7 @@ class  LocalDataHandler {
     await preferences!.setStringList("log", previousLog);
   }
 
-  static Future<void> clearLog() async{
+  static Future<void> clearLog() async {
     await checkPreferences();
 
     await preferences!.setStringList("log", []);
@@ -125,13 +138,13 @@ class  LocalDataHandler {
     preferences!.setBool("notificationEnable", value);
   }
 
-    static Future<bool> showImportantMessage() async {
-      await checkPreferences();
-      return preferences!.getBool("showImportantMessage") ?? true;
-    }
+  static Future<bool> showImportantMessage() async {
+    await checkPreferences();
+    return preferences!.getBool("showImportantMessage") ?? true;
+  }
 
-    static Future stopShowingImportantMessage() async {
-      await checkPreferences();
-      preferences!.setBool("showImportantMessage", false);
-    }
+  static Future stopShowingImportantMessage() async {
+    await checkPreferences();
+    preferences!.setBool("showImportantMessage", false);
+  }
 }
