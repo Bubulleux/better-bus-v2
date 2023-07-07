@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="8dp"
+    android:layout_margin="0dp"
     android:orientation="vertical"
     android:background="@drawable/widget_background"
     android:padding="8dp"
@@ -19,19 +19,18 @@
 
         <TextView
             android:id="@+id/widget_title"
-            android:layout_width="wrap_content
-"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Raccourcis"
-            android:textSize="20sp"
+            android:text="Raccourcis Better Bus"
+            android:textSize="15sp"
             android:textStyle="bold"
             />
 
         <ImageButton
             android:id="@+id/my_stop_button"
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
+            android:layout_height="40dp"
             android:layout_weight="0"
             android:adjustViewBounds="false"
             android:backgroundTint="#00000000"
@@ -54,7 +53,7 @@
             android:id="@+id/list_empty"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:textSize="25sp"
+            android:textSize="15sp"
             android:textStyle="bold"
             android:gravity="center"
             android:text="Aucun raccourci n'a été mis en favori."
