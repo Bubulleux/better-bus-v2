@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:better_bus_v2/data_provider/gtfs_data_provider.dart';
 import 'package:better_bus_v2/error_handler/custom_error.dart';
 import 'package:better_bus_v2/model/clean/bus_line.dart';
 import 'package:better_bus_v2/model/clean/bus_stop.dart';
@@ -8,6 +9,7 @@ import 'package:better_bus_v2/model/clean/line_boarding.dart';
 import 'package:better_bus_v2/model/clean/map_place.dart';
 import 'package:better_bus_v2/model/clean/route.dart';
 import 'package:better_bus_v2/model/clean/timetable.dart';
+import 'package:better_bus_v2/model/gtfs_data.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
@@ -45,6 +47,12 @@ class VitalisDataProvider {
   }
 
   static Future<List<BusStop>?> getStops() async {
+    print(GTFSDataProvider.gtfsData);
+    if (GTFSDataProvider.gtfsData != null) {
+      print("Get GTFS");
+      return GTFSDataProvider.getStops();
+    }
+
     Uri uri = Uri.parse("https://releases-uxb3m2jh5q-ew.a.run.app/stops");
 
     List<dynamic> body = await sendRequest(uri, cache: stopsCache);
@@ -57,6 +65,9 @@ class VitalisDataProvider {
   }
 
   static Future<List<BusLine>?> getLines(BusStop stop) async {
+    if (GTFSDataProvider.gtfsData != null) {
+      return GTFSDataProvider.getStopLines(stop.id);
+    }
     Uri uri = Uri.parse("https://releases-uxb3m2jh5q-ew.a.run.app/gtfs/Line/getStationLines.json");
     uri = uri.replace(queryParameters: {
       "station": stop.name,

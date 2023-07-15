@@ -1,20 +1,19 @@
+import 'dart:math';
+
 import 'package:better_bus_v2/app_constant/app_string.dart';
 import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
+import 'package:better_bus_v2/data_provider/gtfs_data_provider.dart';
 import 'package:better_bus_v2/data_provider/local_data_handler.dart';
 import 'package:better_bus_v2/data_provider/version_data_provider.dart';
-import 'package:better_bus_v2/info_traffic_notification.dart';
 import 'package:better_bus_v2/model/clean/bus_stop.dart';
 import 'package:better_bus_v2/model/clean/view_shortcut.dart';
 import 'package:better_bus_v2/views/common/background.dart';
 import 'package:better_bus_v2/views/common/closestStopDialog.dart';
 import 'package:better_bus_v2/views/common/content_container.dart';
-import 'package:better_bus_v2/views/common/context_menu.dart';
 import 'package:better_bus_v2/views/common/messages.dart';
 import 'package:better_bus_v2/views/common/title_bar.dart';
 import 'package:better_bus_v2/views/home_page/navigation_bar.dart';
 import 'package:better_bus_v2/views/home_page/shortcut_section.dart';
-import 'package:better_bus_v2/views/log_view.dart';
-import 'package:better_bus_v2/views/preferences_view.dart';
 import 'package:better_bus_v2/views/route_page/route_page.dart';
 import 'package:better_bus_v2/views/setting_page/setting_page.dart';
 import 'package:better_bus_v2/views/stop_info/stop_info_page.dart';
@@ -22,7 +21,6 @@ import 'package:better_bus_v2/views/traffic_info_page/traffic_info_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:home_widget/home_widget.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../stops_search_page/stops_search_page.dart';
@@ -73,6 +71,8 @@ class _HomePageState extends State<HomePage> {
     initFlutterNotificationPlugin();
     checkIfAppIsNotificationLaunched();
     checkIfFisrtTimeOpenningApp();
+    GTFSDataProvider.loadFile().onError((error, stackTrace) =>
+        print(error.toString() + "\n" + stackTrace.toString()));
   }
 
   @override
@@ -131,7 +131,8 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  void launchShortcutByWidget(String shortcutRowId, BuildContext context) async {
+  void launchShortcutByWidget(
+      String shortcutRowId, BuildContext context) async {
     List<ViewShortcut> shortcuts = await LocalDataHandler.loadShortcut();
     int shortcutIndex = int.parse(shortcutRowId);
     if (shortcutIndex == -1) {

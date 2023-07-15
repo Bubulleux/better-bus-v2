@@ -10,8 +10,7 @@ class BusStop {
   late final double longitude;
   late final int id;
 
-  BusStop.fromJson(Map<String, dynamic> json)
-  {
+  BusStop.fromJson(Map<String, dynamic> json) {
     name = json["name"];
 
     // String transformation: WyIxMDA3NyIsMV0= -> (base 64) ["10077",1] -> (sub string) 10077
@@ -20,28 +19,33 @@ class BusStop {
 
     latitude = json["lat"];
     longitude = json["lng"];
-
   }
 
   BusStop.fromCleanJson(Map<String, dynamic> json)
       : this(
-    json["name"],
-    // String transformation: WyIxMDA3NyIsMV0= -> (base 64) ["10077",1] -> (sub string) 10077
-    json["id"],
-    latitude: json["lat"],
-    longitude: json["long"],
-  );
+          json["name"],
+          // String transformation: WyIxMDA3NyIsMV0= -> (base 64) ["10077",1] -> (sub string) 10077
+          json["id"],
+          latitude: json["lat"],
+          longitude: json["long"],
+        );
+
+  BusStop.fromCSV(Map<String, String> row)
+      : this(
+          row["stop_name"]!,
+          int.parse(row["stop_id"]!),
+          latitude: double.parse(row["stop_lat"]!),
+          longitude: double.parse(row["stop_lon"]!),
+        );
 
   Map<String, dynamic> toJson() {
     return {
-      "name" : name,
-      "lat" : latitude,
+      "name": name,
+      "lat": latitude,
       "long": longitude,
       "id": id,
     };
   }
-
-
 
   @override
   bool operator ==(Object other) {
@@ -50,5 +54,4 @@ class BusStop {
 
   @override
   int get hashCode => Object.hash(id, name);
-
 }
