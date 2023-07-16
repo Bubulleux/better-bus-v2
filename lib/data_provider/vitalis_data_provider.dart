@@ -19,9 +19,12 @@ import 'connectivity_checker.dart';
 
 class VitalisDataProvider {
   static String? token;
-  static CacheDataProvider stopsCache = const CacheDataProvider(key: "stops", expiration: Duration(hours: 5));
-  static CacheDataProvider linesCache = const CacheDataProvider(key: "lines", expiration: Duration(hours: 5));
-  static CacheDataProvider trafficInfoCache = const CacheDataProvider(key: "trafficInfo", expiration: Duration(minutes: 14));
+  static CacheDataProvider stopsCache =
+      const CacheDataProvider(key: "stops", expiration: Duration(hours: 5));
+  static CacheDataProvider linesCache =
+      const CacheDataProvider(key: "lines", expiration: Duration(hours: 5));
+  static CacheDataProvider trafficInfoCache = const CacheDataProvider(
+      key: "trafficInfo", expiration: Duration(minutes: 14));
 
   static Future<void> getToken() async {
     if (!await ConnectivityChecker.isConnected()) {
@@ -58,7 +61,6 @@ class VitalisDataProvider {
     List<dynamic> body = await sendRequest(uri, cache: stopsCache);
     List<BusStop> output = [];
     for (Map<String, dynamic> rawStop in body) {
-
       output.add(BusStop.fromJson(rawStop));
     }
     return output;
@@ -68,7 +70,8 @@ class VitalisDataProvider {
     if (GTFSDataProvider.gtfsData != null) {
       return GTFSDataProvider.getStopLines(stop.id);
     }
-    Uri uri = Uri.parse("https://releases-uxb3m2jh5q-ew.a.run.app/gtfs/Line/getStationLines.json");
+    Uri uri = Uri.parse(
+        "https://releases-uxb3m2jh5q-ew.a.run.app/gtfs/Line/getStationLines.json");
     uri = uri.replace(queryParameters: {
       "station": stop.name,
       "networks": "[1]",
@@ -83,12 +86,14 @@ class VitalisDataProvider {
     return output;
   }
 
-  static Future<List<NextPassage>> getNextPassage(BusStop stop, {int max = 40}) async {
+  static Future<List<NextPassage>> getNextPassage(BusStop stop,
+      {int max = 40}) async {
     if (stop.id == -1) {
       throw "Bus Stop need id";
     }
 
-    Uri uri = Uri.parse("https://releases-uxb3m2jh5q-ew.a.run.app/gtfs/SIRI/getSIRIWithErrors.json");
+    Uri uri = Uri.parse(
+        "https://releases-uxb3m2jh5q-ew.a.run.app/gtfs/SIRI/getSIRIWithErrors.json");
     uri = uri.replace(queryParameters: {
       "max": max.toString(),
       "stopPoint": stop.id.toString(),
@@ -105,9 +110,10 @@ class VitalisDataProvider {
     return output;
   }
 
-  static Future<LineBoarding> getLineBoarding(BusStop stop, BusLine line) async {
-
-    Uri uri = Uri.parse("https://releases-uxb3m2jh5q-ew.a.run.app/gtfs/Station/getBoardingIDs.json");
+  static Future<LineBoarding> getLineBoarding(
+      BusStop stop, BusLine line) async {
+    Uri uri = Uri.parse(
+        "https://releases-uxb3m2jh5q-ew.a.run.app/gtfs/Station/getBoardingIDs.json");
     uri = uri.replace(queryParameters: {
       "station": stop.name,
       "line": line.id.toString(),
@@ -118,14 +124,30 @@ class VitalisDataProvider {
     return LineBoarding.fromJson(body, line);
   }
 
-  static Future<Timetable> getTimetable(BusStop stop, BusLine line, int direction, LineBoarding boarding, DateTime date) async {
-    Uri uri = Uri.parse("https://releases-uxb3m2jh5q-ew.a.run.app/gtfs/Horaire/getHoraire.json");
+  static Future<Timetable> getTimetable(BusStop stop, BusLine line,
+      int direction, LineBoarding boarding, DateTime date) async {
+    if (GTFSDataProvider.gtfsData != null) {
+      print("Get Timetable");
+      try {
+      return GTFSDataProvider.getTimetable(
+          stop.id.toString(), line.id, direction == 0, date);
+      } catch (e, stack){
+        print(e);
+        print(stack);
+      }
+    }
+
+    Uri uri = Uri.parse(
+        "https://releases-uxb3m2jh5q-ew.a.run.app/gtfs/Horaire/getHoraire.json");
     uri = uri.replace(queryParameters: {
       "boarding_id": stop.id.toString(),
       "date": DateFormat("yyyy-MM-dd").format(date),
-      "direction" : direction.toString(),
+      "direction": direction.toString(),
       "line": line.id,
-      "stop_id": jsonEncode((direction == 0 ? boarding.back : boarding.go).values.map((k) => k.toString()).toList()),
+      "stop_id": jsonEncode((direction == 0 ? boarding.back : boarding.go)
+          .values
+          .map((k) => k.toString())
+          .toList()),
       "networks": "[1]",
     });
 
@@ -148,11 +170,14 @@ class VitalisDataProvider {
     Uri uri = Uri.parse("https://releases-uxb3m2jh5q-ew.a.run.app/lines");
 
     List<dynamic> json = await sendRequest(uri, cache: linesCache);
-    return { for (Map<String, dynamic>  e in json) e["slug"]: BusLine.fromSimpleJson(e)};
+    return {
+      for (Map<String, dynamic> e in json) e["slug"]: BusLine.fromSimpleJson(e)
+    };
   }
 
-  static Future<List<MapPlace>> getPlaceAutoComplete(String input) async{
-    Uri uri = Uri.parse("https://autosuggest.search.hereapi.com/v1/autosuggest");
+  static Future<List<MapPlace>> getPlaceAutoComplete(String input) async {
+    Uri uri =
+        Uri.parse("https://autosuggest.search.hereapi.com/v1/autosuggest");
     uri = uri.replace(queryParameters: {
       // "types": "address,place",
       "q": input.replaceAll(" ", "+"),
@@ -162,16 +187,19 @@ class VitalisDataProvider {
 
     Map<String, dynamic> json = await sendRequest(uri, needToken: false);
     List<MapPlace> output = [];
-    for (Map<String, dynamic> e in json["items"]){
-      if (e.containsKey("position")){
+    for (Map<String, dynamic> e in json["items"]) {
+      if (e.containsKey("position")) {
         output.add(MapPlace.fromJson(e));
       }
     }
     return output;
   }
 
-  static Future<List<VitalisRoute>> getVitalisRoute(MapPlace start, MapPlace end, DateTime date, String timeType, {int count = 5}) async {
-    Uri uri = Uri.parse("https://releases-uxb3m2jh5q-ew.a.run.app/gtfs/Itinerary/getItineraries.json");
+  static Future<List<VitalisRoute>> getVitalisRoute(
+      MapPlace start, MapPlace end, DateTime date, String timeType,
+      {int count = 5}) async {
+    Uri uri = Uri.parse(
+        "https://releases-uxb3m2jh5q-ew.a.run.app/gtfs/Itinerary/getItineraries.json");
     uri = uri.replace(queryParameters: {
       "start": "[${start.latitude},${start.longitude}]",
       "end": "[${end.latitude},${end.longitude}]",
@@ -184,20 +212,24 @@ class VitalisDataProvider {
     });
 
     dynamic rawJson = await sendRequest(uri);
-    if (rawJson is Map<String, dynamic>){
+    if (rawJson is Map<String, dynamic>) {
       return [];
     }
     List<dynamic> json = rawJson;
-    return json.map((e) => VitalisRoute.fromJson(e)).toList().cast<VitalisRoute>();
+    return json
+        .map((e) => VitalisRoute.fromJson(e))
+        .toList()
+        .cast<VitalisRoute>();
   }
 
-  static Future<dynamic> sendRequest(Uri uri, {needToken = true, CacheDataProvider? cache}) async {
+  static Future<dynamic> sendRequest(Uri uri,
+      {needToken = true, CacheDataProvider? cache}) async {
     int status = -1;
     int countTry = 0;
     http.Response? response;
-    if (cache != null){
+    if (cache != null) {
       String? cacheData = await cache.getData();
-      if (cacheData != null){
+      if (cacheData != null) {
         return jsonDecode(cacheData);
       }
     }
@@ -208,7 +240,8 @@ class VitalisDataProvider {
 
     while (status != 200 && countTry < 3) {
       countTry += 1;
-      response = await http.get(uri, headers: needToken ? await getAutHeader() : null);
+      response =
+          await http.get(uri, headers: needToken ? await getAutHeader() : null);
       status = response.statusCode;
       if (response.statusCode == 200) {
         String body = utf8.decode(response.bodyBytes);
@@ -225,7 +258,6 @@ class VitalisDataProvider {
     }
     throw ApiProviderException(response!);
   }
-
 }
 
 class ApiProviderException implements Exception {

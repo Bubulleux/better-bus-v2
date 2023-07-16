@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:better_bus_v2/data_provider/connectivity_checker.dart';
 import 'package:better_bus_v2/model/clean/bus_line.dart';
 import 'package:better_bus_v2/model/clean/bus_stop.dart';
+import 'package:better_bus_v2/model/clean/timetable.dart';
 import 'package:better_bus_v2/model/cvs_parser.dart';
 import 'package:better_bus_v2/model/gtfs_data.dart';
 import 'package:flutter/foundation.dart';
@@ -106,6 +107,8 @@ class GTFSDataProvider {
           .compareTo(gtfsData!.stopTime[b]!.length),
     );
 
+    stopTrips = stopTrips.reversed.toList();
+
     print(validIDs);
     print(stopTrips.length);
 
@@ -144,5 +147,55 @@ class GTFSDataProvider {
       lines.add(line);
     }
     return lines;
+  }
+
+  static Timetable getTimetable(
+    String stopID,
+    String lineID,
+    bool direction,
+    DateTime date,
+  ) {
+    DateTime midnightTime = DateTime(date.year, date.month, date.day);
+    Set<String> validServices =
+        gtfsData!.calendar.getEnablesServices(midnightTime);
+    Map<String, List<GTFSStopTime>> schredules = {};
+
+    String routeID = gtfsData!.routes.entries
+        .firstWhere((e) => e.value.shortName == lineID)
+        .key;
+
+    GTFSStop stop = gtfsData!.stops[stopID]!;
+    Set<int> validStopId = stop.child.map((e) => e.id).toSet();
+
+    for (var trip in gtfsData!.trips.entries) {
+      if (trip.value.direction != direction) continue;
+      if (trip.value.routeID != routeID) continue;
+      if (!validServices.contains(trip.value.serviceID)) continue;
+
+      String key = trip.value.headSign;
+      if (!schredules.containsKey(key)) {
+        schredules[key] = [];
+      }
+
+      schredules[key]!.add(gtfsData!.stopTime[trip.key]!
+          .firstWhere((e) => validStopId.contains(int.parse(e.stopID))));
+    }
+
+    String labels = "abcdefghijk";
+    Map<String, String> terminalLabel = {};
+    for (var terminal in schredules.keys) {
+      terminalLabel[terminal] = labels[terminalLabel.length];
+    }
+
+    List<BusSchedule> sortedSchredules = [];
+
+    for (var entrie in schredules.entries) {
+      for (var schredule in entrie.value) {
+        sortedSchredules.add(BusSchedule(
+            midnightTime.add(schredule.arival), terminalLabel[entrie.key]!));
+      }
+    }
+    sortedSchredules.sort((a, b) => a.time.compareTo(b.time));
+    return Timetable(sortedSchredules, terminalLabel);
   }
 }
