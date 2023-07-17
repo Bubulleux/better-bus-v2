@@ -216,6 +216,7 @@ class GTFSCalendar {
       if (exception.type == ExceptionType.remove) {
         servicesEnable.remove(exception.serviceID);
       }
+      print(exception.type);
     }
 
     return servicesEnable;

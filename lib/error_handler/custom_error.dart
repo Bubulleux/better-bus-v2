@@ -1,20 +1,26 @@
 import 'package:better_bus_v2/app_constant/app_string.dart';
 import 'package:flutter/material.dart';
 
-class CustomError extends Error{
+class CustomError extends Error {
   CustomError(this.content, this.icon, this.canBeRetry);
-
 
   final String content;
   final IconData? icon;
   final bool canBeRetry;
 
-  Widget build(BuildContext context, VoidCallback? retry){
+  Widget build(BuildContext context, VoidCallback? retry) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(icon ?? Icons.error, size: 40,),
-        Text(content, style: Theme.of(context).textTheme.titleLarge, textAlign: TextAlign.center,),
+        Icon(
+          icon ?? Icons.error,
+          size: 40,
+        ),
+        Text(
+          content,
+          style: Theme.of(context).textTheme.titleLarge,
+          textAlign: TextAlign.center,
+        ),
         if (retry != null && canBeRetry)
           ElevatedButton(
             onPressed: retry,
@@ -32,20 +38,19 @@ class CustomError extends Error{
   }
 }
 
-class CustomException extends CustomError{
-  CustomException(this.exception): super(exception.toString(), null, true);
+class CustomException extends CustomError {
+  CustomException(this.exception) : super(exception.toString(), null, true);
 
   final Exception exception;
 }
 
-extension ToError on Exception{
+extension ToError on Exception {
   CustomException toError() {
     return CustomException(this);
   }
 }
 
-
-class CustomErrors{
+class CustomErrors {
   static final emptyNextPassage = CustomError(
     "Aucun bus n'est prévu pour le moment.",
     Icons.bus_alert,
@@ -93,5 +98,10 @@ class CustomErrors{
     Icons.wrong_location,
     false,
   );
-}
 
+  static final noGTFS = CustomError(
+    "Aucune données GTFS n'a été trouver",
+    Icons.file_download_off,
+    false,
+  );
+}

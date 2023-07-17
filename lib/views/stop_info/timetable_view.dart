@@ -19,11 +19,11 @@ class TimeTableView extends StatefulWidget {
   State<TimeTableView> createState() => _TimeTableViewState();
 }
 
-class _TimeTableViewState extends State<TimeTableView> with AutomaticKeepAliveClientMixin {
+class _TimeTableViewState extends State<TimeTableView>
+    with AutomaticKeepAliveClientMixin {
   List<BusLine>? busLines;
   BusLine? busLineSelected;
 
-  LineBoarding? boarding;
   int? boardingSelected;
 
   DateTime selectedDate = DateTime.now();
@@ -46,7 +46,6 @@ class _TimeTableViewState extends State<TimeTableView> with AutomaticKeepAliveCl
 
   void selectLine(BusLine? line) {
     setState(() {
-      boarding = null;
       boardingSelected = null;
       busLineSelected = line;
     });
@@ -55,33 +54,29 @@ class _TimeTableViewState extends State<TimeTableView> with AutomaticKeepAliveCl
       return;
     }
 
-    VitalisDataProvider.getLineBoarding(widget.stop, line).then((value) {
-      if (mounted) {
-        setState(() {
-          boarding = value;
-          changeDirection();
-        });
-      }
-    });
+    changeDirection();
   }
 
-  Widget timetableEmpty = Column(
+  Widget timetableEmpty = const Column(
     mainAxisAlignment: MainAxisAlignment.center,
     crossAxisAlignment: CrossAxisAlignment.center,
-    children: const [
-      SizedBox(height: 50,
-      width: double.infinity,),
+    children: [
+      SizedBox(
+        height: 50,
+        width: double.infinity,
+      ),
       Icon(Icons.error_outline),
-      Text(AppString.noBusToday),],
+      Text(AppString.noBusToday),
+    ],
   );
 
   void changeDirection() {
-    if (boarding == null) {
+    if (busLineSelected == null) {
       return;
     }
     if (boardingSelected == null) {
       setState(() {
-        if (boarding!.back.isNotEmpty) {
+        if (busLineSelected!.goDirection.isNotEmpty) {
           boardingSelected = 0;
         } else {
           boardingSelected = 1;
@@ -91,13 +86,14 @@ class _TimeTableViewState extends State<TimeTableView> with AutomaticKeepAliveCl
     }
 
     setState(() {
-      if (boardingSelected == 0 && boarding!.go.isNotEmpty) {
+      if (boardingSelected == 0 && busLineSelected!.goDirection.isNotEmpty) {
         boardingSelected = 1;
-      } else if (boarding!.back.isNotEmpty) {
+      } else if (busLineSelected!.backDirection.isNotEmpty) {
         boardingSelected = 0;
       }
     });
-    if (boarding!.go.isEmpty || boarding!.back.isEmpty) {
+    if (busLineSelected!.goDirection.isEmpty ||
+        busLineSelected!.backDirection.isEmpty) {
       ScaffoldMessenger.of(context).removeCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text(AppString.onlyOneDirection),
@@ -129,14 +125,17 @@ class _TimeTableViewState extends State<TimeTableView> with AutomaticKeepAliveCl
     super.build(context);
     String? directionString;
     if (boardingSelected != null) {
-      directionString = (boardingSelected == 0 ? boarding!.back : boarding!.go).keys.join(" | ");
+      directionString = (boardingSelected == 0
+              ? busLineSelected!.backDirection
+              : busLineSelected!.goDirection)
+          .join(" | ");
     }
 
     Widget timeTableBody = Container();
     if (busLineSelected != null && boardingSelected != null) {
       timeTableBody = FutureBuilder(
-        future:
-            VitalisDataProvider.getTimetable(widget.stop, busLineSelected!, boardingSelected!, boarding!, selectedDate),
+        future: VitalisDataProvider.getTimetable(widget.stop, busLineSelected!,
+            boardingSelected!, selectedDate),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.hasError) {
@@ -175,7 +174,8 @@ class _TimeTableViewState extends State<TimeTableView> with AutomaticKeepAliveCl
                 underline: Container(),
                 hint: const Text(AppString.selectALine),
                 value: busLineSelected,
-                items: (busLines ?? []).map<DropdownMenuItem<BusLine>>((BusLine value) {
+                items: (busLines ?? [])
+                    .map<DropdownMenuItem<BusLine>>((BusLine value) {
                   return DropdownMenuItem<BusLine>(
                     value: value,
                     child: Row(
@@ -267,7 +267,7 @@ class TimetableOutput extends StatelessWidget {
     List<Widget> labelsPassage = [];
     for (MapEntry<String, String> entry in timetable.terminalLabel.entries) {
       labelsPassage.add(Text(
-        "${entry.key}: ${entry.value}",
+        "${entry.value}: ${entry.key}",
         textAlign: TextAlign.left,
         style: Theme.of(context).textTheme.bodySmall,
       ));
@@ -306,7 +306,9 @@ class TimetableOutput extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(15),
                     border: Border.all(color: Theme.of(context).primaryColor),
-                    color: index % 2 == 0 ? Theme.of(context).primaryColorLight : null,
+                    color: index % 2 == 0
+                        ? Theme.of(context).primaryColorLight
+                        : null,
                   ),
                   child: IntrinsicHeight(
                     child: Row(
@@ -317,7 +319,8 @@ class TimetableOutput extends StatelessWidget {
                           decoration: BoxDecoration(
                               color: Theme.of(context).primaryColor,
                               borderRadius: const BorderRadius.only(
-                                  topLeft: Radius.circular(15), bottomLeft: Radius.circular(15))),
+                                  topLeft: Radius.circular(15),
+                                  bottomLeft: Radius.circular(15))),
                           alignment: Alignment.centerRight,
                           padding: const EdgeInsets.only(right: 3),
                           child: Text(
@@ -345,7 +348,9 @@ class TimetableOutput extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
             width: double.infinity,
-            decoration: BoxDecoration(color: Theme.of(context).primaryColor, borderRadius: BorderRadius.circular(20)),
+            decoration: BoxDecoration(
+                color: Theme.of(context).primaryColor,
+                borderRadius: BorderRadius.circular(20)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: labelsPassage,

@@ -50,9 +50,7 @@ class VitalisDataProvider {
   }
 
   static Future<List<BusStop>?> getStops() async {
-    print(GTFSDataProvider.gtfsData);
     if (GTFSDataProvider.gtfsData != null) {
-      print("Get GTFS");
       return GTFSDataProvider.getStops();
     }
 
@@ -88,6 +86,14 @@ class VitalisDataProvider {
 
   static Future<List<NextPassage>> getNextPassage(BusStop stop,
       {int max = 40}) async {
+    List<NextPassage>? gtfsNextPassage;
+    if (GTFSDataProvider.gtfsData != null) {
+      gtfsNextPassage = GTFSDataProvider.getNextPassage(stop.id.toString());
+      if (!await ConnectivityChecker.isConnected()) {
+        return gtfsNextPassage;
+      }
+    }
+
     if (stop.id == -1) {
       throw "Bus Stop need id";
     }
@@ -107,6 +113,18 @@ class VitalisDataProvider {
       output.add(NextPassage.fromJson(rawPassage));
     }
 
+    if (gtfsNextPassage == null) return output;
+
+    for (var nextPassage in output) {
+      gtfsNextPassage.removeWhere((e) =>
+          e.aimedTime.toUtc().isAtSameMomentAs(nextPassage.realTime
+              ? nextPassage.aimedTime
+              : nextPassage.expectedTime) &&
+          e.line.id == nextPassage.line.id);
+    }
+    output += gtfsNextPassage;
+    output.sort((a, b) => a.expectedTime.compareTo(b.expectedTime));
+
     return output;
   }
 
@@ -124,36 +142,14 @@ class VitalisDataProvider {
     return LineBoarding.fromJson(body, line);
   }
 
-  static Future<Timetable> getTimetable(BusStop stop, BusLine line,
-      int direction, LineBoarding boarding, DateTime date) async {
-    if (GTFSDataProvider.gtfsData != null) {
-      print("Get Timetable");
-      try {
-      return GTFSDataProvider.getTimetable(
-          stop.id.toString(), line.id, direction == 0, date);
-      } catch (e, stack){
-        print(e);
-        print(stack);
-      }
+  static Future<Timetable> getTimetable(
+      BusStop stop, BusLine line, int direction, DateTime date) async {
+    if (GTFSDataProvider.gtfsData == null) {
+      throw CustomErrors.noGTFS;
     }
 
-    Uri uri = Uri.parse(
-        "https://releases-uxb3m2jh5q-ew.a.run.app/gtfs/Horaire/getHoraire.json");
-    uri = uri.replace(queryParameters: {
-      "boarding_id": stop.id.toString(),
-      "date": DateFormat("yyyy-MM-dd").format(date),
-      "direction": direction.toString(),
-      "line": line.id,
-      "stop_id": jsonEncode((direction == 0 ? boarding.back : boarding.go)
-          .values
-          .map((k) => k.toString())
-          .toList()),
-      "networks": "[1]",
-    });
-
-    Map<String, dynamic> body = await sendRequest(uri);
-    Timetable output = Timetable.fromJson(body);
-    return output;
+    return GTFSDataProvider.getTimetable(
+        stop.id.toString(), line.id, direction == 1, date);
   }
 
   static Future<List<InfoTraffic>> getTrafficInfo() async {

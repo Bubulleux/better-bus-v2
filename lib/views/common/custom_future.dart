@@ -99,7 +99,7 @@ class CustomFutureBuilderState<T> extends State<CustomFutureBuilder> with Widget
 
     await hideRefresh();
     needRefresh = false;
-    if (widget.automaticRefresh != null && error == null) {
+    if (widget.automaticRefresh != null && error == null && mounted) {
       Future.delayed(widget.automaticRefresh!, autoRefresh);
     }
   }

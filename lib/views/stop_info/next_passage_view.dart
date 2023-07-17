@@ -20,27 +20,27 @@ class NextPassagePage extends StatefulWidget {
   State<NextPassagePage> createState() => _NextPassagePageState();
 }
 
-class _NextPassagePageState extends State<NextPassagePage> with AutomaticKeepAliveClientMixin, SingleTickerProviderStateMixin{
-
+class _NextPassagePageState extends State<NextPassagePage>
+    with AutomaticKeepAliveClientMixin, SingleTickerProviderStateMixin {
   bool seeAll = false;
   late AnimationController seeAllAnimationController;
   late Animation<double> seeAllBtnAnimation;
 
-  GlobalKey<NextPassageListWidgetState> nextPassageWidgetKey = GlobalKey<NextPassageListWidgetState>();
-
+  GlobalKey<NextPassageListWidgetState> nextPassageWidgetKey =
+      GlobalKey<NextPassageListWidgetState>();
 
   @override
   void initState() {
     super.initState();
-    if (widget.lines == null)
-    {
+    if (widget.lines == null) {
       seeAll = true;
     }
-    seeAllAnimationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 200));
-    seeAllBtnAnimation = CurvedAnimation(parent: seeAllAnimationController, curve: Curves.easeOut);
+    seeAllAnimationController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 200));
+    seeAllBtnAnimation = CurvedAnimation(
+        parent: seeAllAnimationController, curve: Curves.easeOut);
     seeAllAnimationController.value = seeAll ? 0 : 1;
   }
-
 
   @override
   void setState(VoidCallback fn) {
@@ -51,33 +51,36 @@ class _NextPassagePageState extends State<NextPassagePage> with AutomaticKeepAli
   Widget build(BuildContext context) {
     super.build(context);
     return SizedBox(
-      width: double.infinity,
-      height: double.infinity,
-      child: Column(
-        children: [
-          SizeTransition(
-            sizeFactor: seeAllBtnAnimation,
-            axisAlignment: 1,
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: ElevatedButton(
-                onPressed: () {
-                  seeAll = true;
-                  seeAllAnimationController.reverse();
-                  nextPassageWidgetKey.currentState!.refresh();
-                  setState(() {});
-                },
-                child: const Text(AppString.seeAllLabel),
+        width: double.infinity,
+        height: double.infinity,
+        child: Column(
+          children: [
+            SizeTransition(
+              sizeFactor: seeAllBtnAnimation,
+              axisAlignment: 1,
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: ElevatedButton(
+                  onPressed: () {
+                    seeAll = true;
+                    seeAllAnimationController.reverse();
+                    nextPassageWidgetKey.currentState!.refresh();
+                    setState(() {});
+                  },
+                  child: const Text(AppString.seeAllLabel),
+                ),
               ),
             ),
-          ),
-          Expanded(
-            child: NextPassageListWidget(widget.stop,  seeAll ? null : widget.lines, key: nextPassageWidgetKey,),
-          ),
-        ],
-      )
-    );
+            Expanded(
+              child: NextPassageListWidget(
+                widget.stop,
+                seeAll ? null : widget.lines,
+                key: nextPassageWidgetKey,
+              ),
+            ),
+          ],
+        ));
   }
 
   @override
@@ -85,7 +88,8 @@ class _NextPassagePageState extends State<NextPassagePage> with AutomaticKeepAli
 }
 
 class NextPassageListWidget extends StatefulWidget {
-  const NextPassageListWidget(this.stop, this.lines, {Key? key}) : super(key: key);
+  const NextPassageListWidget(this.stop, this.lines, {Key? key})
+      : super(key: key);
 
   final BusStop stop;
   final List<BusLine>? lines;
@@ -95,21 +99,23 @@ class NextPassageListWidget extends StatefulWidget {
 }
 
 class NextPassageListWidgetState extends State<NextPassageListWidget> {
-
-  final GlobalKey<CustomFutureBuilderState<List<NextPassage>>> futureBuilderKey = GlobalKey<CustomFutureBuilderState<List<NextPassage>>>();
+  final GlobalKey<CustomFutureBuilderState<List<NextPassage>>>
+      futureBuilderKey =
+      GlobalKey<CustomFutureBuilderState<List<NextPassage>>>();
 
   void refresh() {
     futureBuilderKey.currentState!.refresh();
   }
 
   Future<List<NextPassage>> getData() async {
-    List<NextPassage> result = await VitalisDataProvider.getNextPassage(widget.stop);
-    if (widget.lines != null){
-      result.removeWhere((element){
-        for(BusLine line in widget.lines!){
+    List<NextPassage> result =
+        await VitalisDataProvider.getNextPassage(widget.stop);
+    if (widget.lines != null) {
+      result.removeWhere((element) {
+        for (BusLine line in widget.lines!) {
           if (line.id == element.line.id &&
               (line.goDirection.contains(element.destination) ||
-                  line.backDirection.contains(element.destination))){
+                  line.backDirection.contains(element.destination))) {
             return false;
           }
         }
@@ -118,7 +124,6 @@ class NextPassageListWidgetState extends State<NextPassageListWidget> {
     }
 
     return result;
-
   }
 
   @override
@@ -132,16 +137,14 @@ class NextPassageListWidgetState extends State<NextPassageListWidget> {
           itemBuilder: (context, index) => NextPassageWidget(data[index]),
         );
       },
-
       onError: (context, error, refresh) {
         return error.build(context, refresh);
       },
-
       refreshIndicator: (context, child, refresh) {
         return RefreshIndicator(child: child, onRefresh: refresh);
       },
       errorTest: (data) {
-        if (data.isEmpty){
+        if (data.isEmpty) {
           return CustomErrors.emptyNextPassage;
         }
         return null;
@@ -157,16 +160,19 @@ class NextPassageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String formattedTime = DateFormat.Hm().format(nextPassage.expectedTime.toLocal());
-    String minuteToWait = "${nextPassage.expectedTime.difference(DateTime.now()).inMinutes} min";
+    String formattedTime =
+        DateFormat.Hm().format(nextPassage.expectedTime.toLocal());
+    Duration arrivalDuration = nextPassage.expectedTime.difference(DateTime.now());
+    String minuteToWait =
+        (arrivalDuration.inHours >= 1 ? "${arrivalDuration.inHours} h " : "") +
+        "${nextPassage.expectedTime.difference(DateTime.now()).inMinutes % 60} min";
     return Container(
       height: 55,
       padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 5),
       decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(width: 1, color: Theme.of(context).primaryColor)
-        )
-      ),
+          border: Border(
+              bottom:
+                  BorderSide(width: 1, color: Theme.of(context).primaryColor))),
       child: Row(
         children: [
           LineWidget(nextPassage.line, 45),
@@ -183,22 +189,26 @@ class NextPassageWidget extends StatelessWidget {
             ),
           ),
           Container(
-            child: nextPassage.realTime ? const Padding(
-              padding: EdgeInsets.all(4.0),
-              child: Icon(Icons.wifi),
-            ) : null,
+            child: nextPassage.realTime
+                ? const Padding(
+                    padding: EdgeInsets.all(4.0),
+                    child: Icon(Icons.wifi),
+                  )
+                : null,
           ),
           Padding(
             padding: const EdgeInsets.all(5.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(minuteToWait,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),),
                 Text(
-                    formattedTime,
+                  minuteToWait,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  formattedTime,
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
               ],
