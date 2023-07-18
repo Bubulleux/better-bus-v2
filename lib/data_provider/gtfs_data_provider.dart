@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:better_bus_v2/data_provider/connectivity_checker.dart';
+import 'package:better_bus_v2/data_provider/local_data_handler.dart';
+import 'package:better_bus_v2/error_handler/custom_error.dart';
 import 'package:better_bus_v2/model/clean/bus_line.dart';
 import 'package:better_bus_v2/model/clean/bus_stop.dart';
 import 'package:better_bus_v2/model/clean/next_passage.dart';
@@ -14,6 +16,13 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
 
+class DatasetMetadata {
+  Uri ressourceUri;
+  DateTime updateTime;
+
+  DatasetMetadata(this.ressourceUri, this.updateTime);
+}
+
 class GTFSDataProvider {
   static final dataSetAPI = Uri.parse(
       "https://transport.data.gouv.fr/api/datasets/58ef2cefa3a7293d49c4e178");
@@ -23,11 +32,18 @@ class GTFSDataProvider {
   static GTFSData? gtfsData;
 
   static Future loadFile() async {
-    await downloadFile();
+    if (gtfsData != null) return;
+
+    bool download = await downloadFile();
+    print(download);
     Directory appSupportDir = await getApplicationSupportDirectory();
     Directory gtfsDir = Directory(appSupportDir.path + gtfsDirPath);
 
     Map<String, CSVTable> files = loadFiles(gtfsDir);
+    print(files.keys.toList());
+    if (files.isEmpty) {
+      throw CustomErrors.noGTFS;
+    }
     gtfsData = GTFSData(files);
   }
 
@@ -47,10 +63,21 @@ class GTFSDataProvider {
       return false;
     }
 
-    Uri fileUri = await getFileMetaData();
+    bool downloadWhenWifi = await LocalDataHandler.getDownloadWhenWifi();
+    bool isWifiConnected = await ConnectivityChecker.isWifiConnected();
+    if (downloadWhenWifi && !isWifiConnected) {
+      return false;
+    }
+
+    DatasetMetadata metadata = await getFileMetaData();
+    DateTime? lastUpdate = await LocalDataHandler.getGTFSDownloadDate();
+
+    if (lastUpdate != null && metadata.updateTime.isBefore(lastUpdate)) {
+      return false;
+    }
 
     HttpClient client = HttpClient();
-    var request = await client.getUrl(fileUri);
+    var request = await client.getUrl(metadata.ressourceUri);
     var response = await request.close();
 
     if (response.statusCode != 200) return false;
@@ -60,14 +87,19 @@ class GTFSDataProvider {
     await File(appTempDir.path + gtfsFilePath).writeAsBytes(bytes);
 
     await extractZipFile();
+    await LocalDataHandler.setGTFSDownloadDate(DateTime.now());
+
     return true;
   }
 
-  static Future<Uri> getFileMetaData() async {
+  static Future<DatasetMetadata> getFileMetaData() async {
     http.Response res = await http.get(dataSetAPI);
     Map<String, dynamic> json = jsonDecode(utf8.decode(res.bodyBytes));
+
     var uri = Uri.parse(json["resources"][0]["original_url"]);
-    return uri;
+    DateTime updateTime = DateTime.parse(json["updated"]);
+
+    return DatasetMetadata(uri, updateTime);
   }
 
   static Future extractZipFile() async {
@@ -109,7 +141,6 @@ class GTFSDataProvider {
 
     stopTrips = stopTrips.reversed.toList();
 
-
     Map<String, List<String>> routeDirectionsA = {};
     Map<String, List<String>> routeDirectionsB = {};
 
@@ -143,6 +174,17 @@ class GTFSDataProvider {
     return lines;
   }
 
+  static Future deleteGTFSData() async {
+    await LocalDataHandler.setGTFSDownloadDate(null);
+    var appSupportDir = await getApplicationSupportDirectory();
+    var dir = Directory(appSupportDir.path + gtfsDirPath);
+    for (FileSystemEntity e in dir.listSync()) {
+      if (e is! File) continue;
+      File file = e;
+      await file.delete();
+    }
+  }
+
   static Timetable getTimetable(
     String stopID,
     String lineID,
@@ -166,8 +208,9 @@ class GTFSDataProvider {
       if (trip.value.routeID != routeID) continue;
       if (!validServices.contains(trip.value.serviceID)) continue;
 
-      List<GTFSStopTime> stopTime = gtfsData!.stopTime[trip.key]!.where(
-      (e) => validStopId.contains(int.parse(e.stopID))).toList();
+      List<GTFSStopTime> stopTime = gtfsData!.stopTime[trip.key]!
+          .where((e) => validStopId.contains(int.parse(e.stopID)))
+          .toList();
       if (stopTime.isEmpty) continue;
 
       String key = trip.value.headSign;

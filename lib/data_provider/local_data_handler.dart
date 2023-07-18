@@ -147,4 +147,35 @@ class LocalDataHandler {
     await checkPreferences();
     preferences!.setBool("showImportantMessage", false);
   }
+
+  static Future setGTFSDownloadDate(DateTime? date) async {
+    await checkPreferences();
+    if (date == null) {
+      preferences!.remove("gtfsDownloadDate");
+      return;
+    }
+    preferences!.setInt("gtfsDownloadDate", date.millisecondsSinceEpoch);
+  }
+
+  static Future<DateTime?> getGTFSDownloadDate() async {
+    await checkPreferences();
+    int? epoch = preferences!.getInt("gtfsDownloadDate");
+    if (epoch == null) return null;
+
+    return DateTime.fromMillisecondsSinceEpoch(epoch);
+  }
+
+  static Future setDownloadWhenWifi(bool value) async {
+    await checkPreferences();
+    await preferences!.setBool("downloadWhenWifi", value);
+  }
+  
+  static Future<bool> getDownloadWhenWifi() async {
+    await checkPreferences();
+    return preferences!.getBool("downloadWhenWifi") ?? true;
+  }
+
+
+
+
 }

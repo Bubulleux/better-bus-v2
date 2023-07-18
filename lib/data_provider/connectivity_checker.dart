@@ -8,4 +8,10 @@ class ConnectivityChecker {
 
     return result != ConnectivityResult.none;
   }
+
+    static Future<bool> isWifiConnected() async {
+      ConnectivityResult result = await connectivity.checkConnectivity();
+
+      return result == ConnectivityResult.wifi;
+    }
 }
