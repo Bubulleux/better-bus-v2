@@ -42,8 +42,10 @@ class TrafficInfoPageState extends State<TrafficInfoPage> {
           (a.isActive ? 1 : 0).compareTo(b.isActive ? 1 : 0),
           ((a.linesId != null ? 0 : 1)).compareTo(b.linesId != null ? 0 : 1),
           (favoriteLines.intersection(a.linesId?.toSet() ?? {}).length)
-              .compareTo(favoriteLines.intersection(b.linesId?.toSet() ?? {}).length),
-          BusLine.compareID((b.linesId?.firstOrNull ?? ""), (a.linesId?.firstOrNull ?? ""))
+              .compareTo(
+                  favoriteLines.intersection(b.linesId?.toSet() ?? {}).length),
+          BusLine.compareID(
+              (b.linesId?.firstOrNull ?? ""), (a.linesId?.firstOrNull ?? ""))
         ];
         for (int compareValues in compareValues) {
           if (compareValues != 0) {
@@ -85,8 +87,8 @@ class TrafficInfoPageState extends State<TrafficInfoPage> {
               CustomTitleBar(
                 title: AppString.trafficInfoTitle,
                 leftChild: BackArrow(),
-                rightChild: IconButton(onPressed: goSetting, 
-                  icon: const Icon(Icons.settings)),
+                rightChild: IconButton(
+                    onPressed: goSetting, icon: const Icon(Icons.settings)),
               ),
               Expanded(
                 child: CustomFutureBuilder<InfoTrafficObject>(
@@ -95,10 +97,13 @@ class TrafficInfoPageState extends State<TrafficInfoPage> {
                   onData: (context, data, refresh) {
                     trafficInfos = data.infoList;
                     infoTrafficItemKey = {};
-                    trafficInfos!.forEachIndexed((index, element) => infoTrafficItemKey![index] = GlobalKey());
+                    trafficInfos!.forEachIndexed((index, element) =>
+                        infoTrafficItemKey![index] = GlobalKey());
                     return ScrollablePositionedList.builder(
                       itemCount: data.infoList.length,
-                      initialScrollIndex: focus != null ? trafficInfos!.indexWhere((e) => e.id == focus) : 0,
+                      initialScrollIndex: focus != null
+                          ? trafficInfos!.indexWhere((e) => e.id == focus)
+                          : 0,
                       itemBuilder: (context, index) => TrafficInfoItem(
                         data.infoList[index],
                         data.busLines,
@@ -106,6 +111,7 @@ class TrafficInfoPageState extends State<TrafficInfoPage> {
                         deploy: data.infoList[index].id == focus,
                       ),
                     );
+                    return Container();
                   },
                 ),
               )

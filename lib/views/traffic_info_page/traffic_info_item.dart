@@ -57,6 +57,7 @@ class TrafficInfoItemState extends State<TrafficInfoItem> with SingleTickerProvi
     super.build(context);
     List<BusLine> itemLines = [];
     for (String lineID in widget.infoTraffic.linesId ?? []) {
+      if (widget.busLines[lineID] == null) continue;
       itemLines.add(widget.busLines[lineID]!);
     }
 
