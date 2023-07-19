@@ -86,7 +86,7 @@ class TrafficInfoPageState extends State<TrafficInfoPage> {
             children: [
               CustomTitleBar(
                 title: AppString.trafficInfoTitle,
-                leftChild: BackArrow(),
+                leftChild: const BackArrow(),
                 rightChild: IconButton(
                     onPressed: goSetting, icon: const Icon(Icons.settings)),
               ),
@@ -111,7 +111,6 @@ class TrafficInfoPageState extends State<TrafficInfoPage> {
                         deploy: data.infoList[index].id == focus,
                       ),
                     );
-                    return Container();
                   },
                 ),
               )

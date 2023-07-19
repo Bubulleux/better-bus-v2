@@ -49,9 +49,9 @@ class ClosestStopDialog {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     error.build(context, retry),
-                    SizedBox(height: 30,),
+                    const SizedBox(height: 30,),
                     ElevatedButton(onPressed: () => Navigator.of(context).pop(), 
-                    child: Text("Ok")),
+                    child: const Text("Ok")),
                   ],
                 );
               },

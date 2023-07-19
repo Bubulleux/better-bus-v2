@@ -34,13 +34,13 @@ class GTFSDataProvider {
   static Future loadFile() async {
     if (gtfsData != null) return;
 
-    bool download = await downloadFile();
-    print(download);
+    await downloadFile();
+
     Directory appSupportDir = await getApplicationSupportDirectory();
     Directory gtfsDir = Directory(appSupportDir.path + gtfsDirPath);
 
     Map<String, CSVTable> files = loadFiles(gtfsDir);
-    print(files.keys.toList());
+
     if (files.isEmpty) {
       throw CustomErrors.noGTFS;
     }

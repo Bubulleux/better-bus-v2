@@ -1,5 +1,4 @@
 import 'package:better_bus_v2/app_constant/app_string.dart';
-import 'package:better_bus_v2/views/common/back_arrow.dart';
 import 'package:better_bus_v2/views/common/title_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
@@ -24,8 +23,7 @@ class _MessageViewState extends State<MessageView> {
     message = ModalRoute.of(context)!.settings.arguments as Message;
     rootBundle
         .loadString("assets/messages/" + message.fileName)
-        .then((value) => setState(() => body = value))
-        .onError((error, stackTrace) => print(error));
+        .then((value) => setState(() => body = value));
   }
 
   void close() {
@@ -87,7 +85,7 @@ class Message {
 DateTime lastStartUpMessageUpdate = DateTime(2022, 07, 19);
 
 class Messages {
-  static final importantMessage = Message("Message imporant", "important.html");
+  static const importantMessage = Message("Message imporant", "important.html");
 
-  static final toVitalis = Message("Message pour Vitalis", "vitalis.html");
+  static const toVitalis = Message("Message pour Vitalis", "vitalis.html");
 }

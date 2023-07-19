@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:better_bus_v2/app_constant/app_string.dart';
 import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
 import 'package:better_bus_v2/data_provider/gtfs_data_provider.dart';
@@ -8,7 +6,7 @@ import 'package:better_bus_v2/data_provider/version_data_provider.dart';
 import 'package:better_bus_v2/model/clean/bus_stop.dart';
 import 'package:better_bus_v2/model/clean/view_shortcut.dart';
 import 'package:better_bus_v2/views/common/background.dart';
-import 'package:better_bus_v2/views/common/closestStopDialog.dart';
+import 'package:better_bus_v2/views/common/closest_stop_dialog.dart';
 import 'package:better_bus_v2/views/common/content_container.dart';
 import 'package:better_bus_v2/views/common/messages.dart';
 import 'package:better_bus_v2/views/common/title_bar.dart';
@@ -71,8 +69,7 @@ class _HomePageState extends State<HomePage> {
     initFlutterNotificationPlugin();
     checkIfAppIsNotificationLaunched();
     checkIfFisrtTimeOpenningApp();
-    GTFSDataProvider.loadFile().onError((error, stackTrace) =>
-        print(error.toString() + "\n" + stackTrace.toString()));
+    GTFSDataProvider.loadFile();
   }
 
   @override

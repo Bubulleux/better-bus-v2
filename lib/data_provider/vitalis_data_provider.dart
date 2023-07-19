@@ -9,9 +9,7 @@ import 'package:better_bus_v2/model/clean/line_boarding.dart';
 import 'package:better_bus_v2/model/clean/map_place.dart';
 import 'package:better_bus_v2/model/clean/route.dart';
 import 'package:better_bus_v2/model/clean/timetable.dart';
-import 'package:better_bus_v2/model/gtfs_data.dart';
 import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
 
 import '../model/clean/next_passage.dart';
 import 'cache_data_provider.dart';
