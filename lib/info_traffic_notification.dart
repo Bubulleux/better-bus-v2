@@ -1,5 +1,6 @@
 import 'package:better_bus_v2/app_constant/app_string.dart';
 import 'package:better_bus_v2/data_provider/connectivity_checker.dart';
+import 'package:better_bus_v2/data_provider/gtfs_data_provider.dart';
 import 'package:better_bus_v2/data_provider/local_data_handler.dart';
 import 'package:better_bus_v2/data_provider/vitalis_data_provider.dart';
 import 'package:better_bus_v2/model/clean/info_traffic.dart';
@@ -10,6 +11,7 @@ final DateFormat dateFormat = DateFormat("EEEE d MMMM", "fr");
 
 Future<bool> checkInfoTraffic() async {
   // await LocalDataHandler.addLog("Start function");
+  GTFSDataProvider.downloadFile();
 
   FlutterLocalNotificationsPlugin flip = FlutterLocalNotificationsPlugin();
   // await LocalDataHandler.addLog("Sep 1");
