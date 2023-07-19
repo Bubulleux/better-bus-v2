@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:better_bus_v2/custom_home_widget.dart';
+import 'package:better_bus_v2/views/common/messages.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -140,12 +141,16 @@ class LocalDataHandler {
 
   static Future<bool> showImportantMessage() async {
     await checkPreferences();
-    return preferences!.getBool("showImportantMessage") ?? true;
-  }
+    int? epoch = preferences!.getInt("lastImportanteMessageDate");
+    await preferences!.setInt("lastImportanteMessageDate",
+        lastStartUpMessageUpdate.millisecondsSinceEpoch);
 
-  static Future stopShowingImportantMessage() async {
-    await checkPreferences();
-    preferences!.setBool("showImportantMessage", false);
+    if (epoch == null) {
+      return true;
+    }
+    DateTime previousDate = DateTime.fromMillisecondsSinceEpoch(epoch);
+
+    return !previousDate.isAtSameMomentAs(lastStartUpMessageUpdate);
   }
 
   static Future setGTFSDownloadDate(DateTime? date) async {
@@ -169,13 +174,9 @@ class LocalDataHandler {
     await checkPreferences();
     await preferences!.setBool("downloadWhenWifi", value);
   }
-  
+
   static Future<bool> getDownloadWhenWifi() async {
     await checkPreferences();
     return preferences!.getBool("downloadWhenWifi") ?? true;
   }
-
-
-
-
 }

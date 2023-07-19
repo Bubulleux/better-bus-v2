@@ -108,8 +108,7 @@ class _HomePageState extends State<HomePage> {
       return;
     }
     Navigator.of(context)
-        .pushNamed(MessageView.routeName, arguments: Messages.importantMessage)
-        .then((value) => LocalDataHandler.stopShowingImportantMessage());
+        .pushNamed(MessageView.routeName, arguments: Messages.importantMessage);
   }
 
   Future initFlutterNotificationPlugin() async {
