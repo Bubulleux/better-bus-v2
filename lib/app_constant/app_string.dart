@@ -105,4 +105,6 @@ class AppString {
 
   static const reDownloadGTFSData =
       "Télécharger à nouvaux les données du réseau";
+
+  static const notificationTitle = "Il y a une nouvelle info-traffic sur le réseau !";
 }

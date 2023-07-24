@@ -69,7 +69,7 @@ Future<bool> checkInfoTraffic() async {
     // await LocalDataHandler.addLog("Sub Sep 2");
     alreadyPushNotifications.add(infoTraffic.id);
     await flip.show(infoTraffic.id,
-        AppString.appName,
+        AppString.notificationTitle,
         infoTraffic.title,
         platformChannelSpecifics);
     // await LocalDataHandler.addLog("Sucess");
