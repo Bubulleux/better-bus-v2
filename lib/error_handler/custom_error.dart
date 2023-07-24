@@ -94,7 +94,7 @@ class CustomErrors {
   );
 
   static final noCloseStop = CustomError(
-    "Aucun arret de bus a été trover a proximité",
+    "Aucun arret de bus a été trouver a proximité",
     Icons.wrong_location,
     false,
   );
@@ -102,6 +102,12 @@ class CustomErrors {
   static final noGTFS = CustomError(
     "Aucune données GTFS n'a été trouver",
     Icons.file_download_off,
+    false,
+  );
+
+  static final locationDisable = CustomError(
+    "La localisation est désactivé",
+    Icons.location_off,
     false,
   );
 }

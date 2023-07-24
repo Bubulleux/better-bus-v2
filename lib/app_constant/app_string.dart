@@ -1,6 +1,4 @@
-
-class AppString{
-
+class AppString {
   static const appName = "Better Bus";
   static const cityName = "Poitiers";
 
@@ -20,7 +18,8 @@ class AppString{
   static const deleteLabel = "Supprimer";
 
   static const emptyShortcut = "Aucun raccourci n'a été crée pour le moment.";
-  static const emptyShortcutAdvice = "\nLes Raccourcis vous permettent d'accéder plus facilement à certaines informations."
+  static const emptyShortcutAdvice =
+      "\nLes Raccourcis vous permettent d'accéder plus facilement à certaines informations."
       "\nVous pouvez en créer en appuyant sur le + à gauche de \"Raccourcis:\"";
 
   static const errorLabel = "Erreur";
@@ -50,12 +49,11 @@ class AppString{
   static const selectALine = "Sélectionner une ligne...";
   static const myPosition = "Ma position";
 
-
   static const searchStopHint = "Rechercher un arrêt";
   static const busStation = "Station de bus";
   static const place = "Adresse";
   static const validateLabel = "Valider";
-  static const  selectAll= "Tout sélectionner";
+  static const selectAll = "Tout sélectionner";
   static const unSelectAll = "Tout déselectier";
   static const trafficInfoTitle = "Info trafic :";
 
@@ -63,12 +61,12 @@ class AppString{
   static const selectBusStop = "Sélectionner un arrêt de bus";
   static const directionLabel = "Direction :";
   static const addToFavorite = "Mettre en favori";
-  static const emptyDirectionSelection = "Aucune direction n'a été sélectionnée.";
+  static const emptyDirectionSelection =
+      "Aucune direction n'a été sélectionnée.";
   static const changeDirection = "Changer les directions";
   static const setShortcutName = "Donner un nom à votre raccourci.";
   static const emptyStopSelection = "Aucun arret de bus n'a été sélectionné.";
   static const emptyLineSelection = "Aucune ligne n'a été sélectionnée.";
-
 
   static const selectLine = "Sélectionner les lignes qui vous intéressent :";
   static const enableNotification = "Activer les notifications";
@@ -78,7 +76,8 @@ class AppString{
 
   static const newVersion = "Une nouvelle version est diponible";
 
-  static const interestedLineInfo = "Les lignes désignés comme intéresser seront affichées en prioriter sur la page "
+  static const interestedLineInfo =
+      "Les lignes désignés comme intéresser seront affichées en prioriter sur la page "
       "des infos traffic et des notification seront envoyées si elle sont activées.";
 
   static const appInfoPageTitle = "Information Utilies";
@@ -98,4 +97,12 @@ class AppString{
   static const settings = "Paramètre";
 
   static const close = "Fermer";
+
+  static const gtfsDownloadWIFI = "Attendre d'être en wifi pour "
+      "télécharger les données du réseau";
+  static const gtfsDownloadWIFIExplain =
+      "La taille de c'est données est inférieur a 1 Mo par jours.";
+
+  static const reDownloadGTFSData =
+      "Télécharger à nouvaux les données du réseau";
 }

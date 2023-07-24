@@ -57,7 +57,6 @@ class ClosestStopDialog {
               },
               errorTest: (data) {
                 List<BusStop>? stops = data;
-                print("Test error");
                 if (stops!.isEmpty) {
                   return CustomErrors.noCloseStop;
                 }
@@ -75,12 +74,17 @@ barrierDismissible: false,
   }
 
   static Future<List<BusStop>?> getClosestStops() async {
-    LocationData? location = await GpsDataProvider.getLocation();
+    LocationData? location = await GpsDataProvider.getLocation(askEnableGPS: true);
     List<BusStop>? stops = await VitalisDataProvider.getStops();
     List<BusStop> result = [];
+  
+    if (location == null) {
+      throw CustomErrors.locationDisable;
+    }
+
     for (BusStop stop in stops!) {
       double distance = GpsDataProvider.calculateDistance(
-          location!.latitude, location.longitude, stop.latitude, stop.longitude);
+          location.latitude, location.longitude, stop.latitude, stop.longitude);
       if (distance < 0.1) {
         result.add(stop);
       }

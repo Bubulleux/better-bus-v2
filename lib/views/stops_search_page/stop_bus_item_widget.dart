@@ -29,7 +29,8 @@ class BusStopWidget extends StatefulWidget {
   State<BusStopWidget> createState() => _BusStopWidgetState();
 }
 
-class _BusStopWidgetState extends State<BusStopWidget> with SingleTickerProviderStateMixin {
+class _BusStopWidgetState extends State<BusStopWidget>
+    with SingleTickerProviderStateMixin {
   late AnimationController expandController;
   late Animation<double> animation;
 
@@ -49,7 +50,8 @@ class _BusStopWidgetState extends State<BusStopWidget> with SingleTickerProvider
       duration: const Duration(milliseconds: 500),
     );
 
-    animation = CurvedAnimation(parent: expandController, curve: Curves.fastLinearToSlowEaseIn);
+    animation = CurvedAnimation(
+        parent: expandController, curve: Curves.fastLinearToSlowEaseIn);
   }
 
   void runExpandCheck() {
@@ -73,7 +75,8 @@ class _BusStopWidgetState extends State<BusStopWidget> with SingleTickerProvider
   }
 
   void getInfo() {
-    GpsDataProvider.getLocation().then((value) => getDistanceInKMeter(widget.stop, value!));
+    GpsDataProvider.getLocation()
+        .then((value) => getDistanceInKMeter(widget.stop, value!));
 
     if (expand) {
       expand = false;
@@ -156,7 +159,9 @@ class _BusStopWidgetState extends State<BusStopWidget> with SingleTickerProvider
                               ? null
                               : Text(
                                   "${widget.stopDistance} km",
-                                  style: TextStyle(color: Theme.of(context).primaryColorDark, fontSize: 13),
+                                  style: TextStyle(
+                                      color: Theme.of(context).primaryColorDark,
+                                      fontSize: 13),
                                 ),
                         ),
                       ],
@@ -167,7 +172,8 @@ class _BusStopWidgetState extends State<BusStopWidget> with SingleTickerProvider
                       child: AnimatedBuilder(
                           animation: animation,
                           builder: (context, widget) => Transform.rotate(
-                              angle: animation.value * pi, child: const Icon(Icons.keyboard_arrow_down))))
+                              angle: animation.value * pi,
+                              child: const Icon(Icons.keyboard_arrow_down))))
                 ],
               ),
               SizeTransition(

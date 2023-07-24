@@ -1,7 +1,9 @@
 import 'package:better_bus_v2/app_constant/app_string.dart';
 import 'package:better_bus_v2/data_provider/cache_data_provider.dart';
+import 'package:better_bus_v2/data_provider/gtfs_data_provider.dart';
 import 'package:better_bus_v2/data_provider/local_data_handler.dart';
 import 'package:better_bus_v2/info_traffic_notification.dart';
+import 'package:better_bus_v2/model/gtfs_data.dart';
 import 'package:better_bus_v2/views/common/back_arrow.dart';
 import 'package:better_bus_v2/views/common/messages.dart';
 import 'package:better_bus_v2/views/common/title_bar.dart';
@@ -21,6 +23,14 @@ class SettingPage extends StatefulWidget {
 }
 
 class _SettingPageState extends State<SettingPage> {
+  bool gtfsDownloadWIFI = false;
+
+  @override
+  void initState() {
+    super.initState();
+    LocalDataHandler.getDownloadWhenWifi().then(setgtfsWifiDownload);
+  }
+
   void showPrivacyPolicy() {
     Uri uri = Uri.parse(
         "https://github.com/Bubulleux/better-bus-v2/blob/master/Privacy%20policy.md");
@@ -68,11 +78,44 @@ class _SettingPageState extends State<SettingPage> {
     Navigator.of(context).pushNamed(PreferencesView.routeName);
   }
 
+  void setgtfsWifiDownload(bool value) {
+    LocalDataHandler.setDownloadWhenWifi(value);
+    setState(() {
+      gtfsDownloadWIFI = value;
+    });
+  }
+
+  void reDownloadGTFSData() async {
+    AlertDialog alert = const AlertDialog(
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          CircularProgressIndicator(),
+        ],
+      ),
+    );
+    showDialog(
+        context: context,
+        builder: (context) => alert,
+        barrierDismissible: false);
+    await GTFSDataProvider.loadFile(forceDownload: true);
+    Navigator.of(context).pop();
+  }
+
   List<SettingEntry> getOptions() {
     List<SettingEntry> options = [
       SettingEntry(
         AppString.notificationSetting,
         onClick: gotToNotificationSetting,
+      ),
+      SettingEntry(
+        AppString.gtfsDownloadWIFI,
+        description: AppString.gtfsDownloadWIFIExplain,
+        child: Switch(value: gtfsDownloadWIFI, onChanged: setgtfsWifiDownload),
+      ),
+      SettingEntry(
+        AppString.reDownloadGTFSData,
+        onClick: reDownloadGTFSData,
       ),
       SettingEntry(
         AppString.privicyPolicy,
@@ -127,10 +170,17 @@ class _SettingPageState extends State<SettingPage> {
 }
 
 class SettingEntry extends StatelessWidget {
-  const SettingEntry(this.title, {this.onClick, this.child, Key? key})
-      : super(key: key);
+  const SettingEntry(
+    this.title, {
+    this.onClick,
+    this.description,
+    this.child,
+    Key? key,
+  }) : super(key: key);
 
   final String title;
+  final String? description;
+
   final void Function()? onClick;
   final Widget? child;
   @override
@@ -142,13 +192,30 @@ class SettingEntry extends StatelessWidget {
               border: Border.symmetric(
                   horizontal: BorderSide(color: Colors.black.withAlpha(50)))),
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 13),
-          child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                title,
-                style: Theme.of(context).textTheme.titleLarge,
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      title,
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                  ),
+                  child ?? Container(),
+                ],
               ),
-              child ?? Container(),
+              const SizedBox(
+                height: 10,
+              ),
+              description != null
+                  ? Text(
+                      description!,
+                      textAlign: TextAlign.left,
+                      style: Theme.of(context).textTheme.bodySmall,
+                    )
+                  : Container(),
             ],
           ),
         ));

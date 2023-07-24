@@ -31,6 +31,7 @@ class MapPlaceSearcherView extends StatefulWidget {
 
 class _MapPlaceSearcherViewState extends State<MapPlaceSearcherView> {
   LocationData? locationData;
+  bool locationPermission = true;
   late GlobalKey<CustomFutureBuilderState> futureStateKey;
 
   SharedPreferences? preferences;
@@ -86,6 +87,10 @@ class _MapPlaceSearcherViewState extends State<MapPlaceSearcherView> {
       futureStateKey.currentState?.hideRefresh();
       setState(() => locationData = value);
     });
+
+    GpsDataProvider.askForGPSPermission()
+        .then((value) => setState(() => locationPermission = value));
+
     futureStateKey = GlobalKey();
     getHistoric().then((value) {
       futureStateKey.currentState?.hideRefresh();
@@ -101,19 +106,29 @@ class _MapPlaceSearcherViewState extends State<MapPlaceSearcherView> {
     super.didUpdateWidget(oldWidget);
   }
 
+  void returnLocation() async {
+    locationData = await GpsDataProvider.getLocation(askEnableGPS:  true);
+
+    if (locationData == null) return;
+
+    if (!mounted) return;
+
+    widget.placeCallback(MapPlace(
+      title: AppString.myPosition,
+      address: "",
+      type: "location",
+      latitude: locationData!.latitude!,
+      longitude: locationData!.longitude!,
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        locationData != null
+        locationPermission
             ? GestureDetector(
-                onTap: () => widget.placeCallback(MapPlace(
-                  title: AppString.myPosition,
-                  address: "",
-                  type: "location",
-                  latitude: locationData!.latitude!,
-                  longitude: locationData!.longitude!,
-                )),
+                onTap: returnLocation,
                 child: Container(
                   decoration: CustomDecorations.of(context).boxBackground,
                   padding: const EdgeInsets.all(8),

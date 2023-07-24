@@ -31,10 +31,10 @@ class GTFSDataProvider {
 
   static GTFSData? gtfsData;
 
-  static Future loadFile() async {
-    if (gtfsData != null) return;
+  static Future loadFile({bool forceDownload = false}) async {
+    if (gtfsData != null && !forceDownload) return;
 
-    await downloadFile();
+    await downloadFile(forceDownload: forceDownload);
 
     Directory appSupportDir = await getApplicationSupportDirectory();
     Directory gtfsDir = Directory(appSupportDir.path + gtfsDirPath);
@@ -58,21 +58,23 @@ class GTFSDataProvider {
     return files;
   }
 
-  static Future<bool> downloadFile() async {
+  static Future<bool> downloadFile({bool forceDownload = false}) async {
     if (!await ConnectivityChecker.isConnected()) {
       return false;
     }
 
     bool downloadWhenWifi = await LocalDataHandler.getDownloadWhenWifi();
     bool isWifiConnected = await ConnectivityChecker.isWifiConnected();
-    if (downloadWhenWifi && !isWifiConnected) {
+    if (downloadWhenWifi && !isWifiConnected && !forceDownload) {
       return false;
     }
 
     DatasetMetadata metadata = await getFileMetaData();
     DateTime? lastUpdate = await LocalDataHandler.getGTFSDownloadDate();
 
-    if (lastUpdate != null && metadata.updateTime.isBefore(lastUpdate)) {
+    if (lastUpdate != null &&
+        metadata.updateTime.isBefore(lastUpdate) &&
+        !forceDownload) {
       return false;
     }
 

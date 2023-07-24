@@ -64,7 +64,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    GpsDataProvider.askForGPS();
+    GpsDataProvider.askForGPSPermission();
     HomeWidget.widgetClicked.listen(launchWithWidget);
     initFlutterNotificationPlugin();
     checkIfAppIsNotificationLaunched();
