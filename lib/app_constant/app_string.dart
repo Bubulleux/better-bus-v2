@@ -2,13 +2,13 @@ class AppString {
   static const appName = "Better Bus";
   static const cityName = "Poitiers";
 
-  static const retry = "Ré-essayer";
-  static const findStop = "Chercher un arret";
+  static const retry = "Réessayer";
+  static const findStop = "Chercher un arrêt";
 
   static const shortcut = "Raccourcis :";
 
   static const searchLabel = "Rechercher";
-  static const closestStopLabel = "Mon arret";
+  static const closestStopLabel = "Mon arrêt";
   static const routeLabel = "Itinéraire";
   static const trafficInfoLabel = "Info Trafic";
 
@@ -29,8 +29,8 @@ class AppString {
 
   static const walkToPlace = "Marcher jusqu'à l'adresse";
   static const walkToStop = "Marcher jusqu'à l'arrêt";
-  static const atTheStopTakeLine = "A l'arrêt {#} prendre la ligne ";
-  static const andGoToStop = " et aller jusqu'à l'arrêt ";
+  static const atTheStopTakeLine = "A l'arrêt {#}, prendre la ligne ";
+  static const andGoToStop = " puis aller jusqu'à l'arrêt ";
   static const seeOnMaps = "Voir sur la carte";
 
   static const startLabel = "Départ";
@@ -54,7 +54,7 @@ class AppString {
   static const place = "Adresse";
   static const validateLabel = "Valider";
   static const selectAll = "Tout sélectionner";
-  static const unSelectAll = "Tout déselectier";
+  static const unSelectAll = "Tout décocher";
   static const trafficInfoTitle = "Info trafic :";
 
   static const shortcutNameLabel = "Nom du raccourci";
@@ -74,15 +74,15 @@ class AppString {
   static const notificationBodyMultipleDay = "Du {} au {}.";
   static const notificationBodyOneDay = "Le {}.";
 
-  static const newVersion = "Une nouvelle version est diponible";
+  static const newVersion = "Une nouvelle version est disponible";
 
   static const interestedLineInfo =
-      "Les lignes désignés comme intéresser seront affichées en prioriter sur la page "
-      "des infos traffic et des notification seront envoyées si elle sont activées.";
+      "Les lignes cochées seront affichées en priorité sur la page "
+      "des infos trafic et vous recevrez une notification si une nouvelle info trafic apparait.";
 
-  static const appInfoPageTitle = "Information Utilies";
+  static const appInfoPageTitle = "Informations Utiles";
 
-  static const appInfo = "Bienvenu sur Better Bus\n";
+  static const appInfo = "Bienvenue sur Better Bus\n";
 
   static const privicyPolicy = "Politique de confidentialité";
   static const sourceCode = "Code source";
@@ -90,21 +90,21 @@ class AppString {
   static const emptyCache = "Vider le cache";
   static const messageToVitalis = "Message pour Vitalis";
   static const importantMessage = "Message important";
-  static const notificationSetting = "Paramètre de notification";
+  static const notificationSetting = "Paramètres de notification";
 
-  static const myStop = "Mon arret";
+  static const myStop = "Mon arrêt";
 
-  static const settings = "Paramètre";
+  static const settings = "Paramètres";
 
   static const close = "Fermer";
 
   static const gtfsDownloadWIFI = "Attendre d'être en wifi pour "
       "télécharger les données du réseau";
   static const gtfsDownloadWIFIExplain =
-      "La taille de c'est données est inférieur a 1 Mo par jours.";
+      "La taille des données est inférieur à 1 Mo par jour.";
 
   static const reDownloadGTFSData =
-      "Télécharger à nouvaux les données du réseau";
+      "Télécharger à nouveau les données du réseau";
 
-  static const notificationTitle = "Il y a une nouvelle info-traffic sur le réseau !";
+  static const notificationTitle = "Il y a une nouvelle info trafic sur le réseau !";
 }
