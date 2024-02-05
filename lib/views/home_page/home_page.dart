@@ -18,7 +18,7 @@ import 'package:better_bus_v2/views/stop_info/stop_info_page.dart';
 import 'package:better_bus_v2/views/traffic_info_page/traffic_info_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:home_widget/home_widget.dart';
+//import 'package:home_widget/home_widget.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../stops_search_page/stops_search_page.dart';
@@ -65,7 +65,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     GpsDataProvider.askForGPSPermission();
-    HomeWidget.widgetClicked.listen(launchWithWidget);
+    // HomeWidget.widgetClicked.listen(launchWithWidget);
     initFlutterNotificationPlugin();
     checkIfAppIsNotificationLaunched();
     checkIfFisrtTimeOpenningApp();
@@ -75,8 +75,8 @@ class _HomePageState extends State<HomePage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    HomeWidget.initiallyLaunchedFromHomeWidget().then(launchWithWidget);
-    HomeWidget.widgetClicked.listen(launchWithWidget);
+    // HomeWidget.initiallyLaunchedFromHomeWidget().then(launchWithWidget);
+    // HomeWidget.widgetClicked.listen(launchWithWidget);
   }
 
   Future checkIfAppIsNotificationLaunched() async {

@@ -39,17 +39,17 @@ dependencies:
   shared_preferences: ^2.0.15
   flutter_widget_from_html: ^0.8.5
   connectivity_plus: ^2.3.6
-  home_widget: ^0.1.6
+  # home_widget: ^0.1.6
   url_launcher: ^6.1.5
   flutter_local_notifications: ^12.0.3
   workmanager: ^0.5.0
   scrollable_positioned_list: ^0.3.5
   format: ^1.2.0
-  package_info_plus: ^3.0.2
+  # package_info_plus: ^3.0.2
   chewie: ^1.5.0
   flutter_localizations:
     sdk: flutter
-  flutter_archive: ^5.0.0
+  # flutter_archive: ^6.0.0
   path_provider: ^2.0.15
 
 dev_dependencies:

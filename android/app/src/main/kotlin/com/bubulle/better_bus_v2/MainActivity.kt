@@ -23,20 +23,21 @@ class MainActivity: FlutterActivity() {
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler {
                 call, result ->
             if (call.method == "updateWidget") {
-                val n = updateWidgets()
-                result.success(n)
+                result.notImplemented()
+                // val n = updateWidgets()
+                // result.success(n)
             } else {
               result.notImplemented()
             }
         }
     }
 
-    fun updateWidgets(): IntArray {
-        val widgetManager: AppWidgetManager = AppWidgetManager.getInstance(this)
-        val ids: IntArray = widgetManager.getAppWidgetIds(ComponentName(this, HomeWidgetProvider::class.java))
-        if (ids.size > 0) {
-            HomeWidgetProvider().onUpdate(this, widgetManager, ids)
-        }
-        return ids
-    }
+    // fun updateWidgets(): IntArray {
+    //     val widgetManager: AppWidgetManager = AppWidgetManager.getInstance(this)
+    //     val ids: IntArray = widgetManager.getAppWidgetIds(ComponentName(this, HomeWidgetProvider::class.java))
+    //     if (ids.size > 0) {
+    //         HomeWidgetProvider().onUpdate(this, widgetManager, ids)
+    //     }
+    //     return ids
+    // }
 }

@@ -11,7 +11,7 @@ import 'package:better_bus_v2/model/clean/timetable.dart';
 import 'package:better_bus_v2/model/cvs_parser.dart';
 import 'package:better_bus_v2/model/gtfs_data.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_archive/flutter_archive.dart';
+// import 'package:flutter_archive/flutter_archive.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
@@ -34,7 +34,8 @@ class GTFSDataProvider {
   static Future loadFile({bool forceDownload = false}) async {
     if (gtfsData != null && !forceDownload) return;
 
-    await downloadFile(forceDownload: forceDownload);
+    var success = await downloadFile(forceDownload: forceDownload);
+
 
     Directory appSupportDir = await getApplicationSupportDirectory();
     Directory gtfsDir = Directory(appSupportDir.path + gtfsDirPath);
@@ -98,7 +99,9 @@ class GTFSDataProvider {
     http.Response res = await http.get(dataSetAPI);
     Map<String, dynamic> json = jsonDecode(utf8.decode(res.bodyBytes));
 
-    var uri = Uri.parse(json["resources"][0]["original_url"]);
+    var ressource = json["resources"].firstWhere((e) => e["format"] == "GTFS");
+
+    var uri = Uri.parse(ressource["original_url"]);
     DateTime updateTime = DateTime.parse(json["updated"]);
 
     return DatasetMetadata(uri, updateTime);
@@ -107,9 +110,9 @@ class GTFSDataProvider {
   static Future extractZipFile() async {
     Directory appTempDir = await getTemporaryDirectory();
     Directory appSupportDir = await getApplicationSupportDirectory();
-    await ZipFile.extractToDirectory(
-        zipFile: File(appTempDir.path + gtfsFilePath),
-        destinationDir: Directory(appSupportDir.path + gtfsDirPath));
+    // await ZipFile.extractToDirectory(
+    //     zipFile: File(appTempDir.path + gtfsFilePath),
+    //     destinationDir: Directory(appSupportDir.path + gtfsDirPath));
   }
 
   static List<BusStop> getStops() {
