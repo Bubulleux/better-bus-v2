@@ -147,6 +147,10 @@ class _SettingPageState extends State<SettingPage> {
       SettingEntry(
         "See shared prefs",
         onClick: gotoPrefs,
+      ),
+      SettingEntry(
+          "Test Notifiaction",
+          onClick: testNotificationActivation,
       )
     ];
     return options;

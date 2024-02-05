@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:better_bus_v2/custom_home_widget.dart';
 import 'package:better_bus_v2/views/common/messages.dart';
-// import 'package:home_widget/home_widget.dart';
+import 'package:home_widget/home_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../model/clean/view_shortcut.dart';
@@ -46,11 +46,11 @@ class LocalDataHandler {
     }
 
     preferences!.setStringList("shortcuts", shortcutJson);
-    // HomeWidget.saveWidgetData<String>("shortcuts", favoriteShortcut.join(";"));
-    // HomeWidget.saveWidgetData<String>(
-    //     "shortcutsIds", favoriteShortcutIds.join(";"));
-    // // HomeWidget.updateWidget(name: "HomeWidgetExampleProvider");
-    // CustomHomeWidgetRequest.updateWidget();
+    HomeWidget.saveWidgetData<String>("shortcuts", favoriteShortcut.join(";"));
+    HomeWidget.saveWidgetData<String>(
+        "shortcutsIds", favoriteShortcutIds.join(";"));
+    // HomeWidget.updateWidget(name: "HomeWidgetExampleProvider");
+    CustomHomeWidgetRequest.updateWidget();
   }
 
   static Future<Set<String>> loadInterestedLine() async {

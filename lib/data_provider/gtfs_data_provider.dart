@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:archive/archive_io.dart';
 import 'package:better_bus_v2/data_provider/connectivity_checker.dart';
 import 'package:better_bus_v2/data_provider/local_data_handler.dart';
 import 'package:better_bus_v2/error_handler/custom_error.dart';
@@ -11,7 +12,6 @@ import 'package:better_bus_v2/model/clean/timetable.dart';
 import 'package:better_bus_v2/model/cvs_parser.dart';
 import 'package:better_bus_v2/model/gtfs_data.dart';
 import 'package:flutter/foundation.dart';
-// import 'package:flutter_archive/flutter_archive.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
@@ -26,6 +26,7 @@ class DatasetMetadata {
 class GTFSDataProvider {
   static final dataSetAPI = Uri.parse(
       "https://transport.data.gouv.fr/api/datasets/58ef2cefa3a7293d49c4e178");
+  static final gtfsFileURL = Uri.parse("https://data.grandpoitiers.fr/data-fair/api/v1/datasets/2gwvlq16siyb7d9m3rqt1pb1/metadata-attachments/gtfs.zip");
   static const String gtfsFilePath = "/gtfs.zip";
   static const String gtfsDirPath = "/gtfs";
 
@@ -96,6 +97,8 @@ class GTFSDataProvider {
   }
 
   static Future<DatasetMetadata> getFileMetaData() async {
+    var now = DateTime.now();
+    return DatasetMetadata(gtfsFileURL, DateTime(now.year, now.month, now.day));
     http.Response res = await http.get(dataSetAPI);
     Map<String, dynamic> json = jsonDecode(utf8.decode(res.bodyBytes));
 
@@ -110,6 +113,8 @@ class GTFSDataProvider {
   static Future extractZipFile() async {
     Directory appTempDir = await getTemporaryDirectory();
     Directory appSupportDir = await getApplicationSupportDirectory();
+    await extractFileToDisk(appTempDir.path + gtfsFilePath,
+      appSupportDir.path + gtfsDirPath);
     // await ZipFile.extractToDirectory(
     //     zipFile: File(appTempDir.path + gtfsFilePath),
     //     destinationDir: Directory(appSupportDir.path + gtfsDirPath));
