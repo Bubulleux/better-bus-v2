@@ -8,6 +8,7 @@ import 'package:better_bus_v2/views/common/fake_text_field.dart';
 import 'package:better_bus_v2/views/common/labeled_radio.dart';
 import 'package:better_bus_v2/views/route_page/route_widget_item.dart';
 import 'package:better_bus_v2/views/stops_search_page/place_searcher_page.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -28,7 +29,6 @@ class _RoutePageState extends State<RoutePage> {
 
   String timeType = "departure";
 
-  TimeOfDay routeTimeOfDay = TimeOfDay.now();
   DateTime routeDateTime = DateTime.now();
 
   GlobalKey<CustomFutureBuilderState<List<VitalisRoute>?>> futureBuilderKey =
@@ -75,18 +75,29 @@ class _RoutePageState extends State<RoutePage> {
   }
 
   void setTime() {
-    showTimePicker(
+    showDialog(
       context: context,
-      initialTime: routeTimeOfDay,
-    ).then((output) {
-      if (output == null) {
-        return;
+      builder: (ctx) {
+        return Dialog(
+          child: Row(
+            children: [
+              CupertinoSlidingSegmentedControl(
+                children: {
+                  "arival" : Text(AppString.departureAt),
+                  "departure" : Text(AppString.arrivalAt)
+                },
+                onValueChanged: (newValue) {
+                setState(() {
+                    timeType = newValue as String;
+                  });
+                },
+                groupValue: timeType,
+              )
+            ],
+          ),
+        );
       }
-      setState(() {
-        routeTimeOfDay = output;
-        futureBuilderKey.currentState!.refresh();
-      });
-    });
+    );
   }
 
   void setDate() {
@@ -110,10 +121,16 @@ class _RoutePageState extends State<RoutePage> {
     if (startPlace == null || endPlace == null) {
       return null;
     }
-    String date = DateFormat("dd-MM-yyyy").format(routeDateTime) + " ${routeTimeOfDay.hour}:${routeTimeOfDay.minute}";
 
     return await VitalisDataProvider.getVitalisRoute(
-        startPlace!, endPlace!, DateFormat("dd-MM-yyyy HH:mm").parse(date), timeType);
+        startPlace!, endPlace!, routeDateTime, timeType);
+  }
+
+  String getTimeString() {
+    if (routeDateTime.difference(DateTime.now()).isNegative) {
+      return "Now";
+    }
+    return "Nan";
   }
 
   @override
@@ -159,69 +176,15 @@ class _RoutePageState extends State<RoutePage> {
                         icon: Icons.search,
                         value: endPlace?.title,
                       ),
-                      Row(
-                        children: [
-                          Row(
-                            children: [
-                              LabeledRadio<String>(
-                                value: "departure",
-                                groupValue: timeType,
-                                onChanged: setRouteTime,
-                                label: AppString.departureAt,
-                              ),
-                              LabeledRadio<String>(
-                                value: "arrival",
-                                groupValue: timeType,
-                                onChanged: setRouteTime,
-                                label: AppString.arrivalAt,
-                              ),
-                            ],
-                          ),
-                          const Spacer(),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 15),
-                            child: ElevatedButton(
-                              child: Row(
-                                children: [
-                                  Text(
-                                    routeTimeOfDay.format(context),
-                                    style: Theme.of(context).textTheme.titleLarge,
-                                  ),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  const Icon(Icons.edit)
-                                ],
-                              ),
-                              onPressed: setTime,
-                            ),
-                          ),
-                        ],
+                      const SizedBox(
+                        height: 5,
                       ),
-                      Row(
-                        children: [
-                          const Text(AppString.routeWhenDate),
-                          const Spacer(),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: ElevatedButton(
-                              child: Row(
-                                children: [
-                                  Text(
-                                    DateFormat("dd/MM/yy").format(routeDateTime),
-                                    style: Theme.of(context).textTheme.titleLarge,
-                                  ),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  const Icon(Icons.edit)
-                                ],
-                              ),
-                              onPressed: setDate,
-                            ),
-                          ),
-                        ],
-                      ),
+                      FakeTextField(
+                        value: getTimeString(),
+                        onPress: setTime,
+                        prefixIcon: const Icon(Icons.access_time),
+                        backgroundColor: Theme.of(context).backgroundColor,
+                      )
                     ],
                   ),
                 ),

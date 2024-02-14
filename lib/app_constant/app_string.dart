@@ -35,8 +35,8 @@ class AppString {
 
   static const startLabel = "Départ";
   static const endLabel = "Arrivée";
-  static const departureAt = "Partir à";
-  static const arrivalAt = "Arriver à";
+  static const departureAt = "Partir";
+  static const arrivalAt = "Arriver";
   static const routeWhenDate = "Quand ?";
 
   static const seeAllLabel = "Voir toutes les lignes et terminus";
