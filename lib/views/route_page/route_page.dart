@@ -6,6 +6,7 @@ import 'package:better_bus_v2/views/common/custom_future.dart';
 import 'package:better_bus_v2/views/common/decorations.dart';
 import 'package:better_bus_v2/views/common/fake_text_field.dart';
 import 'package:better_bus_v2/views/common/labeled_radio.dart';
+import 'package:better_bus_v2/views/common/segmentedChoices.dart';
 import 'package:better_bus_v2/views/route_page/route_widget_item.dart';
 import 'package:better_bus_v2/views/stops_search_page/place_searcher_page.dart';
 import 'package:flutter/cupertino.dart';
@@ -81,17 +82,13 @@ class _RoutePageState extends State<RoutePage> {
         return Dialog(
           child: Row(
             children: [
-              CupertinoSlidingSegmentedControl(
-                children: {
-                  "arival" : Text(AppString.departureAt),
-                  "departure" : Text(AppString.arrivalAt)
-                },
-                onValueChanged: (newValue) {
-                setState(() {
-                    timeType = newValue as String;
-                  });
-                },
-                groupValue: timeType,
+              SegmentedChoices<String>(
+                items: {
+                  "departure": SegmentedChoice(AppString.departureAt, null),
+                  "arival": SegmentedChoice(AppString.arrivalAt, null),
+                  },
+                onChange: setRouteTime,
+                defaultValue: timeType,
               )
             ],
           ),
