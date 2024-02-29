@@ -25,7 +25,7 @@ class DatasetMetadata {
 
 class GTFSDataProvider {
   static final dataSetAPI = Uri.parse(
-      "https://transport.data.gouv.fr/api/datasets/58ef2cefa3a7293d49c4e178");
+      "https://data.grandpoitiers.fr/data-fair/api/v1/datasets/offre-de-transport-du-reseau-vitalis");
   static final gtfsFileURL = Uri.parse("https://data.grandpoitiers.fr/data-fair/api/v1/datasets/2gwvlq16siyb7d9m3rqt1pb1/metadata-attachments/gtfs.zip");
   static const String gtfsFilePath = "/gtfs.zip";
   static const String gtfsDirPath = "/gtfs";
@@ -73,12 +73,14 @@ class GTFSDataProvider {
 
     DatasetMetadata metadata = await getFileMetaData();
     DateTime? lastUpdate = await LocalDataHandler.getGTFSDownloadDate();
+    print("Download start ?");
 
     if (lastUpdate != null &&
         metadata.updateTime.isBefore(lastUpdate) &&
         !forceDownload) {
       return false;
     }
+    print("Yes it do");
 
     HttpClient client = HttpClient();
     var request = await client.getUrl(metadata.ressourceUri);
@@ -97,15 +99,13 @@ class GTFSDataProvider {
   }
 
   static Future<DatasetMetadata> getFileMetaData() async {
-    var now = DateTime.now();
-    return DatasetMetadata(gtfsFileURL, DateTime(now.year, now.month, now.day));
     http.Response res = await http.get(dataSetAPI);
     Map<String, dynamic> json = jsonDecode(utf8.decode(res.bodyBytes));
 
-    var ressource = json["resources"].firstWhere((e) => e["format"] == "GTFS");
+    var ressource = json["attachments"].firstWhere((e) => e["title"] == "gtfs.zip");
 
-    var uri = Uri.parse(ressource["original_url"]);
-    DateTime updateTime = DateTime.parse(json["updated"]);
+    var uri = Uri.parse(ressource["url"]);
+    DateTime updateTime = DateTime.parse(ressource["updatedAt"]);
 
     return DatasetMetadata(uri, updateTime);
   }
