@@ -1,6 +1,4 @@
-import 'package:better_bus_v2/views/common/extendable_view.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 
 class SegmentedChoice {
   SegmentedChoice(this.text, this.icon);
@@ -36,16 +34,44 @@ class _SegmentedChoicesState<T> extends State<SegmentedChoices> {
       });
     }
 
+  void valueChange(T newValue) {
+    (widget as SegmentedChoices<T>).onChange(newValue);
+    setState(() {
+      value = newValue;
+      print(value);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-    width: 300,
-      child: Row(
-        children: widget.items.entries.map((e) => 
-          ChoiceWidget(e.value, e.key == value,
-            () => setState((){ value = e.key;})))
-        .toList()
+    return Padding(
+      padding: const EdgeInsets.all(8),
+      child: Container(
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(50),
+          ),
+          const BoxShadow(
+            color: Colors.white,
+            spreadRadius: -3,
+            blurRadius: 3
+
+          )
+        ],
+        borderRadius: BorderRadius.circular(10)
+      ),
+      width: 300,
+        child: Padding(
+          padding: const EdgeInsets.all(8).copyWith(bottom: 0),
+          child: Row(
+            children: widget.items.entries.map((e) => 
+              ChoiceWidget(e.value, e.key == value,
+                () => valueChange(e.key)))
+            .toList()
+            ),
         )
+      ),
     );
   }
 }
@@ -61,36 +87,75 @@ class ChoiceWidget extends StatefulWidget {
   State<ChoiceWidget> createState() => _ChoiceWidgetState();
 }
 
-class _ChoiceWidgetState extends State<ChoiceWidget> {
+class _ChoiceWidgetState extends State<ChoiceWidget>
+  with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
+  
+  late AnimationController _animationController;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(vsync: this,
+      duration: const Duration(milliseconds: 200));
+
+    _animation = CurvedAnimation( parent: _animationController,
+      curve: Curves.fastOutSlowIn);
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    if (widget.selected) {
+      _animationController.forward();
+    } else {
+      _animationController.reverse();
+    }
+    super.didChangeDependencies();
+  }
+
+  @override
+  bool get wantKeepAlive => true;
+
+
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     return Expanded(
       child: InkWell(
         onTap: () => widget.onClick(),
-        child: Container(
-          height: 50,
-          color: Colors.red,
-          child: Column(
-          mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                widget.data.text,
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              Container(
-                width: 40,
-                height: 10,
-                decoration: BoxDecoration(
-                  color: widget.selected ? Theme.of(context).primaryColor : Colors.transparent,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(5),
-                    topRight: Radius.circular(5)
+        child: Column(
+        mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              widget.data.text,
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            SizedBox(
+              height: 10,
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  height: widget.selected ? 10 : 0,
+                  width: 30,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).primaryColor,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(5),
+                      topRight: Radius.circular(5),
+                      )
+                    ),
                   )
-                ),
-                  // borderRadius: BorderRadius.circular(0)
               )
-            ],
-          )
+            ),
+          ],
         ),
       ),
     );

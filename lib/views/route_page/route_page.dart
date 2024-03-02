@@ -7,6 +7,7 @@ import 'package:better_bus_v2/views/common/decorations.dart';
 import 'package:better_bus_v2/views/common/fake_text_field.dart';
 import 'package:better_bus_v2/views/common/labeled_radio.dart';
 import 'package:better_bus_v2/views/common/segmentedChoices.dart';
+import 'package:better_bus_v2/views/route_page/route_time_picker.dart';
 import 'package:better_bus_v2/views/route_page/route_widget_item.dart';
 import 'package:better_bus_v2/views/stops_search_page/place_searcher_page.dart';
 import 'package:flutter/cupertino.dart';
@@ -15,6 +16,18 @@ import 'package:intl/intl.dart';
 
 import '../../app_constant/app_string.dart';
 import '../../model/clean/map_place.dart';
+
+enum RouteTimeType{
+  departure,
+  arival
+}
+
+class RouteTimeParameter {
+  RouteTimeType timeType;
+  DateTime time;
+
+  RouteTimeParameter(this.timeType, this.time);
+}
 
 class RoutePage extends StatefulWidget {
   const RoutePage({Key? key}) : super(key: key);
@@ -28,14 +41,13 @@ class _RoutePageState extends State<RoutePage> {
   MapPlace? startPlace;
   MapPlace? endPlace;
 
-  String timeType = "departure";
-
-  DateTime routeDateTime = DateTime.now();
+  RouteTimeParameter timeParameter = RouteTimeParameter(RouteTimeType.departure,
+    DateTime.now());
 
   GlobalKey<CustomFutureBuilderState<List<VitalisRoute>?>> futureBuilderKey =
       GlobalKey<CustomFutureBuilderState<List<VitalisRoute>?>>();
 
-  getStartPlace() {
+  void getStartPlace() {
     getPlace().then((place) {
       if (place == null) {
         return;
@@ -47,7 +59,7 @@ class _RoutePageState extends State<RoutePage> {
     });
   }
 
-  getStopPlace() {
+  void getStopPlace() {
     getPlace().then((place) {
       if (place == null) {
         return;
@@ -65,54 +77,6 @@ class _RoutePageState extends State<RoutePage> {
     return place;
   }
 
-  void setRouteTime(String? value) {
-    if (value == null) {
-      return;
-    }
-    setState(() {
-      timeType = value;
-      futureBuilderKey.currentState!.refresh();
-    });
-  }
-
-  void setTime() {
-    showDialog(
-      context: context,
-      builder: (ctx) {
-        return Dialog(
-          child: Row(
-            children: [
-              SegmentedChoices<String>(
-                items: {
-                  "departure": SegmentedChoice(AppString.departureAt, null),
-                  "arival": SegmentedChoice(AppString.arrivalAt, null),
-                  },
-                onChange: setRouteTime,
-                defaultValue: timeType,
-              )
-            ],
-          ),
-        );
-      }
-    );
-  }
-
-  void setDate() {
-    showDatePicker(
-            context: context,
-            initialDate: routeDateTime,
-            firstDate: DateTime.now().subtract(const Duration(days: 4)),
-            lastDate: DateTime.now().add(const Duration(days: 4)))
-        .then((date) {
-      if (date == null) {
-        return;
-      }
-      setState(() {
-        routeDateTime = date;
-        futureBuilderKey.currentState!.refresh();
-      });
-    });
-  }
 
   Future<List<VitalisRoute>?> getRoutes() async {
     if (startPlace == null || endPlace == null) {
@@ -120,13 +84,22 @@ class _RoutePageState extends State<RoutePage> {
     }
 
     return await VitalisDataProvider.getVitalisRoute(
-        startPlace!, endPlace!, routeDateTime, timeType);
+        startPlace!, endPlace!, timeParameter.time, timeParameter.timeType.toString());
+  }
+
+  void setTime() async {
+    RouteTimeParameter newParameter = 
+      await showDialog(context: context, builder: (ctx) => RouteTimePicker(timeParameter));
+
+    setState(() {
+          timeParameter = newParameter;
+          print("Set State");
+          print(timeParameter.timeType);
+        });
+
   }
 
   String getTimeString() {
-    if (routeDateTime.difference(DateTime.now()).isNegative) {
-      return "Now";
-    }
     return "Nan";
   }
 

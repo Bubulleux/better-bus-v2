@@ -107,4 +107,7 @@ class AppString {
       "Télécharger à nouveau les données du réseau";
 
   static const notificationTitle = "Il y a une nouvelle info trafic sur le réseau !";
+
+  static const today = "Aujourd'hui";
+  static const tomorrow = "Demain";
 }
