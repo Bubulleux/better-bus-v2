@@ -35,7 +35,10 @@ class FakeTextField extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              prefixIcon ?? Container(),
+              Padding(
+                padding: const EdgeInsets.only(right: 3),
+                child: prefixIcon ?? Container(),
+              ),
               Expanded(
                 child: Text(
                   value ?? hint ?? "",

@@ -36,6 +36,7 @@ class _RouteTimePickerState extends State<RouteTimePicker> {
   void dateChange(int index) {
     DateTime newDate = DateTime.now().add(Duration(days: index));
     time = time.copyWith(day: newDate.day, month: newDate.month, year: newDate.year);
+    print(time);
   }
 
   void hoursChange(int index) {

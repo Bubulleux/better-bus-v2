@@ -84,7 +84,7 @@ class _RoutePageState extends State<RoutePage> {
     }
 
     return await VitalisDataProvider.getVitalisRoute(
-        startPlace!, endPlace!, timeParameter.time, timeParameter.timeType.toString());
+        startPlace!, endPlace!, timeParameter.time, timeParameter.timeType.name);
   }
 
   void setTime() async {
@@ -93,14 +93,25 @@ class _RoutePageState extends State<RoutePage> {
 
     setState(() {
           timeParameter = newParameter;
-          print("Set State");
-          print(timeParameter.timeType);
+          futureBuilderKey.currentState!.refresh();
         });
 
   }
 
   String getTimeString() {
-    return "Nan";
+    String timeTypeText = timeParameter.timeType == RouteTimeType.departure ?
+      AppString.departureAt : AppString.arrivalAt;
+
+    Duration diffNow = timeParameter.time.difference(DateTime.now());
+    
+    if (diffNow.inMinutes < 1) {
+      return timeTypeText + " " + AppString.now;
+    }
+
+    String dateText = DateFormat("EE d MMM", "fr").format(timeParameter.time);
+
+    String timeText = DateFormat("HH:mm").format(timeParameter.time);
+    return timeTypeText + " " + dateText + " à " + timeText;
   }
 
   @override

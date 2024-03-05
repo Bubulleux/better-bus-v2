@@ -204,6 +204,7 @@ class VitalisDataProvider {
       "date_type": timeType,
       "networks": "[1]",
     });
+    print(uri);
 
     dynamic rawJson = await sendRequest(uri);
     if (rawJson is Map<String, dynamic>) {
