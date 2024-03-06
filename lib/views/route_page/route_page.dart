@@ -17,7 +17,7 @@ import '../../model/clean/map_place.dart';
 
 enum RouteTimeType{
   departure,
-  arival
+  arrival
 }
 
 class RouteTimeParameter {
@@ -117,6 +117,15 @@ class _RoutePageState extends State<RoutePage> {
     return timeTypeText + " " + dateText + " à " + timeText;
   }
 
+  void swapDirection() {
+    setState(() {
+      var temp = startPlace;
+      startPlace = endPlace;
+      endPlace = temp;
+      futureBuilderKey.currentState!.refresh();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -138,27 +147,43 @@ class _RoutePageState extends State<RoutePage> {
                   padding: const EdgeInsets.all(8),
                   child: Column(
                     children: [
-                      FakeTextField(
-                        onPress: getStartPlace,
-                        backgroundColor: Theme.of(context).colorScheme.background,
-                        hint: AppString.startLabel,
-                        prefixIcon: const Icon(
-                          Icons.flag,
-                          color: Colors.green,
-                        ),
-                        icon: Icons.search,
-                        value: startPlace?.title,
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      FakeTextField(
-                        onPress: getStopPlace,
-                        backgroundColor: Theme.of(context).colorScheme.background,
-                        hint: AppString.endLabel,
-                        prefixIcon: const Icon(Icons.flag, color: Colors.red),
-                        icon: Icons.search,
-                        value: endPlace?.title,
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Column(
+                            children: [
+                            FakeTextField(
+                              onPress: getStartPlace,
+                              backgroundColor: Theme.of(context).colorScheme.background,
+                              hint: AppString.startLabel,
+                              prefixIcon: const Icon(
+                                Icons.flag,
+                                color: Colors.green,
+                                ),
+                              icon: Icons.search,
+                              value: startPlace?.title,
+                              ),
+                            const SizedBox(
+                              height: 5,
+                              ),
+                            FakeTextField(
+                              onPress: getStopPlace,
+                              backgroundColor: Theme.of(context).colorScheme.background,
+                              hint: AppString.endLabel,
+                              prefixIcon: const Icon(Icons.flag, color: Colors.red),
+                              icon: Icons.search,
+                              value: endPlace?.title,
+                              ),
+                            ],
+                          ),
+                          ElevatedButton(
+                            onPressed: swapDirection,
+                            child: const Icon(Icons.swap_vert, size: 20),
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.all(0)
+                            )
+                          )
+                        ],
                       ),
                       const SizedBox(
                         height: 5,

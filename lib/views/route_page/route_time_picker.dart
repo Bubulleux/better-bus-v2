@@ -58,7 +58,7 @@ class _RouteTimePickerState extends State<RouteTimePicker> {
             SegmentedChoices<RouteTimeType>(
               items: {
                   RouteTimeType.departure: SegmentedChoice(AppString.departureAt, null),
-                  RouteTimeType.arival: SegmentedChoice(AppString.arrivalAt, null),
+                  RouteTimeType.arrival: SegmentedChoice(AppString.arrivalAt, null),
                 },
               onChange: (newValue) => timeType = newValue,
               defaultValue: timeType,
