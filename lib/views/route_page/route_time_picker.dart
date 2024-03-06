@@ -4,6 +4,7 @@ import 'package:better_bus_v2/views/common/wheel_scroll_selector.dart';
 import 'package:better_bus_v2/views/route_page/route_page.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:better_bus_v2/helper.dart';
 
 class RouteTimePicker extends StatefulWidget {
   const RouteTimePicker(this.parameter, {Key? key}) : super(key: key);
@@ -20,7 +21,7 @@ class _RouteTimePickerState extends State<RouteTimePicker> {
   late DateTime time;
   List<String> dates = [AppString.today, AppString.tomorrow] +
     List.generate(12, (index) => DateFormat("EE d MMMM", "fr").format(
-          DateTime.now().add(Duration(days: index + 2))));
+          DateTime.now().atMidnight().add(Duration(days: index + 2))));
   late int selectedDate;
 
   @override
@@ -36,11 +37,11 @@ class _RouteTimePickerState extends State<RouteTimePicker> {
   void dateChange(int index) {
     DateTime newDate = DateTime.now().add(Duration(days: index));
     time = time.copyWith(day: newDate.day, month: newDate.month, year: newDate.year);
-    print(time);
   }
 
   void hoursChange(int index) {
     time = time.copyWith(hour: index);
+    print(time);
   }
 
   void minutesChange(int index) {
@@ -69,7 +70,8 @@ class _RouteTimePickerState extends State<RouteTimePicker> {
               padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
               child: SizedBox(
                 height: 150,
-                child: WheelScrollSelector(dates, dateChange, time.difference(DateTime.now()).inDays),
+                child: WheelScrollSelector(dates, dateChange, 
+                  time.difference(DateTime.now().atMidnight()).inDays),
               ),
             ),
             Container(
@@ -93,7 +95,7 @@ class _RouteTimePickerState extends State<RouteTimePicker> {
                     width: 80,
                     child: WheelScrollSelector(
                       List.generate(60, (i) => NumberFormat("00").format(i)),
-                      hoursChange, time.minute
+                      minutesChange, time.minute
                     ),
                   ),
                 ],

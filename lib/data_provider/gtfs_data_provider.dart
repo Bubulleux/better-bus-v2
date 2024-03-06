@@ -73,14 +73,12 @@ class GTFSDataProvider {
 
     DatasetMetadata metadata = await getFileMetaData();
     DateTime? lastUpdate = await LocalDataHandler.getGTFSDownloadDate();
-    print("Download start ?");
 
     if (lastUpdate != null &&
         metadata.updateTime.isBefore(lastUpdate) &&
         !forceDownload) {
       return false;
     }
-    print("Yes it do");
 
     HttpClient client = HttpClient();
     var request = await client.getUrl(metadata.ressourceUri);

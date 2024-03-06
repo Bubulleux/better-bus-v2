@@ -1,5 +1,6 @@
 import 'package:better_bus_v2/data_provider/vitalis_data_provider.dart';
 import 'package:better_bus_v2/error_handler/custom_error.dart';
+import 'package:better_bus_v2/helper.dart';
 import 'package:better_bus_v2/model/clean/route.dart';
 import 'package:better_bus_v2/views/common/background.dart';
 import 'package:better_bus_v2/views/common/custom_future.dart';
@@ -104,11 +105,16 @@ class _RoutePageState extends State<RoutePage> {
 
     Duration diffNow = timeParameter.time.difference(DateTime.now());
     
-    if (diffNow.inMinutes < 1) {
+    if (diffNow.inMinutes < 1 && !diffNow.isNegative) {
       return timeTypeText + " " + AppString.now;
     }
-
+    
+    Duration dayDiff = timeParameter.time.difference(DateTime.now().atMidnight());
     String dateText = DateFormat("EE d MMM", "fr").format(timeParameter.time);
+
+    if (dayDiff.inDays == 0) { dateText = AppString.today; }
+    if (dayDiff.inDays == 1) { dateText = AppString.tomorrow; }
+    
 
     String timeText = DateFormat("HH:mm").format(timeParameter.time);
     return timeTypeText + " " + dateText + " à " + timeText;
@@ -164,6 +170,7 @@ class _RoutePageState extends State<RoutePage> {
                         value: getTimeString(),
                         onPress: setTime,
                         prefixIcon: const Icon(Icons.access_time),
+                        icon: Icons.autorenew,
                         backgroundColor: Theme.of(context).backgroundColor,
                       )
                     ],
