@@ -68,7 +68,10 @@ class _BetterBusAppState extends State<BetterBusApp> with WidgetsBindingObserver
         useMaterial3: false,
         primarySwatch: Colors.lightGreen,
         primaryColorLight: const Color(0xffe6eee5),
-        backgroundColor: const Color(0xdde4e4e4),
+        colorScheme: ColorScheme.fromSwatch(
+          primarySwatch: Colors.lightGreen,
+          backgroundColor: const Color(0xdde4e4e4),
+        ),
         textTheme: const TextTheme(
           bodyMedium: TextStyle(
             fontSize: 16,

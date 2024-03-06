@@ -31,7 +31,7 @@ class _CustomContextMenuState extends State<CustomContextMenu> {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: Theme.of(context).backgroundColor,
+        color: Theme.of(context).colorScheme.background,
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10),

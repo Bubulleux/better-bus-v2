@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 BoxDecoration commonDecoration(context) {
   return BoxDecoration(
-      color: Theme.of(context).backgroundColor,
+      color: Theme.of(context).colorScheme.background,
       borderRadius: BorderRadius.circular(40));
 }
 
@@ -53,7 +53,7 @@ class CustomContentContainer extends StatelessWidget {
     return Padding(
       padding: _margin,
       child: Material(
-        color: color ?? Theme.of(context).backgroundColor,
+        color: color ?? Theme.of(context).colorScheme.background,
         borderRadius: _borderRadius,
         elevation: 2,
         child: InkWell(

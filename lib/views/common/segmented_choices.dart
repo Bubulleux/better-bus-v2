@@ -7,16 +7,16 @@ class SegmentedChoice {
 }
 
 class SegmentedChoices<T> extends StatefulWidget {
-  SegmentedChoices({
+  const SegmentedChoices({
     required this.items,
     required this.onChange,
     required this.defaultValue,
     Key? key})
   : super(key: key);
 
-  Map<T,SegmentedChoice> items;
-  ValueChanged<T> onChange;
-  T defaultValue;
+  final Map<T,SegmentedChoice> items;
+  final ValueChanged<T> onChange;
+  final T defaultValue;
 
   @override
   State<SegmentedChoices> createState() => _SegmentedChoicesState<T>();
@@ -38,7 +38,6 @@ class _SegmentedChoicesState<T> extends State<SegmentedChoices> {
     (widget as SegmentedChoices<T>).onChange(newValue);
     setState(() {
       value = newValue;
-      print(value);
     });
   }
 
@@ -91,16 +90,12 @@ class _ChoiceWidgetState extends State<ChoiceWidget>
   with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   
   late AnimationController _animationController;
-  late Animation<double> _animation;
 
   @override
   void initState() {
     super.initState();
     _animationController = AnimationController(vsync: this,
       duration: const Duration(milliseconds: 200));
-
-    _animation = CurvedAnimation( parent: _animationController,
-      curve: Curves.fastOutSlowIn);
   }
 
   @override

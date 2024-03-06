@@ -1,5 +1,5 @@
 import 'package:better_bus_v2/app_constant/app_string.dart';
-import 'package:better_bus_v2/views/common/segmentedChoices.dart';
+import 'package:better_bus_v2/views/common/segmented_choices.dart';
 import 'package:better_bus_v2/views/common/wheel_scroll_selector.dart';
 import 'package:better_bus_v2/views/route_page/route_page.dart';
 import 'package:flutter/material.dart';
@@ -29,8 +29,6 @@ class _RouteTimePickerState extends State<RouteTimePicker> {
     super.initState();
     timeType = widget.parameter.timeType;
     time = widget.parameter.time;
-    print(timeType);
-    print(time);
     
   }
 
@@ -41,7 +39,6 @@ class _RouteTimePickerState extends State<RouteTimePicker> {
 
   void hoursChange(int index) {
     time = time.copyWith(hour: index);
-    print(time);
   }
 
   void minutesChange(int index) {
@@ -101,8 +98,8 @@ class _RouteTimePickerState extends State<RouteTimePicker> {
                 ],
               ),
             ),
-            SizedBox(height: 10),
-            ElevatedButton(onPressed: submit, child: Text(AppString.validateLabel))
+            const SizedBox(height: 10),
+            ElevatedButton(onPressed: submit, child: const Text(AppString.validateLabel))
           ],
         ),
       );

@@ -149,7 +149,7 @@ class _BusStopWidgetState extends State<BusStopWidget>
                         Text(
                           widget.stop.name,
                           textAlign: TextAlign.left,
-                          style: Theme.of(context).textTheme.headline6,
+                          style: Theme.of(context).textTheme.titleLarge,
                           softWrap: false,
                           maxLines: 1,
                           overflow: TextOverflow.fade,

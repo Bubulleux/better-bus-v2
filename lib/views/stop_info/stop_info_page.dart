@@ -132,6 +132,7 @@ class _StopInfoPageState extends State<StopInfoPage>
                         ],
                       )),
                   TabBar(
+                    indicatorColor: Theme.of(context).primaryColor,
                     tabs: const [
                       Tab(
                         text: AppString.nextPassage,

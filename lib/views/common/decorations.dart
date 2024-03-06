@@ -15,7 +15,7 @@ class CustomDecorations {
 
   BoxDecoration get boxBackground => BoxDecoration(
     borderRadius: borderRadius,
-    color: Theme.of(context).backgroundColor,
+    color: Theme.of(context).colorScheme.background,
   );
 
   static final BorderRadius borderRadius = BorderRadius.circular(20);

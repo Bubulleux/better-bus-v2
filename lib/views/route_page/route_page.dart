@@ -6,12 +6,9 @@ import 'package:better_bus_v2/views/common/background.dart';
 import 'package:better_bus_v2/views/common/custom_future.dart';
 import 'package:better_bus_v2/views/common/decorations.dart';
 import 'package:better_bus_v2/views/common/fake_text_field.dart';
-import 'package:better_bus_v2/views/common/labeled_radio.dart';
-import 'package:better_bus_v2/views/common/segmentedChoices.dart';
 import 'package:better_bus_v2/views/route_page/route_time_picker.dart';
 import 'package:better_bus_v2/views/route_page/route_widget_item.dart';
 import 'package:better_bus_v2/views/stops_search_page/place_searcher_page.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -143,7 +140,7 @@ class _RoutePageState extends State<RoutePage> {
                     children: [
                       FakeTextField(
                         onPress: getStartPlace,
-                        backgroundColor: Theme.of(context).backgroundColor,
+                        backgroundColor: Theme.of(context).colorScheme.background,
                         hint: AppString.startLabel,
                         prefixIcon: const Icon(
                           Icons.flag,
@@ -157,7 +154,7 @@ class _RoutePageState extends State<RoutePage> {
                       ),
                       FakeTextField(
                         onPress: getStopPlace,
-                        backgroundColor: Theme.of(context).backgroundColor,
+                        backgroundColor: Theme.of(context).colorScheme.background,
                         hint: AppString.endLabel,
                         prefixIcon: const Icon(Icons.flag, color: Colors.red),
                         icon: Icons.search,
@@ -171,7 +168,7 @@ class _RoutePageState extends State<RoutePage> {
                         onPress: setTime,
                         prefixIcon: const Icon(Icons.access_time),
                         icon: Icons.autorenew,
-                        backgroundColor: Theme.of(context).backgroundColor,
+                        backgroundColor: Theme.of(context).colorScheme.background,
                       )
                     ],
                   ),

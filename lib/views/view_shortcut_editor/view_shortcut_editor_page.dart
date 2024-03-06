@@ -61,7 +61,7 @@ class _ViewShortcutEditorPageState extends State<ViewShortcutEditorPage> {
       resizeToAvoidBottomInset: false,
       body: Background(
         child: Container(
-          color: Theme.of(context).backgroundColor,
+          color: Theme.of(context).colorScheme.background,
           child: SafeArea(
             child: Container(
               padding: const EdgeInsets.all(15),
@@ -81,7 +81,7 @@ class _ViewShortcutEditorPageState extends State<ViewShortcutEditorPage> {
                         children: [
                           Text(
                             AppString.addToFavorite,
-                            style: Theme.of(context).textTheme.headline5,
+                            style: Theme.of(context).textTheme.headlineSmall,
                           ),
                           const Spacer(),
                           Icon(
@@ -110,7 +110,7 @@ class _ViewShortcutEditorPageState extends State<ViewShortcutEditorPage> {
                       children: [
                         Text(
                           AppString.directionLabel,
-                          style: Theme.of(context).textTheme.headline5,
+                          style: Theme.of(context).textTheme.headlineSmall,
                         ),
                         const SizedBox(
                           height: 5,

@@ -181,7 +181,7 @@ class NextPassageWidget extends StatelessWidget {
               padding: const EdgeInsets.only(left: 8),
               child: Text(
                 nextPassage.destination,
-                style: Theme.of(context).textTheme.headline5,
+                style: Theme.of(context).textTheme.headlineSmall,
                 overflow: TextOverflow.fade,
                 maxLines: 1,
                 softWrap: false,

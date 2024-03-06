@@ -35,7 +35,7 @@ class GTFSDataProvider {
   static Future loadFile({bool forceDownload = false}) async {
     if (gtfsData != null && !forceDownload) return;
 
-    var success = await downloadFile(forceDownload: forceDownload);
+    await downloadFile(forceDownload: forceDownload);
 
 
     Directory appSupportDir = await getApplicationSupportDirectory();
