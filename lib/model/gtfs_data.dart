@@ -5,6 +5,7 @@ import 'package:flutter/rendering.dart';
 
 class GTFSData {
   late final Map<String, GTFSStop> stops;
+  late final Map<String, GTFSStop> allStops;
   late final Map<String, GTFSRoute> routes;
   late final GTFSCalendar calendar;
   late final Map<String, GTFSTrip> trips;
@@ -21,6 +22,7 @@ class GTFSData {
 
   void loadStops(CSVTable table) {
     Map<String, GTFSStop> _stops = {};
+    Map<String, GTFSStop> _allStops = {};
     Map<String, List<GTFSStopChild>> child = {};
 
     for (var e in table) {
@@ -32,14 +34,19 @@ class GTFSData {
         child[parrent]!.add(GTFSStopChild.fromCSV(e));
         continue;
       }
-
-      _stops[e["stop_id"]] = GTFSStop.fromCSV(e);
+      
+      String id = e["stop_id"];
+      _stops[id] = GTFSStop.fromCSV(e);
+      _allStops[id] = _stops[id]!;
     }
 
-    for (var e in child.entries) {
-      _stops[e.key]!.child.addAll(e.value);
+    for (var child in child.entries) {
+      _stops[child.key]!.child.addAll(child.value);
+      _allStops.addEntries(child.value.map((e) => MapEntry(e.id.toString(), 
+        _stops[child.key]!)));
     }
 
+    allStops = _allStops;
     stops = _stops;
   }
 

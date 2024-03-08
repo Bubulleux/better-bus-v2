@@ -114,7 +114,7 @@ class CustomFutureBuilderState<T> extends State<CustomFutureBuilder> with Widget
         error = widget.errorTest!(data);
       }
     } on Exception catch(e) {
-      error = e.toError();
+     error = e.toError();
     } on Error catch(e) {
       error = e is CustomError ? e : CustomError(e.toString(), Icons.error, false);
     }

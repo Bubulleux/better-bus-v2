@@ -132,9 +132,10 @@ class NextPassageListWidgetState extends State<NextPassageListWidget> {
       future: getData,
       key: futureBuilderKey,
       onData: (context, data, refresh) {
-        return ListView.builder(
+        return ListView.separated(
           itemCount: data.length,
           itemBuilder: (context, index) => NextPassageWidget(data[index]),
+          separatorBuilder: (ctx, index) => const Divider(height: 3, color: Colors.black38),
         );
       },
       onError: (context, error, refresh) {
@@ -154,33 +155,35 @@ class NextPassageListWidgetState extends State<NextPassageListWidget> {
   }
 }
 
-class NextPassageWidget extends StatelessWidget {
+class NextPassageWidget extends StatefulWidget {
   const NextPassageWidget(this.nextPassage, {Key? key}) : super(key: key);
+
   final NextPassage nextPassage;
 
   @override
+  State<NextPassageWidget> createState() => _NextPassageWidgetState();
+}
+
+class _NextPassageWidgetState extends State<NextPassageWidget> {
+  @override
   Widget build(BuildContext context) {
     String formattedTime =
-        DateFormat.Hm().format(nextPassage.expectedTime.toLocal());
-    Duration arrivalDuration = nextPassage.expectedTime.difference(DateTime.now());
+        DateFormat.Hm().format(widget.nextPassage.expectedTime.toLocal());
+    Duration arrivalDuration = widget.nextPassage.expectedTime.difference(DateTime.now());
     String minuteToWait =
         (arrivalDuration.inHours >= 1 ? "${arrivalDuration.inHours} h " : "") +
-        "${nextPassage.expectedTime.difference(DateTime.now()).inMinutes % 60} min";
+        "${widget.nextPassage.expectedTime.difference(DateTime.now()).inMinutes % 60} min";
     return Container(
       height: 55,
       padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 5),
-      decoration: BoxDecoration(
-          border: Border(
-              bottom:
-                  BorderSide(width: 1, color: Theme.of(context).primaryColor))),
       child: Row(
         children: [
-          LineWidget(nextPassage.line, 45),
+          LineWidget(widget.nextPassage.line, 45),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.only(left: 8),
               child: Text(
-                nextPassage.destination,
+                widget.nextPassage.destination,
                 style: Theme.of(context).textTheme.headlineSmall,
                 overflow: TextOverflow.fade,
                 maxLines: 1,
@@ -189,10 +192,10 @@ class NextPassageWidget extends StatelessWidget {
             ),
           ),
           Container(
-            child: nextPassage.realTime
+            child: widget.nextPassage.realTime
                 ? const Padding(
                     padding: EdgeInsets.all(4.0),
-                    child: Icon(Icons.wifi),
+                    child: Icon(Icons.wifi, size: 20,),
                   )
                 : null,
           ),

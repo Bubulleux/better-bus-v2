@@ -106,21 +106,26 @@ class VitalisDataProvider {
 
     Map<String, dynamic> body = await sendRequest(uri);
     List<dynamic> rawPassages = body["realtime"];
-    List<NextPassage> output = [];
+    List<NextPassage> realTime = [];
     for (Map<String, dynamic> rawPassage in rawPassages) {
-      output.add(NextPassage.fromJson(rawPassage));
+      realTime.add(NextPassage.fromJson(rawPassage));
     }
 
-    if (gtfsNextPassage == null) return output;
+    if (gtfsNextPassage == null) return realTime;
 
-    for (var nextPassage in output) {
-      gtfsNextPassage.removeWhere((e) =>
+    List<NextPassage> output = [];
+    for (var nextPassage in realTime) {
+      int index = gtfsNextPassage.indexWhere((e) =>
           e.aimedTime.toUtc().isAtSameMomentAs(nextPassage.realTime
               ? nextPassage.aimedTime
               : nextPassage.expectedTime) &&
           e.line.id == nextPassage.line.id);
+      if (index == -1) {
+        output.add(gtfsNextPassage[index]);
+        continue;
+      }
+      output.add(nextPassage.witchArrival(gtfsNextPassage[index].arrivingTimes));
     }
-    output += gtfsNextPassage;
     output.sort((a, b) => a.expectedTime.compareTo(b.expectedTime));
 
     return output;

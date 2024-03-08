@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:archive/archive_io.dart';
@@ -252,7 +253,7 @@ class GTFSDataProvider {
     DateTime today = DateTime(now.year, now.month, now.day);
 
     Set<String> validServices = gtfsData!.calendar.getEnablesServices(today);
-    Map<String, DateTime> tripPassage = {};
+    Map<String, Duration> tripPassage = {};
 
     Set<int> validStopId =
         gtfsData!.stops[stopID]!.child.map((e) => e.id).toSet();
@@ -266,7 +267,7 @@ class GTFSDataProvider {
         DateTime arivalTime = today.add(stopTime.arival);
         if (arivalTime.isBefore(now)) continue;
 
-        tripPassage[entrie.key] = arivalTime;
+        tripPassage[entrie.key] = stopTime.arival;
       }
     }
 
@@ -277,12 +278,17 @@ class GTFSDataProvider {
       GTFSRoute route = gtfsData!.routes[trip.routeID]!;
 
       BusLine line = BusLine(route.shortName, route.longName, route.color);
+      List<ArrivingTime> arrivalTimes = gtfsData!.stopTime[entrie.key]!
+        .where((element) => element.arival > entrie.value).map((e) => 
+        ArrivingTime(gtfsData!.allStops[e.stopID]!.stopName, e.arival)).toList();
+      DateTime arrivalTime = today.add(entrie.value);
       NextPassage nextPassage = NextPassage(
         line,
         trip.headSign,
         false,
-        entrie.value,
-        entrie.value,
+        arrivalTime,
+        arrivalTime,
+        arrivalTimes,
       );
       nextPassages.add(nextPassage);
     }
