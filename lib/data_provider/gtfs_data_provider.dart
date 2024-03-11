@@ -72,20 +72,26 @@ class GTFSDataProvider {
       return false;
     }
 
-    DatasetMetadata metadata = await getFileMetaData();
-    DateTime? lastUpdate = await LocalDataHandler.getGTFSDownloadDate();
+    late HttpClientResponse? response;
+    try {
 
-    if (lastUpdate != null &&
-        metadata.updateTime.isBefore(lastUpdate) &&
-        !forceDownload) {
+      DatasetMetadata metadata = await getFileMetaData();
+      DateTime? lastUpdate = await LocalDataHandler.getGTFSDownloadDate();
+
+      if (lastUpdate != null &&
+          metadata.updateTime.isBefore(lastUpdate) &&
+          !forceDownload) {
+        return false;
+      }
+
+      HttpClient client = HttpClient();
+      var request = await client.getUrl(metadata.ressourceUri);
+      response = await request.close();
+      if (response.statusCode != 200) return false;
+
+    } on Exception {
       return false;
     }
-
-    HttpClient client = HttpClient();
-    var request = await client.getUrl(metadata.ressourceUri);
-    var response = await request.close();
-
-    if (response.statusCode != 200) return false;
 
     Directory appTempDir = await getTemporaryDirectory();
     var bytes = await consolidateHttpClientResponseBytes(response);

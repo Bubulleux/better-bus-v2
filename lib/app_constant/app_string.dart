@@ -112,4 +112,7 @@ class AppString {
   static const tomorrow = "demain";
 
   static const now = "maintenant";
+
+  static const lateOf = "En retard de {} minutes";
+  static const advanceOf = "En avance de {} minutes";
 }

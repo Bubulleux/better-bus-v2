@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 class ExpandableWidgetController {
   late AnimationController animationController;
-  late _ExpendableWidgetState expendableWidgetState;
+  late _ExpandableWidgetState expendableWidgetState;
   Duration? duration;
 
   bool expanded = false;
@@ -32,8 +32,8 @@ class ExpandableWidgetController {
   }
 }
 
-class ExpendableWidget extends StatefulWidget {
-  const ExpendableWidget({
+class ExpandableWidget extends StatefulWidget {
+  const ExpandableWidget({
     required this.child,
     required this.controller,
     Key? key
@@ -43,10 +43,10 @@ class ExpendableWidget extends StatefulWidget {
   final ExpandableWidgetController controller;
 
   @override
-  State<ExpendableWidget> createState() => _ExpendableWidgetState();
+  State<ExpandableWidget> createState() => _ExpandableWidgetState();
 }
 
-class _ExpendableWidgetState extends State<ExpendableWidget>{
+class _ExpandableWidgetState extends State<ExpandableWidget>{
   late Animation<double> animation;
 
   @override

@@ -1,10 +1,15 @@
 import 'package:better_bus_v2/app_constant/app_string.dart';
 import 'package:better_bus_v2/data_provider/vitalis_data_provider.dart';
 import 'package:better_bus_v2/error_handler/custom_error.dart';
+import 'package:better_bus_v2/helper.dart';
 import 'package:better_bus_v2/model/clean/bus_stop.dart';
 import 'package:better_bus_v2/views/common/custom_future.dart';
+import 'package:better_bus_v2/views/common/extendable_view.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
+import 'package:format/format.dart';
 import 'package:intl/intl.dart';
 
 import '../../model/clean/bus_line.dart';
@@ -164,7 +169,18 @@ class NextPassageWidget extends StatefulWidget {
   State<NextPassageWidget> createState() => _NextPassageWidgetState();
 }
 
-class _NextPassageWidgetState extends State<NextPassageWidget> {
+class _NextPassageWidgetState extends State<NextPassageWidget>
+  with SingleTickerProviderStateMixin{
+  
+  late ExpandableWidgetController expandControler;
+
+  @override
+    void initState() {
+      super.initState();
+      expandControler = ExpandableWidgetController(duration: const Duration(milliseconds: 300),
+        root: this);
+    }
+
   @override
   Widget build(BuildContext context) {
     String formattedTime =
@@ -173,51 +189,124 @@ class _NextPassageWidgetState extends State<NextPassageWidget> {
     String minuteToWait =
         (arrivalDuration.inHours >= 1 ? "${arrivalDuration.inHours} h " : "") +
         "${widget.nextPassage.expectedTime.difference(DateTime.now()).inMinutes % 60} min";
-    return Container(
-      height: 55,
-      padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 5),
-      child: Row(
-        children: [
-          LineWidget(widget.nextPassage.line, 45),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(left: 8),
-              child: Text(
-                widget.nextPassage.destination,
-                style: Theme.of(context).textTheme.headlineSmall,
-                overflow: TextOverflow.fade,
-                maxLines: 1,
-                softWrap: false,
-              ),
-            ),
-          ),
-          Container(
-            child: widget.nextPassage.realTime
-                ? const Padding(
-                    padding: EdgeInsets.all(4.0),
-                    child: Icon(Icons.wifi, size: 20,),
-                  )
-                : null,
-          ),
-          Padding(
-            padding: const EdgeInsets.all(5.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+    Duration delay = widget.nextPassage.expectedTime.difference(
+      widget.nextPassage.aimedTime);
+    return InkWell(
+      onTap: expandControler.tickAnimation,
+      child: Container(
+        // height: 55,
+        padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 5),
+        child: Column(
+          children: [
+            Row(
               children: [
-                Text(
-                  minuteToWait,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
+                LineWidget(widget.nextPassage.line, 45),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 8),
+                    child: Text(
+                      widget.nextPassage.destination,
+                      style: Theme.of(context).textTheme.headlineSmall,
+                      overflow: TextOverflow.fade,
+                      maxLines: 1,
+                      softWrap: false,
+                    ),
                   ),
                 ),
-                Text(
-                  formattedTime,
-                  style: Theme.of(context).textTheme.bodySmall,
+                Container(
+                  child: widget.nextPassage.realTime
+                      ? const Padding(
+                          padding: EdgeInsets.all(4.0),
+                          child: Icon(Icons.wifi, size: 20,),
+                        )
+                      : null,
                 ),
+                Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        minuteToWait,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        formattedTime,
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                    ],
+                  ),
+                )
               ],
             ),
-          )
-        ],
+            ExpandableWidget(
+              controller: expandControler,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  delay.abs().inMinutes >= 2 ?
+                  Text(delay.isNegative ?
+                    AppString.advanceOf.format(delay.abs().inMinutes) : 
+                    AppString.lateOf.format(delay.abs().inMinutes)
+                  ) : Container(),
+                  // Text(widget.nextPassage.aimedTime.toLocal().toString()),
+                  // Text(widget.nextPassage.expectedTime.toLocal().toString()),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: widget.nextPassage.arrivingTimes.asMap().entries.map((e) {
+                        String stopName = e.value.stop;
+                        String arivalString = DateFormat("HH:mm", "fr").format(
+                          DateTime.now().atMidnight().add(e.value.duration).add(delay));
+                        return Row(
+                            children: [
+                            SizedBox(
+                              width: 20,
+                              height: 25,
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                Container(
+                                  height: double.infinity,
+                                  width: 5,
+                                  decoration: BoxDecoration(
+                                    color: widget.nextPassage.line.color,
+                                  ),
+                                ),
+                                Container(
+                                  width: 15,
+                                  height: 15,
+                                  decoration: BoxDecoration(
+                                    color: widget.nextPassage.line.color,
+                                    borderRadius: BorderRadiusDirectional.circular(10),
+                                    border: Border.all(
+                                      width: 1,
+                                      color: Colors.black38
+                                      ),
+                                    ),
+                                  )
+                                ],
+                                ),
+                                ),
+                                const SizedBox(width: 10,),
+                                Text(arivalString, style: const TextStyle(fontWeight: FontWeight.bold),),
+                                const SizedBox(width: 10,),
+                                Text(stopName),
+                                ],
+                                );
+                    
+                      }).toList()
+                      ),
+                  )
+                  ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

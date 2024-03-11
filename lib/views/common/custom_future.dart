@@ -105,6 +105,9 @@ class CustomFutureBuilderState<T> extends State<CustomFutureBuilder> with Widget
   }
 
   Future hideRefresh() async {
+    if (!mounted) {
+      return;
+    }
 
     try {
       data = await widget.future();

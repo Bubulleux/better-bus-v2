@@ -1,5 +1,4 @@
 import 'package:better_bus_v2/model/clean/bus_line.dart';
-import 'package:better_bus_v2/model/clean/bus_stop.dart';
 
 class ArrivingTime {
   final Duration duration;
@@ -24,10 +23,19 @@ class NextPassage {
     return NextPassage(line, destination, realTime, aimedTime, expectedTime, newArriving);
   }
 
+  @override
+    int get hashCode => Object.hash(aimedTime.millisecondsSinceEpoch, line.hashCode, 
+      destination);
+
   final BusLine line;
   final String destination;
   final bool realTime;
   final DateTime aimedTime;
   final DateTime expectedTime;
   final List<ArrivingTime> arrivingTimes;
+
+  @override
+  bool operator ==(Object other) {
+    return hashCode == other.hashCode;
+  }
 }

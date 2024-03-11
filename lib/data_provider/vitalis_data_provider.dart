@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:better_bus_v2/data_provider/gtfs_data_provider.dart';
 import 'package:better_bus_v2/error_handler/custom_error.dart';
@@ -115,17 +116,38 @@ class VitalisDataProvider {
 
     List<NextPassage> output = [];
     for (var nextPassage in realTime) {
-      int index = gtfsNextPassage.indexWhere((e) =>
-          e.aimedTime.toUtc().isAtSameMomentAs(nextPassage.realTime
-              ? nextPassage.aimedTime
-              : nextPassage.expectedTime) &&
-          e.line.id == nextPassage.line.id);
+      // int index = gtfsNextPassage.indexWhere((e) =>
+      //     e.aimedTime.toUtc().isAtSameMomentAs(nextPassage.realTime
+      //         ? nextPassage.aimedTime
+      //         : nextPassage.expectedTime) &&
+      //     e.line.id == nextPassage.line.id);
+      int index = -1;
+      Duration durationDiff = const Duration(minutes: 1);
+      
+      for (var e in gtfsNextPassage.asMap().entries) {
+        if (e.value.line.id != nextPassage.line.id ||
+          e.value.destination != nextPassage.destination) {
+          continue;
+        }
+        DateTime aimedTime = nextPassage.realTime
+            ? nextPassage.aimedTime
+            : nextPassage.expectedTime;
+        Duration curDurationDiff = aimedTime.difference(e.value.aimedTime).abs();
+        if (curDurationDiff < durationDiff) {
+          index = e.key;
+          durationDiff = curDurationDiff;
+        }
+
+    
+      }
       if (index == -1) {
-        output.add(gtfsNextPassage[index]);
+        output.add(nextPassage);
         continue;
       }
       output.add(nextPassage.witchArrival(gtfsNextPassage[index].arrivingTimes));
+      gtfsNextPassage.removeAt(index);
     }
+    output.addAll(gtfsNextPassage);
     output.sort((a, b) => a.expectedTime.compareTo(b.expectedTime));
 
     return output;
