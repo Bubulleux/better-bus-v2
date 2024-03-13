@@ -7,8 +7,6 @@ import 'package:better_bus_v2/views/common/custom_future.dart';
 import 'package:better_bus_v2/views/common/extendable_view.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
 import 'package:format/format.dart';
 import 'package:intl/intl.dart';
 
@@ -108,6 +106,8 @@ class NextPassageListWidgetState extends State<NextPassageListWidget> {
       futureBuilderKey =
       GlobalKey<CustomFutureBuilderState<List<NextPassage>>>();
 
+  Map<int, GlobalKey<_NextPassageWidgetState>> nextPassagekeys = {};
+
   void refresh() {
     futureBuilderKey.currentState!.refresh();
   }
@@ -139,8 +139,17 @@ class NextPassageListWidgetState extends State<NextPassageListWidget> {
       onData: (context, data, refresh) {
         return ListView.separated(
           itemCount: data.length,
-          itemBuilder: (context, index) => NextPassageWidget(data[index]),
-          separatorBuilder: (ctx, index) => const Divider(height: 3, color: Colors.black38),
+          itemBuilder: (context, index) {
+            var e = data[index];
+            if (!nextPassagekeys.containsKey(e.hashCode)) {
+              nextPassagekeys[e.hashCode] = GlobalKey<_NextPassageWidgetState>();
+            }
+            return NextPassageWidget(e, key: nextPassagekeys[e.hashCode]);
+          },
+          separatorBuilder: (ctx, index) =>
+              const Divider(height: 3, color: Colors.black38),
+          // addAutomaticKeepAlives: false,
+          
         );
       },
       onError: (context, error, refresh) {
@@ -170,27 +179,154 @@ class NextPassageWidget extends StatefulWidget {
 }
 
 class _NextPassageWidgetState extends State<NextPassageWidget>
-  with SingleTickerProviderStateMixin{
-  
+    with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   late ExpandableWidgetController expandControler;
 
   @override
-    void initState() {
-      super.initState();
-      expandControler = ExpandableWidgetController(duration: const Duration(milliseconds: 300),
-        root: this);
+  void initState() {
+    super.initState();
+    expandControler = ExpandableWidgetController(
+        duration: const Duration(milliseconds: 300), root: this);
+  }
+
+  Widget? _buildDetails(BuildContext context) {
+    Duration delay = widget.nextPassage.expectedTime
+        .difference(widget.nextPassage.aimedTime);
+
+    Widget? lateBox = _buildLateBox(delay, context);
+
+    if (lateBox == null && widget.nextPassage.arrivingTimes.isEmpty) {
+      return null;
     }
+
+    return ExpandableWidget(
+      controller: expandControler,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            lateBox ?? Container(),
+            // Text(widget.nextPassage.aimedTime.toLocal().toString()),
+            // Text(widget.nextPassage.expectedTime.toLocal().toString()),
+            Padding(
+              padding: const EdgeInsets.only(top: 5),
+              child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children:
+                      widget.nextPassage.arrivingTimes.asMap().entries.map((e) {
+                    String stopName = e.value.stop;
+                    DateTime arribalTime = DateTime.now()
+                        .atMidnight()
+                        .add(e.value.duration)
+                        .add(delay);
+
+                    return _buildArribalDetails(arribalTime, stopName);
+                  }).toList()),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget? _buildLateBox(Duration delay, BuildContext context) {
+    if (delay.abs().inMinutes < 1) {
+      return null;
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(8),
+      width: double.infinity,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: Theme.of(context).colorScheme.error.withAlpha(50),
+          border:
+              Border.all(width: 2, color: Theme.of(context).colorScheme.error)),
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          const Icon(Icons.error),
+          const SizedBox(
+            width: 10,
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text((delay.isNegative ? AppString.advanceOf : AppString.lateOf)
+                    .format(delay.abs().inMinutes)),
+                Text(
+                  delay.isNegative ? AppString.advanceInfo : AppString.lateInfo,
+                  style: Theme.of(context).textTheme.bodySmall,
+                  softWrap: true,
+                )
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildArribalDetails(DateTime arrivalTime, String stopName) {
+    String arivalString = DateFormat("HH:mm", "fr").format(arrivalTime);
+    return Row(
+      children: [
+        SizedBox(
+          width: 20,
+          height: 25,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Container(
+                height: double.infinity,
+                width: 5,
+                decoration: BoxDecoration(
+                  color: widget.nextPassage.line.color,
+                ),
+              ),
+              Container(
+                width: 15,
+                height: 15,
+                decoration: BoxDecoration(
+                  color: widget.nextPassage.line.color,
+                  borderRadius: BorderRadiusDirectional.circular(10),
+                  border: Border.all(width: 1, color: Colors.black38),
+                ),
+              )
+            ],
+          ),
+        ),
+        const SizedBox(
+          width: 10,
+        ),
+        Text(
+          arivalString,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(
+          width: 10,
+        ),
+        Text(stopName),
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     String formattedTime =
         DateFormat.Hm().format(widget.nextPassage.expectedTime.toLocal());
-    Duration arrivalDuration = widget.nextPassage.expectedTime.difference(DateTime.now());
-    String minuteToWait =
-        (arrivalDuration.inHours >= 1 ? "${arrivalDuration.inHours} h " : "") +
+
+    Duration arrivalDuration =
+        widget.nextPassage.expectedTime.difference(DateTime.now());
+
+    String minuteToWait = (arrivalDuration.inHours >= 1
+            ? "${arrivalDuration.inHours} h "
+            : "") +
         "${widget.nextPassage.expectedTime.difference(DateTime.now()).inMinutes % 60} min";
-    Duration delay = widget.nextPassage.expectedTime.difference(
-      widget.nextPassage.aimedTime);
+
     return InkWell(
       onTap: expandControler.tickAnimation,
       child: Container(
@@ -217,7 +353,10 @@ class _NextPassageWidgetState extends State<NextPassageWidget>
                   child: widget.nextPassage.realTime
                       ? const Padding(
                           padding: EdgeInsets.all(4.0),
-                          child: Icon(Icons.wifi, size: 20,),
+                          child: Icon(
+                            Icons.wifi,
+                            size: 20,
+                          ),
                         )
                       : null,
                 ),
@@ -241,73 +380,13 @@ class _NextPassageWidgetState extends State<NextPassageWidget>
                 )
               ],
             ),
-            ExpandableWidget(
-              controller: expandControler,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  delay.abs().inMinutes >= 2 ?
-                  Text(delay.isNegative ?
-                    AppString.advanceOf.format(delay.abs().inMinutes) : 
-                    AppString.lateOf.format(delay.abs().inMinutes)
-                  ) : Container(),
-                  // Text(widget.nextPassage.aimedTime.toLocal().toString()),
-                  // Text(widget.nextPassage.expectedTime.toLocal().toString()),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: widget.nextPassage.arrivingTimes.asMap().entries.map((e) {
-                        String stopName = e.value.stop;
-                        String arivalString = DateFormat("HH:mm", "fr").format(
-                          DateTime.now().atMidnight().add(e.value.duration).add(delay));
-                        return Row(
-                            children: [
-                            SizedBox(
-                              width: 20,
-                              height: 25,
-                              child: Stack(
-                                alignment: Alignment.center,
-                                children: [
-                                Container(
-                                  height: double.infinity,
-                                  width: 5,
-                                  decoration: BoxDecoration(
-                                    color: widget.nextPassage.line.color,
-                                  ),
-                                ),
-                                Container(
-                                  width: 15,
-                                  height: 15,
-                                  decoration: BoxDecoration(
-                                    color: widget.nextPassage.line.color,
-                                    borderRadius: BorderRadiusDirectional.circular(10),
-                                    border: Border.all(
-                                      width: 1,
-                                      color: Colors.black38
-                                      ),
-                                    ),
-                                  )
-                                ],
-                                ),
-                                ),
-                                const SizedBox(width: 10,),
-                                Text(arivalString, style: const TextStyle(fontWeight: FontWeight.bold),),
-                                const SizedBox(width: 10,),
-                                Text(stopName),
-                                ],
-                                );
-                    
-                      }).toList()
-                      ),
-                  )
-                  ],
-              ),
-            )
+            _buildDetails(context) ?? Container()
           ],
         ),
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

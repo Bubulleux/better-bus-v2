@@ -115,4 +115,7 @@ class AppString {
 
   static const lateOf = "En retard de {} minutes";
   static const advanceOf = "En avance de {} minutes";
+
+  static const lateInfo = "Le bus peut ratraper sont retard et arriver plus tôt.";
+  static const advanceInfo = "Le bus est senser attendre a l'arret de bus si il est en avence";
 }
