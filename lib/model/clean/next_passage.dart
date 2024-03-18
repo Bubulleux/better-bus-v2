@@ -24,8 +24,7 @@ class NextPassage {
   }
 
   @override
-    int get hashCode => Object.hash(aimedTime.millisecondsSinceEpoch, line.hashCode, 
-      destination);
+    int get hashCode => Object.hash(line.id, destination, aimedTime.millisecondsSinceEpoch);
 
   final BusLine line;
   final String destination;

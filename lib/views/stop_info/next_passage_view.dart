@@ -106,7 +106,7 @@ class NextPassageListWidgetState extends State<NextPassageListWidget> {
       futureBuilderKey =
       GlobalKey<CustomFutureBuilderState<List<NextPassage>>>();
 
-  Map<int, GlobalKey<_NextPassageWidgetState>> nextPassagekeys = {};
+  final listKey = GlobalKey();
 
   void refresh() {
     futureBuilderKey.currentState!.refresh();
@@ -138,17 +138,15 @@ class NextPassageListWidgetState extends State<NextPassageListWidget> {
       key: futureBuilderKey,
       onData: (context, data, refresh) {
         return ListView.separated(
+          // key: listKey,
           itemCount: data.length,
           itemBuilder: (context, index) {
             var e = data[index];
-            if (!nextPassagekeys.containsKey(e.hashCode)) {
-              nextPassagekeys[e.hashCode] = GlobalKey<_NextPassageWidgetState>();
-            }
-            return NextPassageWidget(e, key: nextPassagekeys[e.hashCode]);
+            return NextPassageWidget(e, key: ValueKey(e.hashCode.toString()));
           },
           separatorBuilder: (ctx, index) =>
               const Divider(height: 3, color: Colors.black38),
-          // addAutomaticKeepAlives: false,
+
           
         );
       },
@@ -380,6 +378,7 @@ class _NextPassageWidgetState extends State<NextPassageWidget>
                 )
               ],
             ),
+            Text((widget.key! as ValueKey).value),
             _buildDetails(context) ?? Container()
           ],
         ),
