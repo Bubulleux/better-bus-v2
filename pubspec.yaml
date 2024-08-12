@@ -34,14 +34,14 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   http: ^0.13.6
   cupertino_icons: ^1.0.2
-  intl: ^0.18.0
+  intl: 0.19.0
   location: ^4.4.0
   shared_preferences: ^2.0.15
   flutter_widget_from_html: ^0.8.5
   connectivity_plus: ^2.3.6
-  home_widget: ^0.4.1
+  # home_widget: ^0.4.1
   url_launcher: ^6.1.5
-  flutter_local_notifications: ^12.0.3
+#  flutter_local_notifications: ^12.0.3
   workmanager: ^0.5.0
   scrollable_positioned_list: ^0.3.5
   format: ^1.2.0
@@ -49,8 +49,8 @@ dependencies:
   chewie: ^1.5.0
   flutter_localizations:
     sdk: flutter
-  archive: ^3.4.10
-  path_provider: ^2.0.15
+#  archive: ^3.4.10
+#  path_provider: ^2.0.15
 
 dev_dependencies:
   flutter_test:

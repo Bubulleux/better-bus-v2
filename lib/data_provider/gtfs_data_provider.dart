@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:ffi';
 import 'dart:io';
 
-import 'package:archive/archive_io.dart';
+// import 'package:archive/archive_io.dart';
 import 'package:better_bus_v2/data_provider/connectivity_checker.dart';
 import 'package:better_bus_v2/data_provider/local_data_handler.dart';
 import 'package:better_bus_v2/error_handler/custom_error.dart';
@@ -62,6 +62,7 @@ class GTFSDataProvider {
   }
 
   static Future<bool> downloadFile({bool forceDownload = false}) async {
+    return false;
     if (!await ConnectivityChecker.isConnected()) {
       return false;
     }
@@ -118,8 +119,8 @@ class GTFSDataProvider {
   static Future extractZipFile() async {
     Directory appTempDir = await getTemporaryDirectory();
     Directory appSupportDir = await getApplicationSupportDirectory();
-    await extractFileToDisk(appTempDir.path + gtfsFilePath,
-      appSupportDir.path + gtfsDirPath);
+    // await extractFileToDisk(appTempDir.path + gtfsFilePath,
+    //   appSupportDir.path + gtfsDirPath);
     // await ZipFile.extractToDirectory(
     //     zipFile: File(appTempDir.path + gtfsFilePath),
     //     destinationDir: Directory(appSupportDir.path + gtfsDirPath));
