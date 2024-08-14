@@ -17,21 +17,21 @@ import 'package:flutter/material.dart';
 import 'package:better_bus_v2/views/home_page/home_page.dart';
 import 'package:flutter/services.dart';
 // import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-// import 'package:workmanager/workmanager.dart';
+import 'package:workmanager/workmanager.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'app_constant/app_string.dart';
 
 @pragma('vm:entry-point')
 void callbackDispatcher() {
-  // Workmanager().executeTask((taskName, inputData) async {
-  //   try {
-  //     await checkInfoTraffic();
-  //   } catch(e) {
-  //     return Future.value(false);
-  //   }
-  //   return Future.value(true);
-  // });
+  Workmanager().executeTask((taskName, inputData) async {
+    try {
+      await checkInfoTraffic();
+    } catch(e) {
+      return Future.value(false);
+    }
+    return Future.value(true);
+  });
 }
 
 
@@ -43,9 +43,9 @@ void main() async {
   // flutterLocalNotificationsPlugin.
   //   resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.requestPermission();
 
-  // Workmanager().initialize(callbackDispatcher);
-  // Workmanager().registerPeriodicTask("check-traffic-info", "checkTrafficInfo",
-  //     frequency: const Duration(minutes: 15));
+  Workmanager().initialize(callbackDispatcher);
+  Workmanager().registerPeriodicTask("check-traffic-info", "checkTrafficInfo",
+      frequency: const Duration(minutes: 15));
   checkInfoTraffic();
   runApp(const BetterBusApp());
 }
