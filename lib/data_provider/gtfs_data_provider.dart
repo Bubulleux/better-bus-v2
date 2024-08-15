@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ffi';
 import 'dart:io';
 
 // import 'package:archive/archive_io.dart';
@@ -35,6 +34,7 @@ class GTFSDataProvider {
 
   static Future loadFile({bool forceDownload = false}) async {
     if (gtfsData != null && !forceDownload) return;
+    return;
 
     await downloadFile(forceDownload: forceDownload);
 

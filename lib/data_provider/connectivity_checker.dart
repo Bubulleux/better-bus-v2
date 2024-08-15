@@ -4,14 +4,14 @@ class ConnectivityChecker {
   static final Connectivity connectivity = Connectivity();
 
   static Future<bool> isConnected() async {
-    ConnectivityResult result = await connectivity.checkConnectivity();
+    List<ConnectivityResult> result = await connectivity.checkConnectivity();
 
-    return result != ConnectivityResult.none;
+    return !result.contains(ConnectivityResult.none);
   }
 
     static Future<bool> isWifiConnected() async {
-      ConnectivityResult result = await connectivity.checkConnectivity();
+      List<ConnectivityResult> result = await connectivity.checkConnectivity();
 
-      return result == ConnectivityResult.wifi;
+      return result.contains(ConnectivityResult.wifi);
     }
 }
