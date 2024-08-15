@@ -49,8 +49,8 @@ dependencies:
   # chewie: ^1.5.0
   flutter_localizations:
     sdk: flutter
-#  archive: ^3.4.10
-#  path_provider: ^2.0.15
+  archive: ^3.6.1
+  #path_provider: ^2.1.4
 
 dev_dependencies:
   flutter_test:
