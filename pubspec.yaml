@@ -41,16 +41,14 @@ dependencies:
   connectivity_plus: ^6.0.5
   # home_widget: ^0.6.0
   url_launcher: ^6.3.0
-#  flutter_local_notifications: ^12.0.3
+  flutter_local_notifications: ^17.2.2
   workmanager: ^0.5.2
   scrollable_positioned_list: ^0.3.8
   format: ^1.5.2
   # package_info_plus: ^3.0.2
-  # chewie: ^1.5.0
   flutter_localizations:
     sdk: flutter
   archive: ^3.6.1
-  #path_provider: ^2.1.4
 
 dev_dependencies:
   flutter_test:
