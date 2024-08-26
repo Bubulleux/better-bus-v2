@@ -9,10 +9,10 @@
 //import android.os.Bundle
 //import android.widget.RemoteViewsService
 //import android.net.Uri
-//import es.antonborri.home_widget.HomeWidgetBackgroundIntent
-//import es.antonborri.home_widget.HomeWidgetLaunchIntent
-//import es.antonborri.home_widget.HomeWidgetProvider
-//import es.antonborri.home_widget.HomeWidgetPlugin
+////import es.antonborri.home_widget.HomeWidgetBackgroundIntent
+////import es.antonborri.home_widget.HomeWidgetLaunchIntent
+////import es.antonborri.home_widget.HomeWidgetProvider
+////import es.antonborri.home_widget.HomeWidgetPlugin
 //import android.widget.RemoteViews
 //import android.os.Build
 //
@@ -88,7 +88,7 @@
 //        // source. Heavy lifting, for example downloading or creating content
 //        // etc, should be deferred to onDataSetChanged() or getViewAt(). Taking
 //        // more than 20 seconds in this call will result in an ANR.
-////        shortcutNames = intent.getStringArrayExtra("shortcuts") ?: emptyArray<String>()
+//        shortcutNames = intent.getStringArrayExtra("shortcuts") ?: emptyArray<String>()
 //
 //    }
 //
@@ -98,6 +98,7 @@
 //    }
 //
 //    override fun getCount(): Int {
+//        return 0
 //        return shortcutNames.size
 //    }
 //

@@ -5,4 +5,8 @@ class CustomHomeWidgetRequest {
   static Future<void> updateWidget() async {
     await methodeChannel.invokeMethod("updateWidget");
   }
+
+  static Future<void> setWidgetData(List<String> shortcuts, List<int> shortcutsIds) async {
+
+  }
 }
