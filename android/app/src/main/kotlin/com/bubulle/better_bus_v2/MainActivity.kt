@@ -13,15 +13,21 @@ import io.flutter.plugin.common.EventChannel
 import android.content.ComponentName
 import android.appwidget.AppWidgetManager
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
+import com.bubulle.better_bus_v2.HomeWidgetHandler
+import io.flutter.embedding.engine.plugins.PluginRegistry
 
 
 class MainActivity: FlutterActivity() {
 
     private val CHANNEL = "better.bus.poitier/homeWidget"
+    private lateinit var plugin: PluginRegistry
 //    private lateinit var context: Context
 
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+        plugin = flutterEngine.getPlugins();
+
+        plugin.add(HomeWidgetHandler())
 //        context = getContext();
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler {
                 call, result ->
