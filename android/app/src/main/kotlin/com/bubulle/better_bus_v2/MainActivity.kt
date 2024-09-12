@@ -12,6 +12,7 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.EventChannel
 import android.content.ComponentName
 import android.appwidget.AppWidgetManager
+import android.content.Intent
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import com.bubulle.better_bus_v2.HomeWidgetHandler
 import io.flutter.embedding.engine.plugins.PluginRegistry
@@ -28,34 +29,11 @@ class MainActivity: FlutterActivity() {
         plugin = flutterEngine.getPlugins();
 
         plugin.add(HomeWidgetHandler())
-//        context = getContext();
-        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler {
-                call, result ->
-            if (call.method == "updateWidget") {
-                val n = updateWidgets()
-                result.success(n)
-            } else if (call.method == "setWidgetData") {
-//                setWidgetData(call.argument<String>("data"))
-//                result.success()
-                result.notImplemented()
-            } else {
-              result.notImplemented()
-            }
-        }
     }
 
-    fun updateWidgets(): IntArray {
-//        val widgetManager: AppWidgetManager = AppWidgetManager.getInstance(this)
-//        val ids: IntArray = widgetManager.getAppWidgetIds(ComponentName(this, HomeWidgetProvider::class.java))
-//        if (ids.size > 0) {
-//            HomeWidgetProvider().onUpdate(this, widgetManager, ids)
-//        }
-//        return ids
-        return IntArray(0)
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        println("New Intent !! Data:")
+        println(intent.data)
     }
-
-//    fun setWidgetData(data: String) {
-//        val prefs = context.getSharedPreferences("WidgetData", Context.MODE_PRIVATE).edit()
-//        prefs.putString("favs", data)
-//    }
 }

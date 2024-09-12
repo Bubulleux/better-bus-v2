@@ -46,10 +46,8 @@ class LocalDataHandler {
     }
 
     preferences!.setStringList("shortcuts", shortcutJson);
-    // HomeWidget.saveWidgetData<String>("shortcuts", favoriteShortcut.join(";"));
-    // HomeWidget.saveWidgetData<String>(
-    //     "shortcutsIds", favoriteShortcutIds.join(";"));
-    // HomeWidget.updateWidget(name: "HomeWidgetProvider");
+
+    CustomHomeWidgetRequest.setWidgetData(favoriteShortcut, favoriteShortcutIds);
     CustomHomeWidgetRequest.updateWidget();
   }
 
