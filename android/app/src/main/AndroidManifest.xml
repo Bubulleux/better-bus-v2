@@ -30,7 +30,7 @@
             </intent-filter>
         </activity>
 
-       <receiver android:name="HomeWidgetProvider"
+       <receiver android:name=".HomeWidgetReceiver" android:label="Glance"
                  android:exported="true">
            <intent-filter>
                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
