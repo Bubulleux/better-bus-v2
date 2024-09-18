@@ -10,4 +10,14 @@ class CustomHomeWidgetRequest {
     String data = shortcuts.join(";");
     await methodeChannel.invokeMethod("setWidgetData", {"data" : data} );
   }
+
+  static Future<Uri?> getLaunchUri() async {
+    String? uri = await methodeChannel.invokeListMethod("getLaunchUri" ) as String?;
+    print("getLaunch Uri Called:");
+    print(uri);
+    if (uri == null) {
+      return null;
+    }
+    return Uri.parse(uri);
+  }
 }

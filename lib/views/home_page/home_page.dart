@@ -1,4 +1,5 @@
 import 'package:better_bus_v2/app_constant/app_string.dart';
+import 'package:better_bus_v2/custom_home_widget.dart';
 import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
 import 'package:better_bus_v2/data_provider/gtfs_data_provider.dart';
 import 'package:better_bus_v2/data_provider/local_data_handler.dart';
@@ -70,11 +71,13 @@ class _HomePageState extends State<HomePage> {
     checkIfAppIsNotificationLaunched();
     checkIfFisrtTimeOpenningApp();
     GTFSDataProvider.loadFile();
+    checkWidgetLaunch();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    checkWidgetLaunch();
     // HomeWidget.initiallyLaunchedFromHomeWidget().then(launchWithWidget);
     // HomeWidget.widgetClicked.listen(launchWithWidget);
   }
@@ -116,8 +119,20 @@ class _HomePageState extends State<HomePage> {
     //     onDidReceiveNotificationResponse: receiveNotification);
   }
 
+  Future<void> checkWidgetLaunch() async {
+    Uri? launchUri = await CustomHomeWidgetRequest.getLaunchUri();
+    print("Launch With: ");
+    print(launchUri);
+    if (launchUri is Uri) {
+      print(launchUri.scheme);
+    }
+    launchWithWidget(launchUri);
+  }
+
   void launchWithWidget(Uri? uri) {
     if (uri != null && uri.scheme == "app") {
+      print(uri.scheme);
+      print(uri.host);
       if (uri.host == "openshortcut") {
         launchShortcutByWidget(uri.pathSegments[0], context);
       }

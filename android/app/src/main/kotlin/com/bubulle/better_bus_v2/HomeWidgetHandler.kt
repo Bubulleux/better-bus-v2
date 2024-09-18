@@ -12,22 +12,51 @@ import android.content.Intent
 import android.content.ComponentName
 import android.appwidget.AppWidgetManager
 import android.content.BroadcastReceiver
+import android.net.Uri
 import android.util.Log
+import io.flutter.embedding.engine.plugins.activity.ActivityAware
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
+import io.flutter.plugin.common.PluginRegistry
 
 
-class HomeWidgetHandler : FlutterPlugin, MethodCallHandler{
+class HomeWidgetHandler : FlutterPlugin, MethodCallHandler, ActivityAware,
+    EventChannel.StreamHandler, PluginRegistry.NewIntentListener{
 
     private lateinit var channel: MethodChannel
     private lateinit var eventChannel: EventChannel
     private var receiver: BroadcastReceiver? = null
     private lateinit var context: Context
+    private var activity: MainActivity? = null
+    private var launchUri : Uri? = null
 
 
     override fun onAttachedToEngine(binding: FlutterPluginBinding) {
         channel = MethodChannel(binding.binaryMessenger, "home_widget")
         channel.setMethodCallHandler(this)
 
+        eventChannel = EventChannel(binding.binaryMessenger, "widgetLaunch")
+        eventChannel.setStreamHandler(this)
+
         context = binding.applicationContext
+    }
+
+    override fun onAttachedToActivity(binding: ActivityPluginBinding) {
+        if (binding.activity is MainActivity) {
+            activity = binding.activity as MainActivity
+        }
+    }
+
+    override fun onDetachedFromActivityForConfigChanges() {
+    }
+
+    override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
+        if (binding.activity is MainActivity) {
+            activity = binding.activity as MainActivity
+        }
+    }
+
+    override fun onDetachedFromActivity() {
+        activity = null
     }
 
 
@@ -63,9 +92,43 @@ class HomeWidgetHandler : FlutterPlugin, MethodCallHandler{
 
                 result.success(true)
             }
+            "getLaunchUri" -> {
+                if (launchUri is Uri) {
+                    result.success(launchUri.toString())
+                } else {
+                    result.success(null)
+                }
+
+            }
             else -> {
                 result.notImplemented()
             }
         }
     }
+
+    override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
+        receiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context, intent: Intent) {
+                if (intent.action == LAUNCH_ACTION)
+                events?.success(intent.data)
+            }
+        }
+    }
+
+    override fun onCancel(arguments: Any?) {
+        receiver = null
+    }
+
+    override fun onNewIntent(intent: Intent) : Boolean{
+        if (receiver != null && intent.action == LAUNCH_ACTION && intent.data is Uri) {
+            launchUri = intent.data as Uri
+            println("App launch with ")
+            println(intent.action)
+            println(intent.data)
+            receiver!!.onReceive(context, intent)
+            return true
+        }
+        return false
+    }
+
 }

@@ -13,9 +13,11 @@ import io.flutter.plugin.common.EventChannel
 import android.content.ComponentName
 import android.appwidget.AppWidgetManager
 import android.content.Intent
+import android.net.Uri
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import com.bubulle.better_bus_v2.HomeWidgetHandler
 import io.flutter.embedding.engine.plugins.PluginRegistry
+import com.bubulle.better_bus_v2.HomeWidgetProvider
 
 
 class MainActivity: FlutterActivity() {
@@ -29,11 +31,5 @@ class MainActivity: FlutterActivity() {
         plugin = flutterEngine.getPlugins();
 
         plugin.add(HomeWidgetHandler())
-    }
-
-    override fun onNewIntent(intent: Intent) {
-        super.onNewIntent(intent)
-        println("New Intent !! Data:")
-        println(intent.data)
     }
 }
