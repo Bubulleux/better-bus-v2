@@ -67,6 +67,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     GpsDataProvider.askForGPSPermission();
     // HomeWidget.widgetClicked.listen(launchWithWidget);
+    CustomHomeWidgetRequest.listenWidgetLaunch(context);
     initFlutterNotificationPlugin();
     checkIfAppIsNotificationLaunched();
     checkIfFisrtTimeOpenningApp();
@@ -80,6 +81,7 @@ class _HomePageState extends State<HomePage> {
     checkWidgetLaunch();
     // HomeWidget.initiallyLaunchedFromHomeWidget().then(launchWithWidget);
     // HomeWidget.widgetClicked.listen(launchWithWidget);
+    CustomHomeWidgetRequest.listenWidgetLaunch(context);
   }
 
   Future checkIfAppIsNotificationLaunched() async {
@@ -130,34 +132,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   void launchWithWidget(Uri? uri) {
-    if (uri != null && uri.scheme == "app") {
-      print(uri.scheme);
-      print(uri.host);
-      if (uri.host == "openshortcut") {
-        launchShortcutByWidget(uri.pathSegments[0], context);
-      }
-      if (uri.host == "openmystop") {
-        findClosestStop();
-      }
-    }
   }
 
-  void launchShortcutByWidget(
-      String shortcutRowId, BuildContext context) async {
-    List<ViewShortcut> shortcuts = await LocalDataHandler.loadShortcut();
-    int shortcutIndex = int.parse(shortcutRowId);
-    if (shortcutIndex == -1) {
-      return;
-    }
-    ViewShortcut shortcut = shortcuts[shortcutIndex];
-
-    Navigator.of(context).popUntil((route) =>
-        (route.settings.name != StopInfoPage.routeName ||
-            (route.settings.arguments as StopInfoPageArgument?)?.stop !=
-                shortcut.stop));
-    Navigator.of(context).pushNamed(StopInfoPage.routeName,
-        arguments: StopInfoPageArgument(shortcut.stop, shortcut.lines));
-  }
 
   void goToSetting() {
     Navigator.of(context).pushNamed(SettingPage.routeName);

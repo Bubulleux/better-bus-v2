@@ -38,11 +38,15 @@ class HomeWidgetHandler : FlutterPlugin, MethodCallHandler, ActivityAware,
         eventChannel.setStreamHandler(this)
 
         context = binding.applicationContext
+        println("onCreate")
     }
 
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
+        println("Attached To activity")
         if (binding.activity is MainActivity) {
+            println("Attached To Main Activity")
             activity = binding.activity as MainActivity
+            binding.addOnNewIntentListener(this)
         }
     }
 
@@ -50,8 +54,11 @@ class HomeWidgetHandler : FlutterPlugin, MethodCallHandler, ActivityAware,
     }
 
     override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
+        println("Re-Attached To activity")
         if (binding.activity is MainActivity) {
+            println("Re-Attached To Main Activity")
             activity = binding.activity as MainActivity
+            binding.addOnNewIntentListener(this)
         }
     }
 
@@ -109,8 +116,9 @@ class HomeWidgetHandler : FlutterPlugin, MethodCallHandler, ActivityAware,
     override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
         receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
-                if (intent.action == LAUNCH_ACTION)
-                events?.success(intent.data)
+                if (intent.action == LAUNCH_ACTION) {
+                    events?.success(intent.data.toString())
+                }
             }
         }
     }
@@ -120,6 +128,10 @@ class HomeWidgetHandler : FlutterPlugin, MethodCallHandler, ActivityAware,
     }
 
     override fun onNewIntent(intent: Intent) : Boolean{
+        println("New Intent")
+        println(intent.action)
+        println(receiver)
+        println(intent.data)
         if (receiver != null && intent.action == LAUNCH_ACTION && intent.data is Uri) {
             launchUri = intent.data as Uri
             println("App launch with ")
