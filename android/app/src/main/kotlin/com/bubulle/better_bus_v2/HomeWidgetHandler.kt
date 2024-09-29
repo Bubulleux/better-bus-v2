@@ -43,11 +43,7 @@ class HomeWidgetHandler : FlutterPlugin, MethodCallHandler, ActivityAware,
 
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
         println("Attached To activity")
-        if (binding.activity is MainActivity) {
-            println("Attached To Main Activity")
-            activity = binding.activity as MainActivity
-            binding.addOnNewIntentListener(this)
-        }
+        setActivivity(binding)
     }
 
     override fun onDetachedFromActivityForConfigChanges() {
@@ -55,9 +51,16 @@ class HomeWidgetHandler : FlutterPlugin, MethodCallHandler, ActivityAware,
 
     override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
         println("Re-Attached To activity")
+        setActivivity(binding)
+    }
+
+    private fun setActivivity(binding: ActivityPluginBinding) {
         if (binding.activity is MainActivity) {
             println("Re-Attached To Main Activity")
             activity = binding.activity as MainActivity
+            if (binding.activity.intent.action == LAUNCH_ACTION) {
+                launchUri = binding.activity.intent.data
+            }
             binding.addOnNewIntentListener(this)
         }
     }
@@ -100,7 +103,10 @@ class HomeWidgetHandler : FlutterPlugin, MethodCallHandler, ActivityAware,
                 result.success(true)
             }
             "getLaunchUri" -> {
+                println("Get Launch URI")
+                println(launchUri)
                 if (launchUri is Uri) {
+                    println(launchUri.toString())
                     result.success(launchUri.toString())
                 } else {
                     result.success(null)
@@ -132,12 +138,14 @@ class HomeWidgetHandler : FlutterPlugin, MethodCallHandler, ActivityAware,
         println(intent.action)
         println(receiver)
         println(intent.data)
-        if (receiver != null && intent.action == LAUNCH_ACTION && intent.data is Uri) {
+        if (intent.action == LAUNCH_ACTION && intent.data is Uri) {
             launchUri = intent.data as Uri
             println("App launch with ")
             println(intent.action)
             println(intent.data)
-            receiver!!.onReceive(context, intent)
+            if (receiver != null) {
+                receiver!!.onReceive(context, intent)
+            }
             return true
         }
         return false

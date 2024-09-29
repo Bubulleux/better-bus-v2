@@ -1,4 +1,5 @@
 import 'package:better_bus_v2/app_constant/app_string.dart';
+import 'package:better_bus_v2/custom_home_widget.dart';
 import 'package:better_bus_v2/data_provider/cache_data_provider.dart';
 import 'package:better_bus_v2/data_provider/gtfs_data_provider.dart';
 import 'package:better_bus_v2/data_provider/local_data_handler.dart';
@@ -150,6 +151,10 @@ class _SettingPageState extends State<SettingPage> {
       SettingEntry(
           "Test Notifiaction",
           onClick: testNotificationActivation,
+      ),
+      SettingEntry(
+        "Test Widget Launch",
+        onClick: () => CustomHomeWidgetRequest.checkWidgetLaunch(context),
       )
     ];
     return options;

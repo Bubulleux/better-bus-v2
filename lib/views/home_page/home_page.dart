@@ -66,22 +66,17 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     GpsDataProvider.askForGPSPermission();
-    // HomeWidget.widgetClicked.listen(launchWithWidget);
-    CustomHomeWidgetRequest.listenWidgetLaunch(context);
     initFlutterNotificationPlugin();
     checkIfAppIsNotificationLaunched();
     checkIfFisrtTimeOpenningApp();
     GTFSDataProvider.loadFile();
-    checkWidgetLaunch();
+    CustomHomeWidgetRequest.init(context);
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    checkWidgetLaunch();
-    // HomeWidget.initiallyLaunchedFromHomeWidget().then(launchWithWidget);
-    // HomeWidget.widgetClicked.listen(launchWithWidget);
-    CustomHomeWidgetRequest.listenWidgetLaunch(context);
+    CustomHomeWidgetRequest.init(context);
   }
 
   Future checkIfAppIsNotificationLaunched() async {
@@ -120,20 +115,6 @@ class _HomePageState extends State<HomePage> {
     // await flip.initialize(settings,
     //     onDidReceiveNotificationResponse: receiveNotification);
   }
-
-  Future<void> checkWidgetLaunch() async {
-    Uri? launchUri = await CustomHomeWidgetRequest.getLaunchUri();
-    print("Launch With: ");
-    print(launchUri);
-    if (launchUri is Uri) {
-      print(launchUri.scheme);
-    }
-    launchWithWidget(launchUri);
-  }
-
-  void launchWithWidget(Uri? uri) {
-  }
-
 
   void goToSetting() {
     Navigator.of(context).pushNamed(SettingPage.routeName);

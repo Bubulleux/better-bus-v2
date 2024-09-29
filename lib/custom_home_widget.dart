@@ -11,6 +11,11 @@ class CustomHomeWidgetRequest {
   static const methodeChannel = MethodChannel("home_widget");
   static const eventChannel = EventChannel("widgetLaunch");
 
+  static void init(BuildContext context) {
+    CustomHomeWidgetRequest.listenWidgetLaunch(context);
+    CustomHomeWidgetRequest.checkWidgetLaunch(context);
+  }
+
 
   static Future<void> updateWidget() async {
     await methodeChannel.invokeMethod("updateWidget");
@@ -22,55 +27,58 @@ class CustomHomeWidgetRequest {
   }
 
   static Future<Uri?> getLaunchUri() async {
-    String? uri = await methodeChannel.invokeListMethod("getLaunchUri" ) as String?;
-    print("getLaunch Uri Called:");
-    print(uri);
-    if (uri == null) {
-      return null;
-    }
-    return Uri.parse(uri);
+    String? result = await methodeChannel.invokeMethod<String?>("getLaunchUri");
+    print("Result");
+    print(result);
+    if (result == null) return null;
+
+    Uri? uri = Uri.tryParse(result);
+    if (uri == null) return null;
+
+    return uri;
+
   }
 
   static void listenWidgetLaunch(BuildContext context) {
     eventChannel.receiveBroadcastStream().listen(((dynamic value) {
-      print("Event Recieve");
       if (value == null) {
-        print("Value null");
         return;
       }
       if (value is! String) {
-        print("value is not String");
         return;
       }
 
       Uri? uri = Uri.tryParse(value as String);
       if (uri == null) {
-        print("Uri is Null");
         return;
       }
 
-      if (uri.scheme == "app") {
-        print(uri.scheme);
-        print(uri.host);
-        if (uri.host == "openshortcut") {
-          launchShortcutByWidget(uri.pathSegments[0], context);
-        }
-        if (uri.host == "openmystop") {
-          findClosestStop(context);
-        }
-      }
-
+      launchUri(context, uri);
     }));
   }
 
-  static void launchShortcutByWidget(
-      String shortcutRowId, BuildContext context) async {
-    List<ViewShortcut> shortcuts = await LocalDataHandler.loadShortcut();
-    int shortcutIndex = int.parse(shortcutRowId);
-    if (shortcutIndex == -1) {
+  static void launchUri(BuildContext context, Uri uri) {
+    if (uri.scheme != "app") {
       return;
     }
-    ViewShortcut shortcut = shortcuts[shortcutIndex];
+
+    if (uri.host == "openshortcut") {
+      launchShortcutByWidget(uri.pathSegments[0], context);
+    }
+
+    if (uri.host == "openmystop") {
+      findClosestStop(context);
+    }
+  }
+
+  static void launchShortcutByWidget(String shortcutRowId, BuildContext context) async {
+    List<ViewShortcut> shortcuts = await LocalDataHandler.loadShortcut();
+    int shortcutIndex = int.parse(shortcutRowId);
+    if (shortcutIndex == -1 || !context.mounted) {
+      return;
+    }
+    ViewShortcut shortcut = shortcuts.where((e) => e.isFavorite)
+      .toList()[shortcutIndex];
 
     Navigator.of(context).popUntil((route) =>
     (route.settings.name != StopInfoPage.routeName ||
@@ -83,5 +91,15 @@ class CustomHomeWidgetRequest {
 
   static Future findClosestStop(BuildContext context) async {
     return ClosestStopDialog.show(context);
+  }
+
+  static Future checkWidgetLaunch(BuildContext context) async {
+    Uri? uri = await getLaunchUri();
+    print("Check widget Launch:");
+    print(uri);
+
+    if (uri == null) return;
+
+    launchUri(context, uri);
   }
 }
