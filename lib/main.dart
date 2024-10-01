@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:better_bus_v2/info_traffic_notification.dart';
 import 'package:better_bus_v2/views/common/messages.dart';
 import 'package:better_bus_v2/views/credit_page.dart';
@@ -34,22 +36,34 @@ void callbackDispatcher() {
   // });
 }
 
+final StreamController<String?> selectNotificationStream =
+  StreamController<String?>.broadcast();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-  AndroidFlutterLocalNotificationsPlugin? androidImp =
-    flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
-  androidImp?.requestNotificationsPermission();
-
-
   // Workmanager().initialize(callbackDispatcher);
   // Workmanager().registerPeriodicTask("check-traffic-info", "checkTrafficInfo",
   //     frequency: const Duration(minutes: 15));
-  checkInfoTraffic();
+  await initFlip();
+  //checkInfoTraffic();
   runApp(const BetterBusApp());
+}
+
+Future initFlip() async {
+  var flip = FlutterLocalNotificationsPlugin();
+
+  AndroidFlutterLocalNotificationsPlugin? androidImp =
+  flip.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+  androidImp?.requestNotificationsPermission();
+
+  var android = const AndroidInitializationSettings('@mipmap/ic_launcher');
+  var settings = InitializationSettings(android: android);
+  await flip.initialize(settings,
+      onDidReceiveNotificationResponse: (NotificationResponse? response) => {
+        print("Notif Recieve")
+      });
 }
 
 

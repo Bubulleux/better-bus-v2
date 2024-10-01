@@ -133,7 +133,7 @@ class HomeWidgetHandler : FlutterPlugin, MethodCallHandler, ActivityAware,
         receiver = null
     }
 
-    override fun onNewIntent(intent: Intent) : Boolean{
+    override fun onNewIntent(intent: Intent) : Boolean {
         println("New Intent")
         println(intent.action)
         println(receiver)
