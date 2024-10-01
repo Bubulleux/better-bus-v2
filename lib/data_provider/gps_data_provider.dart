@@ -1,6 +1,7 @@
 import 'dart:math';
 
-import 'package:location/location.dart';
+//import 'package:location/location.dart';
+import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
 
 class GpsDataProvider {
   static bool askAndDecine = false;
@@ -16,40 +17,16 @@ class GpsDataProvider {
   }
 
   static Future<bool> askForGPSPermission() async {
-    Location location = Location();
-
-    PermissionStatus _permissionGranted = await location.hasPermission();
-    if (_permissionGranted == PermissionStatus.denied) {
-      _permissionGranted = await location.requestPermission();
-      if (_permissionGranted != PermissionStatus.granted) {
-        return false;
-      }
-    }
 
     return true;
   }
 
   static Future<bool> askForEnableGPS(bool forceAsk) async {
-    Location location = Location();
-
-    bool _serviceEnabled = await location.serviceEnabled();
-
-
-    if (!_serviceEnabled) {
-      if (!forceAsk && askAndDecine) return false;
-
-      _serviceEnabled = await location.requestService();
-      if (!_serviceEnabled) {
-        askAndDecine = true;
-        return false;
-      }
-    }
 
     return true;
   }
 
-  static Future<LocationData?> getLocation({bool askEnableGPS = false}) async {
-    Location location = Location();
+  static Future<GeoPoint?> getLocation({bool askEnableGPS = false}) async {
 
     bool isGranted = await askForGPSPermission();
     if (!isGranted) {
@@ -60,8 +37,8 @@ class GpsDataProvider {
     if (!isEnable) {
       return null;
     }
-
-    final LocationData _locationData = await location.getLocation();
-    return _locationData;
+    var controleur = MapController();
+    GeoPoint myPos = await controleur.myLocation();
+    return myPos;
   }
 }

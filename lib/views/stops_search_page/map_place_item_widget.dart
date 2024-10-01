@@ -2,7 +2,7 @@ import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
 import 'package:better_bus_v2/model/clean/map_place.dart';
 import 'package:better_bus_v2/views/common/decorations.dart';
 import 'package:flutter/material.dart';
-import 'package:location/location.dart';
+import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
 
 class MapPlaceItemWidget extends StatelessWidget {
   const MapPlaceItemWidget(
@@ -14,7 +14,7 @@ class MapPlaceItemWidget extends StatelessWidget {
       : super(key: key);
 
   final MapPlace place;
-  final LocationData? locationData;
+  final GeoPoint? locationData;
   final VoidCallback clickCallback;
   final bool inHistoric;
 

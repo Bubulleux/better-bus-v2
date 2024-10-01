@@ -6,7 +6,7 @@ import 'package:better_bus_v2/model/clean/bus_stop.dart';
 import 'package:better_bus_v2/views/common/custom_future.dart';
 import 'package:better_bus_v2/views/stop_info/stop_info_page.dart';
 import 'package:flutter/material.dart';
-import 'package:location/location.dart';
+import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
 
 class ClosestStopDialog {
   static Future show(BuildContext context) async {
@@ -74,7 +74,7 @@ barrierDismissible: false,
   }
 
   static Future<List<BusStop>?> getClosestStops() async {
-    LocationData? location = await GpsDataProvider.getLocation(askEnableGPS: true);
+    GeoPoint? location = await GpsDataProvider.getLocation(askEnableGPS: true);
     List<BusStop>? stops = await VitalisDataProvider.getStops();
     List<BusStop> result = [];
   
