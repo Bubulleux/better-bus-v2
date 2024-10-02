@@ -13,6 +13,7 @@ import 'package:better_bus_v2/views/common/messages.dart';
 import 'package:better_bus_v2/views/common/title_bar.dart';
 import 'package:better_bus_v2/views/home_page/navigation_bar.dart';
 import 'package:better_bus_v2/views/home_page/shortcut_section.dart';
+import 'package:better_bus_v2/views/map_pages/map_test_page.dart';
 import 'package:better_bus_v2/views/route_page/route_page.dart';
 import 'package:better_bus_v2/views/setting_page/setting_page.dart';
 import 'package:better_bus_v2/views/stop_info/stop_info_page.dart';
@@ -57,6 +58,10 @@ class _HomePageState extends State<HomePage> {
 
   void goToRoutePage() {
     Navigator.of(context).pushNamed(RoutePage.routeName);
+  }
+
+  void goToMapTest() {
+    Navigator.of(context).pushNamed(MapTestPage.routeName);
   }
 
   Future findClosestStop() async {
@@ -224,6 +229,11 @@ class _HomePageState extends State<HomePage> {
                     label: AppString.routeLabel,
                     icon: Icons.route,
                     onPress: goToRoutePage,
+                  ),
+                  CustomNavigationItem(
+                    label: "Carte",
+                    icon: Icons.map,
+                    onPress: goToMapTest,
                   ),
                   CustomNavigationItem(
                     label: AppString.trafficInfoLabel,

@@ -3,8 +3,20 @@ import 'dart:math';
 //import 'package:location/location.dart';
 import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
 
-class GpsDataProvider {
-  static bool askAndDecine = false;
+class GpsDataProvider  implements OSMMixinObserver {
+  bool askAndDecine = false;
+  late MapController controller;
+  static late GpsDataProvider instance;
+  bool isReady = false;
+
+  static Future initGps() async {
+    instance = GpsDataProvider();
+  }
+
+  GpsDataProvider() {
+    controller = MapController(initPosition: GeoPoint(latitude: 0, longitude: 0));
+    controller.addObserver(this);
+  }
 
   static double calculateDistance(lat1, lon1, lat2, lon2) {
     var p = 0.017453292519943295;
@@ -27,7 +39,7 @@ class GpsDataProvider {
   }
 
   static Future<GeoPoint?> getLocation({bool askEnableGPS = false}) async {
-
+    return null;
     bool isGranted = await askForGPSPermission();
     if (!isGranted) {
       return null;
@@ -37,8 +49,42 @@ class GpsDataProvider {
     if (!isEnable) {
       return null;
     }
-    var controleur = MapController();
-    GeoPoint myPos = await controleur.myLocation();
+    GeoPoint myPos = await instance.controller.myLocation();
     return myPos;
+  }
+
+  @override
+  Future<void> mapIsReady(bool isReady) async {
+    print("Map Ready");
+    isReady = true;
+  }
+
+  @override
+  Future<void> mapRestored() async {
+  }
+
+  @override
+  void onLocationChanged(UserLocation userLocation) {
+    // TODO: implement onLocationChanged
+  }
+
+  @override
+  void onLongTap(GeoPoint position) {
+    // TODO: implement onLongTap
+  }
+
+  @override
+  void onRegionChanged(Region region) {
+    // TODO: implement onRegionChanged
+  }
+
+  @override
+  void onRoadTap(RoadInfo road) {
+    // TODO: implement onRoadTap
+  }
+
+  @override
+  void onSingleTap(GeoPoint position) {
+    // TODO: implement onSingleTap
   }
 }
