@@ -2,6 +2,7 @@ import 'package:better_bus_v2/helper.dart';
 import 'package:better_bus_v2/model/cvs_parser.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
 
 class GTFSData {
   late final Map<String, GTFSStop> stops;
@@ -10,12 +11,14 @@ class GTFSData {
   late final GTFSCalendar calendar;
   late final Map<String, GTFSTrip> trips;
   late final Map<String, List<GTFSStopTime>> stopTime;
+  late final Map<String, GTFSShape> shapes;
 
   GTFSData(Map<String, CSVTable> files) {
     loadStops(files["stops.txt"]!);
     loadRoutes(files["routes.txt"]!);
     calendar = GTFSCalendar.fromCSV(
         files["calendar.txt"]!, files["calendar_dates.txt"]!);
+    loadShapes(files["shapes.txt"]!);
     loadTrips(files["trips.txt"]!);
     loadStopTime(files["stop_times.txt"]!);
   }
@@ -80,6 +83,23 @@ class GTFSData {
 
     stopTime = _stopTimes;
   }
+
+  void loadShapes(CSVTable table) {
+    Map<String, List<GeoPoint>> rawShapes = {};
+
+    for (var e in table) {
+      String id = e["shape_id"];
+      if (!shapes.containsKey(id)) {
+        rawShapes[id] = [];
+      }
+      double lat = double.parse(e["shape_pt_lat"]);
+      double long = double.parse(e["shape_pt_lon"]);
+      rawShapes[id]!.add(GeoPoint(latitude: lat, longitude: long));
+    }
+
+    shapes = { for (var e in rawShapes.entries) e.key : GTFSShape(e.key, e.value)};
+  }
+
 }
 
 class GTFSStop {
@@ -264,6 +284,13 @@ class GTFSStopTime {
           row["stop_id"]!,
           double.parse(row["shape_dist_traveled"]!),
         );
+}
+
+class GTFSShape {
+  final String shapeId;
+  final List<GeoPoint> wayPoints;
+
+  GTFSShape(this.shapeId, this.wayPoints);
 }
 
 Duration parseDuration(String time) {

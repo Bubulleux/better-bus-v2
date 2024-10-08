@@ -1,3 +1,5 @@
+import 'package:better_bus_v2/data_provider/gtfs_data_provider.dart';
+import 'package:better_bus_v2/model/gtfs_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
 
@@ -25,17 +27,30 @@ class _MapTestPageState extends State<MapTestPage> {
         unFollowUser: false,
       ),
          userLocationMarker : UserLocationMaker(
-            personMarker: MarkerIcon(icon: Icon(Icons.person_pin_circle, size: 48,),),
-           directionArrowMarker: MarkerIcon(icon: Icon(Icons.circle, size: 60,),)
+            personMarker: MarkerIcon(icon: Icon(Icons.person_pin_circle, size: 100,),),
+           directionArrowMarker: MarkerIcon(icon: Icon(Icons.arrow_upward, size: 100,),)
           )
     );
 
   }
 
   void test() async {
-    await controller.moveTo(poitiersGPS);
-    await controller.setZoom(zoomLevel: 14);
-    print((await controller.myLocation()).latitude);
+    await controller.setZoom(zoomLevel: 18);
+    //await controller.moveTo(await controller.myLocation());
+    await controller.currentLocation();
+  }
+
+  Future renderBusPaths() async {
+    if (GTFSDataProvider.gtfsData == null) {
+      return ;
+    }
+    GTFSData data = GTFSDataProvider.gtfsData!;
+
+    for (var e in data.routes.entries) {
+
+    }
+
+
   }
 
   @override
@@ -45,7 +60,6 @@ class _MapTestPageState extends State<MapTestPage> {
         child: Container(
           child: Column(
             children: [
-              
               Expanded(child: OSMFlutter(controller: controller, osmOption: options)),
               ElevatedButton(onPressed: test, child: const Text("OUI"))
             ],
