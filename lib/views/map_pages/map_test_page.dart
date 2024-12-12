@@ -24,7 +24,16 @@ class _MapTestPageState extends State<MapTestPage> {
   @override
   void initState() {
     super.initState();
-    controller = MapController(initPosition: poitiersGPS);
+    controller = MapController.customLayer(
+        initPosition: poitiersGPS,
+      customTile: CustomTile(
+        sourceName: "openstreetmap",
+        urlsServers: [
+          TileURLs(url:"https://c.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png")
+        ],
+          tileExtension: ".png",
+      )
+    );
     controller.init();
     options = OSMOption(
       userTrackingOption: UserTrackingOption(
@@ -34,7 +43,7 @@ class _MapTestPageState extends State<MapTestPage> {
          userLocationMarker : UserLocationMaker(
             personMarker: MarkerIcon(icon: Icon(Icons.person_pin_circle, size: 100,),),
            directionArrowMarker: MarkerIcon(icon: Icon(Icons.arrow_upward, size: 100,),)
-          )
+          ),
     );
 
   }

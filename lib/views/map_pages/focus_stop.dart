@@ -14,9 +14,23 @@ class StopFocusWidget extends StatefulWidget {
 class _StopFocusWidgetState extends State<StopFocusWidget> {
   @override
   Widget build(BuildContext context) {
-    if (widget.stop != null) {
-      return NextPassagePage(widget.stop!);
+    if (widget.stop == null) {
+      return Container();
     }
-    return Container();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          widget.stop!.name,
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
+        Row(
+          children: [
+            Icon(Icons.directions_walk),
+          ],
+        ),
+        Expanded(child:NextPassagePage(widget.stop!)),
+      ],
+    );
   }
 }
