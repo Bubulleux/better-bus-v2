@@ -93,17 +93,23 @@ class _MapTestPageState extends State<MapTestPage> {
     return Scaffold(
       body: SafeArea(
         child: Container(
-          child: Column(
+          child: Stack(
+            alignment: Alignment.bottomCenter,
             children: [
               Expanded(child: OSMFlutter(controller: controller, osmOption: options,
               onGeoPointClicked: geoPointClicked)),
-              focusStop != null ?
-                SizedBox(height: 200, child: StopFocusWidget(focusStop)) :
-                Container(),
-              Row(
+              Column(
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  ElevatedButton(onPressed: test, child: const Text("OUI")),
-                  ElevatedButton(onPressed: renderStops, child: const Text("Stops")),
+                  Row(
+                    children: [
+                      ElevatedButton(onPressed: test, child: const Text("OUI")),
+                      ElevatedButton(onPressed: renderStops, child: const Text("Stops")),
+                    ],
+                  ),
+                  focusStop != null ?
+                  SizedBox(height: 200, child: StopFocusWidget(focusStop)) :
+                  Container(),
                 ],
               )
             ],

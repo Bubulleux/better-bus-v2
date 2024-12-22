@@ -17,20 +17,27 @@ class _StopFocusWidgetState extends State<StopFocusWidget> {
     if (widget.stop == null) {
       return Container();
     }
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          widget.stop!.name,
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
-        Row(
-          children: [
-            Icon(Icons.directions_walk),
-          ],
-        ),
-        Expanded(child:NextPassagePage(widget.stop!)),
-      ],
+    return Container(
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20))
+      ),
+      padding: const EdgeInsets.only(top: 10, right: 5, left: 5),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            widget.stop!.name,
+            style: Theme.of(context).textTheme.headlineMedium,
+          ),
+          Row(
+            children: [
+              Icon(Icons.directions_walk),
+            ],
+          ),
+          Expanded(child:NextPassagePage(widget.stop!)),
+        ],
+      ),
     );
   }
 }
