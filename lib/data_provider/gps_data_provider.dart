@@ -1,7 +1,9 @@
+import 'dart:io';
 import 'dart:math';
 
 //import 'package:location/location.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:geolocator/geolocator.dart';
 
 class GpsDataProvider {
   bool askAndDecine = false;
@@ -26,22 +28,19 @@ class GpsDataProvider {
   }
 
   static Future<bool> askForGPSPermission() async {
+    if (Platform.isLinux) return true;
+    LocationPermission permission = await Geolocator.requestPermission();
+    return permission != LocationPermission.denied;
 
-    return true;
   }
 
   static Future<bool> askForEnableGPS(bool forceAsk) async {
-
     return true;
   }
 
   static Future<LatLng?> getLocation({bool askEnableGPS = false}) async {
-    return null;
-  }
-
-  @override
-  Future<void> mapIsReady(bool isReady) async {
-    print("Map Ready");
-    isReady = true;
+    if (Platform.isLinux) return LatLng(46.58306570646413, 0.34316815224968406);
+    Position pos = await Geolocator.getCurrentPosition();
+    return LatLng(pos.latitude, pos.longitude);
   }
 }
