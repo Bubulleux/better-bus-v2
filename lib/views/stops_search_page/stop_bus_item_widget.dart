@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:better_bus_v2/views/common/decorations.dart';
 import 'package:better_bus_v2/views/stops_search_page/stops_search_page.dart';
 import 'package:flutter/material.dart';
+import 'package:latlong2/latlong.dart';
 
 import '../../data_provider/gps_data_provider.dart';
 import '../../data_provider/vitalis_data_provider.dart';
@@ -10,6 +11,7 @@ import '../../model/clean/bus_line.dart';
 import '../../model/clean/bus_stop.dart';
 import '../common/error_handler.dart';
 import '../common/line_widget.dart';
+
 
 class BusStopWidget extends StatefulWidget {
   const BusStopWidget({

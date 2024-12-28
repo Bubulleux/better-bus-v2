@@ -4,7 +4,7 @@ import 'package:better_bus_v2/error_handler/custom_error.dart';
 import 'package:better_bus_v2/views/common/custom_future.dart';
 import 'package:better_bus_v2/views/stops_search_page/stop_bus_item_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../model/clean/bus_stop.dart';
@@ -39,7 +39,7 @@ class SearchBusStopViewState extends State<SearchBusStopView>{
   List<BusStop>? historic;
   SharedPreferences? preferences;
 
-  GeoPoint? location;
+  LatLng? location;
   Map<int, double>? stopDistance;
 
   late GlobalKey<CustomFutureBuilderState> futureBuilderState;

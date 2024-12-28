@@ -6,7 +6,7 @@ import 'package:better_bus_v2/views/common/fake_text_field.dart';
 import 'package:better_bus_v2/views/stops_search_page/stops_search_page.dart';
 import 'package:better_bus_v2/views/stop_info/timetable_view.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
+import 'package:latlong2/latlong.dart';
 
 import '../../model/clean/bus_line.dart';
 import '../../model/clean/bus_stop.dart';
@@ -51,7 +51,7 @@ class _StopInfoPageState extends State<StopInfoPage>
   }
 
   void getBusStopDistance() async {
-    GeoPoint? location = await GpsDataProvider.getLocation();
+    LatLng? location = await GpsDataProvider.getLocation();
     if (location == null) return;
 
     double distance = GpsDataProvider.calculateDistance(

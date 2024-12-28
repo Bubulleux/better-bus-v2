@@ -5,14 +5,14 @@ import 'package:better_bus_v2/views/common/background.dart';
 import 'package:better_bus_v2/views/common/custom_text_field.dart';
 import 'package:better_bus_v2/views/stops_search_page/search_bus_stop_view.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
+import 'package:latlong2/latlong.dart';
 
 import '../../app_constant/app_string.dart';
 import '../../model/clean/bus_line.dart';
 
 
 
-double getDistanceInKMeter(BusStop stop, GeoPoint locationData) {
+double getDistanceInKMeter(BusStop stop, LatLng locationData) {
   double result = GpsDataProvider.calculateDistance(stop.latitude,
       stop.longitude, locationData.latitude, locationData.longitude);
   return result;
@@ -44,7 +44,7 @@ class _SearchPageState extends State<SearchPage> {
   Map<String, List<BusLine>?> busStopsLines = {};
 
   List<BusStop>? validResult;
-  GeoPoint? locationData;
+  LatLng? locationData;
 
 
 

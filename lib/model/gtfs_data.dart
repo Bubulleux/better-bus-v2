@@ -2,7 +2,7 @@ import 'package:better_bus_v2/helper.dart';
 import 'package:better_bus_v2/model/cvs_parser.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
+import 'package:latlong2/latlong.dart';
 
 class GTFSData {
   late final Map<String, GTFSStop> stops;
@@ -85,16 +85,16 @@ class GTFSData {
   }
 
   void loadShapes(CSVTable table) {
-    Map<String, List<GeoPoint>> rawShapes = {};
+    Map<String, List<LatLng>> rawShapes = {};
 
     for (var e in table) {
       String id = e["shape_id"];
-      if (!shapes.containsKey(id)) {
+      if (!rawShapes.containsKey(id)) {
         rawShapes[id] = [];
       }
       double lat = double.parse(e["shape_pt_lat"]);
       double long = double.parse(e["shape_pt_lon"]);
-      rawShapes[id]!.add(GeoPoint(latitude: lat, longitude: long));
+      rawShapes[id]!.add(LatLng(lat, long));
     }
 
     shapes = { for (var e in rawShapes.entries) e.key : GTFSShape(e.key, e.value)};
@@ -288,7 +288,7 @@ class GTFSStopTime {
 
 class GTFSShape {
   final String shapeId;
-  final List<GeoPoint> wayPoints;
+  final List<LatLng> wayPoints;
 
   GTFSShape(this.shapeId, this.wayPoints);
 }

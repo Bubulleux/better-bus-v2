@@ -48,7 +48,7 @@ void main() async {
   // Workmanager().initialize(callbackDispatcher);
   // Workmanager().registerPeriodicTask("check-traffic-info", "checkTrafficInfo",
   //     frequency: const Duration(minutes: 15));
-  await initFlip();
+  //await initFlip();
   await GpsDataProvider.initGps();
   //checkInfoTraffic();
   runApp(const BetterBusApp());

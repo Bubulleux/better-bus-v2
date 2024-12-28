@@ -7,7 +7,7 @@ import 'package:better_bus_v2/views/common/custom_future.dart';
 import 'package:better_bus_v2/views/common/decorations.dart';
 import 'package:better_bus_v2/views/stops_search_page/map_place_item_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../app_constant/app_string.dart';
@@ -30,7 +30,7 @@ class MapPlaceSearcherView extends StatefulWidget {
 }
 
 class _MapPlaceSearcherViewState extends State<MapPlaceSearcherView> {
-  GeoPoint? locationData;
+  LatLng? locationData;
   bool locationPermission = true;
   late GlobalKey<CustomFutureBuilderState> futureStateKey;
 
