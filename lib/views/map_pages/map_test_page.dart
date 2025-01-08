@@ -21,7 +21,8 @@ class MapTestPage extends StatefulWidget {
   State<MapTestPage> createState() => _MapTestPageState();
 }
 
-class _MapTestPageState extends State<MapTestPage> {
+class _MapTestPageState extends State<MapTestPage>
+  with TickerProviderStateMixin {
   late MapController controller;
   late Map<LatLng, BusStop> stopsPos;
   BusStop? focusStop = null;
@@ -101,6 +102,40 @@ class _MapTestPageState extends State<MapTestPage> {
 
   }
 
+  void goToMyLocation() async {
+    if (position == null) {
+      return;
+    }
+    focusOnLatLng(position!, 18);
+
+  }
+  void focusOnLatLng(LatLng dst, double dstZoom) {
+    final LatLngTween tween = LatLngTween(
+      begin: controller.camera.center,
+      end: dst,
+    );
+
+    final Tween<double> zoomTween = Tween(
+      begin: controller.camera.zoom,
+      end: 18
+    );
+
+    final animationController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    final Animation<double> animation =
+      CurvedAnimation(parent: animationController,
+          curve: Curves.fastLinearToSlowEaseIn);
+    
+    animationController.addListener(() {
+      controller.move(tween.evaluate(animation), 
+      zoomTween.evaluate(animation));
+    });
+
+    animationController.forward();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -145,10 +180,15 @@ class _MapTestPageState extends State<MapTestPage> {
                     children: [
                       ElevatedButton(onPressed: test, child: const Text("OUI")),
                       ElevatedButton(onPressed: renderStops, child: const Text("Stops")),
+                      const Spacer(),
+                      ElevatedButton(
+                        onPressed: goToMyLocation,
+                        child: Icon(Icons.my_location_outlined),
+                      )
                     ],
                   ),
                   focusStop != null ?
-                  SizedBox(height: 200, child: StopFocusWidget(focusStop)) :
+                  SizedBox(child: StopFocusWidget(focusStop)) :
                   Container(),
                 ],
               )
@@ -158,4 +198,5 @@ class _MapTestPageState extends State<MapTestPage> {
       ),
     );
   }
+
 }
