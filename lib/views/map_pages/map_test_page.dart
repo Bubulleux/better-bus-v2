@@ -7,6 +7,7 @@ import 'package:better_bus_v2/model/clean/map_place.dart';
 import 'package:better_bus_v2/model/gtfs_data.dart';
 import 'package:better_bus_v2/views/common/fake_text_field.dart';
 import 'package:better_bus_v2/views/map_pages/focus_stop.dart';
+import 'package:better_bus_v2/views/map_pages/stop_layer.dart';
 import 'package:better_bus_v2/views/stops_search_page/place_searcher_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -37,7 +38,9 @@ class _MapTestPageState extends State<MapTestPage>
 
   void test() async {
     position = await GpsDataProvider.getLocation();
+    print(position);
     setState(() {
+      position = position;
     });
   }
 
@@ -74,10 +77,12 @@ class _MapTestPageState extends State<MapTestPage>
     for (var stop in stopsPos.keys) {
       markers.add(Marker(
         point: stop,
-        child: ElevatedButton(onPressed: () => setState(() {
-          focusStop = stopsPos[stop];
-        }),
-            child: Icon(Icons.directions_bus))
+        child: ElevatedButton(
+            onPressed: () => setState(() { focusStop = stopsPos[stop]; }),
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.all(0)
+            ),
+            child: const Icon(Icons.directions_bus, size: 20,)),
         )
       );
     }
@@ -158,7 +163,7 @@ class _MapTestPageState extends State<MapTestPage>
                       userAgentPackageName: 'dev.fleaflet.flutter_map.example',
                       // Plenty of other options available!
                     ),
-                    getStopsLayer(),
+                    StopsMapLayer(GTFSDataProvider.getStops() ?? []),
                     renderLocationLayer(),
                   ],
                 ),
@@ -166,14 +171,21 @@ class _MapTestPageState extends State<MapTestPage>
               Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: FakeTextField(
-                      onPress: goToSearch,
-                      icon: Icons.search,
-                      value: focusStop?.name,
-                      hint: AppString.searchLabel,
-                    ),
+                  Row(
+                    children: [
+                      const BackButton(),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: FakeTextField(
+                            onPress: goToSearch,
+                            icon: Icons.search,
+                            value: focusStop?.name,
+                            hint: AppString.searchLabel,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   const Spacer(),
                   Row(
