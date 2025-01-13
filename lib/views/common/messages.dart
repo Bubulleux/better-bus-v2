@@ -1,7 +1,7 @@
 import 'package:better_bus_v2/app_constant/app_string.dart';
 import 'package:better_bus_v2/views/common/title_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+//import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -51,13 +51,13 @@ class _MessageViewState extends State<MessageView> {
                               padding: const EdgeInsets.symmetric(
                                   vertical: 15, horizontal: 20),
                               width: double.infinity,
-                              child: HtmlWidget(
-                                body,
-                                onTapUrl: (url) => launchUrlString(
-                                  url,
-                                  mode: LaunchMode.externalApplication,
-                                ),
-                              ),
+                              // child: HtmlWidget(
+                              //   body,
+                              //   onTapUrl: (url) => launchUrlString(
+                              //     url,
+                              //     mode: LaunchMode.externalApplication,
+                              //   ),
+                              // ),
                             ))),
                     Container(
                       width: double.infinity,
