@@ -2,7 +2,9 @@ import 'package:better_bus_v2/model/clean/info_traffic.dart';
 import 'package:better_bus_v2/views/common/decorations.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:html/parser.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -22,12 +24,14 @@ class TrafficInfoItem extends StatefulWidget {
 
   @override
   State<TrafficInfoItem> createState() => TrafficInfoItemState();
+
 }
 
 class TrafficInfoItemState extends State<TrafficInfoItem> with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   // late ExpandableWidgetController expandableController;
   late Animation<double> animation;
   late AnimationController animationController;
+  late WebViewController htmlController;
 
   @override
   void initState() {
@@ -44,6 +48,8 @@ class TrafficInfoItemState extends State<TrafficInfoItem> with SingleTickerProvi
     } else {
       animationController.value = 1;
     }
+
+    htmlController = WebViewController();
   }
 
   @override
@@ -115,12 +121,12 @@ class TrafficInfoItemState extends State<TrafficInfoItem> with SingleTickerProvi
                 runSpacing: 5,
                 children: itemLines.map((e) => LineWidget(e, 25, dynamicWidth: true)).toList(),
               ),
-              // HtmlWidget(
-              //   widget.infoTraffic.content,
-              //   onTapUrl: (url) {
-              //     return launchUrlString(url, mode: LaunchMode.externalApplication);
-              //   },
-              // ),
+              HtmlWidget(
+                widget.infoTraffic.content,
+                onTapUrl: (url) {
+                  return launchUrlString(url, mode: LaunchMode.externalApplication);
+                },
+              ),
             ],
           ),
         ),
