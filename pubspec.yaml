@@ -37,7 +37,7 @@ dependencies:
   intl: 0.19.0
   #location: ^7.0.0
   shared_preferences: ^2.3.1
-  # flutter_widget_from_html: ^0.15.1
+  flutter_widget_from_html: ^0.15.3
   connectivity_plus: ^6.0.5
 #  home_widget: ^0.6.0
   url_launcher: ^6.3.0

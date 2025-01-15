@@ -2,9 +2,7 @@ import 'package:better_bus_v2/model/clean/info_traffic.dart';
 import 'package:better_bus_v2/views/common/decorations.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:html/parser.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -31,7 +29,6 @@ class TrafficInfoItemState extends State<TrafficInfoItem> with SingleTickerProvi
   // late ExpandableWidgetController expandableController;
   late Animation<double> animation;
   late AnimationController animationController;
-  late WebViewController htmlController;
 
   @override
   void initState() {
@@ -49,7 +46,6 @@ class TrafficInfoItemState extends State<TrafficInfoItem> with SingleTickerProvi
       animationController.value = 1;
     }
 
-    htmlController = WebViewController();
   }
 
   @override

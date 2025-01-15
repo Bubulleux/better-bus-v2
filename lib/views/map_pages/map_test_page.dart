@@ -6,6 +6,7 @@ import 'package:better_bus_v2/model/clean/bus_stop.dart';
 import 'package:better_bus_v2/model/clean/map_place.dart';
 import 'package:better_bus_v2/model/gtfs_data.dart';
 import 'package:better_bus_v2/views/common/fake_text_field.dart';
+import 'package:better_bus_v2/views/map_pages/easter_eggs_layer.dart';
 import 'package:better_bus_v2/views/map_pages/focus_stop.dart';
 import 'package:better_bus_v2/views/map_pages/stop_layer.dart';
 import 'package:better_bus_v2/views/stops_search_page/place_searcher_page.dart';
@@ -44,21 +45,6 @@ class _MapTestPageState extends State<MapTestPage>
     });
   }
 
-  Future renderBusPaths() async {
-    if (GTFSDataProvider.gtfsData == null) {
-      return ;
-    }
-    GTFSData data = GTFSDataProvider.gtfsData!;
-
-    for (var e in data.routes.entries) {
-
-    }
-
-
-  }
-
-  Future renderStops() async {
-  }
 
   void LatLngClicked(LatLng point) {
     print(point);
@@ -163,7 +149,13 @@ class _MapTestPageState extends State<MapTestPage>
                       userAgentPackageName: 'dev.fleaflet.flutter_map.example',
                       // Plenty of other options available!
                     ),
-                    StopsMapLayer(GTFSDataProvider.getStops() ?? []),
+                    StopsMapLayer(
+                        GTFSDataProvider.getStops() ?? [],
+                      onStopClick: (BusStop v) => setState(() {
+                        focusStop = v;
+                      }),
+                    ),
+                    EasterEggsLayer(),
                     renderLocationLayer(),
                   ],
                 ),
@@ -191,7 +183,6 @@ class _MapTestPageState extends State<MapTestPage>
                   Row(
                     children: [
                       ElevatedButton(onPressed: test, child: const Text("OUI")),
-                      ElevatedButton(onPressed: renderStops, child: const Text("Stops")),
                       const Spacer(),
                       ElevatedButton(
                         onPressed: goToMyLocation,
