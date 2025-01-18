@@ -55,6 +55,7 @@ dependencies:
   latlng: ^2.0.7
   path: ^1.9.0
   path_provider: ^2.1.5
+  flutter_svg: ^2.0.17
 
 dev_dependencies:
   flutter_test:
@@ -86,6 +87,8 @@ flutter:
     - assets/images/bg_map.png
     - assets/images/icon.jpg
     - assets/messages/
+    - assets/svg/stop_and_kiss.svg
+    - assets/svg/stop_and_miss.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
