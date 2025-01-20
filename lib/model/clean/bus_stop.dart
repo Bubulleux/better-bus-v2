@@ -1,51 +1,65 @@
 import 'dart:convert';
 
-class BusStop {
-  BusStop(this.name, this.id, {this.latitude = 0, this.longitude = 0});
+import 'package:latlong2/latlong.dart';
 
-  BusStop.example() : this("Bus Stop Name", 10);
+class SubBusStop {
+  const SubBusStop(this.id, this.pos, {this.stopCode});
 
-  late final String name;
-  late final double latitude;
-  late final double longitude;
-  late final int id;
+  final LatLng pos;
+  final int id;
+  final String? stopCode;
+}
 
-  BusStop.fromJson(Map<String, dynamic> json) {
-    name = json["name"];
+class BusStop extends SubBusStop{
+  const BusStop(this.name, super.id, super.pos, {this.children = const [], super.stopCode});
 
-    // String transformation: WyIxMDA3NyIsMV0= -> (base 64) ["10077",1] -> (sub string) 10077
-    String parsedId = utf8.decode(base64.decode(json["stop_id"]));
-    id = int.parse(parsedId.substring(2, parsedId.length - 4));
+  BusStop.example() : this("Bus Stop Name", 10, const LatLng(0, 0));
 
-    latitude = json["lat"];
-    longitude = json["lng"];
-  }
+  final String name;
+  final List<SubBusStop> children;
+
+  double get latitude => pos.latitude;
+  double get longitude => pos.longitude;
+
+  BusStop.fromJson(Map<String, dynamic> json) :
+        this(
+          json["name"],
+          getIdFromApi(json["stop_id"]),
+          LatLng(json["lat"], json["lng"])
+      );
 
   BusStop.fromCleanJson(Map<String, dynamic> json)
       : this(
           json["name"],
           // String transformation: WyIxMDA3NyIsMV0= -> (base 64) ["10077",1] -> (sub string) 10077
           json["id"],
-          latitude: json["lat"],
-          longitude: json["long"],
+          LatLng(json["lat"], json["long"])
         );
 
   BusStop.fromCSV(Map<String, String> row)
       : this(
           row["stop_name"]!,
           int.parse(row["stop_id"]!),
-          latitude: double.parse(row["stop_lat"]!),
-          longitude: double.parse(row["stop_lon"]!),
+          LatLng(
+              double.parse(row["stop_lat"]!),
+              double.parse(row["stop_lon"]!))
         );
 
   Map<String, dynamic> toJson() {
     return {
       "name": name,
-      "lat": latitude,
-      "long": longitude,
+      "lat": pos.latitude,
+      "long": pos.longitude,
       "id": id,
     };
   }
+
+  static int getIdFromApi(String base64Id) {
+    // String transformation: WyIxMDA3NyIsMV0= -> (base 64) ["10077",1] -> (sub string) 10077
+    String parsedId = utf8.decode(base64.decode(base64Id));
+    return int.parse(parsedId.substring(2, parsedId.length - 4));
+  }
+
 
   @override
   bool operator ==(Object other) {
@@ -55,3 +69,5 @@ class BusStop {
   @override
   int get hashCode => Object.hash(id, name);
 }
+
+

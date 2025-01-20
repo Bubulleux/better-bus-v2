@@ -151,10 +151,11 @@ class _MapTestPageState extends State<MapTestPage>
                       // Plenty of other options available!
                     ),
                     StopsMapLayer(
-                        GTFSDataProvider.getStops() ?? [],
+                        stops: GTFSDataProvider.getStops() ?? [],
                       onStopClick: (BusStop v) => setState(() {
                         focusStop = v;
                       }),
+                      focusedStop: focusStop,
                     ),
                     EasterEggsLayer(),
                     renderLocationLayer(),

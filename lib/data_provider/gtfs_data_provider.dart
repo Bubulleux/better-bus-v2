@@ -15,6 +15,7 @@ import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
 import 'package:http/http.dart' as http;
+import 'package:latlong2/latlong.dart';
 
 class DatasetMetadata {
   Uri ressourceUri;
@@ -122,21 +123,14 @@ class GTFSDataProvider {
   }
 
   static List<BusStop> getStops() {
-    return gtfsData!.stops.values
-        .map((e) => BusStop(
-              e.stopName,
-              e.stopID,
-              latitude: e.latitude,
-              longitude: e.longitude,
-            ))
-        .toList();
+    return gtfsData!.stops.values.toList();
   }
 
   static List<BusLine> getStopLines(int stopId) {
     List<String> stopTrips = [];
     GTFSStop stop = gtfsData!.stops[stopId.toString()]!;
-    Set<int> validIDs = {stop.stopID};
-    validIDs.addAll(stop.child.map((e) => e.id));
+    Set<int> validIDs = {stop.id};
+    validIDs.addAll(stop.children.map((e) => e.id));
 
     for (List<GTFSStopTime> stopTimes in gtfsData!.stopTime.values) {
       for (var stopTime in stopTimes) {
@@ -212,7 +206,7 @@ class GTFSDataProvider {
         .key;
 
     GTFSStop stop = gtfsData!.stops[stopID]!;
-    Set<int> validStopId = stop.child.map((e) => e.id).toSet();
+    Set<int> validStopId = stop.children.map((e) => e.id).toSet();
 
     for (var trip in gtfsData!.trips.entries) {
       if (trip.value.direction != direction) continue;
@@ -258,7 +252,7 @@ class GTFSDataProvider {
     Map<String, Duration> tripPassage = {};
 
     Set<int> validStopId =
-        gtfsData!.stops[stopID]!.child.map((e) => e.id).toSet();
+        gtfsData!.stops[stopID]!.children.map((e) => e.id).toSet();
 
     for (var entrie in gtfsData!.stopTime.entries) {
       GTFSTrip trip = gtfsData!.trips[entrie.key]!;
@@ -282,7 +276,7 @@ class GTFSDataProvider {
       BusLine line = BusLine(route.shortName, route.longName, route.color);
       List<ArrivingTime> arrivalTimes = gtfsData!.stopTime[entrie.key]!
         .where((element) => element.arival > entrie.value).map((e) => 
-        ArrivingTime(gtfsData!.allStops[e.stopID]!.stopName, e.arival)).toList();
+        ArrivingTime(gtfsData!.allStops[e.stopID]!.name, e.arival)).toList();
       DateTime arrivalTime = today.add(entrie.value);
       NextPassage nextPassage = NextPassage(
         line,

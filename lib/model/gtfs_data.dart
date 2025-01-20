@@ -1,4 +1,5 @@
 import 'package:better_bus_v2/helper.dart';
+import 'package:better_bus_v2/model/clean/bus_stop.dart';
 import 'package:better_bus_v2/model/cvs_parser.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -29,23 +30,23 @@ class GTFSData {
     Map<String, List<GTFSStopChild>> child = {};
 
     for (var e in table) {
-      String parrent = e["parent_station"];
-      if (parrent != "") {
-        if (!child.containsKey(parrent)) {
-          child[parrent] = [];
+      String parent = e["parent_station"];
+      if (parent != "") {
+        if (!child.containsKey(parent)) {
+          child[parent] = [];
         }
-        child[parrent]!.add(GTFSStopChild.fromCSV(e));
+        child[parent]!.add(GTFSStopChild.fromCSV(e));
         continue;
       }
       
       String id = e["stop_id"];
       _stops[id] = GTFSStop.fromCSV(e);
-      _allStops[id] = _stops[id]!;
     }
 
     for (var child in child.entries) {
-      _stops[child.key]!.child.addAll(child.value);
-      _allStops.addEntries(child.value.map((e) => MapEntry(e.id.toString(), 
+      _stops[child.key] = _stops[child.key]!.withChildren(child.value);
+      _allStops.addEntries(
+          child.value.map((e) => MapEntry(e.id.toString(),
         _stops[child.key]!)));
     }
 
@@ -102,37 +103,29 @@ class GTFSData {
 
 }
 
-class GTFSStop {
-  final int stopID;
-  final String stopName;
-  final double latitude;
-  final double longitude;
-  List<GTFSStopChild> child = [];
-
-  GTFSStop(this.stopID, this.stopName, this.latitude, this.longitude);
+class GTFSStop extends BusStop {
+  const GTFSStop(super.name, super.id, super.pos, {super.children});
 
   GTFSStop.fromCSV(Map<String, String> row)
       : this(
-          int.parse(row["stop_id"]!),
-          row["stop_name"]!,
-          double.parse(row["stop_lat"]!),
-          double.parse(row["stop_lon"]!),
-        );
+            row["stop_name"]!,
+            int.parse(row["stop_id"]!),
+            LatLng(double.parse(row["stop_lat"]!),
+                double.parse(row["stop_lon"]!)));
+
+  GTFSStop withChildren(List<SubBusStop> newChildren) {
+    return GTFSStop(name, id, pos, children: newChildren);
+  }
 }
 
-class GTFSStopChild {
-  final int id;
-  final double latitude;
-  final double longitude;
-
-  GTFSStopChild(this.id, this.latitude, this.longitude);
+class GTFSStopChild extends SubBusStop {
+  GTFSStopChild(super.id, super.pos);
 
   GTFSStopChild.fromCSV(Map<String, String> row)
       : this(
-          int.parse(row["stop_id"]!),
-          double.parse(row["stop_lat"]!),
-          double.parse(row["stop_lon"]!),
-        );
+            int.parse(row["stop_id"]!),
+            LatLng(double.parse(row["stop_lat"]!),
+                double.parse(row["stop_lon"]!)));
 }
 
 class GTFSRoute {

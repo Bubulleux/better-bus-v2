@@ -19,7 +19,7 @@ const _miss = "assets/svg/stop_and_miss.svg";
 
 const List<EasterEgg> easterEggs = [
   EasterEgg(LatLng(46.5852595, 0.332725), _miss, "💩"),
-  EasterEgg(LatLng(46.58393969040217, 0.3579758852971781), _kiss, "❤️"),
+  EasterEgg(LatLng(46.58393969040217, 0.3579758852971781), _kiss, "😘"),
 ];
 
 class EasterEggsLayer extends StatefulWidget {
@@ -44,8 +44,7 @@ class _EasterEggsLayerState extends State<EasterEggsLayer> {
 
       if (camera.visibleBounds.contains(e.pos)) {
         final center = (camera.project(e.pos) - camera.pixelOrigin).toOffset();
-        final secPos =
-            LatLng(e.pos.latitude + 0.00005, e.pos.longitude + 0.00005);
+        final secPos =  LatLng(e.pos.latitude + 0.00005, e.pos.longitude + 0.00005);
         final dx = (camera.project(secPos) - camera.project(e.pos)).x * 1;
         final bounds = Rect.fromCenter(
           center: center,
@@ -54,8 +53,7 @@ class _EasterEggsLayerState extends State<EasterEggsLayer> {
         );
         return MobileLayerTransformer(
           child: Stack(children: [
-            StopSign(bounds, e,
-            () {hidden.add(e.pos);},)
+            StopSign(bounds, e, () {hidden.add(e.pos);})
           ]),
         );
       }
