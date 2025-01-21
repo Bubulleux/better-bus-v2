@@ -108,9 +108,24 @@ class NextPassageListWidgetState extends State<NextPassageListWidget> {
       futureBuilderKey =
       GlobalKey<CustomFutureBuilderState<List<NextPassage>>>();
 
+  @override
+  void initState() {
+    super.initState();
+    getData().onError(
+        (error, stack) {
+          print("Error found");
+          print(error);
+          print(stack);
+          return [];
+        }
+    ).then((v) => print("No error: $v"));
+  }
+
+
   void refresh() {
     futureBuilderKey.currentState!.refresh();
   }
+
 
   Future<List<NextPassage>> getData() async {
     List<NextPassage> result =

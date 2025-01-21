@@ -1,13 +1,16 @@
 import 'dart:math';
 
+import 'package:better_bus_v2/data_provider/gtfs_data_provider.dart';
 import 'package:better_bus_v2/model/clean/bus_stop.dart';
 import 'package:better_bus_v2/views/stop_info/next_passage_view.dart';
 import 'package:flutter/material.dart';
 
 
 class StopFocusWidget extends StatefulWidget {
-  StopFocusWidget(this.stop, {key}) : super(key: key);
-  BusStop? stop;
+  StopFocusWidget({this.station, this.stop, super.key});
+  final BusStop? station;
+  final SubBusStop? stop;
+
 
   @override
   State<StopFocusWidget> createState() => _StopFocusWidgetState();
@@ -20,16 +23,19 @@ class _StopFocusWidgetState extends State<StopFocusWidget> {
   @override
   void didChangeDependencies() {
     setState(() {
-
     });
     super.didChangeDependencies();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (widget.stop == null) {
+    if (widget.station == null) {
       return Container();
     }
+
+    final lines = GTFSDataProvider.getStopLines(widget.stop?.id ?? widget.station?.id ?? 0);
+    print(lines);
+
     return Container(
       height: _height,
       decoration: const BoxDecoration(
@@ -70,7 +76,10 @@ class _StopFocusWidgetState extends State<StopFocusWidget> {
             ],
           ),
           Expanded(
-              child:NextPassagePage(widget.stop!, key: Key(widget.stop!.name),
+              child: NextPassagePage(
+                widget.station!,
+                lines: lines,
+                key: Key(widget.station!.name + (widget.stop?.id.toString() ?? " ")),
               )
           ),
         ],

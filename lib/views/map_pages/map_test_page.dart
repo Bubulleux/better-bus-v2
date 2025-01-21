@@ -1,19 +1,16 @@
 import 'package:better_bus_v2/app_constant/app_string.dart';
 import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
 import 'package:better_bus_v2/data_provider/gtfs_data_provider.dart';
-import 'package:better_bus_v2/data_provider/vitalis_data_provider.dart';
 import 'package:better_bus_v2/model/clean/bus_stop.dart';
 import 'package:better_bus_v2/model/clean/map_place.dart';
-import 'package:better_bus_v2/model/gtfs_data.dart';
 import 'package:better_bus_v2/views/common/fake_text_field.dart';
 import 'package:better_bus_v2/views/map_pages/easter_eggs_layer.dart';
 import 'package:better_bus_v2/views/map_pages/focus_stop.dart';
+import 'package:better_bus_v2/views/map_pages/position_layer.dart';
 import 'package:better_bus_v2/views/map_pages/stop_layer.dart';
 import 'package:better_bus_v2/views/stops_search_page/place_searcher_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 
 class MapTestPage extends StatefulWidget {
@@ -28,7 +25,8 @@ class _MapTestPageState extends State<MapTestPage>
   with TickerProviderStateMixin {
   late MapController controller;
   late Map<LatLng, BusStop> stopsPos;
-  BusStop? focusStop = null;
+  BusStop? focusStation;
+  SubBusStop? focusedStop;
   LatLng? position = null;
 
   @override
@@ -51,21 +49,21 @@ class _MapTestPageState extends State<MapTestPage>
     print(point);
     print(stopsPos[point]?.name);
     setState(() {
-      focusStop = stopsPos[point];
+      focusStation = stopsPos[point];
     });
   }
 
   MarkerLayer getStopsLayer() {
     List<Marker> markers = [];
     stopsPos = {
-      for (var e in GTFSDataProvider.getStops() ?? [])
+      for (var e in GTFSDataProvider.getStops())
     LatLng(e.latitude, e.longitude) : e
     };
     for (var stop in stopsPos.keys) {
       markers.add(Marker(
         point: stop,
         child: ElevatedButton(
-            onPressed: () => setState(() { focusStop = stopsPos[stop]; }),
+            onPressed: () => setState(() { focusStation = stopsPos[stop]; }),
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.all(0)
             ),
@@ -77,15 +75,6 @@ class _MapTestPageState extends State<MapTestPage>
     return MarkerLayer(markers: markers);
   }
 
-  MarkerLayer renderLocationLayer() {
-    return MarkerLayer(markers: position != null ?
-      [Marker(
-        point: position!,
-        child: Icon(Icons.arrow_upward)
-
-      )] : []
-    );
-  }
 
   Future goToSearch() async {
     print("Go to Search");
@@ -152,13 +141,18 @@ class _MapTestPageState extends State<MapTestPage>
                     ),
                     StopsMapLayer(
                         stops: GTFSDataProvider.getStops() ?? [],
-                      onStopClick: (BusStop v) => setState(() {
-                        focusStop = v;
+                      onStationClick: (BusStop v) => setState(() {
+                        focusStation = v;
+                        focusedStop = null;
                       }),
-                      focusedStop: focusStop,
+                      onStopClick: (SubBusStop v) => setState(() {
+                        focusedStop = v;
+                      }),
+                      focusedStation: focusStation,
+                      focusedStop: focusedStop,
                     ),
-                    EasterEggsLayer(),
-                    renderLocationLayer(),
+                    const EasterEggsLayer(),
+                    PositionLayer(),
                   ],
                 ),
               ),
@@ -174,7 +168,7 @@ class _MapTestPageState extends State<MapTestPage>
                           child: FakeTextField(
                             onPress: goToSearch,
                             icon: Icons.search,
-                            value: focusStop?.name,
+                            value: focusStation?.name,
                             hint: AppString.searchLabel,
                           ),
                         ),
@@ -192,9 +186,10 @@ class _MapTestPageState extends State<MapTestPage>
                       )
                     ],
                   ),
-                  focusStop != null ?
-                  SizedBox(child: StopFocusWidget(focusStop)) :
-                  Container(),
+                  StopFocusWidget(
+                    station: focusStation,
+                    stop: focusedStop,
+                  ),
                 ],
               )
             ],

@@ -123,14 +123,23 @@ class GTFSDataProvider {
   }
 
   static List<BusStop> getStops() {
-    return gtfsData!.stops.values.toList();
+    if (gtfsData == null) {
+      return  [];
+    }
+    return gtfsData!.stations.values.toList();
   }
 
   static List<BusLine> getStopLines(int stopId) {
+    if (!gtfsData!.stops.containsKey(stopId.toString())) {
+      return [];
+    }
     List<String> stopTrips = [];
-    GTFSStop stop = gtfsData!.stops[stopId.toString()]!;
+    SubBusStop stop = gtfsData!.stops[stopId.toString()]!;
     Set<int> validIDs = {stop.id};
-    validIDs.addAll(stop.children.map((e) => e.id));
+    final parent = gtfsData!.stations[stopId.toString()];
+    if (parent != null) {
+      validIDs.addAll(parent.children.map((e) => e.id));
+    }
 
     for (List<GTFSStopTime> stopTimes in gtfsData!.stopTime.values) {
       for (var stopTime in stopTimes) {
@@ -205,7 +214,7 @@ class GTFSDataProvider {
         .firstWhere((e) => e.value.shortName == lineID)
         .key;
 
-    GTFSStop stop = gtfsData!.stops[stopID]!;
+    BusStop stop = gtfsData!.stations[stopID]!;
     Set<int> validStopId = stop.children.map((e) => e.id).toSet();
 
     for (var trip in gtfsData!.trips.entries) {
@@ -252,7 +261,7 @@ class GTFSDataProvider {
     Map<String, Duration> tripPassage = {};
 
     Set<int> validStopId =
-        gtfsData!.stops[stopID]!.children.map((e) => e.id).toSet();
+        gtfsData!.stations[stopID]!.children.map((e) => e.id).toSet();
 
     for (var entrie in gtfsData!.stopTime.entries) {
       GTFSTrip trip = gtfsData!.trips[entrie.key]!;
@@ -276,7 +285,7 @@ class GTFSDataProvider {
       BusLine line = BusLine(route.shortName, route.longName, route.color);
       List<ArrivingTime> arrivalTimes = gtfsData!.stopTime[entrie.key]!
         .where((element) => element.arival > entrie.value).map((e) => 
-        ArrivingTime(gtfsData!.allStops[e.stopID]!.name, e.arival)).toList();
+        ArrivingTime(trip.headSign, e.arival)).toList();
       DateTime arrivalTime = today.add(entrie.value);
       NextPassage nextPassage = NextPassage(
         line,

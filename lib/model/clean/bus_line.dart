@@ -142,4 +142,9 @@ class BusLine extends Comparable<BusLine>{
 
     return 0;
   }
+
+  @override
+  String toString() {
+    return "{$id, $goDirection, $backDirection}";
+  }
 }

@@ -6,8 +6,8 @@ import 'package:flutter/rendering.dart';
 import 'package:latlong2/latlong.dart';
 
 class GTFSData {
-  late final Map<String, GTFSStop> stops;
-  late final Map<String, GTFSStop> allStops;
+  late final Map<String, BusStop> stations;
+  late final Map<String, SubBusStop> stops;
   late final Map<String, GTFSRoute> routes;
   late final GTFSCalendar calendar;
   late final Map<String, GTFSTrip> trips;
@@ -25,33 +25,32 @@ class GTFSData {
   }
 
   void loadStops(CSVTable table) {
-    Map<String, GTFSStop> _stops = {};
-    Map<String, GTFSStop> _allStops = {};
+    Map<String, GTFSStop> _station = {};
+    Map<String, GTFSStopChild> _stops = {};
     Map<String, List<GTFSStopChild>> child = {};
 
     for (var e in table) {
-      String parent = e["parent_station"];
+      final parent = e["parent_station"];
+      final id = e["stop_id"];
+      final stopChild = GTFSStopChild.fromCSV(e);
+      _stops[id] =  stopChild;
       if (parent != "") {
         if (!child.containsKey(parent)) {
           child[parent] = [];
         }
-        child[parent]!.add(GTFSStopChild.fromCSV(e));
+        child[parent]!.add(stopChild);
         continue;
       }
       
-      String id = e["stop_id"];
-      _stops[id] = GTFSStop.fromCSV(e);
+      _station[id] = GTFSStop.fromCSV(e);
     }
 
     for (var child in child.entries) {
-      _stops[child.key] = _stops[child.key]!.withChildren(child.value);
-      _allStops.addEntries(
-          child.value.map((e) => MapEntry(e.id.toString(),
-        _stops[child.key]!)));
+      _station[child.key] = _station[child.key]!.withChildren(child.value);
     }
 
-    allStops = _allStops;
     stops = _stops;
+    stations = _station;
   }
 
   void loadRoutes(CSVTable table) {
