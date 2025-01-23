@@ -11,6 +11,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:format/format.dart';
 import 'package:intl/intl.dart';
+import 'dart:math';
 
 import '../../model/clean/bus_line.dart';
 import '../../model/clean/next_passage.dart';
@@ -108,24 +109,9 @@ class NextPassageListWidgetState extends State<NextPassageListWidget> {
       futureBuilderKey =
       GlobalKey<CustomFutureBuilderState<List<NextPassage>>>();
 
-  @override
-  void initState() {
-    super.initState();
-    getData().onError(
-        (error, stack) {
-          print("Error found");
-          print(error);
-          print(stack);
-          return [];
-        }
-    ).then((v) => print("No error: $v"));
-  }
-
-
   void refresh() {
     futureBuilderKey.currentState!.refresh();
   }
-
 
   Future<List<NextPassage>> getData() async {
     List<NextPassage> result =
@@ -155,7 +141,8 @@ class NextPassageListWidgetState extends State<NextPassageListWidget> {
         return ListView.separated(
           itemCount: data.length,
           itemBuilder: (context, index) => NextPassageWidget(data[index]),
-          separatorBuilder: (ctx, index) => const Divider(height: 3, color: Colors.black38),
+          separatorBuilder: (ctx, index) =>
+              const Divider(height: 3, color: Colors.black38),
         );
       },
       onError: (context, error, refresh) {
@@ -185,27 +172,145 @@ class NextPassageWidget extends StatefulWidget {
 }
 
 class _NextPassageWidgetState extends State<NextPassageWidget>
-  with SingleTickerProviderStateMixin{
-  
+    with SingleTickerProviderStateMixin {
   late ExpandableWidgetController expandControler;
 
   @override
-    void initState() {
-      super.initState();
-      expandControler = ExpandableWidgetController(duration: const Duration(milliseconds: 300),
-        root: this);
-    }
+  void initState() {
+    super.initState();
+    expandControler = ExpandableWidgetController(
+        duration: const Duration(milliseconds: 300), root: this);
+  }
+
+  Widget buildNextPassageDetail(Duration delay) {
+    return SizedBox(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          delay.abs().inMinutes >= 2
+              ? Text(delay.isNegative
+                  ? AppString.advanceOf.format(delay.abs().inMinutes)
+                  : AppString.lateOf.format(delay.abs().inMinutes))
+              : Container(),
+          // Text(widget.nextPassage.aimedTime.toLocal().toString()),
+          // Text(widget.nextPassage.expectedTime.toLocal().toString()),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SizedBox(
+              height: 148,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: widget.nextPassage.arrivingTimes.length,
+                itemBuilder: (_, i) => buildWayItem(i, delay, i == widget.nextPassage.arrivingTimes.length - 1),
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget buildWayItem(int index, Duration delay, bool last) {
+    ArrivingTime arrival = widget.nextPassage.arrivingTimes[index];
+    String stopName = arrival.stop;
+    DateTime arrivalTime = DateTime.now().atMidnight().add(arrival.duration).add(delay);
+    return SizedBox(
+      width: last ? 70 : 40,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Transform.rotate(
+              angle: pi * 0.25,
+              alignment: Alignment.bottomCenter,
+              child: RotatedBox(
+                  quarterTurns: -1,
+                  child: Container(
+                    width: 100,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                          stopName,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  )
+              )
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: SizedBox(
+              height: 20,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Container(
+                    height: 5,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: widget.nextPassage.line.color,
+                    ),
+                  ),
+                  Container(
+                    width: 15,
+                    height: 15,
+                    decoration: BoxDecoration(
+                      color: widget.nextPassage.line.color,
+                      borderRadius: BorderRadiusDirectional.circular(10),
+                      border: Border.all(width: 1, color: Colors.black38),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+          // const SizedBox(
+          //   width: 10,
+          // ),
+          RichText(
+            text: TextSpan(
+              style: DefaultTextStyle.of(context).style,
+              children: [
+              TextSpan(
+                text: arrivalTime.hour.toString().padLeft(2, '0') + ":",
+                style: TextStyle(
+                  fontSize: 8,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              TextSpan(
+                text: arrivalTime.minute.toString().padLeft(2, '0'),
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                ),
+              )
+            ],
+          ))
+          // const SizedBox(
+          //   width: 10,
+          // ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     String formattedTime =
         DateFormat.Hm().format(widget.nextPassage.expectedTime.toLocal());
-    Duration arrivalDuration = widget.nextPassage.expectedTime.difference(DateTime.now());
-    String minuteToWait =
-        (arrivalDuration.inHours >= 1 ? "${arrivalDuration.inHours} h " : "") +
+    Duration arrivalDuration =
+        widget.nextPassage.expectedTime.difference(DateTime.now());
+    String minuteToWait = (arrivalDuration.inHours >= 1
+            ? "${arrivalDuration.inHours} h "
+            : "") +
         "${widget.nextPassage.expectedTime.difference(DateTime.now()).inMinutes % 60} min";
-    Duration delay = widget.nextPassage.expectedTime.difference(
-      widget.nextPassage.aimedTime);
+    Duration delay = widget.nextPassage.expectedTime
+        .difference(widget.nextPassage.aimedTime);
     return InkWell(
       onTap: expandControler.tickAnimation,
       child: Container(
@@ -232,7 +337,10 @@ class _NextPassageWidgetState extends State<NextPassageWidget>
                   child: widget.nextPassage.realTime
                       ? const Padding(
                           padding: EdgeInsets.all(4.0),
-                          child: Icon(Icons.wifi, size: 20,),
+                          child: Icon(
+                            Icons.wifi,
+                            size: 20,
+                          ),
                         )
                       : null,
                 ),
@@ -258,67 +366,7 @@ class _NextPassageWidgetState extends State<NextPassageWidget>
             ),
             ExpandableWidget(
               controller: expandControler,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  delay.abs().inMinutes >= 2 ?
-                  Text(delay.isNegative ?
-                    AppString.advanceOf.format(delay.abs().inMinutes) : 
-                    AppString.lateOf.format(delay.abs().inMinutes)
-                  ) : Container(),
-                  // Text(widget.nextPassage.aimedTime.toLocal().toString()),
-                  // Text(widget.nextPassage.expectedTime.toLocal().toString()),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: widget.nextPassage.arrivingTimes.asMap().entries.map((e) {
-                        String stopName = e.value.stop;
-                        String arivalString = DateFormat("HH:mm", "fr").format(
-                          DateTime.now().atMidnight().add(e.value.duration).add(delay));
-                        return Row(
-                            children: [
-                            SizedBox(
-                              width: 20,
-                              height: 25,
-                              child: Stack(
-                                alignment: Alignment.center,
-                                children: [
-                                Container(
-                                  height: double.infinity,
-                                  width: 5,
-                                  decoration: BoxDecoration(
-                                    color: widget.nextPassage.line.color,
-                                  ),
-                                ),
-                                Container(
-                                  width: 15,
-                                  height: 15,
-                                  decoration: BoxDecoration(
-                                    color: widget.nextPassage.line.color,
-                                    borderRadius: BorderRadiusDirectional.circular(10),
-                                    border: Border.all(
-                                      width: 1,
-                                      color: Colors.black38
-                                      ),
-                                    ),
-                                  )
-                                ],
-                                ),
-                                ),
-                                const SizedBox(width: 10,),
-                                Text(arivalString, style: const TextStyle(fontWeight: FontWeight.bold),),
-                                const SizedBox(width: 10,),
-                                Text(stopName),
-                                ],
-                                );
-                    
-                      }).toList()
-                      ),
-                  )
-                  ],
-              ),
+              child: buildNextPassageDetail(delay),
             )
           ],
         ),

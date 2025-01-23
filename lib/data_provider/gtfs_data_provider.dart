@@ -285,7 +285,7 @@ class GTFSDataProvider {
       BusLine line = BusLine(route.shortName, route.longName, route.color);
       List<ArrivingTime> arrivalTimes = gtfsData!.stopTime[entrie.key]!
         .where((element) => element.arival > entrie.value).map((e) => 
-        ArrivingTime(trip.headSign, e.arival)).toList();
+        ArrivingTime(gtfsData!.stopsParent[e.stopID]!.name, e.arival)).toList();
       DateTime arrivalTime = today.add(entrie.value);
       NextPassage nextPassage = NextPassage(
         line,

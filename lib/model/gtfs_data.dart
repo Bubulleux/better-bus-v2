@@ -8,6 +8,7 @@ import 'package:latlong2/latlong.dart';
 class GTFSData {
   late final Map<String, BusStop> stations;
   late final Map<String, SubBusStop> stops;
+  late final Map<String, BusStop> stopsParent;
   late final Map<String, GTFSRoute> routes;
   late final GTFSCalendar calendar;
   late final Map<String, GTFSTrip> trips;
@@ -27,6 +28,7 @@ class GTFSData {
   void loadStops(CSVTable table) {
     Map<String, GTFSStop> _station = {};
     Map<String, GTFSStopChild> _stops = {};
+    Map<String, BusStop> _stopParent = {};
     Map<String, List<GTFSStopChild>> child = {};
 
     for (var e in table) {
@@ -46,9 +48,12 @@ class GTFSData {
     }
 
     for (var child in child.entries) {
-      _station[child.key] = _station[child.key]!.withChildren(child.value);
+      final newStation = _station[child.key]!.withChildren(child.value);
+      _station[child.key] = newStation;
+      _stopParent.addEntries(child.value.map((e) => MapEntry(e.id.toString(), newStation)));
     }
 
+    stopsParent = _stopParent;
     stops = _stops;
     stations = _station;
   }
