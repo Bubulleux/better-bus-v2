@@ -7,6 +7,7 @@ import 'package:better_bus_v2/data_provider/local_data_handler.dart';
 import 'package:better_bus_v2/error_handler/custom_error.dart';
 import 'package:better_bus_v2/model/clean/bus_line.dart';
 import 'package:better_bus_v2/model/clean/bus_stop.dart';
+import 'package:better_bus_v2/model/clean/line_direction.dart';
 import 'package:better_bus_v2/model/clean/next_passage.dart';
 import 'package:better_bus_v2/model/clean/timetable.dart';
 import 'package:better_bus_v2/model/cvs_parser.dart';
@@ -253,7 +254,7 @@ class GTFSDataProvider {
     return Timetable(sortedSchredules, terminalLabel);
   }
 
-  static List<NextPassage> getNextPassage(String stopID, {List<NextPassage>? realtime, int max = 100}) {
+  static List<NextPassage> getNextPassage(String stopID) {
     DateTime now = DateTime.now();
     DateTime today = DateTime(now.year, now.month, now.day);
 
@@ -263,16 +264,12 @@ class GTFSDataProvider {
     Set<int> validStopId =
         gtfsData!.stations[stopID]!.children.map((e) => e.id).toSet();
     
-    DateTime startSearch = realtime?.first.aimedTime.subtract(const Duration(minutes: 1)) ?? DateTime.now();
-
     for (var entrie in gtfsData!.stopTime.entries) {
       GTFSTrip trip = gtfsData!.trips[entrie.key]!;
       if (!validServices.contains(trip.serviceID)) continue;
 
       for (var stopTime in entrie.value) {
         if (!validStopId.contains(int.parse(stopTime.stopID))) continue;
-        DateTime arivalTime = today.add(stopTime.arival);
-        if (arivalTime.isBefore(now)) continue;
 
         tripPassage[entrie.key] = stopTime.arival;
       }
@@ -299,10 +296,49 @@ class GTFSDataProvider {
     }
 
     nextPassages.sort((a, b) => a.betterTime.compareTo(b.betterTime));
-    if (nextPassages.length > max) {
-      nextPassages = nextPassages.sublist(0, max);
-    }
 
     return nextPassages;
+  }
+
+  static Map<LineDirection, List<DateTime>> getFullTimetable(BusStop stop) {
+    DateTime now = DateTime.now();
+    DateTime today = DateTime(now.year, now.month, now.day);
+
+    Set<String> validServices = gtfsData!.calendar.getEnablesServices(today);
+    Map<String, Duration> tripPassage = {};
+
+    Set<int> validStopId =
+    gtfsData!.stations[stop.id.toString()]!.children.map((e) => e.id).toSet();
+
+    for (var entrie in gtfsData!.stopTime.entries) {
+      GTFSTrip trip = gtfsData!.trips[entrie.key]!;
+      if (!validServices.contains(trip.serviceID)) continue;
+
+      for (var stopTime in entrie.value) {
+        if (!validStopId.contains(int.parse(stopTime.stopID))) continue;
+
+        tripPassage[entrie.key] = stopTime.arival;
+      }
+    }
+
+    Map<LineDirection, List<DateTime>> timetable = {};
+
+    for (var entrie in tripPassage.entries) {
+      GTFSTrip trip = gtfsData!.trips[entrie.key]!;
+      GTFSRoute route = gtfsData!.routes[trip.routeID]!;
+
+      BusLine line = BusLine(route.shortName, route.longName, route.color);
+      List<ArrivingTime> arrivalTimes = gtfsData!.stopTime[entrie.key]!
+          .where((element) => element.arival > entrie.value).map((e) =>
+          ArrivingTime(gtfsData!.stopsParent[e.stopID]!.name, e.arival)).toList();
+      DateTime arrivalTime = today.add(entrie.value);
+      final direction = LineDirection(line,entrie.key, trip.headSign);
+      if (!timetable.containsKey(direction)) {
+        timetable[direction] = [];
+      }
+      timetable[direction]!.add(arrivalTime);
+    }
+
+    return timetable;
   }
 }

@@ -84,12 +84,12 @@ class BusLine extends Comparable<BusLine>{
 
   @override
   int get hashCode{
-    List<String> goDir = List.from(goDirection);
-    List<String> backDir = List.from(backDirection);
-    goDir.sort();
-    backDir.sort();
+    // // List<String> goDir = List.from(goDirection);
+    // // List<String> backDir = List.from(backDirection);
+    // goDir.sort();
+    // backDir.sort();
 
-    return Object.hash(id, fullName, color, goDir, backDir);
+    return Object.hash(id, fullName, color);
   }
 
   static List<String> parseId(String id) {

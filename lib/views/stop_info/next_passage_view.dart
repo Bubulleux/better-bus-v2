@@ -113,6 +113,16 @@ class NextPassageListWidgetState extends State<NextPassageListWidget> {
     futureBuilderKey.currentState!.refresh();
   }
 
+  @override
+  void initState() {
+    super.initState();
+    getData().onError((e, s) {
+      print(e);
+      print(s);
+      return [];
+    });
+  }
+
   Future<List<NextPassage>> getData() async {
     List<NextPassage> result =
         await VitalisDataProvider.getNextPassage(widget.stop);

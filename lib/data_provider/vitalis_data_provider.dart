@@ -7,6 +7,7 @@ import 'package:better_bus_v2/model/clean/bus_line.dart';
 import 'package:better_bus_v2/model/clean/bus_stop.dart';
 import 'package:better_bus_v2/model/clean/info_traffic.dart';
 import 'package:better_bus_v2/model/clean/line_boarding.dart';
+import 'package:better_bus_v2/model/clean/line_direction.dart';
 import 'package:better_bus_v2/model/clean/map_place.dart';
 import 'package:better_bus_v2/model/clean/route.dart';
 import 'package:better_bus_v2/model/clean/timetable.dart';
@@ -85,11 +86,11 @@ class VitalisDataProvider {
 
   static Future<List<NextPassage>> getNextPassage(BusStop stop,
       {int max = 40}) async {
-    List<NextPassage>? gtfsNextPassage;
+    Map<LineDirection, List<DateTime>>? fullTimetable;
     if (GTFSDataProvider.gtfsData != null) {
-      gtfsNextPassage = GTFSDataProvider.getNextPassage(stop.id.toString());
+      fullTimetable = GTFSDataProvider.getFullTimetable(stop);
       if (!await ConnectivityChecker.isConnected()) {
-        return gtfsNextPassage;
+        return GTFSDataProvider.getNextPassage(stop.id.toString());
       }
     }
 
@@ -111,41 +112,24 @@ class VitalisDataProvider {
     for (Map<String, dynamic> rawPassage in rawPassages) {
       realTime.add(ApiNextPassage.fromJson(rawPassage));
     }
-    if (gtfsNextPassage == null) return realTime;
-    return realTime + gtfsNextPassage;
+    if (fullTimetable == null) return realTime;
 
     List<NextPassage> output = [];
-    for (var nextPassage in realTime) {
-      // int index = gtfsNextPassage.indexWhere((e) =>
-      //     e.aimedTime.toUtc().isAtSameMomentAs(nextPassage.realTime
-      //         ? nextPassage.aimedTime
-      //         : nextPassage.expectedTime) &&
-      //     e.line.id == nextPassage.line.id);
-      int index = -1;
-      Duration durationDiff = const Duration(minutes: 1);
-      
-      for (var e in gtfsNextPassage.asMap().entries) {
-        if (e.value.line.id != nextPassage.line.id ||
-          e.value.destination != nextPassage.destination) {
-          continue;
+    final now = DateTime.now();
+    for (var realNextTime in realTime) {
+      DateTime? bestMatch = null;
+      final testingTime = realNextTime.betterTime;
+      final destinationTimes = fullTimetable.entries.firstWhere(
+              (e) => e.key.line.id == realNextTime.line.id && e.key.destination == realNextTime.destination);
+      for (var curTime in destinationTimes.value) {
+        bestMatch ??= curTime;
+        final timeDiff = testingTime.difference(bestMatch) - testingTime.difference(curTime);
+        if (timeDiff.isNegative) {
+          bestMatch = curTime;
         }
-        DateTime aimedTime = nextPassage.expectedTime ?? nextPassage.aimedTime;
-        Duration curDurationDiff = aimedTime.difference(e.value.aimedTime).abs();
-        if (curDurationDiff < durationDiff) {
-          index = e.key;
-          durationDiff = curDurationDiff;
-        }
-
-    
       }
-      if (index == -1) {
-        output.add(nextPassage);
-        continue;
-      }
-      output.add(nextPassage.copyWith(arrivingTimes: gtfsNextPassage[index].arrivingTimes));
-      gtfsNextPassage.removeAt(index);
+      output.add(realNextTime.copyWith(aimedTime: bestMatch));
     }
-    output.addAll(gtfsNextPassage);
     output.sort((a, b) => a.betterTime.compareTo(b.betterTime));
 
     return output;

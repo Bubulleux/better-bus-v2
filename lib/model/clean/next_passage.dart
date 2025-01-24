@@ -22,16 +22,16 @@ class NextPassage {
   DateTime get betterTime => expectedTime ?? aimedTime;
   bool get realTime => expectedTime != null;
 
-  NextPassage copyWith({DateTime? expectedTime, List<ArrivingTime>? arrivingTimes}) {
+  NextPassage copyWith({DateTime? aimedTime, DateTime? expectedTime, List<ArrivingTime>? arrivingTimes}) {
     return NextPassage(
-        line, destination, aimedTime,
+        line, destination, aimedTime ?? this.aimedTime,
         expectedTime: expectedTime ?? this.expectedTime, arrivingTimes:
     arrivingTimes ?? this.arrivingTimes);
   }
 
   @override
   int get hashCode =>
-      Object.hash(aimedTime.millisecondsSinceEpoch, line.hashCode,
+      Object.hash(aimedTime.hashCode, line.hashCode,
           destination);
 
 
@@ -50,7 +50,7 @@ class ApiNextPassage extends NextPassage {
       : this (
     BusLine.fromJson(json["line"]),
     json["destinationName"],
-    DateTime.parse(json["aimedDepartureTime"]),
+    DateTime.parse(json["expectedDepartureTime"]),
     expectedTime: json["realtime"] ? DateTime.parse(json["expectedDepartureTime"]) : null,
   );
 }
