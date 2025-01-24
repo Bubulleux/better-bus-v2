@@ -200,8 +200,8 @@ class _NextPassageWidgetState extends State<NextPassageWidget>
               height: 148,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: widget.nextPassage.arrivingTimes.length,
-                itemBuilder: (_, i) => buildWayItem(i, delay, i == widget.nextPassage.arrivingTimes.length - 1),
+                itemCount: widget.nextPassage.arrivingTimes?.length ?? 0,
+                itemBuilder: (_, i) => buildWayItem(i, delay, i == (widget.nextPassage.arrivingTimes?.length ?? 0) - 1),
               ),
             ),
           )
@@ -211,7 +211,8 @@ class _NextPassageWidgetState extends State<NextPassageWidget>
   }
 
   Widget buildWayItem(int index, Duration delay, bool last) {
-    ArrivingTime arrival = widget.nextPassage.arrivingTimes[index];
+    if (widget.nextPassage.arrivingTimes == null) return Container();
+    ArrivingTime arrival = widget.nextPassage.arrivingTimes![index];
     String stopName = arrival.stop;
     DateTime arrivalTime = DateTime.now().atMidnight().add(arrival.duration).add(delay);
     return SizedBox(
@@ -271,26 +272,28 @@ class _NextPassageWidgetState extends State<NextPassageWidget>
           // const SizedBox(
           //   width: 10,
           // ),
-          RichText(
-            text: TextSpan(
-              style: DefaultTextStyle.of(context).style,
-              children: [
-              TextSpan(
-                text: arrivalTime.hour.toString().padLeft(2, '0') + ":",
-                style: TextStyle(
-                  fontSize: 8,
-                  fontWeight: FontWeight.w700,
+          ClipRect(
+            child: RichText(
+              text: TextSpan(
+                style: DefaultTextStyle.of(context).style,
+                children: [
+                TextSpan(
+                  text: arrivalTime.hour.toString().padLeft(2, '0') + ":",
+                  style: TextStyle(
+                    fontSize: 8,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
-              ),
-              TextSpan(
-                text: arrivalTime.minute.toString().padLeft(2, '0'),
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                ),
-              )
-            ],
-          ))
+                TextSpan(
+                  text: arrivalTime.minute.toString().padLeft(2, '0'),
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                  ),
+                )
+              ],
+            )),
+          )
           // const SizedBox(
           //   width: 10,
           // ),
@@ -302,14 +305,14 @@ class _NextPassageWidgetState extends State<NextPassageWidget>
   @override
   Widget build(BuildContext context) {
     String formattedTime =
-        DateFormat.Hm().format(widget.nextPassage.expectedTime.toLocal());
+        DateFormat.Hm().format(widget.nextPassage.betterTime.toLocal());
     Duration arrivalDuration =
-        widget.nextPassage.expectedTime.difference(DateTime.now());
+        widget.nextPassage.betterTime.difference(DateTime.now());
     String minuteToWait = (arrivalDuration.inHours >= 1
             ? "${arrivalDuration.inHours} h "
             : "") +
-        "${widget.nextPassage.expectedTime.difference(DateTime.now()).inMinutes % 60} min";
-    Duration delay = widget.nextPassage.expectedTime
+        "${widget.nextPassage.betterTime.difference(DateTime.now()).inMinutes % 60} min";
+    Duration delay = widget.nextPassage.betterTime
         .difference(widget.nextPassage.aimedTime);
     return InkWell(
       onTap: expandControler.tickAnimation,
@@ -362,6 +365,12 @@ class _NextPassageWidgetState extends State<NextPassageWidget>
                     ],
                   ),
                 )
+              ],
+            ),
+            Column(
+              children: [
+                Text("aim: " + widget.nextPassage.aimedTime.toString()),
+                Text("exp: " + widget.nextPassage.expectedTime.toString()),
               ],
             ),
             ExpandableWidget(

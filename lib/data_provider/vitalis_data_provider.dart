@@ -109,10 +109,10 @@ class VitalisDataProvider {
     List<dynamic> rawPassages = body["realtime"];
     List<NextPassage> realTime = [];
     for (Map<String, dynamic> rawPassage in rawPassages) {
-      realTime.add(NextPassage.fromJson(rawPassage));
+      realTime.add(ApiNextPassage.fromJson(rawPassage));
     }
-
     if (gtfsNextPassage == null) return realTime;
+    return realTime + gtfsNextPassage;
 
     List<NextPassage> output = [];
     for (var nextPassage in realTime) {
@@ -129,9 +129,7 @@ class VitalisDataProvider {
           e.value.destination != nextPassage.destination) {
           continue;
         }
-        DateTime aimedTime = nextPassage.realTime
-            ? nextPassage.aimedTime
-            : nextPassage.expectedTime;
+        DateTime aimedTime = nextPassage.expectedTime ?? nextPassage.aimedTime;
         Duration curDurationDiff = aimedTime.difference(e.value.aimedTime).abs();
         if (curDurationDiff < durationDiff) {
           index = e.key;
@@ -144,11 +142,11 @@ class VitalisDataProvider {
         output.add(nextPassage);
         continue;
       }
-      output.add(nextPassage.witchArrival(gtfsNextPassage[index].arrivingTimes));
+      output.add(nextPassage.copyWith(arrivingTimes: gtfsNextPassage[index].arrivingTimes));
       gtfsNextPassage.removeAt(index);
     }
     output.addAll(gtfsNextPassage);
-    output.sort((a, b) => a.expectedTime.compareTo(b.expectedTime));
+    output.sort((a, b) => a.betterTime.compareTo(b.betterTime));
 
     return output;
   }

@@ -1,41 +1,56 @@
+import 'dart:math';
+
 import 'package:better_bus_v2/model/clean/bus_line.dart';
 
 class ArrivingTime {
   final Duration duration;
   final String stop;
 
-  ArrivingTime(this.stop, this.duration);
+  const ArrivingTime(this.stop, this.duration);
 }
 
 class NextPassage {
-  NextPassage(this.line, this.destination, this.realTime, this.aimedTime,
-      this.expectedTime, this.arrivingTimes);
-
-  NextPassage.fromJson(Map<String, dynamic> json)
-      : line = BusLine.fromJson(json["line"]),
-        destination = json["destinationName"],
-        realTime = json["realtime"],
-        aimedTime = DateTime.parse(json["aimedDepartureTime"]),
-        expectedTime = DateTime.parse(json["expectedDepartureTime"]),
-        arrivingTimes = [];
-
-  NextPassage witchArrival(List<ArrivingTime> newArriving) {
-    return NextPassage(line, destination, realTime, aimedTime, expectedTime, newArriving);
-  }
-
-  @override
-    int get hashCode => Object.hash(aimedTime.millisecondsSinceEpoch, line.hashCode, 
-      destination);
+  const NextPassage(this.line, this.destination, this.aimedTime,
+      {this.expectedTime, this.arrivingTimes});
 
   final BusLine line;
   final String destination;
-  final bool realTime;
   final DateTime aimedTime;
-  final DateTime expectedTime;
-  final List<ArrivingTime> arrivingTimes;
+  final DateTime? expectedTime;
+  final List<ArrivingTime>? arrivingTimes;
+
+  DateTime get betterTime => expectedTime ?? aimedTime;
+  bool get realTime => expectedTime != null;
+
+  NextPassage copyWith({DateTime? expectedTime, List<ArrivingTime>? arrivingTimes}) {
+    return NextPassage(
+        line, destination, aimedTime,
+        expectedTime: expectedTime ?? this.expectedTime, arrivingTimes:
+    arrivingTimes ?? this.arrivingTimes);
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(aimedTime.millisecondsSinceEpoch, line.hashCode,
+          destination);
+
 
   @override
   bool operator ==(Object other) {
     return hashCode == other.hashCode;
   }
+}
+
+
+class ApiNextPassage extends NextPassage {
+  ApiNextPassage(super.line, super.destination, super.aimedTime,
+  {super.expectedTime, super.arrivingTimes});
+
+  ApiNextPassage.fromJson(Map<String, dynamic> json)
+      : this (
+    BusLine.fromJson(json["line"]),
+    json["destinationName"],
+    DateTime.parse(json["aimedDepartureTime"]),
+    expectedTime: json["realtime"] ? DateTime.parse(json["expectedDepartureTime"]) : null,
+  );
 }

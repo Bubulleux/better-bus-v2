@@ -253,7 +253,7 @@ class GTFSDataProvider {
     return Timetable(sortedSchredules, terminalLabel);
   }
 
-  static List<NextPassage> getNextPassage(String stopID, {int max = 100}) {
+  static List<NextPassage> getNextPassage(String stopID, {List<NextPassage>? realtime, int max = 100}) {
     DateTime now = DateTime.now();
     DateTime today = DateTime(now.year, now.month, now.day);
 
@@ -262,6 +262,8 @@ class GTFSDataProvider {
 
     Set<int> validStopId =
         gtfsData!.stations[stopID]!.children.map((e) => e.id).toSet();
+    
+    DateTime startSearch = realtime?.first.aimedTime.subtract(const Duration(minutes: 1)) ?? DateTime.now();
 
     for (var entrie in gtfsData!.stopTime.entries) {
       GTFSTrip trip = gtfsData!.trips[entrie.key]!;
@@ -290,15 +292,13 @@ class GTFSDataProvider {
       NextPassage nextPassage = NextPassage(
         line,
         trip.headSign,
-        false,
         arrivalTime,
-        arrivalTime,
-        arrivalTimes,
+        arrivingTimes: arrivalTimes,
       );
       nextPassages.add(nextPassage);
     }
 
-    nextPassages.sort((a, b) => a.expectedTime.compareTo(b.expectedTime));
+    nextPassages.sort((a, b) => a.betterTime.compareTo(b.betterTime));
     if (nextPassages.length > max) {
       nextPassages = nextPassages.sublist(0, max);
     }
