@@ -9,5 +9,10 @@ class LineDirection {
   final String destination;
 
   @override
-  int get hashCode => line.hashCode ^ destination.hashCode ^ tripId.hashCode;
+  int get hashCode => line.hashCode ^ destination.hashCode;
+
+  @override
+  bool operator ==(Object other) {
+    return hashCode == other.hashCode;
+  }
 }

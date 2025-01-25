@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:ffi';
+import 'dart:math';
 
 import 'package:better_bus_v2/data_provider/gtfs_data_provider.dart';
 import 'package:better_bus_v2/error_handler/custom_error.dart';
@@ -115,20 +116,41 @@ class VitalisDataProvider {
     if (fullTimetable == null) return realTime;
 
     List<NextPassage> output = [];
+    Map<LineDirection, DateTime> directionAccuracy = {};
     final now = DateTime.now();
     for (var realNextTime in realTime) {
-      DateTime? bestMatch = null;
+      DateTime? bestMatch;
       final testingTime = realNextTime.betterTime;
       final destinationTimes = fullTimetable.entries.firstWhere(
               (e) => e.key.line.id == realNextTime.line.id && e.key.destination == realNextTime.destination);
+
       for (var curTime in destinationTimes.value) {
         bestMatch ??= curTime;
-        final timeDiff = testingTime.difference(bestMatch) - testingTime.difference(curTime);
-        if (timeDiff.isNegative) {
+        final curTimeDiff = testingTime.difference(curTime);
+
+        if (curTimeDiff.abs() < testingTime.difference(bestMatch).abs() && curTimeDiff > const Duration(minutes: -5)) {
           bestMatch = curTime;
         }
       }
-      output.add(realNextTime.copyWith(aimedTime: bestMatch));
+
+      output.add(realNextTime.copyWith(
+          aimedTime: bestMatch,
+          arrivingTimes: GTFSDataProvider.getArrivingTime(stop.id.toString(), destinationTimes.key.tripId, Duration.zero)));
+      if (bestMatch == null) continue;
+
+      if (!directionAccuracy.containsKey(destinationTimes.key) ||
+        bestMatch.isAfter(directionAccuracy[destinationTimes.key]!)) {
+        directionAccuracy[destinationTimes.key] = bestMatch;
+      }
+    }
+    for(var curDirection in fullTimetable.entries) {
+      DateTime start = directionAccuracy[curDirection.key] ?? now;
+      output.addAll(curDirection.value.where(
+          (e) => e.isAfter(start)
+      ).map(
+          (e) => NextPassage(curDirection.key.line, curDirection.key.destination, e,
+          arrivingTimes: GTFSDataProvider.getArrivingTime(stop.id.toString(), curDirection.key.tripId, Duration.zero))
+      ));
     }
     output.sort((a, b) => a.betterTime.compareTo(b.betterTime));
 

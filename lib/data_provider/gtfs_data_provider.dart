@@ -13,6 +13,7 @@ import 'package:better_bus_v2/model/clean/timetable.dart';
 import 'package:better_bus_v2/model/cvs_parser.dart';
 import 'package:better_bus_v2/model/gtfs_data.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
 import 'package:http/http.dart' as http;
@@ -327,12 +328,9 @@ class GTFSDataProvider {
       GTFSTrip trip = gtfsData!.trips[entrie.key]!;
       GTFSRoute route = gtfsData!.routes[trip.routeID]!;
 
-      BusLine line = BusLine(route.shortName, route.longName, route.color);
-      List<ArrivingTime> arrivalTimes = gtfsData!.stopTime[entrie.key]!
-          .where((element) => element.arival > entrie.value).map((e) =>
-          ArrivingTime(gtfsData!.stopsParent[e.stopID]!.name, e.arival)).toList();
+      final line = BusLine(route.shortName, route.longName, route.color);
       DateTime arrivalTime = today.add(entrie.value);
-      final direction = LineDirection(line,entrie.key, trip.headSign);
+      final direction = LineDirection(line, entrie.key, trip.headSign);
       if (!timetable.containsKey(direction)) {
         timetable[direction] = [];
       }
@@ -340,5 +338,12 @@ class GTFSDataProvider {
     }
 
     return timetable;
+  }
+
+  static List<ArrivingTime> getArrivingTime(String stopId, String tripId, Duration start) {
+
+    return gtfsData!.stopTime[tripId]!
+        .where((element) => element.arival > start).map((e) =>
+        ArrivingTime(gtfsData!.stopsParent[e.stopID]!.name, e.arival)).toList();
   }
 }
