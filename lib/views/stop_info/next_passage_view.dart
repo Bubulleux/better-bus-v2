@@ -203,14 +203,16 @@ class _NextPassageWidgetState extends State<NextPassageWidget>
               ? InfoBox(
                   width: double.infinity,
                   color: delay.isNegative ? Colors.red : Colors.orange,
-                  margin: EdgeInsets.all(5),
+                  margin: const EdgeInsets.all(5),
                   icon: Icons.warning_amber,
                   child: Row(
                     children: [
-                      Text(delay.isNegative
-                          ? AppString.advanceOf.format(delay.abs().inMinutes)
-                          : AppString.lateOf.format(delay.abs().inMinutes),
-                      style: const TextStyle(fontWeight: FontWeight.bold),),
+                      Text(
+                        delay.isNegative
+                            ? AppString.advanceOf.format(delay.abs().inMinutes)
+                            : AppString.lateOf.format(delay.abs().inMinutes),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     ],
                   ),
                 )
@@ -220,12 +222,14 @@ class _NextPassageWidgetState extends State<NextPassageWidget>
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: SizedBox(
-              height: 148,
+              height: 120,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: widget.nextPassage.arrivingTimes?.length ?? 0,
-                itemBuilder: (_, i) => buildWayItem(i, delay,
-                    i == (widget.nextPassage.arrivingTimes?.length ?? 0) - 1),
+                itemCount: (widget.nextPassage.arrivingTimes?.length ?? -1) + 1,
+                itemBuilder: (_, i) =>
+                    ((widget.nextPassage.arrivingTimes?.length ?? 0) == i)
+                        ? buildLineEnd()
+                        : buildWayItem(i, delay),
               ),
             ),
           )
@@ -234,60 +238,95 @@ class _NextPassageWidgetState extends State<NextPassageWidget>
     );
   }
 
-  Widget buildWayItem(int index, Duration delay, bool last) {
+  Widget buildLineEnd() {
+    return const SizedBox(
+      width: 70,
+      height: double.infinity,
+    );
+  }
+
+  Widget buildWayItem(int index, Duration delay) {
     if (widget.nextPassage.arrivingTimes == null) return Container();
     ArrivingTime arrival = widget.nextPassage.arrivingTimes![index];
     String stopName = arrival.stop;
     DateTime arrivalTime =
         DateTime.now().atMidnight().add(arrival.duration).add(delay);
     return SizedBox(
-      width: last ? 70 : 40,
+      //width: 50,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Transform.rotate(
-              angle: pi * 0.25,
-              alignment: Alignment.bottomCenter,
-              child: RotatedBox(
-                  quarterTurns: -1,
-                  child: Container(
-                    width: 100,
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        stopName,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
+          Padding(
+            padding: const EdgeInsets.only(left: 15),
+            child: Transform.rotate(
+                angle: pi * 0.25,
+                alignment: Alignment.bottomCenter,
+                child: RotatedBox(
+                    quarterTurns: -1,
+                    child: Container(
+                      width: 80,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          stopName,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
                         ),
                       ),
-                    ),
-                  ))),
+                    ))),
+          ),
           Padding(
             padding: const EdgeInsets.only(top: 10),
             child: SizedBox(
               height: 20,
-              child: Stack(
-                alignment: Alignment.center,
+              child: Row(
+                //alignment: Alignment.center,
                 children: [
                   Container(
                     height: 5,
-                    width: double.infinity,
+                    alignment: Alignment.centerRight,
+                    width: 10,
                     decoration: BoxDecoration(
                       color: widget.nextPassage.line.color,
                     ),
                   ),
                   Container(
-                    width: 15,
-                    height: 15,
-                    decoration: BoxDecoration(
-                      color: widget.nextPassage.line.color,
-                      borderRadius: BorderRadiusDirectional.circular(10),
-                      border: Border.all(width: 1, color: Colors.black38),
-                    ),
-                  )
+                      height: 20,
+                      padding: const EdgeInsets.all(3),
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: widget.nextPassage.line.color.withAlpha(80),
+                        borderRadius: BorderRadiusDirectional.circular(10),
+                        border: Border.all(
+                            width: 2, color: widget.nextPassage.line.color),
+                      ),
+                      child: Text(DateFormat.Hm().format(arrivalTime.toLocal()),
+                          style: const TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ))
+                      // child: RichText(
+                      //     text: TextSpan(
+                      //   style: DefaultTextStyle.of(context).style,
+                      //   children: [
+                      //     TextSpan(
+                      //       text: arrivalTime.hour.toString().padLeft(2, '0') + ":",
+                      //       style: const TextStyle(
+                      //         fontSize: 8,
+                      //         fontWeight: FontWeight.w700,
+                      //       ),
+                      //     ),
+                      //     TextSpan(
+                      //       text: arrivalTime.minute.toString().padLeft(2, '0'),
+                      //       ),
+                      //     )
+                      //   ],
+                      // )),
+                      ),
                 ],
               ),
             ),
@@ -295,28 +334,8 @@ class _NextPassageWidgetState extends State<NextPassageWidget>
           // const SizedBox(
           //   width: 10,
           // ),
-          ClipRect(
-            child: RichText(
-                text: TextSpan(
-              style: DefaultTextStyle.of(context).style,
-              children: [
-                TextSpan(
-                  text: arrivalTime.hour.toString().padLeft(2, '0') + ":",
-                  style: TextStyle(
-                    fontSize: 8,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                TextSpan(
-                  text: arrivalTime.minute.toString().padLeft(2, '0'),
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                  ),
-                )
-              ],
-            )),
-          )
+          // ClipRect(
+          // )
           // const SizedBox(
           //   width: 10,
           // ),

@@ -7,6 +7,7 @@ import 'package:better_bus_v2/data_provider/local_data_handler.dart';
 import 'package:better_bus_v2/error_handler/custom_error.dart';
 import 'package:better_bus_v2/model/clean/bus_line.dart';
 import 'package:better_bus_v2/model/clean/bus_stop.dart';
+import 'package:better_bus_v2/model/clean/bus_trip.dart';
 import 'package:better_bus_v2/model/clean/line_direction.dart';
 import 'package:better_bus_v2/model/clean/next_passage.dart';
 import 'package:better_bus_v2/model/clean/timetable.dart';
@@ -301,7 +302,7 @@ class GTFSDataProvider {
     return nextPassages;
   }
 
-  static Map<LineDirection, List<DateTime>> getFullTimetable(BusStop stop) {
+  static Map<LineDirection, List<TripPassage>> getFullTimetable(BusStop stop) {
     DateTime now = DateTime.now();
     DateTime today = DateTime(now.year, now.month, now.day);
 
@@ -322,7 +323,7 @@ class GTFSDataProvider {
       }
     }
 
-    Map<LineDirection, List<DateTime>> timetable = {};
+    Map<LineDirection, List<TripPassage>> timetable = {};
 
     for (var entrie in tripPassage.entries) {
       GTFSTrip trip = gtfsData!.trips[entrie.key]!;
@@ -330,20 +331,31 @@ class GTFSDataProvider {
 
       final line = BusLine(route.shortName, route.longName, route.color);
       DateTime arrivalTime = today.add(entrie.value);
-      final direction = LineDirection(line, entrie.key, trip.headSign);
+      final direction = LineDirection(line, trip.headSign);
       if (!timetable.containsKey(direction)) {
         timetable[direction] = [];
       }
-      timetable[direction]!.add(arrivalTime);
+      timetable[direction]!.add(
+        TripPassage(line, trip.headSign, arrivalTime, entrie.key)
+      );
     }
 
     return timetable;
   }
 
-  static List<ArrivingTime> getArrivingTime(String stopId, String tripId, Duration start) {
+  static List<ArrivingTime> getArrivingTime(String stopId, String tripId) {
+    print(stopId);
+    print(gtfsData!.stations[stopId]);
+    final stopTimes = gtfsData!.stopTime[tripId];
+    final ids = gtfsData!.stations[stopId]?.ids;
+    if (stopTimes == null || ids == null) return [];
 
-    return gtfsData!.stopTime[tripId]!
-        .where((element) => element.arival > start).map((e) =>
+    print(stopId);
+    print(stopTimes.map((e) => e.stopID));
+    final start  = stopTimes.indexWhere((e) => ids.contains(e.stopID));
+    if (start == -1 ) return [];
+
+    return stopTimes.skip(start).map((e) =>
         ArrivingTime(gtfsData!.stopsParent[e.stopID]!.name, e.arival)).toList();
   }
 }

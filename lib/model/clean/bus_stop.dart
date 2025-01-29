@@ -63,6 +63,8 @@ class BusStop extends SubBusStop{
     return int.parse(parsedId.substring(2, parsedId.length - 4));
   }
 
+  Set<String> get ids => {id.toString(), ...children.map((e) => e.id.toString())};
+
 
   @override
   bool operator ==(Object other) {

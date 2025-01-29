@@ -6,6 +6,7 @@ import 'package:better_bus_v2/data_provider/gtfs_data_provider.dart';
 import 'package:better_bus_v2/error_handler/custom_error.dart';
 import 'package:better_bus_v2/model/clean/bus_line.dart';
 import 'package:better_bus_v2/model/clean/bus_stop.dart';
+import 'package:better_bus_v2/model/clean/bus_trip.dart';
 import 'package:better_bus_v2/model/clean/info_traffic.dart';
 import 'package:better_bus_v2/model/clean/line_boarding.dart';
 import 'package:better_bus_v2/model/clean/line_direction.dart';
@@ -87,7 +88,7 @@ class VitalisDataProvider {
 
   static Future<List<NextPassage>> getNextPassage(BusStop stop,
       {int max = 40}) async {
-    Map<LineDirection, List<DateTime>>? fullTimetable;
+    Map<LineDirection, List<TripPassage>>? fullTimetable;
     if (GTFSDataProvider.gtfsData != null) {
       fullTimetable = GTFSDataProvider.getFullTimetable(stop);
       if (!await ConnectivityChecker.isConnected()) {
@@ -119,37 +120,38 @@ class VitalisDataProvider {
     Map<LineDirection, DateTime> directionAccuracy = {};
     final now = DateTime.now();
     for (var realNextTime in realTime) {
-      DateTime? bestMatch;
+      TripPassage? bestMatch;
       final testingTime = realNextTime.betterTime;
       final destinationTimes = fullTimetable.entries.firstWhere(
               (e) => e.key.line.id == realNextTime.line.id && e.key.destination == realNextTime.destination);
 
-      for (var curTime in destinationTimes.value) {
-        bestMatch ??= curTime;
+      for (var curTrip in destinationTimes.value) {
+        final curTime = curTrip.time;
+        bestMatch ??= curTrip;
         final curTimeDiff = testingTime.difference(curTime);
 
-        if (curTimeDiff.abs() < testingTime.difference(bestMatch).abs() && curTimeDiff > const Duration(minutes: -10)) {
-          bestMatch = curTime;
+        if (curTimeDiff.abs() < testingTime.difference(bestMatch.time).abs() && curTimeDiff > const Duration(minutes: -10)) {
+          bestMatch = curTrip;
         }
       }
 
       output.add(realNextTime.copyWith(
-          aimedTime: bestMatch,
-          arrivingTimes: GTFSDataProvider.getArrivingTime(stop.id.toString(), destinationTimes.key.tripId, Duration.zero)));
+          aimedTime: bestMatch?.time,
+          arrivingTimes: GTFSDataProvider.getArrivingTime(stop.id.toString(), bestMatch?.tripId ?? "")));
       if (bestMatch == null) continue;
 
       if (!directionAccuracy.containsKey(destinationTimes.key) ||
-        bestMatch.isAfter(directionAccuracy[destinationTimes.key]!)) {
-        directionAccuracy[destinationTimes.key] = bestMatch;
+        bestMatch.time.isAfter(directionAccuracy[destinationTimes.key]!)) {
+        directionAccuracy[destinationTimes.key] = bestMatch.time;
       }
     }
     for(var curDirection in fullTimetable.entries) {
       DateTime start = directionAccuracy[curDirection.key] ?? now;
       output.addAll(curDirection.value.where(
-          (e) => e.isAfter(start)
+          (e) => e.time.isAfter(start)
       ).map(
-          (e) => NextPassage(curDirection.key.line, curDirection.key.destination, e,
-          arrivingTimes: GTFSDataProvider.getArrivingTime(stop.id.toString(), curDirection.key.tripId, Duration.zero))
+          (e) => NextPassage(curDirection.key.line, curDirection.key.destination, e.time,
+          arrivingTimes: GTFSDataProvider.getArrivingTime(stop.id.toString(), e.tripId))
       ));
     }
     output.sort((a, b) => a.betterTime.compareTo(b.betterTime));
