@@ -4,7 +4,9 @@ import 'package:better_bus_v2/error_handler/custom_error.dart';
 import 'package:better_bus_v2/helper.dart';
 import 'package:better_bus_v2/model/clean/bus_stop.dart';
 import 'package:better_bus_v2/views/common/custom_future.dart';
+import 'package:better_bus_v2/views/common/decorations.dart';
 import 'package:better_bus_v2/views/common/extendable_view.dart';
+import 'package:better_bus_v2/views/common/informative_box.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -197,10 +199,21 @@ class _NextPassageWidgetState extends State<NextPassageWidget>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          delay.abs().inMinutes >= 2
-              ? Text(delay.isNegative
-                  ? AppString.advanceOf.format(delay.abs().inMinutes)
-                  : AppString.lateOf.format(delay.abs().inMinutes))
+          delay.abs().inMinutes >= 1
+              ? InfoBox(
+                  width: double.infinity,
+                  color: delay.isNegative ? Colors.red : Colors.orange,
+                  margin: EdgeInsets.all(5),
+                  icon: Icons.warning_amber,
+                  child: Row(
+                    children: [
+                      Text(delay.isNegative
+                          ? AppString.advanceOf.format(delay.abs().inMinutes)
+                          : AppString.lateOf.format(delay.abs().inMinutes),
+                      style: const TextStyle(fontWeight: FontWeight.bold),),
+                    ],
+                  ),
+                )
               : Container(),
           // Text(widget.nextPassage.aimedTime.toLocal().toString()),
           // Text(widget.nextPassage.expectedTime.toLocal().toString()),
@@ -211,7 +224,8 @@ class _NextPassageWidgetState extends State<NextPassageWidget>
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: widget.nextPassage.arrivingTimes?.length ?? 0,
-                itemBuilder: (_, i) => buildWayItem(i, delay, i == (widget.nextPassage.arrivingTimes?.length ?? 0) - 1),
+                itemBuilder: (_, i) => buildWayItem(i, delay,
+                    i == (widget.nextPassage.arrivingTimes?.length ?? 0) - 1),
               ),
             ),
           )
@@ -224,7 +238,8 @@ class _NextPassageWidgetState extends State<NextPassageWidget>
     if (widget.nextPassage.arrivingTimes == null) return Container();
     ArrivingTime arrival = widget.nextPassage.arrivingTimes![index];
     String stopName = arrival.stop;
-    DateTime arrivalTime = DateTime.now().atMidnight().add(arrival.duration).add(delay);
+    DateTime arrivalTime =
+        DateTime.now().atMidnight().add(arrival.duration).add(delay);
     return SizedBox(
       width: last ? 70 : 40,
       child: Column(
@@ -242,16 +257,14 @@ class _NextPassageWidgetState extends State<NextPassageWidget>
                       fit: BoxFit.scaleDown,
                       alignment: Alignment.centerLeft,
                       child: Text(
-                          stopName,
+                        stopName,
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
                         ),
                       ),
                     ),
-                  )
-              )
-          ),
+                  ))),
           Padding(
             padding: const EdgeInsets.only(top: 10),
             child: SizedBox(
@@ -284,9 +297,9 @@ class _NextPassageWidgetState extends State<NextPassageWidget>
           // ),
           ClipRect(
             child: RichText(
-              text: TextSpan(
-                style: DefaultTextStyle.of(context).style,
-                children: [
+                text: TextSpan(
+              style: DefaultTextStyle.of(context).style,
+              children: [
                 TextSpan(
                   text: arrivalTime.hour.toString().padLeft(2, '0') + ":",
                   style: TextStyle(
@@ -322,8 +335,8 @@ class _NextPassageWidgetState extends State<NextPassageWidget>
             ? "${arrivalDuration.inHours} h "
             : "") +
         "${widget.nextPassage.betterTime.difference(DateTime.now()).inMinutes % 60} min";
-    Duration delay = widget.nextPassage.betterTime
-        .difference(widget.nextPassage.aimedTime);
+    Duration delay =
+        widget.nextPassage.betterTime.difference(widget.nextPassage.aimedTime);
     return InkWell(
       onTap: expandControler.tickAnimation,
       child: Container(
@@ -375,12 +388,6 @@ class _NextPassageWidgetState extends State<NextPassageWidget>
                     ],
                   ),
                 )
-              ],
-            ),
-            Column(
-              children: [
-                Text("aim: " + widget.nextPassage.aimedTime.toString()),
-                Text("exp: " + widget.nextPassage.expectedTime.toString()),
               ],
             ),
             ExpandableWidget(

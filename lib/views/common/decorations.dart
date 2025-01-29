@@ -6,6 +6,7 @@ class CustomDecorations {
   BuildContext context;
   ThemeData get theme => Theme.of(context);
 
+
   BoxDecoration get boxOutlined => BoxDecoration(
     border: Border.all(
       color: theme.primaryColor,

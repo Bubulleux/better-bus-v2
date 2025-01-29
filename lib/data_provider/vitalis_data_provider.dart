@@ -128,7 +128,7 @@ class VitalisDataProvider {
         bestMatch ??= curTime;
         final curTimeDiff = testingTime.difference(curTime);
 
-        if (curTimeDiff.abs() < testingTime.difference(bestMatch).abs() && curTimeDiff > const Duration(minutes: -5)) {
+        if (curTimeDiff.abs() < testingTime.difference(bestMatch).abs() && curTimeDiff > const Duration(minutes: -10)) {
           bestMatch = curTime;
         }
       }
