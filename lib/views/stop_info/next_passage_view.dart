@@ -4,7 +4,6 @@ import 'package:better_bus_v2/error_handler/custom_error.dart';
 import 'package:better_bus_v2/helper.dart';
 import 'package:better_bus_v2/model/clean/bus_stop.dart';
 import 'package:better_bus_v2/views/common/custom_future.dart';
-import 'package:better_bus_v2/views/common/decorations.dart';
 import 'package:better_bus_v2/views/common/extendable_view.dart';
 import 'package:better_bus_v2/views/common/informative_box.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
@@ -222,7 +221,7 @@ class _NextPassageWidgetState extends State<NextPassageWidget>
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: SizedBox(
-              height: 120,
+              height: 80,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: (widget.nextPassage.arrivingTimes?.length ?? -1) + 1,
@@ -252,46 +251,54 @@ class _NextPassageWidgetState extends State<NextPassageWidget>
     DateTime arrivalTime =
         DateTime.now().atMidnight().add(arrival.duration).add(delay);
     return SizedBox(
-      //width: 50,
+      width: 50,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 15),
-            child: Transform.rotate(
-                angle: pi * 0.25,
-                alignment: Alignment.bottomCenter,
-                child: RotatedBox(
+          SizedBox(
+            height: 40,
+            child: OverflowBox(
+              maxHeight: 65,
+              maxWidth: 30,
+              alignment: Alignment.bottomCenter,
+              child: SizedBox(
+                width: 70,
+                child: Transform.rotate(
+                  angle:  pi * .30,
+                  alignment: Alignment.bottomCenter,
+                  child: RotatedBox(
                     quarterTurns: -1,
-                    child: Container(
-                      width: 80,
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          stopName,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
-                    ))),
+                    child: FittedBox(
+                      //alignment: Alignment.centerRight,
+                      fit: BoxFit.scaleDown,
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 120),
+                          child: Text(stopName,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                              )),
+                        )),
+                  ),
+                ),
+              ),
+            ),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 10),
+            padding: const EdgeInsets.only(top: 8),
             child: SizedBox(
               height: 20,
               child: Row(
                 //alignment: Alignment.center,
                 children: [
-                  Container(
-                    height: 5,
-                    alignment: Alignment.centerRight,
-                    width: 10,
-                    decoration: BoxDecoration(
-                      color: widget.nextPassage.line.color,
+                  Expanded(
+                    child: Container(
+                      height: 5,
+                      alignment: Alignment.centerRight,
+                      decoration: BoxDecoration(
+                        color: widget.nextPassage.line.color,
+                      ),
                     ),
                   ),
                   Container(
