@@ -7,9 +7,10 @@ import 'package:flutter/material.dart';
 
 
 class StopFocusWidget extends StatefulWidget {
-  StopFocusWidget({this.station, this.stop, super.key});
+  StopFocusWidget({this.station, this.stop, this.distance, super.key});
   final BusStop? station;
   final SubBusStop? stop;
+  final double? distance;
 
 
   @override
@@ -27,6 +28,17 @@ class _StopFocusWidgetState extends State<StopFocusWidget> {
     super.didChangeDependencies();
   }
 
+  void handleVerticalDrag(DragUpdateDetails detail) {
+    setState(() {
+      _height -= detail.delta.dy;
+      _height = max(_height, 100);
+    });
+  }
+
+  void handleEndVerticalDrag(DragEndDetails detail) {
+    print(detail.velocity.pixelsPerSecond.dy);
+  }
+
   @override
   Widget build(BuildContext context) {
     if (widget.station == null) {
@@ -36,7 +48,8 @@ class _StopFocusWidgetState extends State<StopFocusWidget> {
     final lines = GTFSDataProvider.getStopLines(widget.stop?.id ?? widget.station?.id ?? 0);
     print(lines);
 
-    return Container(
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 100),
       height: _height,
       decoration: const BoxDecoration(
         color: Colors.white,
@@ -47,12 +60,8 @@ class _StopFocusWidgetState extends State<StopFocusWidget> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           GestureDetector(
-            onVerticalDragUpdate: (detail) {
-              setState(() {
-                _height -= detail.delta.dy;
-                _height = max(_height, 100);
-              });
-            },
+            onVerticalDragUpdate: handleVerticalDrag,
+            onVerticalDragEnd: handleEndVerticalDrag,
             child: Material(
               color: Colors.transparent,
               child: Container(

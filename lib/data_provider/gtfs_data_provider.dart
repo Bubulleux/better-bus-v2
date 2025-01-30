@@ -14,11 +14,9 @@ import 'package:better_bus_v2/model/clean/timetable.dart';
 import 'package:better_bus_v2/model/cvs_parser.dart';
 import 'package:better_bus_v2/model/gtfs_data.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
 import 'package:http/http.dart' as http;
-import 'package:latlong2/latlong.dart';
 
 class DatasetMetadata {
   Uri ressourceUri;
@@ -344,14 +342,10 @@ class GTFSDataProvider {
   }
 
   static List<ArrivingTime> getArrivingTime(String stopId, String tripId) {
-    print(stopId);
-    print(gtfsData!.stations[stopId]);
     final stopTimes = gtfsData!.stopTime[tripId];
     final ids = gtfsData!.stations[stopId]?.ids;
     if (stopTimes == null || ids == null) return [];
 
-    print(stopId);
-    print(stopTimes.map((e) => e.stopID));
     final start  = stopTimes.indexWhere((e) => ids.contains(e.stopID));
     if (start == -1 ) return [];
 

@@ -13,8 +13,7 @@ class SubBusStop {
 class BusStop extends SubBusStop{
   const BusStop(this.name, super.id, super.pos, {this.children = const [], super.stopCode});
 
-  @override
-  int? get parent_id => null;
+  int? get parentId => null;
 
   BusStop.example() : this("Bus Stop Name", 10, const LatLng(0, 0));
 

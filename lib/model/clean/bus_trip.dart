@@ -1,5 +1,4 @@
 import 'package:better_bus_v2/model/clean/bus_line.dart';
-import 'package:better_bus_v2/model/clean/next_passage.dart';
 
 class BusTrip {
 

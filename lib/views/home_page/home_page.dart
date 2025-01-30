@@ -7,7 +7,6 @@ import 'package:better_bus_v2/data_provider/gtfs_data_provider.dart';
 import 'package:better_bus_v2/data_provider/local_data_handler.dart';
 import 'package:better_bus_v2/data_provider/version_data_provider.dart';
 import 'package:better_bus_v2/model/clean/bus_stop.dart';
-import 'package:better_bus_v2/model/clean/view_shortcut.dart';
 import 'package:better_bus_v2/views/common/background.dart';
 import 'package:better_bus_v2/views/common/closest_stop_dialog.dart';
 import 'package:better_bus_v2/views/common/content_container.dart';

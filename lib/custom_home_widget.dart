@@ -38,8 +38,6 @@ class CustomHomeWidgetRequest {
   static Future<Uri?> getLaunchUri() async {
     if (!available) return null;
     String? result = await methodeChannel.invokeMethod<String?>("getLaunchUri");
-    print("Result");
-    print(result);
     if (result == null) return null;
 
     Uri? uri = Uri.tryParse(result);
@@ -59,7 +57,7 @@ class CustomHomeWidgetRequest {
         return;
       }
 
-      Uri? uri = Uri.tryParse(value as String);
+      Uri? uri = Uri.tryParse(value);
       if (uri == null) {
         return;
       }
@@ -110,8 +108,6 @@ class CustomHomeWidgetRequest {
   static Future checkWidgetLaunch(BuildContext context) async {
     if (!available) return;
     Uri? uri = await getLaunchUri();
-    print("Check widget Launch:");
-    print(uri);
 
     if (uri == null) return;
 
