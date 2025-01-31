@@ -88,12 +88,14 @@ class _StopSignState extends State<StopSign> {
       child: GestureDetector(
           onTap: onCLick,
           child: Stack(
+            clipBehavior: Clip.none,
               children: [
                 AnimatedOpacity(
                   duration: Duration(seconds: 5),
                   opacity: clicked ? 0 : 1,
-                  child: Padding(
-                    padding: const EdgeInsets.all(4.0),
+                  child: AnimatedScale(
+                    duration: Duration(seconds: 5),
+                    scale: clicked ? 30 : 0,
                     child: FittedBox(
                       child: Text(
                         widget.easterEgg.hiddenChar,
