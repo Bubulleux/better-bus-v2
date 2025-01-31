@@ -18,10 +18,11 @@ import '../../model/clean/bus_line.dart';
 import '../../model/clean/next_passage.dart';
 
 class NextPassagePage extends StatefulWidget {
-  const NextPassagePage(this.stop, {this.lines, Key? key}) : super(key: key);
+  const NextPassagePage(this.stop, {this.lines, this.minimal = false, Key? key}) : super(key: key);
 
   final BusStop stop;
   final List<BusLine>? lines;
+  final bool minimal;
 
   @override
   State<NextPassagePage> createState() => _NextPassagePageState();
@@ -39,7 +40,7 @@ class _NextPassagePageState extends State<NextPassagePage>
   @override
   void initState() {
     super.initState();
-    if (widget.lines == null) {
+    if (widget.lines == null || widget.minimal) {
       seeAll = true;
     }
     seeAllAnimationController = AnimationController(
@@ -82,7 +83,7 @@ class _NextPassagePageState extends State<NextPassagePage>
             Expanded(
               child: NextPassageListWidget(
                 widget.stop,
-                seeAll ? null : widget.lines,
+                seeAll && !widget.minimal ? null : widget.lines,
                 key: nextPassageWidgetKey,
               ),
             ),

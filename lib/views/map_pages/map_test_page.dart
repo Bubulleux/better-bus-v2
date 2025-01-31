@@ -8,32 +8,61 @@ import 'package:better_bus_v2/views/map_pages/easter_eggs_layer.dart';
 import 'package:better_bus_v2/views/map_pages/focus_stop.dart';
 import 'package:better_bus_v2/views/map_pages/position_layer.dart';
 import 'package:better_bus_v2/views/map_pages/stop_layer.dart';
+import 'package:better_bus_v2/views/stop_info/stop_info_page.dart';
 import 'package:better_bus_v2/views/stops_search_page/place_searcher_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 
-class MapTestPage extends StatefulWidget {
-  const MapTestPage({Key? key}) : super(key: key);
+class MapPageArg {
+  const MapPageArg({this.station, this.stop});
+
+  final BusStop? station;
+  final SubBusStop? stop;
+}
+
+class MapPage extends StatefulWidget {
+  const MapPage({Key? key}) : super(key: key);
   static const String routeName = "/map_test";
 
   @override
-  State<MapTestPage> createState() => _MapTestPageState();
+  State<MapPage> createState() => _MapPageState();
 }
 
-class _MapTestPageState extends State<MapTestPage>
+class _MapPageState extends State<MapPage>
   with TickerProviderStateMixin {
   late MapController controller;
   late Map<LatLng, BusStop> stopsPos;
   BusStop? focusStation;
   SubBusStop? focusedStop;
   LatLng? position = null;
+  LatLng? needFocus = null;
 
   @override
   void initState() {
     super.initState();
     controller = MapController();
+    controller.mapEventStream.listen((data)  {
+      if (needFocus != null) {
+        focusOnLatLng(needFocus!, 18);
+        needFocus = null;
+      }
+    });
 
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+     final arg = ModalRoute.of(context)!.settings.arguments as MapPageArg?;
+     if (arg != null) {
+       setState(() {
+         focusStation = arg.station;
+         focusedStop = arg.stop;
+         needFocus = focusStation?.pos;
+       });
+     }
   }
 
   void test() async {
@@ -75,7 +104,6 @@ class _MapTestPageState extends State<MapTestPage>
     return MarkerLayer(markers: markers);
   }
 
-
   Future goToSearch() async {
     print("Go to Search");
     MapPlace? place = await (Navigator.of(context).pushNamed(PlaceSearcherPage.routeName) as Future<dynamic>);
@@ -88,8 +116,8 @@ class _MapTestPageState extends State<MapTestPage>
       return;
     }
     focusOnLatLng(position!, 18);
-
   }
+
   void focusOnLatLng(LatLng dst, double dstZoom) {
     final LatLngTween tween = LatLngTween(
       begin: controller.camera.center,
@@ -116,6 +144,18 @@ class _MapTestPageState extends State<MapTestPage>
 
     animationController.forward();
   }
+
+  void onFocusOpen() {
+    if (focusStation == null) return;
+    Navigator.of(context).pushNamed(StopInfoPage.routeName,
+        arguments: StopInfoPageArgument(focusStation!, null, fromMap: true)).then((value)  {
+          setState(() {
+          focusStation = value as BusStop?;
+          if (focusStation != null) focusOnLatLng(focusStation!.pos, 18);
+        });
+        });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -178,17 +218,28 @@ class _MapTestPageState extends State<MapTestPage>
                   const Spacer(),
                   Row(
                     children: [
-                      ElevatedButton(onPressed: test, child: const Text("OUI")),
+                      //ElevatedButton(onPressed: test, child: const Text("OUI")),
                       const Spacer(),
-                      ElevatedButton(
-                        onPressed: goToMyLocation,
-                        child: Icon(Icons.my_location_outlined),
+                      Container(
+                        margin: EdgeInsets.all(5),
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: Theme.of(context).primaryColor
+                        ),
+                          child: InkWell(
+                            onTap: goToMyLocation,
+                              child: Icon(Icons.my_location_outlined)
+                          )
                       )
                     ],
                   ),
                   StopFocusWidget(
                     station: focusStation,
                     stop: focusedStop,
+                    position: position,
+                    openFocus: onFocusOpen,
                   ),
                 ],
               )

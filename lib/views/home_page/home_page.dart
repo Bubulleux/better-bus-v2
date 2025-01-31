@@ -62,7 +62,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void goToMapTest() {
-    Navigator.of(context).pushNamed(MapTestPage.routeName);
+    Navigator.of(context).pushNamed(MapPage.routeName);
   }
 
   Future findClosestStop() async {

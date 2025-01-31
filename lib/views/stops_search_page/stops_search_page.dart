@@ -12,9 +12,9 @@ import '../../model/clean/bus_line.dart';
 
 
 
-double getDistanceInKMeter(BusStop stop, LatLng locationData) {
-  double result = GpsDataProvider.calculateDistance(stop.latitude,
-      stop.longitude, locationData.latitude, locationData.longitude);
+double getDistanceInKMeter(SubBusStop stop, LatLng locationData) {
+  double result = GpsDataProvider.calculateDistance(stop.pos.latitude,
+      stop.pos.longitude, locationData.latitude, locationData.longitude);
   return result;
 }
 

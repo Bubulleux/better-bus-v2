@@ -3,6 +3,7 @@ import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
 import 'package:better_bus_v2/data_provider/maps_router.dart';
 import 'package:better_bus_v2/views/common/back_arrow.dart';
 import 'package:better_bus_v2/views/common/fake_text_field.dart';
+import 'package:better_bus_v2/views/map_pages/map_test_page.dart';
 import 'package:better_bus_v2/views/stops_search_page/stops_search_page.dart';
 import 'package:better_bus_v2/views/stop_info/timetable_view.dart';
 import 'package:flutter/material.dart';
@@ -15,8 +16,9 @@ import 'next_passage_view.dart';
 class StopInfoPageArgument {
   final BusStop stop;
   final List<BusLine>? lines;
+  final bool fromMap;
 
-  const StopInfoPageArgument(this.stop, this.lines);
+  const StopInfoPageArgument(this.stop, this.lines,  {this.fromMap = false});
 }
 
 class StopInfoPage extends StatefulWidget {
@@ -32,6 +34,7 @@ class _StopInfoPageState extends State<StopInfoPage>
   late final TabController tabController;
   late BusStop stop;
   late List<BusLine>? lines;
+  late bool fromMap = false;
   double? busStopDistance;
 
   @override
@@ -45,8 +48,11 @@ class _StopInfoPageState extends State<StopInfoPage>
     super.didChangeDependencies();
     StopInfoPageArgument argument =
         ModalRoute.of(context)!.settings.arguments as StopInfoPageArgument;
-    stop = argument.stop;
-    lines = argument.lines;
+    setState(() {
+      stop = argument.stop;
+      lines = argument.lines;
+      fromMap = argument.fromMap;
+    });
     getBusStopDistance();
   }
 
@@ -72,6 +78,15 @@ class _StopInfoPageState extends State<StopInfoPage>
         lines = null;
       });
     });
+  }
+
+  void mapButtonClick() {
+    Navigator.of(context).pop(stop as BusStop);
+    if (!fromMap) {
+      Navigator.of(context).pushNamed(MapPage.routeName, arguments: MapPageArg(
+        station: stop
+      ));
+    }
   }
 
   @override
@@ -100,8 +115,7 @@ class _StopInfoPageState extends State<StopInfoPage>
                           Column(
                             children: [
                               TextButton(
-                                onPressed: () => MapsRouter.routeToMap(
-                                    stop.latitude, stop.longitude),
+                                onPressed: mapButtonClick,
                                 child: const Padding(
                                   padding: EdgeInsets.only(left: 10),
                                   child: Icon(

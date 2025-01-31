@@ -136,7 +136,7 @@ class _BetterBusAppState extends State<BetterBusApp> with WidgetsBindingObserver
         PreferencesView.routeName: (context) => const PreferencesView(),
 
         AppInfo.routeName: (context) => const AppInfo(),
-        MapTestPage.routeName: (context) => const MapTestPage(),
+        MapPage.routeName: (context) => const MapPage(),
       },
     );
   }
