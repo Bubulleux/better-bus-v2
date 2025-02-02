@@ -17,6 +17,7 @@ class GpsDataProvider {
   }
 
 
+
   static double calculateDistance(lat1, lon1, lat2, lon2) {
     var p = 0.017453292519943295;
     var c = cos;
@@ -25,6 +26,10 @@ class GpsDataProvider {
         c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
     double result = 12742 * asin(sqrt(a));
     return result;
+  }
+
+  static double calculateDistancePos(LatLng posA, LatLng posB) {
+    return calculateDistance(posA.latitude, posA.longitude, posB.latitude, posB.longitude);
   }
 
   static Future<bool> askForGPSPermission() async {

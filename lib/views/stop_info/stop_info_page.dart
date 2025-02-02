@@ -32,8 +32,8 @@ class StopInfoPage extends StatefulWidget {
 class _StopInfoPageState extends State<StopInfoPage>
     with SingleTickerProviderStateMixin {
   late final TabController tabController;
-  late BusStop stop;
-  late List<BusLine>? lines;
+  BusStop? stop;
+  List<BusLine>? lines;
   late bool fromMap = false;
   double? busStopDistance;
 
@@ -43,25 +43,28 @@ class _StopInfoPageState extends State<StopInfoPage>
     tabController = TabController(length: 2, vsync: this);
   }
 
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     StopInfoPageArgument argument =
         ModalRoute.of(context)!.settings.arguments as StopInfoPageArgument;
-    setState(() {
-      stop = argument.stop;
-      lines = argument.lines;
-      fromMap = argument.fromMap;
-    });
-    getBusStopDistance();
+    if (stop == null) {
+      setState(() {
+        stop = argument.stop;
+        lines = argument.lines;
+        fromMap = argument.fromMap;
+      });
+      getBusStopDistance();
+    }
   }
 
   void getBusStopDistance() async {
     LatLng? location = await GpsDataProvider.getLocation();
-    if (location == null) return;
+    if (location == null || stop == null) return;
 
     double distance = GpsDataProvider.calculateDistance(
-        location.latitude, location.longitude, stop.latitude, stop.longitude);
+        location.latitude, location.longitude, stop!.latitude, stop!.longitude);
 
     setState(() {
       busStopDistance = (distance * 10).roundToDouble() / 10;
@@ -70,6 +73,8 @@ class _StopInfoPageState extends State<StopInfoPage>
 
   void changeBusStop() {
     Navigator.of(context).pushNamed(SearchPage.routeName).then((value) {
+      print("Stop changed");
+      print(value);
       if (value == null) {
         return;
       }
@@ -91,6 +96,8 @@ class _StopInfoPageState extends State<StopInfoPage>
 
   @override
   Widget build(BuildContext context) {
+    if (stop == null) return Placeholder();
+
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -108,7 +115,7 @@ class _StopInfoPageState extends State<StopInfoPage>
                           Expanded(
                             child: FakeTextField(
                               onPress: changeBusStop,
-                              value: stop.name,
+                              value: stop!.name,
                               icon: Icons.search,
                             ),
                           ),
@@ -163,8 +170,8 @@ class _StopInfoPageState extends State<StopInfoPage>
             Expanded(
               child: TabBarView(
                 children: [
-                  NextPassagePage(stop, lines: lines),
-                  TimeTableView(stop),
+                  NextPassagePage(stop!, lines: lines),
+                  TimeTableView(stop!),
                 ],
                 controller: tabController,
                 key: ObjectKey(stop),
