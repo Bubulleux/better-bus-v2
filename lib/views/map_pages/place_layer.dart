@@ -12,8 +12,15 @@ class PlaceLayer extends StatelessWidget {
     return MarkerLayer(
       markers: [
         Marker(
+          width: 50,
+          height: 50,
+          alignment: Alignment.topCenter,
           point: LatLng(place.latitude, place.longitude),
-          child: Icon(Icons.place)
+          child: const Icon(
+            Icons.place,
+            size: 50,
+            color: Colors.red,
+          )
         )
       ],
     );

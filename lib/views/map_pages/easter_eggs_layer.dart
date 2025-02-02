@@ -95,7 +95,7 @@ class _StopSignState extends State<StopSign> {
                   opacity: clicked ? 0 : 1,
                   child: AnimatedScale(
                     duration: Duration(seconds: 5),
-                    scale: clicked ? 30 : 0,
+                    scale: clicked ? 8 : 0,
                     child: FittedBox(
                       child: Text(
                         widget.easterEgg.hiddenChar,
