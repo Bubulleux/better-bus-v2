@@ -41,7 +41,9 @@ class _ViewShortcutEditorPageState extends State<ViewShortcutEditorPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    shortcut = ModalRoute.of(context)!.settings.arguments as ViewShortcut?;if (shortcut != null) {
+    shortcut = ModalRoute.of(context)!.settings.arguments as ViewShortcut?;
+
+    if (shortcut != null && shortcutName == "") {
       shortcutName = shortcut!.shortcutName;
       shortcutIsFavorite = shortcut!.isFavorite;
       shortcutBusStop = shortcut!.stop;
