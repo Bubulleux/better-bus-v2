@@ -118,18 +118,18 @@ class _StopInfoPageState extends State<StopInfoPage>
                             children: [
                               TextButton(
                                 onPressed: mapButtonClick,
+                                style: TextButton.styleFrom(
+                                  padding: EdgeInsets.zero,
+                                  minimumSize: Size.zero,
+                                  tapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
+                                ),
                                 child: const Padding(
                                   padding: EdgeInsets.only(left: 10),
                                   child: Icon(
                                     Icons.map,
                                     size: 40,
                                   ),
-                                ),
-                                style: TextButton.styleFrom(
-                                  padding: EdgeInsets.zero,
-                                  minimumSize: Size.zero,
-                                  tapTargetSize:
-                                      MaterialTapTargetSize.shrinkWrap,
                                 ),
                               ),
                               busStopDistance != null
@@ -164,12 +164,12 @@ class _StopInfoPageState extends State<StopInfoPage>
             ),
             Expanded(
               child: TabBarView(
+                controller: tabController,
+                key: ObjectKey(stop),
                 children: [
                   NextPassagePage(stop!, lines: lines),
                   TimeTableView(stop!),
                 ],
-                controller: tabController,
-                key: ObjectKey(stop),
               ),
             )
           ],

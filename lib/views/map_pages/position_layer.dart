@@ -73,11 +73,9 @@ class _PositionLayerState extends State<PositionLayer>
             top: realPos.y,
             child: Transform.rotate(
               angle: angle / 180 * 3.141592,
-              child: Container(
-                child: const Icon(
-                  Icons.arrow_circle_up,
-                  size: 30,
-                ),
+              child: const Icon(
+                Icons.arrow_circle_up,
+                size: 30,
               ),
             ))
       ],

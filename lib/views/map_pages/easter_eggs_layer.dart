@@ -62,7 +62,7 @@ class _EasterEggsLayerState extends State<EasterEggsLayer> {
 }
 
 class StopSign extends StatefulWidget {
-  StopSign(this.pos, this.easterEgg, this.clicked, {super.key});
+  const StopSign(this.pos, this.easterEgg, this.clicked, {super.key});
   final Rect pos;
   final EasterEgg easterEgg;
   final VoidCallback clicked;

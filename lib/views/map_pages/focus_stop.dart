@@ -9,7 +9,7 @@ import 'package:latlong2/latlong.dart';
 
 
 class StopFocusWidget extends StatefulWidget {
-  StopFocusWidget({this.station, this.stop, this.position, this.openFocus, super.key});
+  const StopFocusWidget({this.station, this.stop, this.position, this.openFocus, super.key});
   final BusStop? station;
   final SubBusStop? stop;
   final LatLng? position;
@@ -39,7 +39,6 @@ class _StopFocusWidgetState extends State<StopFocusWidget> {
   }
 
   void handleEndVerticalDrag(DragEndDetails detail) {
-    print(detail.velocity.pixelsPerSecond.dy);
     if (detail.localPosition.dy.isNegative && detail.velocity.pixelsPerSecond.dy < -60) {
       setState(() {
         _height = 300;

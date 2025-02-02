@@ -117,7 +117,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future initFlutterNotificationPlugin() async {
-    print("Init FlIP");
     flip = FlutterLocalNotificationsPlugin();
 
     AndroidFlutterLocalNotificationsPlugin? androidImp =

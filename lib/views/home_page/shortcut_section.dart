@@ -255,10 +255,10 @@ class ShortcutWidget extends StatelessWidget {
               ),
               Expanded(
                 child: Wrap(
-                  children: linesWidget,
                   alignment: WrapAlignment.end,
                   spacing: 3,
                   runSpacing: 3,
+                  children: linesWidget,
                 ),
               )
             ],

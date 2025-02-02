@@ -84,15 +84,12 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
 
   void test() async {
     position = await GpsDataProvider.getLocation();
-    print(position);
     setState(() {
       position = position;
     });
   }
 
   void LatLngClicked(LatLng point) {
-    print(point);
-    print(stopsPos[point]?.name);
     setState(() {
       focusStation = stopsPos[point];
     });
@@ -188,94 +185,92 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Container(
-          child: Stack(
-            alignment: Alignment.bottomCenter,
-            children: [
-              SizedBox(
-                height: double.infinity,
-                width: double.infinity,
-                child: FlutterMap(
-                  mapController: controller,
-                  options: const MapOptions(
-                    initialCenter: GpsDataProvider.cityLocation,
-                  ),
-                  children: [
-                    TileLayer(
-                      urlTemplate:
-                          'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                      userAgentPackageName: 'dev.fleaflet.flutter_map.example',
-                      // Plenty of other options available!
-                    ),
-                    StopsMapLayer(
-                      stops: GTFSDataProvider.getStops(),
-                      onStationClick: (BusStop v) => setState(() {
-                        focusStation = v;
-                        focusedStop = null;
-                      }),
-                      onStopClick: (SubBusStop v) => setState(() {
-                        focusedStop = v;
-                      }),
-                      focusedStation: focusStation,
-                      focusedStop: focusedStop,
-                    ),
-                    const EasterEggsLayer(),
-                    const PositionLayer(),
-                    focusedPlace != null ?
-                        PlaceLayer(focusedPlace!) :
-                        Container()
-                  ],
+        child: Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            SizedBox(
+              height: double.infinity,
+              width: double.infinity,
+              child: FlutterMap(
+                mapController: controller,
+                options: const MapOptions(
+                  initialCenter: GpsDataProvider.cityLocation,
                 ),
-              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Row(
-                    children: [
-                      const BackButton(),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: FakeTextField(
-                            onPress: goToSearch,
-                            icon: Icons.search,
-                            value: focusStation?.name ?? focusedPlace?.title,
-                            hint: AppString.searchLabel,
-                          ),
-                        ),
-                      ),
-                    ],
+                  TileLayer(
+                    urlTemplate:
+                        'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    userAgentPackageName: 'dev.fleaflet.flutter_map.example',
+                    // Plenty of other options available!
                   ),
-                  const Spacer(),
-                  Row(
-                    children: [
-                      //ElevatedButton(onPressed: test, child: const Text("OUI")),
-                      const Spacer(),
-                      Container(
-                          margin: const EdgeInsets.all(5),
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              color: Theme.of(context).primaryColor),
-                          child: InkWell(
-                              onTap: goToMyLocation,
-                              child: const Icon(Icons.my_location_outlined)))
-                    ],
+                  StopsMapLayer(
+                    stops: GTFSDataProvider.getStops(),
+                    onStationClick: (BusStop v) => setState(() {
+                      focusStation = v;
+                      focusedStop = null;
+                    }),
+                    onStopClick: (SubBusStop v) => setState(() {
+                      focusedStop = v;
+                    }),
+                    focusedStation: focusStation,
+                    focusedStop: focusedStop,
                   ),
-                  StopFocusWidget(
-                    station: focusStation,
-                    stop: focusedStop,
-                    position: position,
-                    openFocus: onFocusOpen,
-                  ),
+                  const EasterEggsLayer(),
+                  const PositionLayer(),
                   focusedPlace != null ?
-                      FocusPlace(focusedPlace!, pos: position,):
+                      PlaceLayer(focusedPlace!) :
                       Container()
                 ],
-              )
-            ],
-          ),
+              ),
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Row(
+                  children: [
+                    const BackButton(),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: FakeTextField(
+                          onPress: goToSearch,
+                          icon: Icons.search,
+                          value: focusStation?.name ?? focusedPlace?.title,
+                          hint: AppString.searchLabel,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const Spacer(),
+                Row(
+                  children: [
+                    //ElevatedButton(onPressed: test, child: const Text("OUI")),
+                    const Spacer(),
+                    Container(
+                        margin: const EdgeInsets.all(5),
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: Theme.of(context).primaryColor),
+                        child: InkWell(
+                            onTap: goToMyLocation,
+                            child: const Icon(Icons.my_location_outlined)))
+                  ],
+                ),
+                StopFocusWidget(
+                  station: focusStation,
+                  stop: focusedStop,
+                  position: position,
+                  openFocus: onFocusOpen,
+                ),
+                focusedPlace != null ?
+                    FocusPlace(focusedPlace!, pos: position,):
+                    Container()
+              ],
+            )
+          ],
         ),
       ),
     );
