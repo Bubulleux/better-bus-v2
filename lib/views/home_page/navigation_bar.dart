@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CustomNavigationBar extends StatelessWidget {
-  const CustomNavigationBar({Key? key, required this.child}) : super(key: key);
+  const CustomNavigationBar({super.key, required this.child});
 
   final List<CustomNavigationItem> child;
 
@@ -32,11 +32,11 @@ class CustomNavigationBar extends StatelessWidget {
 
 class CustomNavigationItem extends StatelessWidget {
   const CustomNavigationItem({
-    Key? key,
+    super.key,
     required this.label,
     required this.icon,
     required this.onPress,
-  }) : super(key: key);
+  });
 
   final String label;
   final IconData icon;

@@ -2,7 +2,7 @@ import 'package:better_bus_v2/data_provider/local_data_handler.dart';
 import 'package:flutter/material.dart';
 
 class LogView extends StatelessWidget {
-  const LogView({Key? key}) : super(key: key);
+  const LogView({super.key});
   static const String routeName = "/log";
 
   Future<List<String>> getLog() async {

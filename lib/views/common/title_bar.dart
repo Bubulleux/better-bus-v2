@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 
 class CustomTitleBar extends StatelessWidget {
   const CustomTitleBar(
-      {required this.title, this.leftChild, this.rightChild, Key? key})
-      : super(key: key);
+      {required this.title, this.leftChild, this.rightChild, super.key});
 
   final String title;
   final Widget? leftChild;

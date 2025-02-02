@@ -37,10 +37,10 @@ class _FocusPlaceState extends State<FocusPlace> {
               widget.place.title,
               style: Theme.of(context).textTheme.titleLarge,
             ),
-            SizedBox(height: 10,),
+            const SizedBox(height: 10,),
             Row(
               children: distance != null
-            ? [Icon(Icons.directions_walk), Text(distance)]
+            ? [const Icon(Icons.directions_walk), Text(distance)]
                 : []
             )
           ],

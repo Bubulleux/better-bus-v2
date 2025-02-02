@@ -22,7 +22,7 @@ const List<EasterEgg> easterEggs = [
 ];
 
 class EasterEggsLayer extends StatefulWidget {
-  const EasterEggsLayer({Key? key}) : super(key: key);
+  const EasterEggsLayer({super.key});
 
   @override
   State<EasterEggsLayer> createState() => _EasterEggsLayerState();
@@ -62,7 +62,7 @@ class _EasterEggsLayerState extends State<EasterEggsLayer> {
 }
 
 class StopSign extends StatefulWidget {
-  StopSign(this.pos, this.easterEgg, this.clicked, {Key? key}) : super(key: key);
+  StopSign(this.pos, this.easterEgg, this.clicked, {super.key});
   final Rect pos;
   final EasterEgg easterEgg;
   final VoidCallback clicked;
@@ -91,10 +91,10 @@ class _StopSignState extends State<StopSign> {
             clipBehavior: Clip.none,
               children: [
                 AnimatedOpacity(
-                  duration: Duration(seconds: 5),
+                  duration: const Duration(seconds: 5),
                   opacity: clicked ? 0 : 1,
                   child: AnimatedScale(
-                    duration: Duration(seconds: 5),
+                    duration: const Duration(seconds: 5),
                     scale: clicked ? 8 : 0,
                     child: FittedBox(
                       child: Text(
@@ -108,7 +108,7 @@ class _StopSignState extends State<StopSign> {
                   ),
                 ),
                 AnimatedScale(
-                  duration: Duration(milliseconds: 200),
+                  duration: const Duration(milliseconds: 200),
                   scale: clicked ? 0 : 1,
                   child: SvgPicture.asset(widget.easterEgg.svg),
                 )

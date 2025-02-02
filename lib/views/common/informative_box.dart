@@ -21,7 +21,7 @@ class InfoBox extends StatelessWidget {
       padding: margin,
       child: Container(
         width: width,
-        padding: EdgeInsets.all(5),
+        padding: const EdgeInsets.all(5),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             color: color.shade100,

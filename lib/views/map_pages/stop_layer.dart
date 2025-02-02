@@ -12,8 +12,7 @@ class StopsMapLayer extends StatefulWidget {
       this.onStationClick,
       this.focusedStation,
       this.focusedStop,
-      Key? key})
-      : super(key: key);
+      super.key});
 
   final List<BusStop> stops;
   final BusStop? focusedStation;

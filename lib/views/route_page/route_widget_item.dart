@@ -7,7 +7,7 @@ import 'package:intl/intl.dart';
 import '../common/decorations.dart';
 
 class RouteItemWidget extends StatefulWidget {
-  const RouteItemWidget(this.vitalisRoute, {Key? key}) : super(key: key);
+  const RouteItemWidget(this.vitalisRoute, {super.key});
 
   final VitalisRoute vitalisRoute;
 

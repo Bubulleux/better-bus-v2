@@ -2,7 +2,7 @@ import 'package:better_bus_v2/data_provider/local_data_handler.dart';
 import 'package:flutter/material.dart';
 
 class PreferencesView extends StatelessWidget {
-  const PreferencesView({Key? key}) : super(key: key);
+  const PreferencesView({super.key});
   static const String routeName = "/preferences";
 
   Future<List<Widget>> getPreferences() async {

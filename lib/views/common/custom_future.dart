@@ -16,7 +16,7 @@ typedef WidgetRefresh = RefreshIndicator Function(
 
 class CustomFutureBuilder<T> extends StatefulWidget {
   const CustomFutureBuilder({
-    Key? key,
+    super.key,
     required this.future,
     required this.onData,
     this.onError,
@@ -25,7 +25,7 @@ class CustomFutureBuilder<T> extends StatefulWidget {
     this.refreshIndicator,
     this.errorTest,
     this.automaticRefresh,
-  }) : super(key: key);
+  });
 
   final FutureFunction<T> future;
   final T? initData;

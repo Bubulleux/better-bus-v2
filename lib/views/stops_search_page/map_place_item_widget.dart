@@ -6,12 +6,11 @@ import 'package:latlong2/latlong.dart';
 
 class MapPlaceItemWidget extends StatelessWidget {
   const MapPlaceItemWidget(
-      {Key? key,
+      {super.key,
       required this.place,
       required this.locationData,
       required this.clickCallback,
-      required this.inHistoric})
-      : super(key: key);
+      required this.inHistoric});
 
   final MapPlace place;
   final LatLng? locationData;

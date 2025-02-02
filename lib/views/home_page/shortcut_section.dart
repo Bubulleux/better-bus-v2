@@ -12,7 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ShortcutWidgetRoot extends StatefulWidget {
-  const ShortcutWidgetRoot({Key? key}) : super(key: key);
+  const ShortcutWidgetRoot({super.key});
 
   @override
   State<ShortcutWidgetRoot> createState() => ShortcutWidgetRootState();
@@ -189,8 +189,8 @@ class ShortcutWidget extends StatelessWidget {
     required this.shortcut,
     required this.onPressed,
     required this.onLongPressed,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   final ViewShortcut shortcut;
   final VoidCallback onPressed;

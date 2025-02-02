@@ -28,7 +28,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 import '../stops_search_page/stops_search_page.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({super.key});
   static const String routeName = "/";
 
   @override
@@ -98,12 +98,9 @@ class _HomePageState extends State<HomePage> {
   }
 
    void receiveNotification(NotificationResponse? response) {
-    print("Recieve Notification");
-    print(response);
      if (response == null) {
        return;
      }
-     print(response.id);
      Navigator.of(context)
          .popUntil((route) => route.settings.name != TrafficInfoPage.routeName);
      Navigator.of(context)

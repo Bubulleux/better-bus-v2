@@ -30,7 +30,7 @@ class _PositionLayerState extends State<PositionLayer>
   void initState() {
     super.initState();
     controller =
-        AnimationController(duration: Duration(seconds: 1), vsync: this);
+        AnimationController(duration: const Duration(seconds: 1), vsync: this);
     animation = CurvedAnimation(parent: controller, curve: Curves.linear);
     animation.addListener(() {setState(() {});});
     updatePosition();
@@ -56,7 +56,7 @@ class _PositionLayerState extends State<PositionLayer>
         angleAnimation = Tween(begin: position?.heading, end: newPos.heading);
         position = newPos;
         controller.duration = position != null ?
-          newPos.timestamp.difference(position!.timestamp) : Duration(seconds: 1);
+          newPos.timestamp.difference(position!.timestamp) : const Duration(seconds: 1);
         controller.forward(from: 0);
       });
     });
@@ -74,7 +74,7 @@ class _PositionLayerState extends State<PositionLayer>
             child: Transform.rotate(
               angle: angle / 180 * 3.141592,
               child: Container(
-                child: Icon(
+                child: const Icon(
                   Icons.arrow_circle_up,
                   size: 30,
                 ),

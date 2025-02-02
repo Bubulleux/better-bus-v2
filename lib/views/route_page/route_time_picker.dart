@@ -7,7 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:better_bus_v2/helper.dart';
 
 class RouteTimePicker extends StatefulWidget {
-  const RouteTimePicker(this.parameter, {Key? key}) : super(key: key);
+  const RouteTimePicker(this.parameter, {super.key});
 
   final RouteTimeParameter parameter;
 

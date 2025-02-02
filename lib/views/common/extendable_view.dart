@@ -36,8 +36,8 @@ class ExpandableWidget extends StatefulWidget {
   const ExpandableWidget({
     required this.child,
     required this.controller,
-    Key? key
-  }) : super(key: key);
+    super.key
+  });
 
   final Widget child;
   final ExpandableWidgetController controller;
@@ -73,7 +73,7 @@ class _ExpandableWidgetState extends State<ExpandableWidget>{
 }
 
 class ExpendableWidgetButton extends StatefulWidget {
-  const ExpendableWidgetButton(this.controller, {this.height, this.width, Key? key}) : super(key: key);
+  const ExpendableWidgetButton(this.controller, {this.height, this.width, super.key});
 
   final ExpandableWidgetController controller;
   final double? height;

@@ -11,8 +11,7 @@ class SegmentedChoices<T> extends StatefulWidget {
     required this.items,
     required this.onChange,
     required this.defaultValue,
-    Key? key})
-  : super(key: key);
+    super.key});
 
   final Map<T,SegmentedChoice> items;
   final ValueChanged<T> onChange;
@@ -76,7 +75,7 @@ class _SegmentedChoicesState<T> extends State<SegmentedChoices> {
 }
 
 class ChoiceWidget extends StatefulWidget {
-  const ChoiceWidget(this.data, this.selected, this.onClick, {Key? key}) : super(key: key);
+  const ChoiceWidget(this.data, this.selected, this.onClick, {super.key});
 
   final SegmentedChoice data;
   final bool selected;

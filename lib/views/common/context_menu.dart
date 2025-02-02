@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CustomContextMenu extends StatefulWidget {
-  const CustomContextMenu({required this.actions, Key? key}) : super(key: key);
+  const CustomContextMenu({required this.actions, super.key});
 
   final List<ContextMenuAction> actions;
 

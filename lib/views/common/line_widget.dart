@@ -3,8 +3,7 @@ import 'package:better_bus_v2/model/clean/route.dart';
 import 'package:flutter/material.dart';
 
 class LineWidget extends StatelessWidget {
-  const LineWidget(this.line, this.size, {this.dynamicWidth = false, Key? key})
-      : super(key: key);
+  const LineWidget(this.line, this.size, {this.dynamicWidth = false, super.key});
 
   LineWidget.fromRouteLine(RouteLine line, double size, {bool dynamicWidth = false, Key? key}): this(
     BusLine(line.name, "", line.color),

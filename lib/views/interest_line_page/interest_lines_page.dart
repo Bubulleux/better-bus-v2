@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 typedef CheckCallBack = void Function(bool checked, BusLine line);
 
 class InterestLinePage extends StatefulWidget {
-  const InterestLinePage({Key? key}) : super(key: key);
+  const InterestLinePage({super.key});
   static const String routeName = "/interestedLines";
 
   @override
@@ -141,7 +141,7 @@ class _InterestLinePageState extends State<InterestLinePage> {
 }
 
 class LineItem extends StatefulWidget {
-  const LineItem(this.line, this.isChecked, this.callBack, {Key? key}) : super(key: key);
+  const LineItem(this.line, this.isChecked, this.callBack, {super.key});
 
   final BusLine line;
   final bool isChecked;

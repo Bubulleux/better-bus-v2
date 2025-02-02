@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CustomInputWidget extends StatelessWidget {
-  CustomInputWidget({required this.child, this.onTap, BorderRadius? borderRadius, Key? key}): super(key: key){
+  CustomInputWidget({required this.child, this.onTap, BorderRadius? borderRadius, super.key}){
     this.borderRadius = borderRadius ?? BorderRadius.circular(20);
   }
   final Widget child;

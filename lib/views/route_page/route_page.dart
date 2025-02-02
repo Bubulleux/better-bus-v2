@@ -28,7 +28,7 @@ class RouteTimeParameter {
 }
 
 class RoutePage extends StatefulWidget {
-  const RoutePage({Key? key}) : super(key: key);
+  const RoutePage({super.key});
   static const String routeName = "/RouteFinder";
 
   @override

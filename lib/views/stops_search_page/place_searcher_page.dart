@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import '../../app_constant/app_string.dart';
 
 class PlaceSearcherPage extends StatefulWidget {
-  const PlaceSearcherPage({Key? key}) : super(key: key);
+  const PlaceSearcherPage({super.key});
   static const String routeName = "/placeSearcher";
 
   @override

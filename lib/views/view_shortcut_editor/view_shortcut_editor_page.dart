@@ -13,7 +13,7 @@ import '../../app_constant/app_string.dart';
 import '../../model/clean/bus_line.dart';
 
 class ViewShortcutEditorPage extends StatefulWidget {
-  const ViewShortcutEditorPage({Key? key}) : super(key: key);
+  const ViewShortcutEditorPage({super.key});
   static const String routeName = "/shortcutEditor";
 
 

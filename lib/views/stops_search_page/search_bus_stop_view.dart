@@ -17,8 +17,8 @@ class SearchBusStopView extends StatefulWidget {
     this.saveInHistoric = true,
     this.showHistoric = true,
     required this.stopCallback,
-    Key? key
-  }) : super(key: key);
+    super.key
+  });
 
   final String? search;
   final bool saveInHistoric;

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class WheelScrollSelector extends StatefulWidget {
   const WheelScrollSelector(this.content, this.onChange, this.defaultValue,
-    {Key? key}) : super(key: key);
+    {super.key});
 
   final List<String> content;
   final ValueChanged<int> onChange;

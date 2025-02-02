@@ -15,7 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SettingPage extends StatefulWidget {
-  const SettingPage({Key? key}) : super(key: key);
+  const SettingPage({super.key});
   static const String routeName = "/setting";
 
   @override
@@ -183,8 +183,8 @@ class SettingEntry extends StatelessWidget {
     this.onClick,
     this.description,
     this.child,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   final String title;
   final String? description;

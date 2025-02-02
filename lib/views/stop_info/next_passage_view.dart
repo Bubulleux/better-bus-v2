@@ -8,8 +8,6 @@ import 'package:better_bus_v2/views/common/extendable_view.dart';
 import 'package:better_bus_v2/views/common/informative_box.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
 import 'package:format/format.dart';
 import 'package:intl/intl.dart';
 import 'dart:math';
@@ -18,7 +16,7 @@ import '../../model/clean/bus_line.dart';
 import '../../model/clean/next_passage.dart';
 
 class NextPassagePage extends StatefulWidget {
-  const NextPassagePage(this.stop, {this.lines, this.minimal = false, Key? key}) : super(key: key);
+  const NextPassagePage(this.stop, {this.lines, this.minimal = false, super.key});
 
   final BusStop stop;
   final List<BusLine>? lines;
@@ -96,8 +94,7 @@ class _NextPassagePageState extends State<NextPassagePage>
 }
 
 class NextPassageListWidget extends StatefulWidget {
-  const NextPassageListWidget(this.stop, this.lines, {Key? key})
-      : super(key: key);
+  const NextPassageListWidget(this.stop, this.lines, {super.key});
 
   final BusStop stop;
   final List<BusLine>? lines;
@@ -165,7 +162,7 @@ class NextPassageListWidgetState extends State<NextPassageListWidget> {
 }
 
 class NextPassageWidget extends StatefulWidget {
-  const NextPassageWidget(this.nextPassage, {Key? key}) : super(key: key);
+  const NextPassageWidget(this.nextPassage, {super.key});
 
   final NextPassage nextPassage;
 
@@ -206,7 +203,7 @@ class _NextPassageWidgetState extends State<NextPassageWidget>
                       ),
                       Text(
                           AppString.initialTime.format(DateFormat.Hm().format(widget.nextPassage.aimedTime)),
-                        textScaler: TextScaler.linear(0.8),
+                        textScaler: const TextScaler.linear(0.8),
                       )
                     ],
                   ),

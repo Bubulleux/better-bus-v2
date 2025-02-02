@@ -10,7 +10,7 @@ import '../../model/clean/bus_stop.dart';
 import '../common/custom_input_widget.dart';
 
 class TimeTableView extends StatefulWidget {
-  const TimeTableView(this.stop, {Key? key}) : super(key: key);
+  const TimeTableView(this.stop, {super.key});
 
   final BusStop stop;
 
@@ -249,7 +249,7 @@ class _TimeTableViewState extends State<TimeTableView>
 }
 
 class TimetableOutput extends StatelessWidget {
-  const TimetableOutput(this.timetable, {Key? key}) : super(key: key);
+  const TimetableOutput(this.timetable, {super.key});
 
   final Timetable timetable;
 

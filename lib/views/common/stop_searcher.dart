@@ -5,7 +5,7 @@ import 'package:better_bus_v2/model/clean/bus_stop.dart';
 import 'package:flutter/material.dart';
 
 class StopSearcher extends StatefulWidget {
-  const StopSearcher({Key? key}) : super(key: key);
+  const StopSearcher({super.key});
 
   @override
   State<StopSearcher> createState() => _StopSearcherState();

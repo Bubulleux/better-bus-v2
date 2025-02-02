@@ -19,8 +19,7 @@ int maxHistoricSize = 20;
 
 class MapPlaceSearcherView extends StatefulWidget {
   const MapPlaceSearcherView(
-      {required this.search, required this.placeCallback, Key? key})
-      : super(key: key);
+      {required this.search, required this.placeCallback, super.key});
 
   final String search;
   final PlaceCallback placeCallback;

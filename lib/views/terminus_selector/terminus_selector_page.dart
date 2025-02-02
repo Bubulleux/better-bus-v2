@@ -18,7 +18,7 @@ class TerminusSelectorPageArgument {
 }
 
 class TerminusSelectorPage extends StatefulWidget {
-  const TerminusSelectorPage({Key? key}) : super(key: key);
+  const TerminusSelectorPage({super.key});
   static const String routeName = "/terminusSelector";
 
   @override
@@ -75,7 +75,6 @@ class _TerminusSelectorPageState extends State<TerminusSelectorPage> {
   @override
   void initState() {
     super.initState();
-    getTerminus();
   }
 
   @override
@@ -84,6 +83,7 @@ class _TerminusSelectorPageState extends State<TerminusSelectorPage> {
     TerminusSelectorPageArgument argument = ModalRoute.of(context)!.settings.arguments as TerminusSelectorPageArgument;
     stop = argument.stop;
     previousData = argument.previousData;
+    getTerminus();
   }
 
   @override
@@ -211,8 +211,7 @@ class _TerminusSelectorPageState extends State<TerminusSelectorPage> {
 }
 
 class TerminusSelection extends StatefulWidget {
-  const TerminusSelection(this.rootState, this.index, this.isGo, {Key? key})
-      : super(key: key);
+  const TerminusSelection(this.rootState, this.index, this.isGo, {super.key});
 
   final _TerminusSelectorPageState rootState;
   final int index;

@@ -15,7 +15,7 @@ import '../../data_provider/local_data_handler.dart';
 import '../../model/clean/bus_line.dart';
 
 class TrafficInfoPage extends StatefulWidget {
-  const TrafficInfoPage({Key? key}) : super(key: key);
+  const TrafficInfoPage({super.key});
   static const String routeName = "/trafficInfo";
 
   @override

@@ -65,7 +65,7 @@ class _StopFocusWidgetState extends State<StopFocusWidget> {
                 Container(
                   alignment: Alignment.center,
                   width: double.infinity,
-                  padding: EdgeInsets.only(bottom: 10, top: 8),
+                  padding: const EdgeInsets.only(bottom: 10, top: 8),
                   child: Container(
                     width: 100,
                     height: 4,
@@ -85,7 +85,7 @@ class _StopFocusWidgetState extends State<StopFocusWidget> {
                       ),
                         const Spacer(),
                         ...(distance != null ? [
-                      Icon(Icons.directions_walk),
+                      const Icon(Icons.directions_walk),
                       Text(distance)
                     ] : [])],
                   ),

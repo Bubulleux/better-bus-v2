@@ -25,8 +25,7 @@ class SearchPageArgument{
 }
 
 class SearchPage extends StatefulWidget {
-  const SearchPage({Key? key})
-      : super(key: key);
+  const SearchPage({super.key});
   static const String routeName = "/stopSearch";
 
 

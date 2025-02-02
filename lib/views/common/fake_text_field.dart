@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class FakeTextField extends StatelessWidget {
   const FakeTextField({
-    Key? key,
+    super.key,
     this.value,
     this.hint,
     this.icon,
@@ -11,7 +11,7 @@ class FakeTextField extends StatelessWidget {
     this.backgroundColor,
     required this.onPress,
 
-  }) : super(key: key);
+  });
 
   final String? value;
   final String? hint;

@@ -6,7 +6,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:url_launcher/url_launcher_string.dart';
 
 class MessageView extends StatefulWidget {
-  const MessageView({Key? key}) : super(key: key);
+  const MessageView({super.key});
   static const routeName = "/messageView";
 
   @override

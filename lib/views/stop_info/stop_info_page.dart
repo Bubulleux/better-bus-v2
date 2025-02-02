@@ -21,7 +21,7 @@ class StopInfoPageArgument {
 }
 
 class StopInfoPage extends StatefulWidget {
-  const StopInfoPage({Key? key}) : super(key: key);
+  const StopInfoPage({super.key});
   static const String routeName = "/stopInfo";
 
   @override
@@ -70,8 +70,6 @@ class _StopInfoPageState extends State<StopInfoPage>
 
   void changeBusStop() {
     Navigator.of(context).pushNamed(SearchPage.routeName).then((value) {
-      print("Stop changed");
-      print(value);
       if (value == null) {
         return;
       }
@@ -93,7 +91,7 @@ class _StopInfoPageState extends State<StopInfoPage>
 
   @override
   Widget build(BuildContext context) {
-    if (stop == null) return Placeholder();
+    if (stop == null) return const Placeholder();
 
     return Scaffold(
       body: SafeArea(

@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import '../app_constant/app_string.dart';
 
 class AppInfo extends StatelessWidget {
-  const AppInfo({Key? key}) : super(key: key);
+  const AppInfo({super.key});
 
   static const String routeName = "info-page";
 

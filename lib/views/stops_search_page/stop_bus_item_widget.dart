@@ -18,8 +18,8 @@ class BusStopWidget extends StatefulWidget {
     required this.onPressed,
     required this.stopDistance,
     required this.inHistoric,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   final BusStop stop;
   final VoidCallback onPressed;

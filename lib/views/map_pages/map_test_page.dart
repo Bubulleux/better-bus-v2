@@ -27,7 +27,7 @@ class MapPageArg {
 }
 
 class MapPage extends StatefulWidget {
-  const MapPage({Key? key}) : super(key: key);
+  const MapPage({super.key});
   static const String routeName = "/map_test";
 
   @override
@@ -40,8 +40,8 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
   BusStop? focusStation;
   SubBusStop? focusedStop;
   MapPlace? focusedPlace;
-  LatLng? position = null;
-  LatLng? needFocus = null;
+  LatLng? position;
+  LatLng? needFocus;
   StreamSubscription<Position>? _posStream;
 
   @override
@@ -197,7 +197,7 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
                 width: double.infinity,
                 child: FlutterMap(
                   mapController: controller,
-                  options: MapOptions(
+                  options: const MapOptions(
                     initialCenter: GpsDataProvider.cityLocation,
                   ),
                   children: [
@@ -220,7 +220,7 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
                       focusedStop: focusedStop,
                     ),
                     const EasterEggsLayer(),
-                    PositionLayer(),
+                    const PositionLayer(),
                     focusedPlace != null ?
                         PlaceLayer(focusedPlace!) :
                         Container()
@@ -252,7 +252,7 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
                       //ElevatedButton(onPressed: test, child: const Text("OUI")),
                       const Spacer(),
                       Container(
-                          margin: EdgeInsets.all(5),
+                          margin: const EdgeInsets.all(5),
                           width: 40,
                           height: 40,
                           decoration: BoxDecoration(
@@ -260,7 +260,7 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
                               color: Theme.of(context).primaryColor),
                           child: InkWell(
                               onTap: goToMyLocation,
-                              child: Icon(Icons.my_location_outlined)))
+                              child: const Icon(Icons.my_location_outlined)))
                     ],
                   ),
                   StopFocusWidget(

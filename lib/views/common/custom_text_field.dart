@@ -7,8 +7,8 @@ class CustomTextField extends StatelessWidget {
     this.hint,
     this.controller,
     this.autofocus,
-    Key? key
-  }) : super(key: key);
+    super.key
+  });
 
   final String? label;
   final String? hint;

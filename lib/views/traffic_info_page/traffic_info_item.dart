@@ -11,7 +11,7 @@ import '../../model/clean/bus_line.dart';
 
 
 class TrafficInfoItem extends StatefulWidget {
-  const TrafficInfoItem(this.infoTraffic, this.busLines,{this.deploy = false, Key? key}) : super(key: key);
+  const TrafficInfoItem(this.infoTraffic, this.busLines,{this.deploy = false, super.key});
 
   final InfoTraffic infoTraffic;
   final Map<String, BusLine> busLines;

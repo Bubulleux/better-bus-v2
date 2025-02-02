@@ -7,8 +7,7 @@ BoxDecoration commonDecoration(context) {
 }
 
 class NormalContentContainer extends StatelessWidget {
-  const NormalContentContainer({this.child, this.height, Key? key})
-      : super(key: key);
+  const NormalContentContainer({this.child, this.height, super.key});
 
   final Widget? child;
   final double? height;
@@ -33,8 +32,8 @@ class CustomContentContainer extends StatelessWidget {
     EdgeInsets? padding,
     EdgeInsets? margin,
     BorderRadius? borderRadius,
-    Key? key,
-  }) : super(key: key) {
+    super.key,
+  }) {
     _padding = padding ?? const EdgeInsets.all(15);
     _margin = margin ?? EdgeInsets.zero;
     _borderRadius = borderRadius ?? BorderRadius.circular(20);
