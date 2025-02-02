@@ -115,4 +115,6 @@ class AppString {
 
   static const lateOf = "En retard de {} minutes";
   static const advanceOf = "En avance de {} minutes";
+
+  static const initialTime = "Initialement prévue à {}";
 }

@@ -115,16 +115,6 @@ class NextPassageListWidgetState extends State<NextPassageListWidget> {
     futureBuilderKey.currentState!.refresh();
   }
 
-  @override
-  void initState() {
-    super.initState();
-    getData().onError((e, s) {
-      print(e);
-      print(s);
-      return [];
-    });
-  }
-
   Future<List<NextPassage>> getData() async {
     List<NextPassage> result =
         await VitalisDataProvider.getNextPassage(widget.stop);
@@ -205,7 +195,8 @@ class _NextPassageWidgetState extends State<NextPassageWidget>
                   color: delay.isNegative ? Colors.red : Colors.orange,
                   margin: const EdgeInsets.all(5),
                   icon: Icons.warning_amber,
-                  child: Row(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         delay.isNegative
@@ -213,12 +204,14 @@ class _NextPassageWidgetState extends State<NextPassageWidget>
                             : AppString.lateOf.format(delay.abs().inMinutes),
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
+                      Text(
+                          AppString.initialTime.format(DateFormat.Hm().format(widget.nextPassage.aimedTime)),
+                        textScaler: TextScaler.linear(0.8),
+                      )
                     ],
                   ),
                 )
               : Container(),
-          // Text(widget.nextPassage.aimedTime.toLocal().toString()),
-          // Text(widget.nextPassage.expectedTime.toLocal().toString()),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: SizedBox(
