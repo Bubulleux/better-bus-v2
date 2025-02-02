@@ -111,6 +111,8 @@ class CustomHomeWidgetRequest {
 
     if (uri == null) return;
 
-    launchUri(context, uri);
+    if (context.mounted) {
+      launchUri(context, uri);
+    }
   }
 }

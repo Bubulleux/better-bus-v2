@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class RouteStepPage extends StatelessWidget {
-  const RouteStepPage(this.busRoute, this.index, {Key? key}) : super(key: key);
+  const RouteStepPage(this.busRoute, this.index, {super.key});
 
   final VitalisRoute busRoute;
   final int index;

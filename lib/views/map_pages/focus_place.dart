@@ -1,6 +1,5 @@
 import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
 import 'package:better_bus_v2/model/clean/map_place.dart';
-import 'package:better_bus_v2/views/stops_search_page/stops_search_page.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 

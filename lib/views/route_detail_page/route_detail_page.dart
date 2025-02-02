@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 
 class RouteDetailPage extends StatefulWidget {
 
-  const RouteDetailPage({Key? key}) : super(key: key);
+  const RouteDetailPage({super.key});
 
   static const String routeName = "/routeDetail";
 

@@ -78,7 +78,7 @@ class _StopsMapLayerState extends State<StopsMapLayer> {
               scale: focused ? 0.8 : 0.5,
               child: AnimatedContainer(
                 duration: animeTime,
-                padding: focused ? EdgeInsets.all(5) : EdgeInsets.all(15),
+                padding: focused ? const EdgeInsets.all(5) : const EdgeInsets.all(15),
                 decoration: BoxDecoration(
                     color: Theme.of(context).primaryColorLight,
                     border: Border.all(

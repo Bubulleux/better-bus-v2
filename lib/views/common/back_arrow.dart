@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class BackArrow extends StatelessWidget {
-  const BackArrow({this.onPress, Key? key}) : super(key: key);
+  const BackArrow({this.onPress, super.key});
 
   final Function? onPress;
 

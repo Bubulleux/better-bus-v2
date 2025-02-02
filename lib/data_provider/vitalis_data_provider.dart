@@ -38,7 +38,7 @@ class VitalisDataProvider {
     if (res.statusCode == 200) {
       int startIndex = res.body.indexOf("token:") + 8;
       int endIndex = res.body.indexOf("'", startIndex);
-      token = "Bearer " + res.body.substring(startIndex, endIndex);
+      token = "Bearer ${res.body.substring(startIndex, endIndex)}";
     }
   }
 
@@ -295,6 +295,6 @@ class ApiProviderException implements Exception {
   @override
   String toString() {
     return "Http Request exception\nStatus: ${response.statusCode}\nBody:\n${response.body}"
-        "${parentException != null ? '\nParent Exception:\n' + parentException.toString() : ""}";
+        "${parentException != null ? '\nParent Exception:\n$parentException' : ""}";
   }
 }

@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:math';
 
-//import 'package:location/location.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -10,7 +9,7 @@ class GpsDataProvider {
   static late GpsDataProvider instance;
   bool isReady = false;
 
-  static const LatLng CityLocation = LatLng(46.58150366398437, 0.3413034114105826);
+  static const LatLng cityLocation = LatLng(46.58150366398437, 0.3413034114105826);
 
   static Future initGps() async {
     instance = GpsDataProvider();
@@ -44,7 +43,7 @@ class GpsDataProvider {
   }
 
   static Future<LatLng?> getLocation({bool askEnableGPS = false}) async {
-    if (Platform.isLinux) return LatLng(46.58306570646413, 0.34316815224968406);
+    if (Platform.isLinux) return const LatLng(46.58306570646413, 0.34316815224968406);
     Position pos = await Geolocator.getCurrentPosition();
     return LatLng(pos.latitude, pos.longitude);
   }

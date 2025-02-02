@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class Background extends StatelessWidget {
-  const Background({this.child, Key? key}) : super(key: key);
+  const Background({this.child, super.key});
   final Widget? child;
 
   @override

@@ -1,6 +1,5 @@
 import 'package:better_bus_v2/app_constant/app_string.dart';
 import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
-import 'package:better_bus_v2/data_provider/maps_router.dart';
 import 'package:better_bus_v2/views/common/back_arrow.dart';
 import 'package:better_bus_v2/views/common/fake_text_field.dart';
 import 'package:better_bus_v2/views/map_pages/map_test_page.dart';

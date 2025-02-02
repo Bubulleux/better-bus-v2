@@ -32,7 +32,7 @@ class _PositionLayerState extends State<PositionLayer>
     controller =
         AnimationController(duration: Duration(seconds: 1), vsync: this);
     animation = CurvedAnimation(parent: controller, curve: Curves.linear);
-    animation.addListener(() => {setState(() {})});
+    animation.addListener(() {setState(() {});});
     updatePosition();
   }
 

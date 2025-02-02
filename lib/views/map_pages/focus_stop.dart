@@ -3,10 +3,8 @@ import 'dart:math';
 import 'package:better_bus_v2/data_provider/gtfs_data_provider.dart';
 import 'package:better_bus_v2/model/clean/bus_stop.dart';
 import 'package:better_bus_v2/views/stop_info/next_passage_view.dart';
-import 'package:better_bus_v2/views/stop_info/stop_info_page.dart';
 import 'package:better_bus_v2/views/stops_search_page/stops_search_page.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 
 

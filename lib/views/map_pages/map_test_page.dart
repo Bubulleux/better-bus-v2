@@ -198,7 +198,7 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
                 child: FlutterMap(
                   mapController: controller,
                   options: MapOptions(
-                    initialCenter: GpsDataProvider.CityLocation,
+                    initialCenter: GpsDataProvider.cityLocation,
                   ),
                   children: [
                     TileLayer(
@@ -208,7 +208,7 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
                       // Plenty of other options available!
                     ),
                     StopsMapLayer(
-                      stops: GTFSDataProvider.getStops() ?? [],
+                      stops: GTFSDataProvider.getStops(),
                       onStationClick: (BusStop v) => setState(() {
                         focusStation = v;
                         focusedStop = null;

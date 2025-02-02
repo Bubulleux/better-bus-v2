@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
+import 'package:better_bus_v2/info_traffic_notification.dart';
 import 'package:better_bus_v2/views/common/messages.dart';
 import 'package:better_bus_v2/views/credit_page.dart';
 import 'package:better_bus_v2/views/interest_line_page/interest_lines_page.dart';
@@ -22,19 +23,20 @@ import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 // import 'package:workmanager/workmanager.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:workmanager/workmanager.dart';
 
 import 'app_constant/app_string.dart';
 
 @pragma('vm:entry-point')
 void callbackDispatcher() {
-  // Workmanager().executeTask((taskName, inputData) async {
-  //   try {
-  //     await checkInfoTraffic();
-  //   } catch(e) {
-  //     return Future.value(false);
-  //   }
-  //   return Future.value(true);
-  // });
+  Workmanager().executeTask((taskName, inputData) async {
+    try {
+      await checkInfoTraffic();
+    } catch(e) {
+      return Future.value(false);
+    }
+    return Future.value(true);
+  });
 }
 
 final StreamController<String?> selectNotificationStream =
@@ -44,12 +46,10 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
-  // Workmanager().initialize(callbackDispatcher);
-  // Workmanager().registerPeriodicTask("check-traffic-info", "checkTrafficInfo",
-  //     frequency: const Duration(minutes: 15));
-  //await initFlip();
+  Workmanager().initialize(callbackDispatcher);
+  Workmanager().registerPeriodicTask("check-traffic-info", "checkTrafficInfo",
+      frequency: const Duration(minutes: 15));
   await GpsDataProvider.initGps();
-  //checkInfoTraffic();
   runApp(const BetterBusApp());
 }
 
@@ -62,15 +62,12 @@ Future initFlip() async {
 
   var android = const AndroidInitializationSettings('@mipmap/ic_launcher');
   var settings = InitializationSettings(android: android);
-  await flip.initialize(settings,
-      onDidReceiveNotificationResponse: (NotificationResponse? response) => {
-        print("Notif Recieve")
-      });
+  await flip.initialize(settings);
 }
 
 
 class BetterBusApp extends StatefulWidget {
-  const BetterBusApp({Key? key}) : super(key: key);
+  const BetterBusApp({super.key});
 
 
   @override

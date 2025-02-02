@@ -99,6 +99,7 @@ class _HomePageState extends State<HomePage> {
 
    void receiveNotification(NotificationResponse? response) {
     print("Recieve Notification");
+    print(response);
      if (response == null) {
        return;
      }
@@ -119,7 +120,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future initFlutterNotificationPlugin() async {
-    return;
     print("Init FlIP");
     flip = FlutterLocalNotificationsPlugin();
 

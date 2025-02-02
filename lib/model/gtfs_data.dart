@@ -145,7 +145,7 @@ class GTFSRoute {
           row["route_id"]!,
           row["route_short_name"]!,
           row["route_long_name"]!,
-          colorFromHex("#" + row["route_color"]!),
+          colorFromHex("#${row["route_color"]!}"),
         );
 }
 

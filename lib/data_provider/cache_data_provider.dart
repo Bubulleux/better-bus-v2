@@ -16,12 +16,12 @@ class CacheDataProvider {
     if (!cacheData.containsKey(key) || DateTime.now().difference(cacheData[key]!) > expiration){
       return null;
     }
-    return preferences.getString("cache-" + key);
+    return preferences.getString("cache-$key");
   }
 
   Future setData(String data) async{
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    await preferences.setString("cache-" + key, data);
+    await preferences.setString("cache-$key", data);
     await setCacheDate(key);
   }
 
