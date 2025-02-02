@@ -54,8 +54,8 @@ class _StopInfoPageState extends State<StopInfoPage>
         stop = argument.stop;
         lines = argument.lines;
         fromMap = argument.fromMap;
+        getBusStopDistance();
       });
-      getBusStopDistance();
     }
   }
 
@@ -66,9 +66,7 @@ class _StopInfoPageState extends State<StopInfoPage>
     double distance = GpsDataProvider.calculateDistance(
         location.latitude, location.longitude, stop!.latitude, stop!.longitude);
 
-    setState(() {
       busStopDistance = (distance * 10).roundToDouble() / 10;
-    });
   }
 
   void changeBusStop() {

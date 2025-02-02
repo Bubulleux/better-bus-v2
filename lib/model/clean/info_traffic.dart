@@ -25,7 +25,7 @@ class InfoTraffic {
     content: json["content"],
     link: json["link"] == "" ? null : json["link"],
     startTime: DateTime.fromMillisecondsSinceEpoch(json["starting_at"] * 1000),
-    stopDisplay: DateTime.fromMillisecondsSinceEpoch(json["ending_at"] * 1000),
+    stopDisplay: DateTime.fromMillisecondsSinceEpoch((json["ending_at"]?? 0) * 1000),
     startDisplay: DateTime.fromMillisecondsSinceEpoch(json["display_start"] * 1000),
     stopTime: DateTime.fromMillisecondsSinceEpoch(json["display_end"] * 1000),
     linesId: json["lines"]?.map((e) => e["slug"]).toList().cast<String>(),
