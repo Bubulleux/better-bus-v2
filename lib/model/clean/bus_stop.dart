@@ -70,8 +70,6 @@ class BusStop extends SubBusStop{
     return other is BusStop && id == other.id && name == other.name;
   }
 
-  @override
-  int get hashCode => Object.hash(id, name);
 }
 
 
