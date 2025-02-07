@@ -5,7 +5,7 @@ class Station extends Place {
   const Station(super.name, this.id, super.postion, {required this.stops});
 
   final int id;
-  final Map<String, LatLng> stops;
+  final Map<int, LatLng> stops;
 
   @override
   bool operator ==(Object other) {

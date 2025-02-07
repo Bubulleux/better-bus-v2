@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:better_bus_v2/core/models/bus_line.dart';
 import 'package:better_bus_v2/core/models/station.dart';
+import 'package:better_bus_v2/core/models/stop_time.dart';
 import 'package:better_bus_v2/helper.dart';
 import 'package:latlong2/latlong.dart';
 
@@ -43,5 +44,16 @@ class JsonBusLine extends BusLine {
     // TODO: Probably needs to be reimplemented
     // goDirection: json["direction"]["aller"].cast<String>(),
     // backDirection: json["direction"]["retour"].cast<String>(),
+  );
+}
+
+class JsonStopTime extends StopTime {
+
+  JsonStopTime(Map<String, dynamic> json)
+      : super (
+    JsonBusLine.fromJson(json["line"]),
+    json["destinationName"],
+    DateTime.parse(json["expectedDepartureTime"]),
+    realTime: json["realtime"] ? DateTime.parse(json["expectedDepartureTime"]) : null,
   );
 }

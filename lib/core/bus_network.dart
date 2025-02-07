@@ -25,9 +25,11 @@ abstract class BusNetwork {
   // Return the timetable of the station
   Future<Timetable> getTimetable(Station station);
 
+  Future<Timetable> getLineTimetable(Station station, BusLine line);
+
 }
 
-abstract interface class InfoTrafficProvider {
+abstract class BusNetworkWithInfo  extends BusNetwork{
   // Return a list of all available Traffic info
-  Future<List<TrafficInfo>> getTrafficInfos();
+  Future<List<InfoTraffic>> getTrafficInfos();
 }
