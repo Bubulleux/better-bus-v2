@@ -4,19 +4,35 @@ import 'package:better_bus_v2/core/api_provider.dart';
 import 'package:better_bus_v2/core/bus_network.dart';
 import 'package:better_bus_v2/core/gtfs_downloader.dart';
 import 'package:better_bus_v2/core/gtfs_provider.dart';
+import 'package:better_bus_v2/core/models/gtfs/gtfs_path.dart';
 import 'package:test/test.dart';
 import 'package:test_descriptor/test_descriptor.dart' as d;
 
 void main() async {
   // TODO: Need to be tested
-  // group("Test Vitalis Api reponse", () {
-  //   ApiProvider api = ApiProvider.vitalis();
-  //   testNetwork(api);
-  //   testInfoTrafficProvider(api);
-  // });
+  group("Test Vitalis Api reponse", () {
+    ApiProvider api = ApiProvider.vitalis();
+    testNetwork(api);
+    testInfoTrafficProvider(api);
+  });
 
   group("Test Vitalis GTFS", () {
-    testGTFSDownloader();
+    final downloader = GTFSDataDownloader.vitalis(
+        GTFSPaths.broken()
+    );
+
+    final network = GTFSProvider(provider: downloader);
+
+    setUp(() async{
+      await d.dir("gtfs", [
+        d.dir("download"),
+        d.dir("extract"),
+      ]).create();
+      downloader.paths = GTFSPaths("${d.sandbox}/gtfs/download/gtfs.zip", "${d.sandbox}/gtfs/extract/");
+    });
+
+    testGTFSDownloader(downloader);
+    testNetwork(network);
   });
 }
 
@@ -64,24 +80,8 @@ void testInfoTrafficProvider(BusNetworkWithInfo provider) {
   });
 }
 
-void testGTFSDownloader() {
-
-  final downloader = GTFSDataDownloader.vitalis(
-      download: Directory("${d.sandbox}/gtfs/download"),
-      save: Directory("${d.sandbox}/gtfs/extract")
-  );
-
-  final network = GTFSProvider(provider: downloader);
-
-  setUp(() async{
-    await d.dir("gtfs", [
-      d.dir("download"),
-      d.dir("extract"),
-    ]).create();
-  });
-
+void testGTFSDownloader(GTFSDataDownloader downloader) {
   test("Test downloader getData()", () async {
-
     final data = await downloader.getData();
     expect(data, isNotNull);
     if (data == null) {
@@ -94,6 +94,4 @@ void testGTFSDownloader() {
     expect(data.calendar, isNotNull);
     expect(data.trips, isNotEmpty);
   });
-
-  testNetwork(network);
 }
