@@ -4,14 +4,15 @@ import 'package:better_bus_v2/core/bus_network.dart';
 import 'package:better_bus_v2/core/gtfs_downloader.dart';
 import 'package:better_bus_v2/core/models/bus_line.dart';
 import 'package:better_bus_v2/core/models/gtfs/gtfs_data.dart';
+import 'package:better_bus_v2/core/models/gtfs/gtfs_path.dart';
 import 'package:better_bus_v2/core/models/station.dart';
 import 'package:better_bus_v2/core/models/timetable.dart';
 
 class GTFSProvider extends BusNetwork {
   GTFSProvider({required this.provider});
 
-  GTFSProvider.vitalis(Directory download, Directory save) : this(
-    provider: GTFSDataDownloader.vitalis(download: download, save: save)
+  GTFSProvider.vitalis(GTFSPaths paths) : this(
+    provider: GTFSDataDownloader.vitalis(paths)
   );
 
   final GTFSDataDownloader provider;

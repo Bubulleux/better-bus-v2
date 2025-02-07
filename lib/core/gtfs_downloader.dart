@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:archive/archive_io.dart';
 import 'package:better_bus_v2/core/models/gtfs/cvs_parser.dart';
 import 'package:better_bus_v2/core/models/gtfs/gtfs_data.dart';
+import 'package:better_bus_v2/core/models/gtfs/gtfs_path.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
 import 'package:http/http.dart' as http;
@@ -20,30 +21,30 @@ class GTFSDataDownloader {
   GTFSDataDownloader({
     required this.dataSetAPI,
     required this.gtfsFileURL,
-    this.gtfsFilePath = "/gtfs.zip",
-    this.gtfsDirPath = "/gtfs",
-    required this.downloadDirectory,
-    required this.gtfsDirectory,
+    required this.paths,
+    // this.gtfsFilePath = "/gtfs.zip",
+    // this.gtfsDirPath = "/gtfs",
+    // required this.downloadDirectory,
+    // required this.gtfsDirectory,
   });
 
   final Uri dataSetAPI;
   final Uri gtfsFileURL;
-  final String gtfsFilePath;
-  final String gtfsDirPath;
-  final Directory downloadDirectory;
-  final Directory gtfsDirectory;
+  GTFSPaths paths;
+  // final String gtfsFilePath;
+  // final String gtfsDirPath;
+  // final Directory downloadDirectory;
+  // final Directory gtfsDirectory;
 
   GTFSData? _gtfsData;
 
-  GTFSDataDownloader.vitalis(
-      {required Directory download, required Directory save})
+  GTFSDataDownloader.vitalis(GTFSPaths paths)
       : this(
           dataSetAPI: Uri.parse(
               "https://data.grandpoitiers.fr/data-fair/api/v1/datasets/offre-de-transport-du-reseau-vitalis"),
           gtfsFileURL: Uri.parse(
               "https://data.grandpoitiers.fr/data-fair/api/v1/datasets/2gwvlq16siyb7d9m3rqt1pb1/metadata-attachments/gtfs.zip"),
-          downloadDirectory: download,
-          gtfsDirectory: save,
+          paths: paths,
         );
 
   Future<GTFSData?> getData() async {
@@ -55,7 +56,7 @@ class GTFSDataDownloader {
 
   Future<GTFSData?> loadFile() async {
     // TODO: Remove Path provider
-    Directory gtfsDir = Directory(gtfsDirectory.path + gtfsDirPath);
+    Directory gtfsDir = Directory(paths.extractDir);
 
     Map<String, CSVTable> files = loadFiles(gtfsDir);
 
@@ -108,7 +109,7 @@ class GTFSDataDownloader {
     }
 
     var bytes = await consolidateHttpClientResponseBytes(response);
-    await File(downloadDirectory.path + gtfsFilePath).writeAsBytes(bytes);
+    await File(paths.gtfsFilePath).writeAsBytes(bytes);
 
     await extractZipFile();
     // TODO: Need to be reimplmented
@@ -131,7 +132,6 @@ class GTFSDataDownloader {
   }
 
   Future extractZipFile() async {
-    await extractFileToDisk(downloadDirectory.path + gtfsFilePath,
-        gtfsDirectory.path + gtfsDirPath);
+    await extractFileToDisk(paths.extractDir, paths.gtfsFilePath);
   }
 }
