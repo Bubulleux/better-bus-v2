@@ -12,7 +12,7 @@ import 'package:better_bus_v2/data_provider/vitalis_data_provider.dart';
 import 'package:better_bus_v2/error_handler/custom_error.dart';
 import 'package:http/http.dart' as http;
 
-class ApiProvider extends BusNetwork {
+class ApiProvider extends BusNetwork implements InfoTrafficProvider {
   String? token;
   Uri tokenUrl;
   Uri apiUrl;
@@ -61,15 +61,29 @@ class ApiProvider extends BusNetwork {
   }
 
   @override
-  Future<List<BusLine>> getAllLines() {
-    // TODO: implement getAllLines
-    throw UnimplementedError();
+  Future<Map<String, BusLine>> getAllLines() async {
+    Uri uri = Uri.parse("$apiUrl/lines");
+    List<dynamic> json = await _sendRequest(uri);
+    return {
+      for (Map<String, dynamic> e in json) e["slug"]: JsonBusLine.fromSimpleJson(e)
+    };
   }
 
   @override
-  Future<List<BusLine>> getPassingLines(Station station) {
-    // TODO: implement getPassingLines
-    throw UnimplementedError();
+  Future<List<BusLine>> getPassingLines(Station station) async{
+    Uri uri = Uri.parse("$apiUrl/gtfs/Line/getStationLines.json");
+    uri = uri.replace(queryParameters: {
+      "station": station.name,
+      "networks": "[1]",
+    });
+
+    Map<String, dynamic> body = await _sendRequest(uri);
+    List<dynamic> rawLines = body["lines"];
+    List<BusLine> output = [];
+    for (Map<String, dynamic> rawLine in rawLines) {
+      output.add(JsonBusLine.fromJson(rawLine));
+    }
+    return output;
   }
 
   @override

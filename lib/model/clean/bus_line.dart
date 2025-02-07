@@ -2,7 +2,7 @@ import 'package:better_bus_v2/helper.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-class BusLine extends Comparable<BusLine>{
+class BusLine implements Comparable<BusLine>{
   BusLine(this.id, this.fullName, this.color,
       {this.goDirection = const [],
       this.backDirection = const []});

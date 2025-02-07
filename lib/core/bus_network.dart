@@ -15,8 +15,9 @@ abstract class BusNetwork {
   // Return a list of all bus station on the network
   Future<List<Station>> getStations();
 
-  // Return a list of all the Line in the network
-  Future<List<BusLine>> getAllLines();
+  // Return a map of all the Line in the network
+  // Key is the short name of the line
+  Future<Map<String,BusLine>> getAllLines();
 
   // Return all the line passing at the bus station
   Future<List<BusLine>> getPassingLines(Station station);
@@ -24,6 +25,9 @@ abstract class BusNetwork {
   // Return the timetable of the station
   Future<Timetable> getTimetable(Station station);
 
+}
+
+abstract interface class InfoTrafficProvider {
   // Return a list of all available Traffic info
   Future<List<TrafficInfo>> getTrafficInfos();
 }
