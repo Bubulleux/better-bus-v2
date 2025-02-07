@@ -4,15 +4,17 @@ import 'package:better_bus_v2/core/bus_network.dart';
 import 'package:better_bus_v2/core/models/bus_line.dart';
 import 'package:better_bus_v2/core/models/json.dart';
 import 'package:better_bus_v2/core/models/station.dart';
+import 'package:better_bus_v2/core/models/stop_time.dart';
 import 'package:better_bus_v2/core/models/timetable.dart';
 import 'package:better_bus_v2/core/models/traffic_info.dart';
 import 'package:better_bus_v2/data_provider/cache_data_provider.dart';
 import 'package:better_bus_v2/data_provider/connectivity_checker.dart';
 import 'package:better_bus_v2/data_provider/vitalis_data_provider.dart';
 import 'package:better_bus_v2/error_handler/custom_error.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 
-class ApiProvider extends BusNetwork implements InfoTrafficProvider {
+class ApiProvider extends BusNetworkWithInfo {
   String? token;
   Uri tokenUrl;
   Uri apiUrl;
@@ -65,12 +67,13 @@ class ApiProvider extends BusNetwork implements InfoTrafficProvider {
     Uri uri = Uri.parse("$apiUrl/lines");
     List<dynamic> json = await _sendRequest(uri);
     return {
-      for (Map<String, dynamic> e in json) e["slug"]: JsonBusLine.fromSimpleJson(e)
+      for (Map<String, dynamic> e in json)
+        e["slug"]: JsonBusLine.fromSimpleJson(e)
     };
   }
 
   @override
-  Future<List<BusLine>> getPassingLines(Station station) async{
+  Future<List<BusLine>> getPassingLines(Station station) async {
     Uri uri = Uri.parse("$apiUrl/gtfs/Line/getStationLines.json");
     uri = uri.replace(queryParameters: {
       "station": station.name,
@@ -87,15 +90,77 @@ class ApiProvider extends BusNetwork implements InfoTrafficProvider {
   }
 
   @override
-  Future<Timetable> getTimetable(Station station) {
-    // TODO: implement getTimetable
-    throw UnimplementedError();
+  Future<Timetable> getTimetable(Station station, {int max = 40}) async {
+    Uri uri = Uri.parse("$apiUrl/gtfs/SIRI/getSIRIWithErrors.json");
+    uri = uri.replace(queryParameters: {
+      "max": max.toString(),
+      "stopPoint": station.id.toString(),
+      "networks": "[1]",
+    });
+
+    Map<String, dynamic> body = await _sendRequest(uri);
+    List<dynamic> rawPassages = body["realtime"];
+    List<StopTime> realTime = [];
+    for (Map<String, dynamic> rawPassage in rawPassages) {
+      realTime.add(JsonStopTime(rawPassage));
+    }
+    return Timetable(station, DateTime.now(), stopTimes: realTime);
+
+    // TODO: Move the match realtime Gtfs algorithm
+    // List<NextPassage> output = [];
+    // Map<LineDirection, DateTime> directionAccuracy = {};
+    // final now = DateTime.now();
+    // for (var realNextTime in realTime) {
+    //   TripPassage? bestMatch;
+    //   final testingTime = realNextTime.betterTime;
+    //   final destinationTimes = fullTimetable.entries.firstWhere((e) =>
+    //       e.key.line.id == realNextTime.line.id &&
+    //       e.key.destination == realNextTime.destination);
+    //
+    //   for (var curTrip in destinationTimes.value) {
+    //     final curTime = curTrip.time;
+    //     bestMatch ??= curTrip;
+    //     final curTimeDiff = testingTime.difference(curTime);
+    //
+    //     if (curTimeDiff.abs() < testingTime.difference(bestMatch.time).abs() &&
+    //         curTimeDiff > const Duration(minutes: -10)) {
+    //       bestMatch = curTrip;
+    //     }
+    //   }
+    //
+    //   output.add(realNextTime.copyWith(
+    //       aimedTime: bestMatch?.time,
+    //       arrivingTimes: GTFSDataProvider.getArrivingTime(
+    //           stop.id.toString(), bestMatch?.tripId ?? "")));
+    //   if (bestMatch == null) continue;
+    //
+    //   if (!directionAccuracy.containsKey(destinationTimes.key) ||
+    //       bestMatch.time.isAfter(directionAccuracy[destinationTimes.key]!)) {
+    //     directionAccuracy[destinationTimes.key] = bestMatch.time;
+    //   }
+    // }
+    // for (var curDirection in fullTimetable.entries) {
+    //   DateTime start = directionAccuracy[curDirection.key] ?? now;
+    //   output.addAll(curDirection.value.where((e) => e.time.isAfter(start)).map(
+    //       (e) => NextPassage(
+    //           curDirection.key.line, curDirection.key.destination, e.time,
+    //           arrivingTimes: GTFSDataProvider.getArrivingTime(
+    //               stop.id.toString(), e.tripId))));
+    // }
+    // output.sort((a, b) => a.betterTime.compareTo(b.betterTime));
+    //
+    // return output;
   }
 
   @override
-  Future<List<TrafficInfo>> getTrafficInfos() {
-    // TODO: implement getTrafficInfos
-    throw UnimplementedError();
+  Future<List<InfoTraffic>> getTrafficInfos() async{
+    Uri uri = Uri.parse("$apiUrl/traffics");
+    uri = uri.replace(queryParameters: {
+      "displayable": "",
+    });
+
+    List<dynamic> json = await _sendRequest(uri);
+    return json.map((e) => InfoTraffic.fromJson(e)).toList();
   }
 
   // pull the api Token and return true if found
@@ -158,5 +223,11 @@ class ApiProvider extends BusNetwork implements InfoTrafficProvider {
       }
     }
     throw ApiProviderException(response!);
+  }
+
+  @override
+  Future<Timetable> getLineTimetable(Station station, BusLine line) {
+    // TODO: implement getLineTimetable check previous commit
+    throw UnimplementedError();
   }
 }
