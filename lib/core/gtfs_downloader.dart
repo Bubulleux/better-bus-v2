@@ -132,6 +132,6 @@ class GTFSDataDownloader {
   }
 
   Future extractZipFile() async {
-    await extractFileToDisk(paths.extractDir, paths.gtfsFilePath);
+    await extractFileToDisk(paths.gtfsFilePath, paths.extractDir);
   }
 }

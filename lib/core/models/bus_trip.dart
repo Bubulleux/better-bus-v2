@@ -1,16 +1,13 @@
 import 'package:better_bus_v2/core/models/bus_line.dart';
+import 'package:better_bus_v2/core/models/line_direction.dart';
 import 'package:better_bus_v2/core/models/station.dart';
 
 class BusTrip {
   const BusTrip({
-    required this.line,
-    required this.headsign,
-    required this.departure,
-    required this.arrivalTimestamp,
+    required this.direction,
+    required this.stopTimes,
 });
 
-  final BusLine line;
-  final String headsign;
-  final DateTime departure;
-  final Map<Duration, Station> arrivalTimestamp;
+  final LineDirection direction;
+  final Map<DateTime, Station> stopTimes;
 }
