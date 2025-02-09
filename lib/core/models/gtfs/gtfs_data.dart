@@ -1,5 +1,8 @@
 import 'package:better_bus_v2/core/models/gtfs/cvs_parser.dart';
+import 'package:better_bus_v2/core/models/gtfs/line.dart';
 import 'package:better_bus_v2/core/models/gtfs/stop.dart';
+import 'package:better_bus_v2/core/models/gtfs/stop_time.dart';
+import 'package:better_bus_v2/core/models/gtfs/trip.dart';
 import 'package:better_bus_v2/core/models/station.dart';
 import 'package:better_bus_v2/helper.dart';
 import 'package:flutter/material.dart';
@@ -8,12 +11,12 @@ import 'package:latlong2/latlong.dart';
 
 class GTFSData {
   late final Map<int, Station> stations;
-  //late final Map<int, Station> stops;
+  late final Map<int, Station> _stopsParent;
   //late final Map<String, BusStop> stopsParent;
-  late final Map<String, GTFSRoute> routes;
+  late final Map<int, GTFSLine> routes;
   late final GTFSCalendar calendar;
-  late final Map<String, GTFSTrip> trips;
-  late final Map<String, List<GTFSStopTime>> stopTime;
+  late final Map<int, GTFSTrip> trips;
+  late final Map<int, List<GTFSStopTime>> stopTime;
   //late final Map<String, GTFSShape> shapes;
 
   GTFSData(Map<String, CSVTable> files) {
@@ -22,8 +25,8 @@ class GTFSData {
     calendar = GTFSCalendar.fromCSV(
         files["calendar.txt"]!, files["calendar_dates.txt"]!);
     //loadShapes(files["shapes.txt"]!);
-    loadTrips(files["trips.txt"]!);
     loadStopTime(files["stop_times.txt"]!);
+    loadTrips(files["trips.txt"]!);
   }
 
   void loadStops(CSVTable table) {
@@ -57,40 +60,50 @@ class GTFSData {
       // _station[id] = GTFSStop.fromCSV(e);
     }
     Map<int, Station> result = {};
+    Map<int, Station> newStopParent = {};
 
 
-    for (var station in raw_stations.entries) {
-      result[station.key] = station.value.toStation(raw_stops[station.key]!);
+    for (var e in raw_stations.entries) {
+      final stops = raw_stops[e.key]!;
+      final station = e.value.toStation(stops);
+      result[e.key] = station;
+      newStopParent.addEntries(stops.map((e) => MapEntry(e.id, station)));
     }
 
     stations = result;
+    _stopsParent = newStopParent;
   }
 
   void loadRoutes(CSVTable table) {
-    routes = {for (var e in table) e["route_id"]: GTFSRoute.fromCSV(e)};
+    routes = {for (var e in table) int.parse(e["route_id"]): GTFSLine.fromCSV(e)};
   }
 
+
   void loadTrips(CSVTable table) {
-    trips = {for (var e in table) e["trip_id"]: GTFSTrip.fromCSV(e)};
+    trips = {for (var e in table) int.parse(e["trip_id"]): GTFSTrip(e,
+      stopTime[int.parse(e["trip_id"]!)]!,
+      routes[int.parse(e["route_id"])]!
+    )};
   }
 
   void loadStopTime(CSVTable table) {
-    Map<String, List<GTFSStopTime>> _stopTimes = {};
+    Map<int, List<GTFSStopTime>> _stopTimes = {};
     for (var row in table) {
-      String tripID = row["trip_id"];
+      int tripID = int.parse(row["trip_id"]!);
 
       if (!_stopTimes.containsKey(tripID)) {
         _stopTimes[tripID] = [];
       }
 
       int index = int.parse(row["stop_sequence"]) - 1;
+      final station = _stopsParent[int.parse(row["stop_id"]!)]!;
 
       if (_stopTimes[tripID]!.length > index) {
-        _stopTimes[tripID]![index] = GTFSStopTime.fromCSV(row);
+        _stopTimes[tripID]![index] = GTFSStopTime(row, station);
       }
 
       while (_stopTimes[tripID]!.length <= index) {
-        _stopTimes[tripID]!.add(GTFSStopTime.fromCSV(row));
+        _stopTimes[tripID]!.add(GTFSStopTime(row, station));
       }
     }
 
@@ -116,22 +129,6 @@ class GTFSData {
 }
 
 
-class GTFSRoute {
-  final String id;
-  final String shortName;
-  final String longName;
-  final Color color;
-
-  GTFSRoute(this.id, this.shortName, this.longName, this.color);
-
-  GTFSRoute.fromCSV(Map<String, String> row)
-      : this(
-          row["route_id"]!,
-          row["route_short_name"]!,
-          row["route_long_name"]!,
-          colorFromHex("#${row["route_color"]!}"),
-        );
-}
 
 class GTFSService {
   final Set<int> enableDays;
@@ -230,42 +227,7 @@ class GTFSCalendar {
   }
 }
 
-class GTFSTrip {
-  final String routeID;
-  final String serviceID;
-  final String headSign;
-  final bool direction;
-  final String shapeID;
 
-  GTFSTrip(this.routeID, this.serviceID, this.headSign, this.direction,
-      this.shapeID);
-
-  GTFSTrip.fromCSV(Map<String, String> row)
-      : this(
-          row["route_id"]!,
-          row["service_id"]!,
-          row["trip_headsign"]!,
-          row["direction_id"] == "1",
-          row["shape_id"]!,
-        );
-}
-
-class GTFSStopTime {
-  final String tripID;
-  final Duration arival;
-  final String stopID;
-  final double distanceTravel;
-
-  GTFSStopTime(this.tripID, this.arival, this.stopID, this.distanceTravel);
-
-  GTFSStopTime.fromCSV(Map<String, String> row)
-      : this(
-          row["trip_id"]!,
-          parseDuration(row["arrival_time"]!),
-          row["stop_id"]!,
-          double.parse(row["shape_dist_traveled"]!),
-        );
-}
 
 class GTFSShape {
   final String shapeId;
