@@ -25,6 +25,9 @@ class GTFSProvider extends BusNetwork {
 
   @override
   Future<bool> init() async{
+    if (data != null) {
+      return true;
+    }
     final providerData = await provider.getData();
     if (providerData == null) {
       return false;
@@ -95,7 +98,6 @@ class GTFSProvider extends BusNetwork {
     DateTime today = DateTime(now.year, now.month, now.day);
 
     Set<String> validServices = data.calendar.getEnablesServices(today);
-    Map<String, Duration> tripPassage = {};
 
     List<StopTime> stopTimes = [];
 
@@ -114,7 +116,4 @@ class GTFSProvider extends BusNetwork {
 
     return Future.value(Timetable(station, today, stopTimes: stopTimes));
   }
-
-
-
 }

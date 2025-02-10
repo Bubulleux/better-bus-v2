@@ -14,4 +14,9 @@ class Station extends Place {
 
   @override
   int get hashCode => Object.hash(id, name);
+
+  @override
+  String toString() {
+    return "$name ($id: ${stops.length})";
+  }
 }
