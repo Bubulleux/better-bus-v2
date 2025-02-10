@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
@@ -47,6 +48,9 @@ class _PositionLayerState extends State<PositionLayer>
     const setttings = LocationSettings(
       accuracy: LocationAccuracy.medium,
     );
+    if (!(await GpsDataProvider.available())) {
+      return;
+    }
     listener = Geolocator.getPositionStream(locationSettings: setttings)
         .listen((Position newPos) {
       setState(() {

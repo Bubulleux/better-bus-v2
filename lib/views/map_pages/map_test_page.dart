@@ -54,6 +54,12 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
         needFocus = null;
       }
     });
+    updateLocation();
+  }
+
+  Future<void> updateLocation() async {
+    if (!(await GpsDataProvider.available())) return;
+
 
     _posStream = Geolocator.getPositionStream().listen((Position newPos) {
       setState(() {
@@ -247,6 +253,7 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
                   children: [
                     //ElevatedButton(onPressed: test, child: const Text("OUI")),
                     const Spacer(),
+                    position != null ?
                     Container(
                         margin: const EdgeInsets.all(5),
                         width: 40,
@@ -257,6 +264,7 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
                         child: InkWell(
                             onTap: goToMyLocation,
                             child: const Icon(Icons.my_location_outlined)))
+                        : Container()
                   ],
                 ),
                 StopFocusWidget(

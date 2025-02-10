@@ -40,6 +40,7 @@ class _StopInfoPageState extends State<StopInfoPage>
   void initState() {
     super.initState();
     tabController = TabController(length: 2, vsync: this);
+    getBusStopDistance();
   }
 
 
@@ -53,19 +54,21 @@ class _StopInfoPageState extends State<StopInfoPage>
         stop = argument.stop;
         lines = argument.lines;
         fromMap = argument.fromMap;
-        getBusStopDistance();
       });
+      getBusStopDistance();
     }
   }
 
   void getBusStopDistance() async {
     LatLng? location = await GpsDataProvider.getLocation();
+    print("Location: $location");
     if (location == null || stop == null) return;
 
     double distance = GpsDataProvider.calculateDistance(
         location.latitude, location.longitude, stop!.latitude, stop!.longitude);
-
+    setState(() {
       busStopDistance = (distance * 10).roundToDouble() / 10;
+    });
   }
 
   void changeBusStop() {
