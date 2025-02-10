@@ -61,7 +61,6 @@ class _StopInfoPageState extends State<StopInfoPage>
 
   void getBusStopDistance() async {
     LatLng? location = await GpsDataProvider.getLocation();
-    print("Location: $location");
     if (location == null || stop == null) return;
 
     double distance = GpsDataProvider.calculateDistance(
