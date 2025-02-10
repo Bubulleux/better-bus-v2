@@ -174,6 +174,7 @@ class LocalDataHandler {
   }
 
   static Future<bool> getDownloadWhenWifi() async {
+    return Future.value(false);
     await checkPreferences();
     return preferences!.getBool("downloadWhenWifi") ?? true;
   }

@@ -108,11 +108,12 @@ class _SettingPageState extends State<SettingPage> {
         AppString.notificationSetting,
         onClick: gotToNotificationSetting,
       ),
-      SettingEntry(
-        AppString.gtfsDownloadWIFI,
-        description: AppString.gtfsDownloadWIFIExplain,
-        child: Switch(value: gtfsDownloadWIFI, onChanged: setgtfsWifiDownload),
-      ),
+      // TODO: Maybe keep the idea
+      // SettingEntry(
+      //   AppString.gtfsDownloadWIFI,
+      //   description: AppString.gtfsDownloadWIFIExplain,
+      //   child: Switch(value: gtfsDownloadWIFI, onChanged: setgtfsWifiDownload),
+      // ),
       SettingEntry(
         AppString.reDownloadGTFSData,
         onClick: reDownloadGTFSData,
