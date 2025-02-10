@@ -2,7 +2,7 @@ import 'package:better_bus_v2/helper.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-class BusLine extends Comparable<BusLine>{
+class BusLine extends Comparable{
   BusLine(this.id, this.fullName, this.color,
       {this.goDirection = const [],
       this.backDirection = const []});
@@ -114,8 +114,11 @@ class BusLine extends Comparable<BusLine>{
   }
 
   @override
-  int compareTo(BusLine other){
-    return compareID(id, other.id);
+  int compareTo(other){
+    if (other is BusLine) {
+      return compareID(id, other.id);
+    }
+    return 0;
   }
 
   static int compareID(String a, String b) {
