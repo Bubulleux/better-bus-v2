@@ -10,10 +10,7 @@ import 'package:better_bus_v2/core/models/stop_time.dart';
 import 'package:better_bus_v2/core/models/timetable.dart';
 import 'package:better_bus_v2/core/models/traffic_info.dart';
 import 'package:better_bus_v2/data_provider/cache_data_provider.dart';
-import 'package:better_bus_v2/data_provider/connectivity_checker.dart';
 import 'package:better_bus_v2/data_provider/vitalis_data_provider.dart';
-import 'package:better_bus_v2/error_handler/custom_error.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 

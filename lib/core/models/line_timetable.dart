@@ -1,6 +1,5 @@
 import 'package:better_bus_v2/core/models/bus_line.dart';
 import 'package:better_bus_v2/core/models/station.dart';
-import 'package:better_bus_v2/core/models/timetable.dart';
 // TODO: Remove helper function
 import 'package:better_bus_v2/helper.dart';
 

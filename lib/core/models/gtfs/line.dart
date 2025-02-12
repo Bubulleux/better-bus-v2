@@ -1,4 +1,3 @@
-import 'dart:ui';
 
 // TODO: Change this to another function
 import 'package:better_bus_v2/core/models/bus_line.dart';

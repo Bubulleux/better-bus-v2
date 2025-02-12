@@ -6,7 +6,6 @@ import 'package:better_bus_v2/core/models/line_timetable.dart';
 import 'package:better_bus_v2/core/models/station.dart';
 import 'package:better_bus_v2/core/models/timetable.dart';
 import 'package:better_bus_v2/core/models/traffic_info.dart';
-import 'package:flutter/foundation.dart';
 
 class FullProvider extends BusNetwork {
   final ApiProvider api;

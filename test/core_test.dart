@@ -1,5 +1,3 @@
-import 'dart:io';
-import 'dart:math';
 
 import 'package:better_bus_v2/core/api_provider.dart';
 import 'package:better_bus_v2/core/bus_network.dart';
@@ -29,9 +27,9 @@ void main() async {
     ]).create();
     downloader.paths = GTFSPaths("${d.sandbox}/gtfs/download/gtfs.zip", "${d.sandbox}/gtfs/extract/");
   });
-  final stationName = "Northampton";
-  final lineId = "2B";
-  final directionId = 1;
+  const stationName = "Northampton";
+  const lineId = "2B";
+  const directionId = 1;
 
   // // TODO: Need to be tested
   group("Test Vitalis Api reponse", () {
