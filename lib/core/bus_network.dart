@@ -1,4 +1,5 @@
 import 'package:better_bus_v2/core/models/bus_line.dart';
+import 'package:better_bus_v2/core/models/line_timetable.dart';
 import 'package:better_bus_v2/core/models/station.dart';
 import 'package:better_bus_v2/core/models/timetable.dart';
 import 'package:better_bus_v2/core/models/traffic_info.dart';
@@ -26,7 +27,7 @@ abstract class BusNetwork {
   Future<Timetable> getTimetable(Station station);
 
   // Return the timetable of the Line in the Station Only
-  Future<Timetable> getLineTimetable(Station station, BusLine line,int direction, DateTime date);
+  Future<LineTimetable> getLineTimetable(Station station, BusLine line,int direction, DateTime date);
 
   // Return a list of all available Traffic info
   Future<List<InfoTraffic>> getTrafficInfos();
