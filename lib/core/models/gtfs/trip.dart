@@ -10,7 +10,7 @@ class GTFSTrip {
   late final String serviceID;
   late final int _routeID;
   // final String _headSign;
-  late final int _directionId;
+  late final int directionId;
   late final List<GTFSStopTime> stopTimes;
 
   BusLine get line => direction.line;
@@ -20,7 +20,7 @@ class GTFSTrip {
     _routeID = int.parse(row["route_id"]!);
     serviceID = row["service_id"]!;
     direction = LineDirection(line, row["trip_headsign"]!);
-    _directionId = int.parse(row["direction_id"]!);
+    directionId = int.parse(row["direction_id"]!);
   }
 
   // BusTrip toTrip() {

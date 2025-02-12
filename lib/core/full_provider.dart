@@ -2,6 +2,7 @@ import 'package:better_bus_v2/core/api_provider.dart';
 import 'package:better_bus_v2/core/bus_network.dart';
 import 'package:better_bus_v2/core/gtfs_provider.dart';
 import 'package:better_bus_v2/core/models/bus_line.dart';
+import 'package:better_bus_v2/core/models/line_timetable.dart';
 import 'package:better_bus_v2/core/models/station.dart';
 import 'package:better_bus_v2/core/models/timetable.dart';
 import 'package:better_bus_v2/core/models/traffic_info.dart';
@@ -33,10 +34,8 @@ class FullProvider extends BusNetwork {
   }
 
   @override
-  Future<Timetable> getLineTimetable(Station station, BusLine line) {
-    // TODO: implement getLineTimetable
-    throw UnimplementedError();
-  }
+  Future<LineTimetable> getLineTimetable(Station station, BusLine line, int direction, DateTime date)
+    => gtfs.getLineTimetable(station, line, direction, date);
 
   @override
   Future<List<BusLine>> getPassingLines(Station station) => preferGtfs.getPassingLines(station);
@@ -45,16 +44,10 @@ class FullProvider extends BusNetwork {
   Future<List<Station>> getStations() => preferGtfs.getStations();
 
   @override
-  Future<Timetable> getTimetable(Station station) {
-    // TODO: implement getTimetable
-    throw UnimplementedError();
-  }
+  Future<Timetable> getTimetable(Station station) => preferApi.getTimetable(station);
 
   @override
-  Future<List<InfoTraffic>> getTrafficInfos() {
-    // TODO: implement getTrafficInfos
-    throw UnimplementedError();
-  }
+  Future<List<InfoTraffic>> getTrafficInfos() => api.getTrafficInfos();
 
 
 }

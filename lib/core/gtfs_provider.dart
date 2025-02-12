@@ -8,10 +8,13 @@ import 'package:better_bus_v2/core/models/gtfs/gtfs_path.dart';
 import 'package:better_bus_v2/core/models/gtfs/line.dart';
 import 'package:better_bus_v2/core/models/gtfs/stop_time.dart';
 import 'package:better_bus_v2/core/models/gtfs/trip.dart';
+import 'package:better_bus_v2/core/models/line_direction.dart';
+import 'package:better_bus_v2/core/models/line_timetable.dart';
 import 'package:better_bus_v2/core/models/station.dart';
 import 'package:better_bus_v2/core/models/stop_time.dart';
 import 'package:better_bus_v2/core/models/timetable.dart';
 import 'package:better_bus_v2/core/models/traffic_info.dart';
+import 'package:better_bus_v2/helper.dart';
 
 class GTFSProvider extends BusNetwork {
   GTFSProvider({required this.provider});
@@ -112,9 +115,39 @@ class GTFSProvider extends BusNetwork {
   }
 
   @override
-  Future<Timetable> getLineTimetable(Station station, BusLine line) {
-    // TODO: implement getLineTimetable
-    throw UnimplementedError();
+  Future<LineTimetable> getLineTimetable(Station station, BusLine line, int direction, DateTime date) {
+    DateTime today = date.atMidnight();
+    Set<String> validServices = data.calendar.getEnablesServices(today);
+
+    Map<String, String> ends = {};
+    Map<DateTime, String> stopTimes = {};
+
+    const labels = "abcdefghijk";
+
+    for (var entry in data.stopTime.entries) {
+      GTFSTrip trip = data.trips[entry.key]!;
+      if (!validServices.contains(trip.serviceID) ||
+        trip.directionId != direction) {
+        continue;
+      }
+
+      for (var stopTime in entry.value) {
+        if (station != stopTime.station) continue;
+        if (!ends.containsKey(trip.direction.destination)) {
+          ends[trip.direction.destination] = labels[ends.length];
+        }
+        stopTimes[today.add(stopTime.arival)] = ends[trip.direction.destination]!;
+
+      }
+    }
+
+
+    final result = LineTimetable(station, line, today,
+      destinations: { for (var e in ends.entries) e.value: e.key},
+      passingTimes: stopTimes,
+    );
+    
+    return Future.value(result);
   }
 
   @override

@@ -160,6 +160,16 @@ class VitalisDataProvider {
 
   static Future<LineBoarding> getLineBoarding(
       BusStop stop, BusLine line) async {
+    Uri uri = Uri.parse(
+        "https://releases-uxb3m2jh5q-ew.a.run.app/gtfs/Station/getBoardingIDs.json");
+    uri = uri.replace(queryParameters: {
+      "station": stop.name,
+      "line": line.id.toString(),
+      "networks": "[1]",
+    });
+
+    Map<String, dynamic> body = await sendRequest(uri);
+    return LineBoarding.fromJson(body, line);
   }
 
   static Future<Timetable> getTimetable(

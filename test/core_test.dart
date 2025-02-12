@@ -30,17 +30,18 @@ void main() async {
     downloader.paths = GTFSPaths("${d.sandbox}/gtfs/download/gtfs.zip", "${d.sandbox}/gtfs/extract/");
   });
   final stationName = "Northampton";
-  final lineId = "2A";
+  final lineId = "2B";
+  final directionId = 1;
 
   // // TODO: Need to be tested
   group("Test Vitalis Api reponse", () {
-    testNetwork(api, stationName, lineId);
+    testNetwork(api, stationName, lineId, directionId);
   });
 
   group("Test Vitalis GTFS", () {
 
     testGTFSDownloader(downloader);
-    testNetwork(gtfs, stationName, lineId);
+    testNetwork(gtfs, stationName, lineId, directionId);
   });
 
   group("Test Networks Equality", () {
@@ -49,7 +50,7 @@ void main() async {
 
   group("Test Full Provider", () {
     final provider = FullProvider(api: api, gtfs: gtfs);
-    testNetwork(provider, stationName, lineId);
+    testNetwork(provider, stationName, lineId, directionId);
   });
 
   group("Faild Test", () {
@@ -57,7 +58,7 @@ void main() async {
   });
 }
 
-void testNetwork(BusNetwork network, String testStationName, String lineTestName) {
+void testNetwork(BusNetwork network, String testStationName, String lineTestName, int directionId) {
   List<Station>? stations;
   Station? station;
   BusLine? line;
@@ -97,10 +98,12 @@ void testNetwork(BusNetwork network, String testStationName, String lineTestName
   test("Get Line Timetable", () async {
     expect(station, isNotNull);
     expect(line, isNotNull);
-    final timetable = await network.getLineTimetable(station!, line!);
+    final timetable = await network.getLineTimetable(station!, line!, directionId,
+    DateTime.now(), );
 
     expect(timetable, isNotNull);
-    expect(timetable.stopTimes, isNotEmpty);
+    expect(timetable.passingTimes, isNotEmpty);
+    expect(timetable.destinations, isNotEmpty);
   });
 
   test("Test Info Traffic", () async {
