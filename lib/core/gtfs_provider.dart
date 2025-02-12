@@ -11,6 +11,7 @@ import 'package:better_bus_v2/core/models/gtfs/trip.dart';
 import 'package:better_bus_v2/core/models/station.dart';
 import 'package:better_bus_v2/core/models/stop_time.dart';
 import 'package:better_bus_v2/core/models/timetable.dart';
+import 'package:better_bus_v2/core/models/traffic_info.dart';
 
 class GTFSProvider extends BusNetwork {
   GTFSProvider({required this.provider});
@@ -25,7 +26,7 @@ class GTFSProvider extends BusNetwork {
 
   @override
   Future<bool> init() async{
-    if (data != null) {
+    if (_data != null) {
       return true;
     }
     final providerData = await provider.getData();
@@ -49,12 +50,6 @@ class GTFSProvider extends BusNetwork {
   @override
   Future<Map<String, BusLine>> getAllLines() {
     return Future.value({for (var e in _data!.routes.entries) e.value.id: e.value});
-  }
-
-  @override
-  Future<Timetable> getLineTimetable(Station station, BusLine line) {
-    // TODO: implement getLineTimetable
-    throw UnimplementedError();
   }
 
   @override
@@ -113,7 +108,18 @@ class GTFSProvider extends BusNetwork {
       }
     }
 
-
     return Future.value(Timetable(station, today, stopTimes: stopTimes));
+  }
+
+  @override
+  Future<Timetable> getLineTimetable(Station station, BusLine line) {
+    // TODO: implement getLineTimetable
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<InfoTraffic>> getTrafficInfos() {
+    // TODO: implement getTrafficInfos
+    throw UnimplementedError();
   }
 }

@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:better_bus_v2/core/bus_network.dart';
 import 'package:better_bus_v2/core/models/bus_line.dart';
-import 'package:better_bus_v2/core/models/json.dart';
+import 'package:better_bus_v2/core/models/api/json.dart';
 import 'package:better_bus_v2/core/models/station.dart';
 import 'package:better_bus_v2/core/models/stop_time.dart';
 import 'package:better_bus_v2/core/models/timetable.dart';
@@ -13,8 +13,9 @@ import 'package:better_bus_v2/data_provider/vitalis_data_provider.dart';
 import 'package:better_bus_v2/error_handler/custom_error.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
-class ApiProvider extends BusNetworkWithInfo {
+class ApiProvider extends BusNetwork {
   String? token;
   Uri tokenUrl;
   Uri apiUrl;
@@ -152,6 +153,34 @@ class ApiProvider extends BusNetworkWithInfo {
     // return output;
   }
 
+  @deprecated
+  @override
+  Future<Timetable> getLineTimetable(Station station, BusLine line, int direction, DateTime date) async {
+    // TODO: Not a good way to do it;
+    Uri uri = Uri.parse(
+        "https://releases-uxb3m2jh5q-ew.a.run.app/gtfs/Station/getBoardingIDs.json");
+    uri = uri.replace(queryParameters: {
+      "station": station.name,
+      "line": line.id.toString(),
+      "networks": "[1]",
+    });
+
+    Map<String, List<String>> boarding = (await _sendRequest(uri))['boarding_ids'];
+    uri = Uri.parse("https://releases-uxb3m2jh5q-ew.a.run.app/gtfs/Horaire/getHoraire.json");
+    uri = uri.replace(queryParameters: {
+      "boarding_id": station.id.toString(),
+      "date": DateFormat("yyyy-MM-dd").format(date),
+      "direction" : direction.toString(),
+      "line": line.id,
+      "stop_id": boarding[direction == 0 ? "aller" : "retour"].toString(),
+      "networks": "[1]",
+    });
+
+    Map<String, dynamic> body = await _sendRequest(uri);
+    Timetable output = Timetable.fromJson(body);
+    return output;
+  }
+
   @override
   Future<List<InfoTraffic>> getTrafficInfos() async{
     Uri uri = Uri.parse("$apiUrl/traffics");
@@ -225,9 +254,4 @@ class ApiProvider extends BusNetworkWithInfo {
     throw ApiProviderException(response!);
   }
 
-  @override
-  Future<Timetable> getLineTimetable(Station station, BusLine line) {
-    // TODO: implement getLineTimetable check previous commit
-    throw UnimplementedError();
-  }
 }

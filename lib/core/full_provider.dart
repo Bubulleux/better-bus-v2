@@ -4,6 +4,7 @@ import 'package:better_bus_v2/core/gtfs_provider.dart';
 import 'package:better_bus_v2/core/models/bus_line.dart';
 import 'package:better_bus_v2/core/models/station.dart';
 import 'package:better_bus_v2/core/models/timetable.dart';
+import 'package:better_bus_v2/core/models/traffic_info.dart';
 import 'package:flutter/foundation.dart';
 
 class FullProvider extends BusNetwork {
@@ -46,6 +47,12 @@ class FullProvider extends BusNetwork {
   @override
   Future<Timetable> getTimetable(Station station) {
     // TODO: implement getTimetable
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<InfoTraffic>> getTrafficInfos() {
+    // TODO: implement getTrafficInfos
     throw UnimplementedError();
   }
 
