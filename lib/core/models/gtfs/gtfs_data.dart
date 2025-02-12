@@ -4,9 +4,6 @@ import 'package:better_bus_v2/core/models/gtfs/stop.dart';
 import 'package:better_bus_v2/core/models/gtfs/stop_time.dart';
 import 'package:better_bus_v2/core/models/gtfs/trip.dart';
 import 'package:better_bus_v2/core/models/station.dart';
-import 'package:better_bus_v2/helper.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:latlong2/latlong.dart';
 
 class GTFSData {
@@ -30,20 +27,20 @@ class GTFSData {
   }
 
   void loadStops(CSVTable table) {
-    Map<int, GTFSStop> raw_stations = {};
-    Map<int, List<GTFSStop>> raw_stops = {};
+    Map<int, GTFSStop> rawStations = {};
+    Map<int, List<GTFSStop>> rawStops = {};
     //Map<String, BusStop> _stopParent = {};
     //Map<String, List<GTFSStopChild>> child = {};
 
     for (var e in table) {
       final curStop = GTFSStop.fromCSV(e);
       if (curStop.parent == null) {
-        raw_stations[curStop.id] = curStop;
+        rawStations[curStop.id] = curStop;
       } else {
-        if (!raw_stops.containsKey(curStop.parent!)) {
-          raw_stops[curStop.parent!] = [];
+        if (!rawStops.containsKey(curStop.parent!)) {
+          rawStops[curStop.parent!] = [];
         }
-        raw_stops[curStop.parent!]!.add(curStop);
+        rawStops[curStop.parent!]!.add(curStop);
       }
       // final parent = e["parent_station"];
       // final id = e["stop_id"];
@@ -63,8 +60,8 @@ class GTFSData {
     Map<int, Station> newStopParent = {};
 
 
-    for (var e in raw_stations.entries) {
-      final stops = raw_stops[e.key]!;
+    for (var e in rawStations.entries) {
+      final stops = rawStops[e.key]!;
       final station = e.value.toStation(stops);
       result[e.key] = station;
       newStopParent.addEntries(stops.map((e) => MapEntry(e.id, station)));
@@ -87,27 +84,27 @@ class GTFSData {
   }
 
   void loadStopTime(CSVTable table) {
-    Map<int, List<GTFSStopTime>> _stopTimes = {};
+    Map<int, List<GTFSStopTime>> stopTimes = {};
     for (var row in table) {
       int tripID = int.parse(row["trip_id"]!);
 
-      if (!_stopTimes.containsKey(tripID)) {
-        _stopTimes[tripID] = [];
+      if (!stopTimes.containsKey(tripID)) {
+        stopTimes[tripID] = [];
       }
 
       int index = int.parse(row["stop_sequence"]) - 1;
       final station = _stopsParent[int.parse(row["stop_id"]!)]!;
 
-      if (_stopTimes[tripID]!.length > index) {
-        _stopTimes[tripID]![index] = GTFSStopTime(row, station);
+      if (stopTimes[tripID]!.length > index) {
+        stopTimes[tripID]![index] = GTFSStopTime(row, station);
       }
 
-      while (_stopTimes[tripID]!.length <= index) {
-        _stopTimes[tripID]!.add(GTFSStopTime(row, station));
+      while (stopTimes[tripID]!.length <= index) {
+        stopTimes[tripID]!.add(GTFSStopTime(row, station));
       }
     }
 
-    stopTime = _stopTimes;
+    stopTime = stopTimes;
   }
 
   // void loadShapes(CSVTable table) {

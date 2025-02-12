@@ -1,14 +1,10 @@
-import 'dart:io';
 
 import 'package:better_bus_v2/core/bus_network.dart';
 import 'package:better_bus_v2/core/gtfs_downloader.dart';
 import 'package:better_bus_v2/core/models/bus_line.dart';
 import 'package:better_bus_v2/core/models/gtfs/gtfs_data.dart';
 import 'package:better_bus_v2/core/models/gtfs/gtfs_path.dart';
-import 'package:better_bus_v2/core/models/gtfs/line.dart';
-import 'package:better_bus_v2/core/models/gtfs/stop_time.dart';
 import 'package:better_bus_v2/core/models/gtfs/trip.dart';
-import 'package:better_bus_v2/core/models/line_direction.dart';
 import 'package:better_bus_v2/core/models/line_timetable.dart';
 import 'package:better_bus_v2/core/models/station.dart';
 import 'package:better_bus_v2/core/models/stop_time.dart';

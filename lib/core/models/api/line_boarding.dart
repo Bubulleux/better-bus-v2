@@ -1,4 +1,3 @@
-import 'package:better_bus_v2/core/models/bus_line.dart';
 // TODO: Remove this file
 // class LineBoarding {
 //   LineBoarding(this.busStop, this.go, this.back);
