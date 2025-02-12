@@ -1,5 +1,6 @@
 import 'bus_line.dart';
 
+@Deprecated("User Core")
 class LineBoarding {
   LineBoarding(this.busStop, this.go, this.back);
 

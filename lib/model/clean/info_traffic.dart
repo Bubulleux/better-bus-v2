@@ -1,5 +1,6 @@
 import 'package:better_bus_v2/model/clean/bus_line.dart';
 
+@Deprecated("User Core")
 class InfoTraffic {
   InfoTraffic({
     required this.id,

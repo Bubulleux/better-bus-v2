@@ -1,6 +1,7 @@
 
 import 'package:better_bus_v2/model/clean/bus_line.dart';
 
+@Deprecated("User Core")
 class ArrivingTime {
   final Duration duration;
   final String stop;
@@ -8,6 +9,7 @@ class ArrivingTime {
   const ArrivingTime(this.stop, this.duration);
 }
 
+@Deprecated("User Core")
 class NextPassage {
   const NextPassage(this.line, this.destination, this.aimedTime,
       {this.expectedTime, this.arrivingTimes});

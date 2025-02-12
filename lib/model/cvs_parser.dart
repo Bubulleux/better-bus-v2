@@ -1,5 +1,6 @@
 import 'dart:io';
 
+@Deprecated("User Core")
 class CSVTable extends Iterable{
   late final List<String>? keys;
   late List<List<String>> table;
