@@ -6,6 +6,9 @@ import 'package:better_bus_v2/core/models/line_timetable.dart';
 import 'package:better_bus_v2/core/models/station.dart';
 import 'package:better_bus_v2/core/models/timetable.dart';
 import 'package:better_bus_v2/core/models/traffic_info.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class FullProvider extends BusNetwork {
   final ApiProvider api;
@@ -15,6 +18,10 @@ class FullProvider extends BusNetwork {
   BusNetwork get preferGtfs => gtfs.isAvailable() ? gtfs : api;
 
   FullProvider({required this.api, required this.gtfs});
+
+  void of(BuildContext context) {
+    context.read<FullProvider>();
+  }
 
   @override
   Future<bool> init() async {
