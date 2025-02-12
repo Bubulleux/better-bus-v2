@@ -1,5 +1,8 @@
 import 'dart:async';
 
+import 'package:better_bus_v2/core/api_provider.dart';
+import 'package:better_bus_v2/core/full_provider.dart';
+import 'package:better_bus_v2/core/gtfs_provider.dart';
 import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
 import 'package:better_bus_v2/info_traffic_notification.dart';
 import 'package:better_bus_v2/views/common/messages.dart';
@@ -23,6 +26,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 // import 'package:workmanager/workmanager.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:provider/provider.dart';
 import 'package:workmanager/workmanager.dart';
 
 import 'app_constant/app_string.dart';
@@ -50,7 +54,20 @@ void main() async {
   Workmanager().registerPeriodicTask("check-traffic-info", "checkTrafficInfo",
       frequency: const Duration(minutes: 15));
   await GpsDataProvider.initGps();
-  runApp(const BetterBusApp());
+  void set(BuildContext context) {
+
+  }
+
+  MultiProvider(
+    providers: [
+      Provider(create: (_) =>
+        FullProvider(api: ApiProvider.vitalis(),
+          gtfs: GTFSProvider.vitalis()
+        )
+      )
+    ],
+      child: const BetterBusApp()
+  )
 }
 
 Future initFlip() async {
