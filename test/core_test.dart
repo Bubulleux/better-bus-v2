@@ -1,10 +1,13 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:better_bus_v2/core/api_provider.dart';
 import 'package:better_bus_v2/core/bus_network.dart';
 import 'package:better_bus_v2/core/full_provider.dart';
 import 'package:better_bus_v2/core/gtfs_downloader.dart';
+
 import 'package:better_bus_v2/core/gtfs_provider.dart';
+import 'package:better_bus_v2/core/models/bus_line.dart';
 import 'package:better_bus_v2/core/models/gtfs/gtfs_path.dart';
 import 'package:better_bus_v2/core/models/station.dart';
 import 'package:test/test.dart';
@@ -19,24 +22,25 @@ void main() async {
   final gtfs = GTFSProvider(provider: downloader);
   ApiProvider api = ApiProvider.vitalis();
 
-  setUp(() async{
+  setUp(() async {
     await d.dir("gtfs", [
       d.dir("download"),
       d.dir("extract"),
     ]).create();
     downloader.paths = GTFSPaths("${d.sandbox}/gtfs/download/gtfs.zip", "${d.sandbox}/gtfs/extract/");
   });
+  final stationName = "Northampton";
+  final lineId = "2A";
 
   // // TODO: Need to be tested
   group("Test Vitalis Api reponse", () {
-    testNetwork(api);
-    testInfoTrafficProvider(api);
+    testNetwork(api, stationName, lineId);
   });
 
   group("Test Vitalis GTFS", () {
 
     testGTFSDownloader(downloader);
-    testNetwork(gtfs);
+    testNetwork(gtfs, stationName, lineId);
   });
 
   group("Test Networks Equality", () {
@@ -45,7 +49,7 @@ void main() async {
 
   group("Test Full Provider", () {
     final provider = FullProvider(api: api, gtfs: gtfs);
-    testNetwork(provider);
+    testNetwork(provider, stationName, lineId);
   });
 
   group("Faild Test", () {
@@ -53,49 +57,59 @@ void main() async {
   });
 }
 
-void testNetwork(BusNetwork network) {
+void testNetwork(BusNetwork network, String testStationName, String lineTestName) {
+  List<Station>? stations;
+  Station? station;
+  BusLine? line;
   test("Test init", () async {
     expect(await network.init(), true);
     expect(network.isAvailable(), true);
   });
 
   test("Test getStations", () async {
-    expect(await network.getStations(), isNotEmpty);
+    stations = await network.getStations();
+    expect(stations, isNotEmpty);
+    station = stations!.firstWhere((e) => e.name.startsWith(testStationName));
+    expect(station, isNotNull);
   });
 
   test("Test getAllLines", () async {
-    expect(await network.getAllLines(), isNotEmpty);
+    final lines = await network.getAllLines();
+    expect(lines, isNotEmpty);
+
+    line = lines[lineTestName];
+    expect(line, isNotNull);
   });
 
   test("Test getLine from stop", () async {
-    final stations = await network.getStations();
-    stations.shuffle();
-    // TODO: Move to Vitalis Specific Test
-    final nd = stations.firstWhere((e) => e.name.startsWith("Notre-"));
-    expect(nd, isNotNull);
-    expect(await network.getPassingLines(stations.first), isNotEmpty);
-    expect(await network.getPassingLines(nd), isNotEmpty);
+    expect(station, isNotNull);
+    expect(await network.getPassingLines(station!), isNotEmpty);
   });
 
   test("Test getTimetable", () async {
-    final stations = await network.getStations();
-    // TODO: Move to Vitalis Specific Test
-    final nd = stations.firstWhere((e) => e.name.startsWith("Notre-"));
-    expect(nd, isNotNull);
-    final timetable = await network.getTimetable(nd);
+    expect(station, isNotNull);
+    final timetable = await network.getTimetable(station!);
     // TODO: Make it more robust
     expect(timetable, isNotNull);
     expect(timetable.stopTimes, isNotEmpty);
   });
-}
 
-void testInfoTrafficProvider(BusNetworkWithInfo provider) {
+  test("Get Line Timetable", () async {
+    expect(station, isNotNull);
+    expect(line, isNotNull);
+    final timetable = await network.getLineTimetable(station!, line!);
+
+    expect(timetable, isNotNull);
+    expect(timetable.stopTimes, isNotEmpty);
+  });
+
   test("Test Info Traffic", () async {
-    expect(provider.isAvailable(), true);
-    final infos = await provider.getTrafficInfos();
+    expect(network.isAvailable(), true);
+    final infos = await network.getTrafficInfos();
     expect(infos, isNotEmpty);
   });
 }
+
 
 void testGTFSDownloader(GTFSDataDownloader downloader) {
   test("Test downloader getData()", () async {
