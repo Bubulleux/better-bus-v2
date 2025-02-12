@@ -1,3 +1,4 @@
+@Deprecated("User Core")
 class MapPlace{
   MapPlace({
     required this.title,

@@ -17,7 +17,7 @@ import 'package:http/http.dart' as http;
 import '../model/clean/next_passage.dart';
 import 'cache_data_provider.dart';
 import 'connectivity_checker.dart';
-
+@Deprecated("User Core")
 class VitalisDataProvider {
   static String? token;
   static CacheDataProvider stopsCache =

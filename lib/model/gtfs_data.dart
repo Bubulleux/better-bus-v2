@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:latlong2/latlong.dart';
 
+@Deprecated("User Core")
 class GTFSData {
   late final Map<String, BusStop> stations;
   late final Map<String, SubBusStop> stops;

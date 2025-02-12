@@ -18,6 +18,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
 import 'package:http/http.dart' as http;
 
+@Deprecated("User Core")
 class DatasetMetadata {
   Uri ressourceUri;
   DateTime updateTime;
@@ -25,6 +26,7 @@ class DatasetMetadata {
   DatasetMetadata(this.ressourceUri, this.updateTime);
 }
 
+@Deprecated("User Core")
 class GTFSDataProvider {
   static final dataSetAPI = Uri.parse(
       "https://data.grandpoitiers.fr/data-fair/api/v1/datasets/offre-de-transport-du-reseau-vitalis");

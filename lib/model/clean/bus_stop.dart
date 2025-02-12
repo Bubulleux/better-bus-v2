@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:latlong2/latlong.dart';
 
+@Deprecated("User Core")
 class SubBusStop {
   const SubBusStop(this.id, this.pos, {this.stopCode});
 
