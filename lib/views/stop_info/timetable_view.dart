@@ -3,7 +3,6 @@ import 'package:better_bus_v2/core/full_provider.dart';
 import 'package:better_bus_v2/core/models/bus_line.dart';
 import 'package:better_bus_v2/core/models/line_timetable.dart';
 import 'package:better_bus_v2/core/models/station.dart';
-import 'package:better_bus_v2/data_provider/vitalis_data_provider.dart';
 import 'package:better_bus_v2/views/common/custom_input_widget.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
 import 'package:flutter/material.dart';

@@ -87,6 +87,8 @@ class GTFSProvider extends BusNetwork {
     for (var key in stopTrips) {
       GTFSTrip trip = data.trips[key]!;
 
+      if (result.contains(trip.line)) continue;
+
       result.add(trip.line);
     }
     return Future.value(result);
@@ -126,13 +128,16 @@ class GTFSProvider extends BusNetwork {
 
     const labels = "abcdefghijk";
 
+    print(ends);
     for (var entry in data.stopTime.entries) {
       GTFSTrip trip = data.trips[entry.key]!;
       if (!validServices.contains(trip.serviceID) ||
         trip.directionId != direction) {
         continue;
       }
-
+      if (trip.line != line || trip.directionId != direction) {
+        continue;
+      }
       for (var stopTime in entry.value) {
         if (station != stopTime.station) continue;
         if (!ends.containsKey(trip.direction.destination)) {

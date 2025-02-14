@@ -18,7 +18,7 @@ class GTFSData {
 
   GTFSData(Map<String, CSVTable> files) {
     loadStops(files["stops.txt"]!);
-    loadRoutes(files["routes.txt"]!);
+    loadRoutes(files["routes.txt"]!, files["trips.txt"]!);
     calendar = GTFSCalendar.fromCSV(
         files["calendar.txt"]!, files["calendar_dates.txt"]!);
     //loadShapes(files["shapes.txt"]!);
@@ -71,8 +71,24 @@ class GTFSData {
     _stopsParent = newStopParent;
   }
 
-  void loadRoutes(CSVTable table) {
-    routes = {for (var e in table) int.parse(e["route_id"]): GTFSLine.fromCSV(e)};
+  void loadRoutes(CSVTable table, CSVTable tripTable) {
+    Map<int, Map<int, List<String>>> destinations = {};
+    for (var e in tripTable) {
+      final routeId = int.parse(e["route_id"]);
+      final direction = int.parse(e["direction_id"]);
+      final headSign = e["trip_headsign"];
+      if (!destinations.containsKey(routeId)) {
+        destinations[routeId] = {direction: [headSign]};
+        continue;
+      }
+      if (!destinations[routeId]!.containsKey(direction)) {
+        destinations[routeId]![direction] = [headSign];
+        continue;
+      }
+      destinations[routeId]![direction]!.add(headSign);
+    }
+    routes = {for (var e in table) int.parse(e["route_id"]): GTFSLine.fromCSV(e,
+    destinations[int.parse(e["route_id"])]!)};
   }
 
 
