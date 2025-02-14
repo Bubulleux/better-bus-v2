@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-class BusLine {
+class BusLine implements Comparable<BusLine>{
   const BusLine(this.id, this.name, this.color,
   {required this.direction});
   final String id;
@@ -69,6 +69,10 @@ class BusLine {
     return "{$id $name}";
   }
 
+  @override
+  int compareTo(BusLine other){
+    return compareID(id, other.id);
+  }
   // TODO: old json methode
   BusLine.fromCleanJson(Map<String, dynamic> json)
       : this(
