@@ -1,18 +1,18 @@
+import 'package:better_bus_v2/app_constant/app_string.dart';
+import 'package:better_bus_v2/core/full_provider.dart';
+import 'package:better_bus_v2/core/models/bus_line.dart';
+import 'package:better_bus_v2/core/models/line_timetable.dart';
+import 'package:better_bus_v2/core/models/station.dart';
 import 'package:better_bus_v2/data_provider/vitalis_data_provider.dart';
-import 'package:better_bus_v2/model/clean/timetable.dart';
+import 'package:better_bus_v2/views/common/custom_input_widget.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../../app_constant/app_string.dart';
-import '../../model/clean/bus_line.dart';
-import '../../model/clean/bus_stop.dart';
-import '../common/custom_input_widget.dart';
-
 class TimeTableView extends StatefulWidget {
   const TimeTableView(this.stop, {super.key});
 
-  final BusStop stop;
+  final Station stop;
 
   @override
   State<TimeTableView> createState() => _TimeTableViewState();
@@ -33,7 +33,7 @@ class _TimeTableViewState extends State<TimeTableView>
   @override
   void initState() {
     super.initState();
-    VitalisDataProvider.getLines(widget.stop).then((value) {
+    FullProvider.of(context).getPassingLines(widget.stop).then((value) {
       if (mounted) {
         setState(() {
           busLines = value;
@@ -75,24 +75,20 @@ class _TimeTableViewState extends State<TimeTableView>
     }
     if (boardingSelected == null) {
       setState(() {
-        if (busLineSelected!.goDirection.isNotEmpty) {
-          boardingSelected = 0;
-        } else {
-          boardingSelected = 1;
-        }
+        boardingSelected = busLineSelected!.direction.keys.first;
       });
       return;
     }
 
     setState(() {
-      if (boardingSelected == 0 && busLineSelected!.goDirection.isNotEmpty) {
+      if (boardingSelected == 0 && busLineSelected!.direction[1] != null) {
         boardingSelected = 1;
-      } else if (busLineSelected!.backDirection.isNotEmpty) {
+      } else if (busLineSelected!.direction[0] != null) {
         boardingSelected = 0;
       }
     });
-    if (busLineSelected!.goDirection.isEmpty ||
-        busLineSelected!.backDirection.isEmpty) {
+    if (busLineSelected!.direction[0] == null ||
+        busLineSelected!.direction[1] == null) {
       ScaffoldMessenger.of(context).removeCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text(AppString.onlyOneDirection),
@@ -124,16 +120,14 @@ class _TimeTableViewState extends State<TimeTableView>
     super.build(context);
     String? directionString;
     if (boardingSelected != null) {
-      directionString = (boardingSelected == 0
-              ? busLineSelected!.backDirection
-              : busLineSelected!.goDirection)
+      directionString = busLineSelected!.direction[boardingSelected]!
           .join(" | ");
     }
 
     Widget timeTableBody = Container();
     if (busLineSelected != null && boardingSelected != null) {
       timeTableBody = FutureBuilder(
-        future: VitalisDataProvider.getTimetable(widget.stop, busLineSelected!,
+        future: FullProvider.of(context).getLineTimetable(widget.stop, busLineSelected!,
             boardingSelected!, selectedDate),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
@@ -142,8 +136,8 @@ class _TimeTableViewState extends State<TimeTableView>
                 child: Text("Error"),
               );
             } else if (snapshot.hasData) {
-              Timetable timetable = snapshot.data! as Timetable;
-              if (timetable.schedule.isEmpty) {
+              LineTimetable timetable = snapshot.data!;
+              if (timetable.passingTimes.isEmpty) {
                 return timetableEmpty;
               }
               return TimetableOutput(timetable);
@@ -184,7 +178,7 @@ class _TimeTableViewState extends State<TimeTableView>
                           child: Padding(
                             padding: const EdgeInsets.only(left: 8),
                             child: Text(
-                              value.fullName,
+                              value.name,
                               overflow: TextOverflow.fade,
                               maxLines: 1,
                               softWrap: false,
@@ -251,20 +245,20 @@ class _TimeTableViewState extends State<TimeTableView>
 class TimetableOutput extends StatelessWidget {
   const TimetableOutput(this.timetable, {super.key});
 
-  final Timetable timetable;
+  final LineTimetable timetable;
 
   @override
   Widget build(BuildContext context) {
-    Map<int, List<BusSchedule>> timetableSorted = {};
-    for (BusSchedule schedule in timetable.schedule) {
-      if (!timetableSorted.containsKey(schedule.time.hour)) {
-        timetableSorted[schedule.time.hour] = [];
+    Map<int, List<MapEntry<DateTime, String>>> timetableSorted = {};
+    for (var schedule in timetable.passingTimes.entries) {
+      if (!timetableSorted.containsKey(schedule.key.hour)) {
+        timetableSorted[schedule.key.hour] = [];
       }
-      timetableSorted[schedule.time.hour]!.add(schedule);
+      timetableSorted[schedule.key.hour]!.add(schedule);
     }
 
     List<Widget> labelsPassage = [];
-    for (MapEntry<String, String> entry in timetable.terminalLabel.entries) {
+    for (MapEntry<String, String> entry in timetable.destinations.entries) {
       labelsPassage.add(Text(
         "${entry.value}: ${entry.key}",
         textAlign: TextAlign.left,
@@ -283,14 +277,14 @@ class TimetableOutput extends StatelessWidget {
             itemBuilder: (context, index) {
               int key = timetableSorted.keys.elementAt(index);
               List<Widget> rowContent = [];
-              for (BusSchedule schedule in timetableSorted[key]!) {
+              for (var schedule in timetableSorted[key]!) {
                 rowContent.add(SizedBox(
                   width: 45,
                   child: Text.rich(TextSpan(
-                    text: schedule.time.minute.toString(),
+                    text: schedule.key.minute.toString(),
                     children: [
                       TextSpan(
-                        text: schedule.label,
+                        text: schedule.value,
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                     ],

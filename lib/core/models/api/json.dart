@@ -33,6 +33,10 @@ class JsonBusLine extends BusLine {
     json["slug"],
     json["name"],
     Color(int.parse(json["color"].replaceAll("#", "0xff"))),
+    direction: {
+      0: json["direction"]["aller"].cast<String>(),
+      1: json["direction"]["retour"].cast<String>(),
+    }
   );
 
   JsonBusLine.fromJson(Map<String, dynamic> json)
@@ -42,8 +46,10 @@ class JsonBusLine extends BusLine {
     // TODO: Get a better function, not from helper.dart
     colorFromHex(json["color"]),
     // TODO: Probably needs to be reimplemented
-    // goDirection: json["direction"]["aller"].cast<String>(),
-    // backDirection: json["direction"]["retour"].cast<String>(),
+      direction: {
+        0: json["direction"]["aller"].cast<String>(),
+        1: json["direction"]["retour"].cast<String>(),
+      }
   );
 }
 

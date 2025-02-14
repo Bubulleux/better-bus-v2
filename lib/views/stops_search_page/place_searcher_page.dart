@@ -1,5 +1,5 @@
-import 'package:better_bus_v2/model/clean/bus_stop.dart';
-import 'package:better_bus_v2/model/clean/map_place.dart';
+import 'package:better_bus_v2/core/models/place.dart';
+import 'package:better_bus_v2/core/models/station.dart';
 import 'package:better_bus_v2/views/common/background.dart';
 import 'package:better_bus_v2/views/common/custom_text_field.dart';
 import 'package:better_bus_v2/views/common/decorations.dart';
@@ -21,11 +21,11 @@ class _PlaceSearcherPageState extends State<PlaceSearcherPage> with TickerProvid
   late TextEditingController textEditingController;
   late TabController tabController;
 
-  void stopCallback(BusStop stop) {
-    Navigator.of(context).pop(MapPlace(title: stop.name, address: "", type: "busStop", latitude: stop.latitude, longitude: stop.longitude));
+  void stopCallback(Station stop) {
+    Navigator.of(context).pop(stop);
   }
 
-  void placeCallback(MapPlace place){
+  void placeCallback(Place place){
     Navigator.of(context).pop(place);
   }
 

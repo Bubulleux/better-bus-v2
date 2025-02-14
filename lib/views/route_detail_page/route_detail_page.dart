@@ -1,4 +1,5 @@
 import 'package:better_bus_v2/app_constant/app_string.dart';
+import 'package:better_bus_v2/core/models/bus_line.dart';
 import 'package:better_bus_v2/model/clean/route.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
 import 'package:better_bus_v2/views/route_detail_page/route_step_tab.dart';
@@ -48,7 +49,7 @@ class _RouteDetailPageState extends State<RouteDetailPage> with SingleTickerProv
         tabs.add(Tab(child:
         Column(
           children: [
-            LineWidget.fromRouteLine(element.lines!, 20),
+            LineWidget(element.lines!, 20),
             const Icon(Icons.directions_bus),
           ],
         )

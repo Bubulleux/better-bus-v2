@@ -1,4 +1,6 @@
-import 'package:better_bus_v2/model/clean/bus_stop.dart';
+import 'package:better_bus_v2/app_constant/app_string.dart';
+import 'package:better_bus_v2/core/models/bus_line.dart';
+import 'package:better_bus_v2/core/models/station.dart';
 import 'package:better_bus_v2/model/clean/view_shortcut.dart';
 import 'package:better_bus_v2/views/common/background.dart';
 import 'package:better_bus_v2/views/common/custom_input_widget.dart';
@@ -8,9 +10,6 @@ import 'package:better_bus_v2/views/common/line_widget.dart';
 import 'package:better_bus_v2/views/stops_search_page/stops_search_page.dart';
 import 'package:better_bus_v2/views/terminus_selector/terminus_selector_page.dart';
 import 'package:flutter/material.dart';
-
-import '../../app_constant/app_string.dart';
-import '../../model/clean/bus_line.dart';
 
 class ViewShortcutEditorPage extends StatefulWidget {
   const ViewShortcutEditorPage({super.key});
@@ -27,7 +26,7 @@ class _ViewShortcutEditorPageState extends State<ViewShortcutEditorPage> {
 
   String shortcutName = "";
   bool shortcutIsFavorite = false;
-  BusStop? shortcutBusStop;
+  Station? shortcutBusStop;
   List<BusLine> shortCutBusLines = [];
 
   late TextEditingController textFieldNameController;
@@ -176,7 +175,7 @@ class _ViewShortcutEditorPageState extends State<ViewShortcutEditorPage> {
         return;
       }
       setState(() {
-        shortcutBusStop = value as BusStop;
+        shortcutBusStop = value as Station;
         shortCutBusLines = [];
       });
     });

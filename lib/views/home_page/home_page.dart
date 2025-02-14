@@ -1,12 +1,11 @@
 import 'dart:io';
 
 import 'package:better_bus_v2/app_constant/app_string.dart';
+import 'package:better_bus_v2/core/models/station.dart';
 import 'package:better_bus_v2/custom_home_widget.dart';
 import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
-import 'package:better_bus_v2/data_provider/gtfs_data_provider.dart';
 import 'package:better_bus_v2/data_provider/local_data_handler.dart';
 import 'package:better_bus_v2/data_provider/version_data_provider.dart';
-import 'package:better_bus_v2/model/clean/bus_stop.dart';
 import 'package:better_bus_v2/views/common/background.dart';
 import 'package:better_bus_v2/views/common/closest_stop_dialog.dart';
 import 'package:better_bus_v2/views/common/content_container.dart';
@@ -18,14 +17,11 @@ import 'package:better_bus_v2/views/map_pages/map_test_page.dart';
 import 'package:better_bus_v2/views/route_page/route_page.dart';
 import 'package:better_bus_v2/views/setting_page/setting_page.dart';
 import 'package:better_bus_v2/views/stop_info/stop_info_page.dart';
+import 'package:better_bus_v2/views/stops_search_page/stops_search_page.dart';
 import 'package:better_bus_v2/views/traffic_info_page/traffic_info_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-// import 'package:home_widget/home_widget.dart';
 import 'package:url_launcher/url_launcher_string.dart';
-
-import '../stops_search_page/stops_search_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -45,7 +41,7 @@ class _HomePageState extends State<HomePage> {
         return;
       }
       Navigator.of(context).pushNamed(StopInfoPage.routeName,
-          arguments: StopInfoPageArgument(value as BusStop, null));
+          arguments: StopInfoPageArgument(value as Station, null));
     });
   }
 
@@ -76,7 +72,6 @@ class _HomePageState extends State<HomePage> {
     initFlutterNotificationPlugin();
     checkIfAppIsNotificationLaunched();
     checkIfFisrtTimeOpenningApp();
-    GTFSDataProvider.loadFile();
     CustomHomeWidgetRequest.init(context);
   }
 

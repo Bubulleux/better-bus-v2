@@ -19,8 +19,8 @@ class FullProvider extends BusNetwork {
 
   FullProvider({required this.api, required this.gtfs});
 
-  void of(BuildContext context) {
-    context.read<FullProvider>();
+  factory FullProvider.of(BuildContext context) {
+    return context.read<FullProvider>();
   }
 
   @override

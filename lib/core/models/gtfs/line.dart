@@ -5,8 +5,9 @@ import 'package:better_bus_v2/helper.dart';
 
 class GTFSLine extends BusLine {
   final int gtfsId;
-
-  GTFSLine(super.id, super.name, super.color, this.gtfsId);
+  // TODO: Add directions
+  GTFSLine(super.id, super.name, super.color, this.gtfsId) :
+  super(direction: {});
 
   GTFSLine.fromCSV(Map<String, String> row)
       : this(

@@ -1,7 +1,7 @@
 import 'package:better_bus_v2/app_constant/app_string.dart';
+import 'package:better_bus_v2/core/full_provider.dart';
+import 'package:better_bus_v2/core/models/bus_line.dart';
 import 'package:better_bus_v2/data_provider/local_data_handler.dart';
-import 'package:better_bus_v2/data_provider/vitalis_data_provider.dart';
-import 'package:better_bus_v2/model/clean/bus_line.dart';
 import 'package:better_bus_v2/views/common/back_arrow.dart';
 import 'package:better_bus_v2/views/common/custom_future.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
@@ -25,7 +25,7 @@ class _InterestLinePageState extends State<InterestLinePage> {
     linesSelected = await LocalDataHandler.loadInterestedLine();
     notificationEnable = await LocalDataHandler.getNotificationEnable();
     setState(() {});
-    List<BusLine> busLines = (await VitalisDataProvider.getAllLines()).values.toList();
+    List<BusLine> busLines = (await FullProvider.of(context).getAllLines()).values.toList();
     busLines.sort();
     return busLines;
   }
@@ -180,7 +180,7 @@ class _LineItemState extends State<LineItem> {
                 child: Padding(
               padding: const EdgeInsets.only(left: 8),
               child: Text(
-                widget.line.fullName,
+                widget.line.name,
                 softWrap: false,
                 overflow: TextOverflow.fade,
                 maxLines: 1,

@@ -51,7 +51,7 @@ class GTFSDataDownloader {
     if (_gtfsData == null) {
       await downloadFile();
     }
-    return _gtfsData ?? loadFile();
+    return _gtfsData ?? (await loadFile());
   }
 
   Future<GTFSData?> loadFile() async {

@@ -1,15 +1,15 @@
+import 'package:better_bus_v2/core/full_provider.dart';
+import 'package:better_bus_v2/core/models/station.dart';
 import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
-import 'package:better_bus_v2/data_provider/vitalis_data_provider.dart';
 import 'package:better_bus_v2/error_handler/custom_error.dart';
 import 'package:better_bus_v2/views/common/custom_future.dart';
 import 'package:better_bus_v2/views/stops_search_page/stop_bus_item_widget.dart';
+import 'package:better_bus_v2/views/stops_search_page/stops_search_page.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../model/clean/bus_stop.dart';
-
-typedef StopCallback = void Function(BusStop stop);
+typedef StopCallback = void Function(Station stop);
 
 class SearchBusStopView extends StatefulWidget {
   const SearchBusStopView({
@@ -34,9 +34,9 @@ const historicPrefName = "historic";
 const maxHistoricSize = 20;
 
 class SearchBusStopViewState extends State<SearchBusStopView>{
-  List<BusStop>? stops;
+  List<Station>? stops;
 
-  List<BusStop>? historic;
+  List<Station>? historic;
   SharedPreferences? preferences;
 
   LatLng? location;
@@ -44,19 +44,20 @@ class SearchBusStopViewState extends State<SearchBusStopView>{
 
   late GlobalKey<CustomFutureBuilderState> futureBuilderState;
 
-  Future<List<BusStop>> getValidStops() async{
-    stops ??= await VitalisDataProvider.getStops();
+  // TODO: Make it less blocking and update more
+  Future<List<Station>> getValidStops() async{
+    stops ??= await FullProvider.of(context).getStations();
     historic ??= await getHistoric();
     location ??= await GpsDataProvider.getLocation();
 
     if (location != null) {
       stopDistance = {};
-      for (BusStop stop in stops!) {
-        stopDistance![stop.id] = GpsDataProvider.calculateDistance(stop.latitude, stop.longitude, location!.latitude, location!.longitude);
+      for (Station stop in stops!) {
+        stopDistance![stop.id] = getDistanceInKMeter(stop, location!);
       }
     }
 
-    List<BusStop> output = [];
+    List<Station> output = [];
     if (widget.search == null) {
       return output;
     }
@@ -66,13 +67,13 @@ class SearchBusStopViewState extends State<SearchBusStopView>{
     }
 
 
-    for (BusStop stops in historic!) {
+    for (Station stops in historic!) {
       if (stops.name.toLowerCase().contains(widget.search!.toLowerCase())) {
         output.add(stops);
       }
     }
 
-    for (BusStop busStop in stops!) {
+    for (Station busStop in stops!) {
       if (busStop.name.toLowerCase().contains(widget.search!.toLowerCase()) && !historic!.contains(busStop)) {
         output.add(busStop);
       }
@@ -80,7 +81,7 @@ class SearchBusStopViewState extends State<SearchBusStopView>{
     return output;
   }
 
-  Future<List<BusStop>> getHistoric() async {
+  Future<List<Station>> getHistoric() async {
     if (!widget.showHistoric){
       return [];
     }
@@ -88,7 +89,7 @@ class SearchBusStopViewState extends State<SearchBusStopView>{
     preferences ??= await SharedPreferences.getInstance();
     List<String> rawHistoric =
         preferences!.getStringList(historicPrefName) ?? [];
-    List<BusStop> output = [];
+    List<Station> output = [];
     for (String stopName in rawHistoric) {
       int busStopIndex = stops!.indexWhere((element) => element.name == stopName);
       if (busStopIndex == -1) {
@@ -105,7 +106,7 @@ class SearchBusStopViewState extends State<SearchBusStopView>{
         historicPrefName, historic!.map((e) => e.name).toList().cast<String>());
   }
 
-  void addStopInHistoric(BusStop stop) {
+  void addStopInHistoric(Station stop) {
     if (historic == null) {
       return;
     }
@@ -117,7 +118,7 @@ class SearchBusStopViewState extends State<SearchBusStopView>{
     }
   }
   
-  void stopSelected(BusStop stop) async {
+  void stopSelected(Station stop) async {
     addStopInHistoric(stop);
     await saveHistoric();
     widget.stopCallback(stop);
@@ -140,13 +141,13 @@ class SearchBusStopViewState extends State<SearchBusStopView>{
 
   @override
   Widget build(BuildContext context) {
-    return CustomFutureBuilder<List<BusStop>>(
+    return CustomFutureBuilder<List<Station>>(
       future: getValidStops,
       key: futureBuilderState,
       onData: (context, data, refresh) {
         return ListView.builder(
           itemBuilder: (context, index) {
-            BusStop stop = data[index];
+            Station stop = data[index];
             return BusStopWidget(
               stop: data[index],
               stopDistance: stopDistance != null ?

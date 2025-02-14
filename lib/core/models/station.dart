@@ -19,4 +19,22 @@ class Station extends Place {
   String toString() {
     return "$name ($id: ${stops.length})";
   }
+
+  // TODO: Old Json function
+  Station.fromCleanJson(Map<String, dynamic> json)
+      : this(
+          json["name"],
+          int.parse(json["id"]),
+          LatLng(json["lat"], json["long"]),
+          stops: {},
+        );
+
+  Map<String, dynamic> toJson() {
+    return {
+      "name": name,
+      "lat": position.latitude,
+      "long": position.longitude,
+      "id": id,
+    };
+  }
 }

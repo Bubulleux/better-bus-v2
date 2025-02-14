@@ -1,7 +1,6 @@
 import 'dart:math';
 
-import 'package:better_bus_v2/data_provider/gtfs_data_provider.dart';
-import 'package:better_bus_v2/model/clean/bus_stop.dart';
+import 'package:better_bus_v2/core/models/station.dart';
 import 'package:better_bus_v2/views/stop_info/next_passage_view.dart';
 import 'package:better_bus_v2/views/stops_search_page/stops_search_page.dart';
 import 'package:flutter/material.dart';
@@ -10,8 +9,8 @@ import 'package:latlong2/latlong.dart';
 
 class StopFocusWidget extends StatefulWidget {
   const StopFocusWidget({this.station, this.stop, this.position, this.openFocus, super.key});
-  final BusStop? station;
-  final SubBusStop? stop;
+  final Station? station;
+  final int? stop;
   final LatLng? position;
   final VoidCallback? openFocus;
 
@@ -48,9 +47,10 @@ class _StopFocusWidgetState extends State<StopFocusWidget> {
   }
 
   Widget buildDragBar() {
+    // TODO: Check distance with sub stop
    String? distance =
     widget.position != null ?
-       "${(getDistanceInKMeter(widget.stop ?? widget.station!, widget.position!) * 100).roundToDouble() / 100} km":
+       "${(getDistanceInKMeter(widget.station!, widget.position!) * 100).roundToDouble() / 100} km":
         null;
 
     return GestureDetector(
@@ -100,8 +100,8 @@ class _StopFocusWidgetState extends State<StopFocusWidget> {
     if (widget.station == null) {
       return Container();
     }
-
-    final lines = GTFSDataProvider.getStopLines(widget.stop?.id ?? widget.station!.id);
+    // TODO: Re implement filter
+    //final lines = GTFSDataProvider.getStopLines(widget.stop?.id ?? widget.station!.id);
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 100),
@@ -118,9 +118,9 @@ class _StopFocusWidgetState extends State<StopFocusWidget> {
           Expanded(
               child: NextPassagePage(
                 widget.station!,
-                lines: widget.stop != null ? lines : null,
+                //lines: widget.stop != null ? lines : null,
                 minimal: true,
-                key: Key(widget.station!.name + (widget.stop?.id.toString() ?? " ")),
+                key: Key(widget.station!.name + (widget.stop.toString())),
               )
           ),
         ],

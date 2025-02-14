@@ -1,13 +1,11 @@
-import 'package:better_bus_v2/model/clean/info_traffic.dart';
+import 'package:better_bus_v2/core/models/bus_line.dart';
+import 'package:better_bus_v2/core/models/traffic_info.dart';
 import 'package:better_bus_v2/views/common/decorations.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher_string.dart';
-
-import '../../model/clean/bus_line.dart';
-
 
 
 class TrafficInfoItem extends StatefulWidget {

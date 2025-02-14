@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:better_bus_v2/app_constant/app_string.dart';
+import 'package:better_bus_v2/core/models/place.dart';
 import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
 import 'package:better_bus_v2/data_provider/vitalis_data_provider.dart';
 import 'package:better_bus_v2/error_handler/custom_error.dart';
@@ -10,10 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../app_constant/app_string.dart';
-import '../../model/clean/map_place.dart';
-
-typedef PlaceCallback = void Function(MapPlace place);
+typedef PlaceCallback = void Function(Place place);
 
 int maxHistoricSize = 20;
 
@@ -34,36 +33,43 @@ class _MapPlaceSearcherViewState extends State<MapPlaceSearcherView> {
   late GlobalKey<CustomFutureBuilderState> futureStateKey;
 
   SharedPreferences? preferences;
-  List<MapPlace>? historic;
+  List<Place>? historic;
 
-  Future<List<MapPlace>?> getPlaces() async {
+  Future<List<Place>?> getPlaces() async {
     if (widget.search == "") {
       return null;
     }
-    List<MapPlace> output =
-        await VitalisDataProvider.getPlaceAutoComplete(widget.search);
+    List<Place> output =
+        (await VitalisDataProvider.getPlaceAutoComplete(widget.search))
+            .map((e) => Place(e.title, LatLng(e.latitude, e.longitude),
+        address: e.address))
+            .toList();
+
     if (widget.search == "") {
       return null;
     }
     return output;
   }
 
-  Future<List<MapPlace>> getHistoric() async {
-    preferences ??= await SharedPreferences.getInstance();
-    List<String> rawHistoric =
-        preferences!.getStringList("placeHistoric") ?? [];
-    List<MapPlace> output =
-        rawHistoric.map((e) => MapPlace.fromCleanJson(jsonDecode(e))).toList();
-    return output;
+  // TODO: Re implement historic
+  Future<List<Place>> getHistoric() async {
+    return [];
+    // preferences ??= await SharedPreferences.getInstance();
+    // List<String> rawHistoric =
+    //     preferences!.getStringList("placeHistoric") ?? [];
+    // List<Place> output =
+    //     rawHistoric.map((e) => Place.fromCleanJson(jsonDecode(e))).toList();
+    // return output;
   }
 
   Future<void> saveHistoric() async {
-    preferences ??= await SharedPreferences.getInstance();
-    await preferences!.setStringList("placeHistoric",
-        historic!.map((e) => jsonEncode(e.toJson())).toList().cast<String>());
+    return;
+    // preferences ??= await SharedPreferences.getInstance();
+    // await preferences!.setStringList("placeHistoric",
+    //     historic!.map((e) => jsonEncode(e.toJson())).toList().cast<String>());
   }
 
-  void addStopInHistoric(MapPlace place) {
+  void addStopInHistoric(Place place) {
     historic ??= [];
 
     historic!.removeWhere((element) => element == place);
@@ -73,7 +79,7 @@ class _MapPlaceSearcherViewState extends State<MapPlaceSearcherView> {
     }
   }
 
-  void placeClicked(MapPlace place) {
+  void placeClicked(Place place) {
     addStopInHistoric(place);
     saveHistoric();
     widget.placeCallback(place);
@@ -106,19 +112,13 @@ class _MapPlaceSearcherViewState extends State<MapPlaceSearcherView> {
   }
 
   void returnLocation() async {
-    locationData = await GpsDataProvider.getLocation(askEnableGPS:  true);
+    locationData = await GpsDataProvider.getLocation(askEnableGPS: true);
 
     if (locationData == null) return;
 
     if (!mounted) return;
 
-    widget.placeCallback(MapPlace(
-      title: AppString.myPosition,
-      address: "",
-      type: "location",
-      latitude: locationData!.latitude,
-      longitude: locationData!.longitude,
-    ));
+    widget.placeCallback(Place(AppString.myPosition, locationData!));
   }
 
   @override
@@ -153,7 +153,7 @@ class _MapPlaceSearcherViewState extends State<MapPlaceSearcherView> {
             onData: (context, data, refresh) {
               return ListView.builder(
                 itemBuilder: (context, index) {
-                  MapPlace place = data?[index] ?? historic?[index] ?? [];
+                  Place place = data?[index] ?? historic?[index] ?? [];
                   return MapPlaceItemWidget(
                       place: place,
                       locationData: locationData,

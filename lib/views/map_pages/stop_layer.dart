@@ -1,4 +1,4 @@
-import 'package:better_bus_v2/model/clean/bus_stop.dart';
+import 'package:better_bus_v2/core/models/station.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -14,25 +14,24 @@ class StopsMapLayer extends StatefulWidget {
       this.focusedStop,
       super.key});
 
-  final List<BusStop> stops;
-  final BusStop? focusedStation;
-  final SubBusStop? focusedStop;
-  final void Function(BusStop)? onStationClick;
-  final void Function(SubBusStop)? onStopClick;
+  final List<Station> stops;
+  final Station? focusedStation;
+  final int? focusedStop;
+  final void Function(Station)? onStationClick;
+  final void Function(int)? onStopClick;
 
   @override
   State<StopsMapLayer> createState() => _StopsMapLayerState();
 }
 
 class _StopsMapLayerState extends State<StopsMapLayer> {
-  Marker buildMaker(BusStop stop, MapCamera camera) {
-    final pos = LatLng(stop.latitude, stop.longitude);
+  Marker buildMaker(Station stop, MapCamera camera) {
     final focused = stop == widget.focusedStation;
     final asDot = camera.zoom < 15;
 
     return Marker(
         key: Key(stop.id.toString()),
-        point: pos,
+        point: stop.position,
         child: AnimatedScale(
           duration: animeTime,
           scale: asDot ? 0.5 : 1,
@@ -63,15 +62,15 @@ class _StopsMapLayerState extends State<StopsMapLayer> {
         ));
   }
 
-  Iterable<Marker> buildSubMarker(BusStop stop) sync* {
-    for (final child in stop.children) {
+  Iterable<Marker> buildSubMarker(Station stop) sync* {
+    for (final child in stop.stops.entries) {
       final focused = child == widget.focusedStop;
       yield Marker(
-          point: child.pos,
+          point: child.value,
           width: 30,
           height: 30,
           child: InkWell(
-            onTap: () => widget.onStopClick?.call(child),
+            onTap: () => widget.onStopClick?.call(child.key),
             child: AnimatedScale(
               duration: animeTime,
               scale: focused ? 0.8 : 0.5,
@@ -105,7 +104,7 @@ class _StopsMapLayerState extends State<StopsMapLayer> {
     final cam = MapCamera.of(context);
 
     return MarkerLayer(
-        markers: (List<BusStop> stops) sync* {
+        markers: (List<Station> stops) sync* {
       for (final stop in stops) {
         if (stop == widget.focusedStation) {
           yield* buildSubMarker(stop);
