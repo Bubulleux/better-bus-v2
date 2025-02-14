@@ -1,17 +1,16 @@
 import 'dart:math';
 
-import 'package:better_bus_v2/data_provider/vitalis_data_provider.dart';
-import 'package:better_bus_v2/model/clean/bus_line.dart';
+import 'package:better_bus_v2/app_constant/app_string.dart';
+import 'package:better_bus_v2/core/full_provider.dart';
+import 'package:better_bus_v2/core/models/bus_line.dart';
+import 'package:better_bus_v2/core/models/station.dart';
 import 'package:better_bus_v2/views/common/background.dart';
 import 'package:better_bus_v2/views/common/content_container.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
 import 'package:flutter/material.dart';
 
-import '../../app_constant/app_string.dart';
-import '../../model/clean/bus_stop.dart';
-
 class TerminusSelectorPageArgument {
-  final BusStop stop;
+  final Station stop;
   final List<BusLine> previousData;
 
   const TerminusSelectorPageArgument(this.stop, this.previousData);
@@ -26,7 +25,7 @@ class TerminusSelectorPage extends StatefulWidget {
 }
 
 class _TerminusSelectorPageState extends State<TerminusSelectorPage> {
-  late BusStop stop;
+  late Station stop;
   late List<BusLine> previousData;
 
   List<BusLine>? validBusLine;
@@ -40,7 +39,7 @@ class _TerminusSelectorPageState extends State<TerminusSelectorPage> {
       return validBusLine!;
     }
 
-    List<BusLine> stopLines = await VitalisDataProvider.getLines(stop) ?? [];
+    List<BusLine> stopLines = await FullProvider.of(context).getPassingLines(stop) ?? [];
     stopLines.sort();
     selectedTerminus = [];
 
@@ -49,22 +48,22 @@ class _TerminusSelectorPageState extends State<TerminusSelectorPage> {
       int previousLineIndex = previousData
           .indexWhere((element) => element.id == stopLines[i].id);
 
-      selectedTerminus.add([
-        stopLines[i].goDirection.map((e) {
-          if (previousLineIndex == -1) {
-            return false;
-          }
-          return previousData[previousLineIndex].goDirection.contains(e);
+      if (previousLineIndex == -1) {
+        selectedTerminus.add(
+          stopLines[i].direction.values.toList().map(
+              (e) => e.map((f) => false).toList()
+          ).toList()
+        );
+        continue;
+      }
+      final line = previousData[previousLineIndex];
 
-        }).toList(),
-        stopLines[i].backDirection.map((e) {
-          if (previousLineIndex == -1) {
-            return false;
-          }
-          return previousData[previousLineIndex].backDirection.contains(e);
+      selectedTerminus.add(
+          stopLines[i].direction.entries.toList().map(
+                  (e) => e.value.map((f) => line.direction[e.key]!.contains(f)).toList()
+          ).toList()
+      );
 
-        }).toList(),
-      ]);
       setState(() {});
     }
 
@@ -144,23 +143,20 @@ class _TerminusSelectorPageState extends State<TerminusSelectorPage> {
     }
     List<BusLine> result = [];
     for (int i = 0; i < selectedTerminus.length; i++) {
-      List<String> goTerminus = [];
-      List<String> backTerminus = [];
-      for (int j = 0; j < selectedTerminus[i][0].length; j++) {
-        if (selectedTerminus[i][0][j]) {
-          goTerminus.add(validBusLine![i].goDirection[j]);
-        }
-      }
-      for (int j = 0; j < selectedTerminus[i][1].length; j++) {
-        if (selectedTerminus[i][1][j]) {
-          backTerminus.add(validBusLine![i].backDirection[j]);
+      List<List<String>> terminus = [[], []];
+      for (int k = 0; k < 2; k++) {
+
+        for (int j = 0; j < selectedTerminus[i][0].length; j++) {
+          if (selectedTerminus[i][0][j]) {
+            terminus[k].add(validBusLine![i].direction[k]![j]);
+          }
         }
       }
 
-      if (goTerminus.isNotEmpty || backTerminus.isNotEmpty) {
+      if (terminus[0].isNotEmpty || terminus[1].isNotEmpty) {
         BusLine line = validBusLine![i];
-        result.add(BusLine(line.id, line.fullName, line.color,
-            goDirection: goTerminus, backDirection: backTerminus));
+        result.add(BusLine(line.id, line.name, line.color,
+        direction: {0: terminus[0], 1: terminus[1]}));
       }
     }
 
@@ -191,7 +187,7 @@ class _TerminusSelectorPageState extends State<TerminusSelectorPage> {
                         child: Padding(
                           padding: const EdgeInsets.only(left: 8),
                           child: Text(
-                            line.fullName,
+                            line.name,
                             style: const TextStyle(fontSize: 15),
                           ),
                         ),
@@ -281,7 +277,7 @@ class _TerminusSelectionState extends State<TerminusSelection>
   Widget build(BuildContext context) {
     super.build(context);
     List<String> getDirection(BusLine _line) =>
-        widget.isGo ? _line.goDirection : _line.backDirection;
+        widget.isGo ? _line.direction[1]! : _line.direction[0]!;
 
     BusLine line = widget.rootState.validBusLine![widget.index];
     List<bool> entrySelected =

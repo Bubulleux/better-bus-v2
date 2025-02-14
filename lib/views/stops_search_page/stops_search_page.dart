@@ -1,6 +1,7 @@
 
+import 'package:better_bus_v2/core/models/place.dart';
+import 'package:better_bus_v2/core/models/station.dart';
 import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
-import 'package:better_bus_v2/model/clean/bus_stop.dart';
 import 'package:better_bus_v2/views/common/background.dart';
 import 'package:better_bus_v2/views/common/custom_text_field.dart';
 import 'package:better_bus_v2/views/stops_search_page/search_bus_stop_view.dart';
@@ -11,10 +12,10 @@ import '../../app_constant/app_string.dart';
 import '../../model/clean/bus_line.dart';
 
 
-
-double getDistanceInKMeter(SubBusStop stop, LatLng locationData) {
-  double result = GpsDataProvider.calculateDistance(stop.pos.latitude,
-      stop.pos.longitude, locationData.latitude, locationData.longitude);
+// TODO: Move it to helper file
+double getDistanceInKMeter(Place place, LatLng locationData) {
+  double result = GpsDataProvider.calculateDistance(place.position.latitude,
+      place.position.longitude, locationData.latitude, locationData.longitude);
   return result;
 }
 
@@ -38,11 +39,11 @@ class _SearchPageState extends State<SearchPage> {
   late bool saveInHistoric;
   late bool showHistoric;
 
-  List<BusStop>? busStops;
+  List<Station>? busStops;
   Map<String, bool> resultExpand = {};
   Map<String, List<BusLine>?> busStopsLines = {};
 
-  List<BusStop>? validResult;
+  List<Station>? validResult;
   LatLng? locationData;
 
 
@@ -92,7 +93,7 @@ class _SearchPageState extends State<SearchPage> {
                 Expanded(
                   child: SearchBusStopView(
                     search: search,
-                    stopCallback: (BusStop stop) {
+                    stopCallback: (Station stop) {
                       Navigator.of(context).pop(stop);
                     },
                   ),

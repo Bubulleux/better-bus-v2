@@ -1,15 +1,15 @@
 
+import 'package:better_bus_v2/core/full_provider.dart';
+import 'package:better_bus_v2/core/models/bus_line.dart';
+import 'package:better_bus_v2/core/models/station.dart';
+import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
 import 'package:better_bus_v2/views/common/decorations.dart';
+import 'package:better_bus_v2/views/common/error_handler.dart';
+import 'package:better_bus_v2/views/common/line_widget.dart';
 import 'package:better_bus_v2/views/stops_search_page/stops_search_page.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 
-import '../../data_provider/gps_data_provider.dart';
-import '../../data_provider/vitalis_data_provider.dart';
-import '../../model/clean/bus_line.dart';
-import '../../model/clean/bus_stop.dart';
-import '../common/error_handler.dart';
-import '../common/line_widget.dart';
 
 
 class BusStopWidget extends StatefulWidget {
@@ -21,7 +21,7 @@ class BusStopWidget extends StatefulWidget {
     super.key,
   });
 
-  final BusStop stop;
+  final Station stop;
   final VoidCallback onPressed;
   final double? stopDistance;
   final bool inHistoric;
@@ -83,7 +83,7 @@ class _BusStopWidgetState extends State<BusStopWidget>
       expand = false;
     } else {
       expand = true;
-      VitalisDataProvider.getLines(widget.stop).then(
+      FullProvider.of(context).getPassingLines(widget.stop).then(
           (value) => {
                 setState(() {
                   if (!mounted) {

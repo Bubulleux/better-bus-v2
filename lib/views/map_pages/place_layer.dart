@@ -1,11 +1,10 @@
-import 'package:better_bus_v2/model/clean/map_place.dart';
+import 'package:better_bus_v2/core/models/place.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart';
 
 class PlaceLayer extends StatelessWidget {
   const PlaceLayer(this.place, {super.key});
-  final MapPlace place;
+  final Place place;
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +14,7 @@ class PlaceLayer extends StatelessWidget {
           width: 50,
           height: 50,
           alignment: Alignment.topCenter,
-          point: LatLng(place.latitude, place.longitude),
+          point: place.position,
           child: const Icon(
             Icons.place,
             size: 50,

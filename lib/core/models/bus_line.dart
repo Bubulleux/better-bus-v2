@@ -1,10 +1,13 @@
 import 'dart:ui';
 
 class BusLine {
-  const BusLine(this.id, this.name, this.color);
+  const BusLine(this.id, this.name, this.color,
+  {required this.direction});
   final String id;
   final String name;
   final Color color;
+  // TODO: Implement direction
+  final Map<int, List<String>> direction;
 
   @override
   int get hashCode => id.hashCode ^ name.hashCode;
@@ -64,5 +67,26 @@ class BusLine {
   @override
   String toString() {
     return "{$id $name}";
+  }
+
+  // TODO: old json methode
+  BusLine.fromCleanJson(Map<String, dynamic> json)
+      : this(
+    json["id"],
+    json["name"],
+    Color(json["color"]),
+    direction: {}
+    // goDirection: json["goDirection"].cast<String>(),
+    // backDirection: json["backDirection"].cast<String>(),
+  );
+
+  Map<String, dynamic> toJson() {
+    return {
+      "id": id,
+      "name": name,
+      "color": color.value,
+      // "goDirection": goDirection,
+      // "backDirection": backDirection,
+    };
   }
 }

@@ -6,4 +6,8 @@ class GTFSPaths {
 
   String gtfsFilePath;
   String extractDir;
+  
+  Future<bool> init() {
+    return Future.value(true);
+  }
 }

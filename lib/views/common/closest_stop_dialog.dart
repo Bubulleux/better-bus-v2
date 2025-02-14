@@ -1,8 +1,8 @@
 import 'package:better_bus_v2/app_constant/app_string.dart';
+import 'package:better_bus_v2/core/full_provider.dart';
+import 'package:better_bus_v2/core/models/station.dart';
 import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
-import 'package:better_bus_v2/data_provider/vitalis_data_provider.dart';
 import 'package:better_bus_v2/error_handler/custom_error.dart';
-import 'package:better_bus_v2/model/clean/bus_stop.dart';
 import 'package:better_bus_v2/views/common/custom_future.dart';
 import 'package:better_bus_v2/views/stop_info/stop_info_page.dart';
 import 'package:flutter/material.dart';
@@ -10,15 +10,15 @@ import 'package:latlong2/latlong.dart';
 
 class ClosestStopDialog {
   static Future show(BuildContext context) async {
-    BusStop? stop = await showDialog(
+    Station? stop = await showDialog(
         context: context,
         builder: (BuildContext context) {
         return AlertDialog(
             title: const Text(AppString.myStop),
-            content: CustomFutureBuilder<List<BusStop>?>(
-              future: getClosestStops,
+            content: CustomFutureBuilder<List<Station>?>(
+              future: () => getClosestStops(context),
               onData: (context, data, refresh) {
-              List<BusStop> stops = data;
+              List<Station> stops = data;
               if (stops.length == 1) {
                 goToStop(context, stops[0]);
                 return Container();
@@ -30,7 +30,7 @@ class ClosestStopDialog {
                     shrinkWrap: true,
                     itemCount: stops.length,
                     itemBuilder: (BuildContext context, int index) {
-                    BusStop stop = stops[index];
+                    Station stop = stops[index];
                     return InkWell(
                         onTap: () => goToStop(context, stop),
                         child: Padding(
@@ -56,7 +56,7 @@ class ClosestStopDialog {
                 );
               },
               errorTest: (data) {
-                List<BusStop>? stops = data;
+                List<Station>? stops = data;
                 if (stops!.isEmpty) {
                   return CustomErrors.noCloseStop;
                 }
@@ -73,18 +73,18 @@ barrierDismissible: false,
     }
   }
 
-  static Future<List<BusStop>?> getClosestStops() async {
+  static Future<List<Station>?> getClosestStops(context) async {
     LatLng? location = await GpsDataProvider.getLocation(askEnableGPS: true);
-    List<BusStop>? stops = await VitalisDataProvider.getStops();
-    List<BusStop> result = [];
+    List<Station>? stops = await FullProvider.of(context).getStations();
+    List<Station> result = [];
   
     if (location == null) {
       throw CustomErrors.locationDisable;
     }
 
-    for (BusStop stop in stops!) {
+    for (Station stop in stops!) {
       double distance = GpsDataProvider.calculateDistance(
-          location.latitude, location.longitude, stop.latitude, stop.longitude);
+          location.latitude, location.longitude, stop.position.latitude, stop.position.longitude);
       if (distance < 0.1) {
         result.add(stop);
       }
@@ -92,7 +92,7 @@ barrierDismissible: false,
     return result;
   }
 
-  static void goToStop(BuildContext context, BusStop stop) {
+  static void goToStop(BuildContext context, Station stop) {
     Navigator.of(context).pop(stop);
   }
 }

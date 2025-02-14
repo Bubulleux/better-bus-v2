@@ -25,6 +25,12 @@ class GTFSProvider extends BusNetwork {
 
   @override
   Future<bool> init() async{
+    bool pathInit = await provider.paths.init();
+    if (!pathInit) {
+      // TODO: Make it better, test it
+      print("Path provider failded to init");
+      return false;
+    }
     if (_data != null) {
       return true;
     }

@@ -35,7 +35,7 @@ class _RouteItemWidgetState extends State<RouteItemWidget> {
       } else {
         wrapChildren.add(Column(
           children: [
-            LineWidget.fromRouteLine(passage.lines!, 30),
+            LineWidget(passage.lines!, 30),
             const SizedBox(
               height: 5,
             ),

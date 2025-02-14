@@ -26,7 +26,7 @@ class RouteStepPage extends StatelessWidget {
       title = RichText(text: TextSpan(
         children: [
           TextSpan(text: AppString.atTheStopTakeLine.replaceFirst("{#}", busRoute.itinerary[index].startPlace)),
-          WidgetSpan(child: LineWidget.fromRouteLine(busRoute.itinerary[index].lines!, 25)),
+          WidgetSpan(child: LineWidget(busRoute.itinerary[index].lines!, 25)),
           TextSpan(text: AppString.andGoToStop + busRoute.itinerary[index].endPlace),
         ],
         style: Theme.of(context).textTheme.titleLarge!.copyWith(

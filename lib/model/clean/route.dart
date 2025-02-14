@@ -1,3 +1,4 @@
+import 'package:better_bus_v2/core/models/bus_line.dart';
 import 'package:flutter/material.dart';
 import 'package:better_bus_v2/helper.dart';
 
@@ -106,8 +107,9 @@ class PolyLine {
   int lineWidth;
 }
 
-class RouteLine {
-  RouteLine({required this.name, required this.destination, required this.color});
+class RouteLine  extends BusLine{
+  RouteLine({required this.name, required this.destination, required this.color}):
+  super(name, destination, color, direction: {});
 
   RouteLine.fromJson(Map<String, dynamic> json): this(
     name: json["lineName"],

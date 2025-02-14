@@ -1,10 +1,10 @@
 import 'dart:async';
 
 import 'package:better_bus_v2/app_constant/app_string.dart';
+import 'package:better_bus_v2/core/full_provider.dart';
+import 'package:better_bus_v2/core/models/place.dart';
+import 'package:better_bus_v2/core/models/station.dart';
 import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
-import 'package:better_bus_v2/data_provider/gtfs_data_provider.dart';
-import 'package:better_bus_v2/model/clean/bus_stop.dart';
-import 'package:better_bus_v2/model/clean/map_place.dart';
 import 'package:better_bus_v2/views/common/fake_text_field.dart';
 import 'package:better_bus_v2/views/map_pages/easter_eggs_layer.dart';
 import 'package:better_bus_v2/views/map_pages/focus_place.dart';
@@ -22,12 +22,13 @@ import 'package:latlong2/latlong.dart';
 class MapPageArg {
   const MapPageArg({this.station, this.stop});
 
-  final BusStop? station;
-  final SubBusStop? stop;
+  final Station? station;
+  final int? stop;
 }
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
+
   static const String routeName = "/map_test";
 
   @override
@@ -36,10 +37,10 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
   late MapController controller;
-  late Map<LatLng, BusStop> stopsPos;
-  BusStop? focusStation;
-  SubBusStop? focusedStop;
-  MapPlace? focusedPlace;
+  late Map<LatLng, Station> stopsPos;
+  Station? focusStation;
+  int? focusedStop;
+  Place? focusedPlace;
   LatLng? position;
   LatLng? needFocus;
   StreamSubscription<Position>? _posStream;
@@ -60,6 +61,7 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
         position = LatLng(newPos.latitude, newPos.longitude);
       });
     });
+    loadStops();
   }
 
   @override
@@ -70,7 +72,7 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
       setState(() {
         focusStation = arg.station;
         focusedStop = arg.stop;
-        needFocus = focusStation?.pos;
+        needFocus = focusStation?.position;
       });
     }
   }
@@ -82,25 +84,24 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  void test() async {
-    position = await GpsDataProvider.getLocation();
-    setState(() {
-      position = position;
-    });
-  }
-
   void LatLngClicked(LatLng point) {
     setState(() {
       focusStation = stopsPos[point];
     });
   }
 
+  Future<bool> loadStops() async {
+    final provider = FullProvider.of(context);
+    if (!provider.isAvailable()) return false;
+    final stations = await FullProvider.of(context).getStations();
+    setState(() {
+      stopsPos = {for (var e in stations) e.position: e};
+    });
+    return true;
+  }
+
   MarkerLayer getStopsLayer() {
     List<Marker> markers = [];
-    stopsPos = {
-      for (var e in GTFSDataProvider.getStops())
-        LatLng(e.latitude, e.longitude): e
-    };
     for (var stop in stopsPos.keys) {
       markers.add(Marker(
         point: stop,
@@ -120,22 +121,21 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
   }
 
   Future goToSearch() async {
-    MapPlace? place = await (Navigator.of(context)
+    Place? place = await (Navigator.of(context)
         .pushNamed(PlaceSearcherPage.routeName) as Future<dynamic>);
     if (place == null) return;
     setState(() {
-      if (place.type == "busStop") {
-        final stop = GTFSDataProvider.getStops()
-            .firstWhere((e) => e.name == place.title);
+      if (place is Station) {
+        final stop = place;
         focusStation = stop;
-        focusedStop = stop;
+        focusedStop = null;
       } else {
         focusStation = null;
         focusedStop = null;
         focusedPlace = place;
       }
     });
-    focusOnLatLng(LatLng(place.latitude, place.longitude), 18);
+    focusOnLatLng(place.position, 18);
   }
 
   void goToMyLocation() async {
@@ -175,8 +175,8 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
             arguments: StopInfoPageArgument(focusStation!, null, fromMap: true))
         .then((value) {
       setState(() {
-        focusStation = value as BusStop?;
-        if (focusStation != null) focusOnLatLng(focusStation!.pos, 18);
+        focusStation = value as Station?;
+        if (focusStation != null) focusOnLatLng(focusStation!.position, 18);
       });
     });
   }
@@ -204,22 +204,20 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
                     // Plenty of other options available!
                   ),
                   StopsMapLayer(
-                    stops: GTFSDataProvider.getStops(),
-                    onStationClick: (BusStop v) => setState(() {
+                    stops: stopsPos.values.toList(),
+                    onStationClick: (Station v) => setState(() {
                       focusStation = v;
                       focusedStop = null;
                     }),
-                    onStopClick: (SubBusStop v) => setState(() {
-                      focusedStop = v;
+                    onStopClick: (int i) => setState(() {
+                      focusedStop = i;
                     }),
                     focusedStation: focusStation,
                     focusedStop: focusedStop,
                   ),
                   const EasterEggsLayer(),
                   const PositionLayer(),
-                  focusedPlace != null ?
-                      PlaceLayer(focusedPlace!) :
-                      Container()
+                  focusedPlace != null ? PlaceLayer(focusedPlace!) : Container()
                 ],
               ),
             ),
@@ -235,7 +233,7 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
                         child: FakeTextField(
                           onPress: goToSearch,
                           icon: Icons.search,
-                          value: focusStation?.name ?? focusedPlace?.title,
+                          value: focusStation?.name ?? focusedPlace?.name,
                           hint: AppString.searchLabel,
                         ),
                       ),
@@ -265,9 +263,12 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
                   position: position,
                   openFocus: onFocusOpen,
                 ),
-                focusedPlace != null ?
-                    FocusPlace(focusedPlace!, pos: position,):
-                    Container()
+                focusedPlace != null
+                    ? FocusPlace(
+                        focusedPlace!,
+                        pos: position,
+                      )
+                    : Container()
               ],
             )
           ],

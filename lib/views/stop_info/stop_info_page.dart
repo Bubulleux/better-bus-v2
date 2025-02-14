@@ -1,19 +1,19 @@
 import 'package:better_bus_v2/app_constant/app_string.dart';
+import 'package:better_bus_v2/core/models/bus_line.dart';
+import 'package:better_bus_v2/core/models/station.dart';
 import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
 import 'package:better_bus_v2/views/common/back_arrow.dart';
 import 'package:better_bus_v2/views/common/fake_text_field.dart';
 import 'package:better_bus_v2/views/map_pages/map_test_page.dart';
+import 'package:better_bus_v2/views/stop_info/next_passage_view.dart';
 import 'package:better_bus_v2/views/stops_search_page/stops_search_page.dart';
 import 'package:better_bus_v2/views/stop_info/timetable_view.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 
-import '../../model/clean/bus_line.dart';
-import '../../model/clean/bus_stop.dart';
-import 'next_passage_view.dart';
 
 class StopInfoPageArgument {
-  final BusStop stop;
+  final Station stop;
   final List<BusLine>? lines;
   final bool fromMap;
 
@@ -31,7 +31,7 @@ class StopInfoPage extends StatefulWidget {
 class _StopInfoPageState extends State<StopInfoPage>
     with SingleTickerProviderStateMixin {
   late final TabController tabController;
-  BusStop? stop;
+  Station? stop;
   List<BusLine>? lines;
   late bool fromMap = false;
   double? busStopDistance;
@@ -62,8 +62,7 @@ class _StopInfoPageState extends State<StopInfoPage>
     LatLng? location = await GpsDataProvider.getLocation();
     if (location == null || stop == null) return;
 
-    double distance = GpsDataProvider.calculateDistance(
-        location.latitude, location.longitude, stop!.latitude, stop!.longitude);
+    double distance = getDistanceInKMeter(stop!, location);
 
       busStopDistance = (distance * 10).roundToDouble() / 10;
   }
@@ -74,14 +73,14 @@ class _StopInfoPageState extends State<StopInfoPage>
         return;
       }
       setState(() {
-        stop = value as BusStop;
+        stop = value as Station;
         lines = null;
       });
     });
   }
 
   void mapButtonClick() {
-    Navigator.of(context).pop(stop as BusStop);
+    Navigator.of(context).pop(stop as Station);
     if (!fromMap) {
       Navigator.of(context).pushNamed(MapPage.routeName, arguments: MapPageArg(
         station: stop

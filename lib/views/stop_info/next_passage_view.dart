@@ -1,8 +1,11 @@
 import 'package:better_bus_v2/app_constant/app_string.dart';
-import 'package:better_bus_v2/data_provider/vitalis_data_provider.dart';
+import 'package:better_bus_v2/core/full_provider.dart';
+import 'package:better_bus_v2/core/models/bus_line.dart';
+import 'package:better_bus_v2/core/models/station.dart';
+import 'package:better_bus_v2/core/models/stop_time.dart';
+import 'package:better_bus_v2/core/models/timetable.dart';
 import 'package:better_bus_v2/error_handler/custom_error.dart';
 import 'package:better_bus_v2/helper.dart';
-import 'package:better_bus_v2/model/clean/bus_stop.dart';
 import 'package:better_bus_v2/views/common/custom_future.dart';
 import 'package:better_bus_v2/views/common/extendable_view.dart';
 import 'package:better_bus_v2/views/common/informative_box.dart';
@@ -12,13 +15,10 @@ import 'package:format/format.dart';
 import 'package:intl/intl.dart';
 import 'dart:math';
 
-import '../../model/clean/bus_line.dart';
-import '../../model/clean/next_passage.dart';
-
 class NextPassagePage extends StatefulWidget {
   const NextPassagePage(this.stop, {this.lines, this.minimal = false, super.key});
 
-  final BusStop stop;
+  final Station stop;
   final List<BusLine>? lines;
   final bool minimal;
 
@@ -96,7 +96,7 @@ class _NextPassagePageState extends State<NextPassagePage>
 class NextPassageListWidget extends StatefulWidget {
   const NextPassageListWidget(this.stop, this.lines, {super.key});
 
-  final BusStop stop;
+  final Station stop;
   final List<BusLine>? lines;
 
   @override
@@ -104,36 +104,38 @@ class NextPassageListWidget extends StatefulWidget {
 }
 
 class NextPassageListWidgetState extends State<NextPassageListWidget> {
-  final GlobalKey<CustomFutureBuilderState<List<NextPassage>>>
+  final GlobalKey<CustomFutureBuilderState<List<StopTime>>>
       futureBuilderKey =
-      GlobalKey<CustomFutureBuilderState<List<NextPassage>>>();
+      GlobalKey<CustomFutureBuilderState<List<StopTime>>>();
 
   void refresh() {
     futureBuilderKey.currentState!.refresh();
   }
 
-  Future<List<NextPassage>> getData() async {
-    List<NextPassage> result =
-        await VitalisDataProvider.getNextPassage(widget.stop);
-    if (widget.lines != null) {
-      result.removeWhere((element) {
-        for (BusLine line in widget.lines!) {
-          if (line.id == element.line.id &&
-              (line.goDirection.contains(element.destination) ||
-                  line.backDirection.contains(element.destination))) {
-            return false;
-          }
-        }
-        return true;
-      });
-    }
+  Future<List<StopTime>> getData() async {
+    Timetable timetable =
+        await FullProvider.of(context).getTimetable(widget.stop);
+    List<StopTime> result = timetable.getNext().toList();
+    // TODO: Re implement filter
+    // if (widget.lines != null) {
+    //   result.removeWhere((element) {
+    //     for (BusLine line in widget.lines!) {
+    //       if (line.id == element.line.id &&
+    //           (line.goDirection.contains(element.destination) ||
+    //               line.backDirection.contains(element.destination))) {
+    //         return false;
+    //       }
+    //     }
+    //     return true;
+    //   });
+    // }
 
     return result;
   }
 
   @override
   Widget build(BuildContext context) {
-    return CustomFutureBuilder<List<NextPassage>>(
+    return CustomFutureBuilder<List<StopTime>>(
       future: getData,
       key: futureBuilderKey,
       onData: (context, data, refresh) {
@@ -164,7 +166,7 @@ class NextPassageListWidgetState extends State<NextPassageListWidget> {
 class NextPassageWidget extends StatefulWidget {
   const NextPassageWidget(this.nextPassage, {super.key});
 
-  final NextPassage nextPassage;
+  final StopTime nextPassage;
 
   @override
   State<NextPassageWidget> createState() => _NextPassageWidgetState();
@@ -209,20 +211,21 @@ class _NextPassageWidgetState extends State<NextPassageWidget>
                   ),
                 )
               : Container(),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: SizedBox(
-              height: 80,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: (widget.nextPassage.arrivingTimes?.length ?? -1) + 1,
-                itemBuilder: (_, i) =>
-                    ((widget.nextPassage.arrivingTimes?.length ?? 0) == i)
-                        ? buildLineEnd()
-                        : buildWayItem(i, delay),
-              ),
-            ),
-          )
+          // TODO: Reimplement trip
+          // Padding(
+          //   padding: const EdgeInsets.all(8.0),
+          //   child: SizedBox(
+          //     height: 80,
+          //     child: ListView.builder(
+          //       scrollDirection: Axis.horizontal,
+          //       itemCount: (widget.nextPassage.arrivingTimes?.length ?? -1) + 1,
+          //       itemBuilder: (_, i) =>
+          //           ((widget.nextPassage.arrivingTimes?.length ?? 0) == i)
+          //               ? buildLineEnd()
+          //               : buildWayItem(i, delay),
+          //     ),
+          //   ),
+          // )
         ],
       ),
     );
@@ -235,125 +238,125 @@ class _NextPassageWidgetState extends State<NextPassageWidget>
     );
   }
 
-  Widget buildWayItem(int index, Duration delay) {
-    if (widget.nextPassage.arrivingTimes == null) return Container();
-    ArrivingTime arrival = widget.nextPassage.arrivingTimes![index];
-    String stopName = arrival.stop;
-    DateTime arrivalTime =
-        DateTime.now().atMidnight().add(arrival.duration).add(delay);
-    return SizedBox(
-      width: 50,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            height: 40,
-            child: OverflowBox(
-              maxHeight: 65,
-              maxWidth: 30,
-              alignment: Alignment.bottomCenter,
-              child: SizedBox(
-                width: 70,
-                child: Transform.rotate(
-                  angle:  pi * .30,
-                  alignment: Alignment.bottomCenter,
-                  child: RotatedBox(
-                    quarterTurns: -1,
-                    child: FittedBox(
-                      //alignment: Alignment.centerRight,
-                      fit: BoxFit.scaleDown,
-                        child: ConstrainedBox(
-                          constraints: const BoxConstraints(maxWidth: 120),
-                          child: Text(stopName,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 15,
-                              )),
-                        )),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: SizedBox(
-              height: 20,
-              child: Row(
-                //alignment: Alignment.center,
-                children: [
-                  Expanded(
-                    child: Container(
-                      height: 5,
-                      alignment: Alignment.centerRight,
-                      decoration: BoxDecoration(
-                        color: widget.nextPassage.line.color,
-                      ),
-                    ),
-                  ),
-                  Container(
-                      height: 20,
-                      padding: const EdgeInsets.all(3),
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: widget.nextPassage.line.color.withAlpha(80),
-                        borderRadius: BorderRadiusDirectional.circular(10),
-                        border: Border.all(
-                            width: 2, color: widget.nextPassage.line.color),
-                      ),
-                      child: Text(DateFormat.Hm().format(arrivalTime.toLocal()),
-                          style: const TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                          ))
-                      // child: RichText(
-                      //     text: TextSpan(
-                      //   style: DefaultTextStyle.of(context).style,
-                      //   children: [
-                      //     TextSpan(
-                      //       text: arrivalTime.hour.toString().padLeft(2, '0') + ":",
-                      //       style: const TextStyle(
-                      //         fontSize: 8,
-                      //         fontWeight: FontWeight.w700,
-                      //       ),
-                      //     ),
-                      //     TextSpan(
-                      //       text: arrivalTime.minute.toString().padLeft(2, '0'),
-                      //       ),
-                      //     )
-                      //   ],
-                      // )),
-                      ),
-                ],
-              ),
-            ),
-          ),
-          // const SizedBox(
-          //   width: 10,
-          // ),
-          // ClipRect(
-          // )
-          // const SizedBox(
-          //   width: 10,
-          // ),
-        ],
-      ),
-    );
-  }
+  // Widget buildWayItem(int index, Duration delay) {
+  //   if (widget.nextPassage.arrivingTimes == null) return Container();
+  //   ArrivingTime arrival = widget.nextPassage.arrivingTimes![index];
+  //   String stopName = arrival.stop;
+  //   DateTime arrivalTime =
+  //       DateTime.now().atMidnight().add(arrival.duration).add(delay);
+  //   return SizedBox(
+  //     width: 50,
+  //     child: Column(
+  //       mainAxisAlignment: MainAxisAlignment.end,
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         SizedBox(
+  //           height: 40,
+  //           child: OverflowBox(
+  //             maxHeight: 65,
+  //             maxWidth: 30,
+  //             alignment: Alignment.bottomCenter,
+  //             child: SizedBox(
+  //               width: 70,
+  //               child: Transform.rotate(
+  //                 angle:  pi * .30,
+  //                 alignment: Alignment.bottomCenter,
+  //                 child: RotatedBox(
+  //                   quarterTurns: -1,
+  //                   child: FittedBox(
+  //                     //alignment: Alignment.centerRight,
+  //                     fit: BoxFit.scaleDown,
+  //                       child: ConstrainedBox(
+  //                         constraints: const BoxConstraints(maxWidth: 120),
+  //                         child: Text(stopName,
+  //                             style: const TextStyle(
+  //                               fontWeight: FontWeight.bold,
+  //                               fontSize: 15,
+  //                             )),
+  //                       )),
+  //                 ),
+  //               ),
+  //             ),
+  //           ),
+  //         ),
+  //         Padding(
+  //           padding: const EdgeInsets.only(top: 8),
+  //           child: SizedBox(
+  //             height: 20,
+  //             child: Row(
+  //               //alignment: Alignment.center,
+  //               children: [
+  //                 Expanded(
+  //                   child: Container(
+  //                     height: 5,
+  //                     alignment: Alignment.centerRight,
+  //                     decoration: BoxDecoration(
+  //                       color: widget.nextPassage.line.color,
+  //                     ),
+  //                   ),
+  //                 ),
+  //                 Container(
+  //                     height: 20,
+  //                     padding: const EdgeInsets.all(3),
+  //                     alignment: Alignment.center,
+  //                     decoration: BoxDecoration(
+  //                       color: widget.nextPassage.line.color.withAlpha(80),
+  //                       borderRadius: BorderRadiusDirectional.circular(10),
+  //                       border: Border.all(
+  //                           width: 2, color: widget.nextPassage.line.color),
+  //                     ),
+  //                     child: Text(DateFormat.Hm().format(arrivalTime.toLocal()),
+  //                         style: const TextStyle(
+  //                           fontSize: 10,
+  //                           fontWeight: FontWeight.bold,
+  //                         ))
+  //                     // child: RichText(
+  //                     //     text: TextSpan(
+  //                     //   style: DefaultTextStyle.of(context).style,
+  //                     //   children: [
+  //                     //     TextSpan(
+  //                     //       text: arrivalTime.hour.toString().padLeft(2, '0') + ":",
+  //                     //       style: const TextStyle(
+  //                     //         fontSize: 8,
+  //                     //         fontWeight: FontWeight.w700,
+  //                     //       ),
+  //                     //     ),
+  //                     //     TextSpan(
+  //                     //       text: arrivalTime.minute.toString().padLeft(2, '0'),
+  //                     //       ),
+  //                     //     )
+  //                     //   ],
+  //                     // )),
+  //                     ),
+  //               ],
+  //             ),
+  //           ),
+  //         ),
+  //         // const SizedBox(
+  //         //   width: 10,
+  //         // ),
+  //         // ClipRect(
+  //         // )
+  //         // const SizedBox(
+  //         //   width: 10,
+  //         // ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
     String formattedTime =
-        DateFormat.Hm().format(widget.nextPassage.betterTime.toLocal());
+        DateFormat.Hm().format(widget.nextPassage.time.toLocal());
     Duration arrivalDuration =
-        widget.nextPassage.betterTime.difference(DateTime.now());
+        widget.nextPassage.time.difference(DateTime.now());
     String minuteToWait = (arrivalDuration.inHours >= 1
             ? "${arrivalDuration.inHours} h "
             : "") +
-        "${widget.nextPassage.betterTime.difference(DateTime.now()).inMinutes % 60} min";
+        "${widget.nextPassage.time.difference(DateTime.now()).inMinutes % 60} min";
     Duration delay =
-        widget.nextPassage.betterTime.difference(widget.nextPassage.aimedTime);
+        widget.nextPassage.time.difference(widget.nextPassage.aimedTime);
     return InkWell(
       onTap: expandControler.tickAnimation,
       child: Container(
@@ -377,7 +380,7 @@ class _NextPassageWidgetState extends State<NextPassageWidget>
                   ),
                 ),
                 Container(
-                  child: widget.nextPassage.realTime
+                  child: widget.nextPassage.isRealTime
                       ? const Padding(
                           padding: EdgeInsets.all(4.0),
                           child: Icon(
