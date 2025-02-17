@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:ui';
 
 class BusLine implements Comparable<BusLine>{
@@ -79,7 +80,7 @@ class BusLine implements Comparable<BusLine>{
     json["id"],
     json["name"],
     Color(json["color"]),
-    direction: {}
+    direction: {},
     // goDirection: json["goDirection"].cast<String>(),
     // backDirection: json["backDirection"].cast<String>(),
   );
@@ -89,6 +90,7 @@ class BusLine implements Comparable<BusLine>{
       "id": id,
       "name": name,
       "color": color.value,
+      "directions": direction,
       // "goDirection": goDirection,
       // "backDirection": backDirection,
     };

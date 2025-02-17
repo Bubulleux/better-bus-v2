@@ -1,6 +1,8 @@
 import 'package:better_bus_v2/app_constant/app_string.dart';
-import 'package:better_bus_v2/data_provider/vitalis_data_provider.dart';
-import 'package:better_bus_v2/model/clean/info_traffic.dart';
+import 'package:better_bus_v2/core/full_provider.dart';
+import 'package:better_bus_v2/core/models/bus_line.dart';
+import 'package:better_bus_v2/core/models/traffic_info.dart';
+import 'package:better_bus_v2/data_provider/local_data_handler.dart';
 import 'package:better_bus_v2/views/common/back_arrow.dart';
 import 'package:better_bus_v2/views/common/background.dart';
 import 'package:better_bus_v2/views/common/custom_future.dart';
@@ -11,8 +13,6 @@ import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
-import '../../data_provider/local_data_handler.dart';
-import '../../model/clean/bus_line.dart';
 
 class TrafficInfoPage extends StatefulWidget {
   const TrafficInfoPage({super.key});
@@ -31,8 +31,9 @@ class TrafficInfoPageState extends State<TrafficInfoPage> {
   List<InfoTraffic>? trafficInfos;
 
   Future<InfoTrafficObject> getAllInformation() async {
-    List<InfoTraffic> infoList = await VitalisDataProvider.getTrafficInfo();
-    Map<String, BusLine> busLines = await VitalisDataProvider.getAllLines();
+    final provider = FullProvider.of(context);
+    List<InfoTraffic> infoList = await provider.getTrafficInfos();
+    Map<String, BusLine> busLines = await provider.getAllLines();
     Set<String> favoriteLines = await LocalDataHandler.loadInterestedLine();
 
     infoList.removeWhere((element) => !element.isDisplay);
