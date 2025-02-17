@@ -18,6 +18,7 @@ class TerminusSelectorPageArgument {
 
 class TerminusSelectorPage extends StatefulWidget {
   const TerminusSelectorPage({super.key});
+
   static const String routeName = "/terminusSelector";
 
   @override
@@ -29,43 +30,49 @@ class _TerminusSelectorPageState extends State<TerminusSelectorPage> {
   late List<BusLine> previousData;
 
   List<BusLine>? validBusLine;
-  List<List<List<bool>>> selectedTerminus = [];
+  Map<String, Map<int, List<String>>> selectedTerminus = {};
 
-  bool get allIsSelected => selectedTerminus.every(
-      (element) => element[0].every((e) => e) && element[1].every((e) => e));
+  bool get allIsSelected => validBusLine?.every(
+      (line) => line.direction.entries.every(
+          (d) => d.value.every((n) => selectedTerminus[line.id]?[d.key]?.contains(n) ?? false)
+      )
+  ) ?? false;
 
   Future<List<BusLine>> getTerminus() async {
     if (validBusLine != null) {
       return validBusLine!;
     }
 
-    List<BusLine> stopLines = await FullProvider.of(context).getPassingLines(stop) ?? [];
+    List<BusLine> stopLines =
+        await FullProvider.of(context).getPassingLines(stop) ?? [];
     stopLines.sort();
-    selectedTerminus = [];
+    selectedTerminus = {for (var e in previousData) e.id: e.direction};
 
-
-    for (int i = 0; i < stopLines.length; i++) {
-      int previousLineIndex = previousData
-          .indexWhere((element) => element.id == stopLines[i].id);
-
-      if (previousLineIndex == -1) {
-        selectedTerminus.add(
-          stopLines[i].direction.values.toList().map(
-              (e) => e.map((f) => false).toList()
-          ).toList()
-        );
-        continue;
-      }
-      final line = previousData[previousLineIndex];
-
-      selectedTerminus.add(
-          stopLines[i].direction.entries.toList().map(
-                  (e) => e.value.map((f) => line.direction[e.key]!.contains(f)).toList()
-          ).toList()
-      );
-
-      setState(() {});
-    }
+    // for (int i = 0; i < stopLines.length; i++) {
+    //   int previousLineIndex =
+    //       previousData.indexWhere((element) => element.id == stopLines[i].id);
+    //
+    //   if (previousLineIndex == -1) {
+    //     selectedTerminus.add(stopLines[i]
+    //         .direction
+    //         .values
+    //         .toList()
+    //         .map((e) => e.map((f) => false).toList())
+    //         .toList());
+    //     continue;
+    //   }
+    //   final line = previousData[previousLineIndex];
+    //
+    //   selectedTerminus.add(stopLines[i]
+    //       .direction
+    //       .entries
+    //       .toList()
+    //       .map((e) =>
+    //           e.value.map((f) => line.direction[e.key]!.contains(f)).toList())
+    //       .toList());
+    //
+    //   setState(() {});
+    // }
 
     validBusLine = stopLines;
     return stopLines;
@@ -79,7 +86,9 @@ class _TerminusSelectorPageState extends State<TerminusSelectorPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    TerminusSelectorPageArgument argument = ModalRoute.of(context)!.settings.arguments as TerminusSelectorPageArgument;
+    TerminusSelectorPageArgument argument = ModalRoute.of(context)!
+        .settings
+        .arguments as TerminusSelectorPageArgument;
     stop = argument.stop;
     previousData = argument.previousData;
     getTerminus();
@@ -112,11 +121,17 @@ class _TerminusSelectorPageState extends State<TerminusSelectorPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  ElevatedButton(onPressed: cancel, child: const Text(AppString.cancelLabel)),
                   ElevatedButton(
-                      onPressed: selectAll, child: Text(allIsSelected ? AppString.unSelectAll : AppString.selectAll)
-                  ),
-                  ElevatedButton(onPressed: validate, child: const Text(AppString.validateLabel)),
+                      onPressed: cancel,
+                      child: const Text(AppString.cancelLabel)),
+                  ElevatedButton(
+                      onPressed: selectAll,
+                      child: Text(allIsSelected
+                          ? AppString.unSelectAll
+                          : AppString.selectAll)),
+                  ElevatedButton(
+                      onPressed: validate,
+                      child: const Text(AppString.validateLabel)),
                 ],
               )
             ],
@@ -128,10 +143,15 @@ class _TerminusSelectorPageState extends State<TerminusSelectorPage> {
 
   void selectAll() {
     bool replaceValue = !allIsSelected;
-    for (int i = 0; i < selectedTerminus.length; i++) {
-      List<List<bool>> element = selectedTerminus[i];
-      element[0].fillRange(0, element[0].length, replaceValue);
-      element[1].fillRange(0, element[1].length, replaceValue);
+    if (allIsSelected) {
+      selectedTerminus = {};
+    } else {
+      for (var line in validBusLine!) {
+        selectedTerminus[line.id] =
+            line.direction.map((k, v) =>
+              MapEntry(k, v)
+            );
+      }
     }
     setState(() {});
   }
@@ -142,22 +162,9 @@ class _TerminusSelectorPageState extends State<TerminusSelectorPage> {
       return;
     }
     List<BusLine> result = [];
-    for (int i = 0; i < selectedTerminus.length; i++) {
-      List<List<String>> terminus = [[], []];
-      for (int k = 0; k < 2; k++) {
-
-        for (int j = 0; j < selectedTerminus[i][0].length; j++) {
-          if (selectedTerminus[i][0][j]) {
-            terminus[k].add(validBusLine![i].direction[k]![j]);
-          }
-        }
-      }
-
-      if (terminus[0].isNotEmpty || terminus[1].isNotEmpty) {
-        BusLine line = validBusLine![i];
-        result.add(BusLine(line.id, line.name, line.color,
-        direction: {0: terminus[0], 1: terminus[1]}));
-      }
+    for (var curLine in selectedTerminus.entries) {
+      BusLine line = validBusLine!.firstWhere((e) => e.id == curLine.key);
+      result.add(BusLine(line.id, line.name, line.color, direction: curLine.value));
     }
 
     Navigator.pop(context, result);
@@ -194,8 +201,23 @@ class _TerminusSelectorPageState extends State<TerminusSelectorPage> {
                       ),
                     ],
                   ),
-                  TerminusSelection(this, index, true),
-                  TerminusSelection(this, index, false),
+                  ...(lines[index]
+                      .direction
+                      .entries
+                      .map((e) => TerminusSelection(
+                            e.value,
+                            selectedTerminus[line.id]?[e.key] ?? [],
+                            onChanged: (newValue) {
+                              setState(() {
+                              if (!selectedTerminus.containsKey(line.id)) {
+                                selectedTerminus[line.id] = {};
+                              }
+
+                                selectedTerminus[line.id]![e.key] = newValue;
+                              });
+                            },
+                          ))
+                      .toList()),
                 ],
               ),
             ),
@@ -207,11 +229,12 @@ class _TerminusSelectorPageState extends State<TerminusSelectorPage> {
 }
 
 class TerminusSelection extends StatefulWidget {
-  const TerminusSelection(this.rootState, this.index, this.isGo, {super.key});
+  const TerminusSelection(this.entries, this.selected,
+      {required this.onChanged, super.key});
 
-  final _TerminusSelectorPageState rootState;
-  final int index;
-  final bool isGo;
+  final List<String> selected;
+  final ValueChanged<List<String>> onChanged;
+  final List<String> entries;
 
   @override
   State<TerminusSelection> createState() => _TerminusSelectionState();
@@ -237,30 +260,18 @@ class _TerminusSelectionState extends State<TerminusSelection>
   }
 
   void prepareAnimations() {
-    expandController =
-        AnimationController(vsync: this, duration: const Duration(milliseconds: 500));
+    expandController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 500));
     animation = CurvedAnimation(
       parent: expandController,
       curve: Curves.fastOutSlowIn,
     );
   }
 
-  bool? checkIfAllSelected(List<bool> list) {
-    bool getFalse = false;
-    bool getTrue = false;
-
-    for (bool e in list) {
-      if (e) {
-        getTrue = true;
-      } else {
-        getFalse = true;
-      }
-      if (getTrue && getFalse) {
-        return null;
-      }
-    }
-
-    return getFalse ? false : true;
+  bool? checkIfAllSelected() {
+    final all = widget.entries.every((e) => widget.selected.contains(e)) ? true : null;
+    final none = widget.selected.isEmpty ? false : null;
+    return all ?? none;
   }
 
   void expand() {
@@ -273,18 +284,36 @@ class _TerminusSelectionState extends State<TerminusSelection>
     }
   }
 
+  Widget buildEntries() {
+    return Column(
+      children: widget.entries.asMap().entries.map((e) {
+        String direction = e.value;
+        return Row(
+          children: [
+            Checkbox(
+              value: widget.selected.contains(e.value),
+              onChanged: (value) {
+                print(value);
+                if (value == false) {
+                  widget.onChanged(widget.selected.where((c) => c != e.value).toList());
+                } else {
+                  widget.onChanged(widget.selected + [e.value]);
+                }
+                setState(() {});
+              },
+            ),
+            Text(direction),
+          ],
+        );
+      }).toList(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    List<String> getDirection(BusLine _line) =>
-        widget.isGo ? _line.direction[1]! : _line.direction[0]!;
 
-    BusLine line = widget.rootState.validBusLine![widget.index];
-    List<bool> entrySelected =
-        widget.rootState.selectedTerminus[widget.index][widget.isGo ? 0 : 1];
-    bool? allSelected = checkIfAllSelected(entrySelected);
-
-    if (entrySelected.isEmpty) {
+    if (widget.entries.isEmpty) {
       return Container();
     }
     return Column(
@@ -292,23 +321,22 @@ class _TerminusSelectionState extends State<TerminusSelection>
         Row(
           children: [
             Checkbox(
-              value: allSelected,
+              value: checkIfAllSelected(),
               tristate: true,
               onChanged: (value) {
-                value ??= false;
-                entrySelected.fillRange(0, entrySelected.length, value);
+                widget.onChanged(value == true ? widget.entries : []);
                 setState(() {});
               },
             ),
             Expanded(
               child: Text(
-                getDirection(line)[0],
+                widget.entries[0],
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
-            if (entrySelected.length > 1)
+            if (widget.entries.length > 1)
               TextButton(
                   onPressed: expand,
                   child: AnimatedBuilder(
@@ -320,31 +348,13 @@ class _TerminusSelectionState extends State<TerminusSelection>
               Container(),
           ],
         ),
-        if (entrySelected.length > 1)
+        if (widget.entries.length > 1)
           SizeTransition(
             axisAlignment: 1,
             sizeFactor: animation,
             child: Padding(
-              padding: const EdgeInsets.only(left: 15.0),
-              child: Column(
-                children: Iterable<int>.generate(entrySelected.length)
-                    .map((int index) {
-                  String direction = getDirection(line)[index];
-                  return Row(
-                    children: [
-                      Checkbox(
-                        value: entrySelected[index],
-                        onChanged: (value) {
-                          entrySelected[index] = value!;
-                          setState(() {});
-                        },
-                      ),
-                      Text(direction),
-                    ],
-                  );
-                }).toList(),
-              ),
-            ),
+                padding: const EdgeInsets.only(left: 15.0),
+                child: buildEntries()),
           )
         else
           Container(),

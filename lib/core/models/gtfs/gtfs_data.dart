@@ -9,11 +9,13 @@ import 'package:latlong2/latlong.dart';
 class GTFSData {
   late final Map<int, Station> stations;
   late final Map<int, Station> _stopsParent;
+
   //late final Map<String, BusStop> stopsParent;
   late final Map<int, GTFSLine> routes;
   late final GTFSCalendar calendar;
   late final Map<int, GTFSTrip> trips;
   late final Map<int, List<GTFSStopTime>> stopTime;
+
   //late final Map<String, GTFSShape> shapes;
 
   GTFSData(Map<String, CSVTable> files) {
@@ -59,7 +61,6 @@ class GTFSData {
     Map<int, Station> result = {};
     Map<int, Station> newStopParent = {};
 
-
     for (var e in rawStations.entries) {
       final stops = rawStops[e.key]!;
       final station = e.value.toStation(stops);
@@ -72,31 +73,42 @@ class GTFSData {
   }
 
   void loadRoutes(CSVTable table, CSVTable tripTable) {
+    // TODO: What a mess FIX IT PLS
     Map<int, Map<int, List<String>>> destinations = {};
     for (var e in tripTable) {
       final routeId = int.parse(e["route_id"]);
       final direction = int.parse(e["direction_id"]);
       final headSign = e["trip_headsign"];
       if (!destinations.containsKey(routeId)) {
-        destinations[routeId] = {direction: [headSign]};
+        destinations[routeId] = {
+          direction: [headSign]
+        };
         continue;
       }
       if (!destinations[routeId]!.containsKey(direction)) {
         destinations[routeId]![direction] = [headSign];
         continue;
       }
-      destinations[routeId]![direction]!.add(headSign);
+      final lst = destinations[routeId]![direction]!;
+      if (!lst.contains(headSign)) {
+        lst.add(headSign);
+      }
     }
-    routes = {for (var e in table) int.parse(e["route_id"]): GTFSLine.fromCSV(e,
-    destinations[int.parse(e["route_id"])]!)};
+    routes = {
+      for (var e in table)
+        int.parse(e["route_id"]):
+            GTFSLine.fromCSV(e, destinations[int.parse(e["route_id"])]!)
+    };
   }
 
-
   void loadTrips(CSVTable table) {
-    trips = {for (var e in table) int.parse(e["trip_id"]): GTFSTrip(e,
-      stopTime[int.parse(e["trip_id"]!)]!,
-      routes[int.parse(e["route_id"])]!
-    )};
+    trips = {
+      for (var e in table)
+        int.parse(e["trip_id"]): GTFSTrip(
+            e,
+            stopTime[int.parse(e["trip_id"]!)]!,
+            routes[int.parse(e["route_id"])]!)
+    };
   }
 
   void loadStopTime(CSVTable table) {
@@ -123,25 +135,22 @@ class GTFSData {
     stopTime = stopTimes;
   }
 
-  // void loadShapes(CSVTable table) {
-  //   Map<String, List<LatLng>> rawShapes = {};
-  //
-  //   for (var e in table) {
-  //     String id = e["shape_id"];
-  //     if (!rawShapes.containsKey(id)) {
-  //       rawShapes[id] = [];
-  //     }
-  //     double lat = double.parse(e["shape_pt_lat"]);
-  //     double long = double.parse(e["shape_pt_lon"]);
-  //     rawShapes[id]!.add(LatLng(lat, long));
-  //   }
-  //
-  //   shapes = { for (var e in rawShapes.entries) e.key : GTFSShape(e.key, e.value)};
-  // }
-
+// void loadShapes(CSVTable table) {
+//   Map<String, List<LatLng>> rawShapes = {};
+//
+//   for (var e in table) {
+//     String id = e["shape_id"];
+//     if (!rawShapes.containsKey(id)) {
+//       rawShapes[id] = [];
+//     }
+//     double lat = double.parse(e["shape_pt_lat"]);
+//     double long = double.parse(e["shape_pt_lon"]);
+//     rawShapes[id]!.add(LatLng(lat, long));
+//   }
+//
+//   shapes = { for (var e in rawShapes.entries) e.key : GTFSShape(e.key, e.value)};
+// }
 }
-
-
 
 class GTFSService {
   final Set<int> enableDays;
@@ -239,8 +248,6 @@ class GTFSCalendar {
     return servicesEnable;
   }
 }
-
-
 
 class GTFSShape {
   final String shapeId;
