@@ -18,7 +18,7 @@ class GTFSStopTime  {
   }
 
   StopTime toStopTime(GTFSTrip trip, DateTime date) {
-    return StopTime(trip.line, trip.direction.destination, 
+    return StopTime(trip.line, trip.direction.destination, trip.direction.directionId,
       date.atMidnight().add(arival));
   }
 
