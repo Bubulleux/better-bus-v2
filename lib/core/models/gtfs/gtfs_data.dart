@@ -3,6 +3,7 @@ import 'package:better_bus_v2/core/models/gtfs/line.dart';
 import 'package:better_bus_v2/core/models/gtfs/stop.dart';
 import 'package:better_bus_v2/core/models/gtfs/stop_time.dart';
 import 'package:better_bus_v2/core/models/gtfs/trip.dart';
+import 'package:better_bus_v2/core/models/line_direction.dart';
 import 'package:better_bus_v2/core/models/station.dart';
 import 'package:latlong2/latlong.dart';
 
@@ -74,24 +75,15 @@ class GTFSData {
 
   void loadRoutes(CSVTable table, CSVTable tripTable) {
     // TODO: What a mess FIX IT PLS
-    Map<int, Map<int, List<String>>> destinations = {};
+    Map<int, Set<Direction>> destinations = {};
     for (var e in tripTable) {
       final routeId = int.parse(e["route_id"]);
-      final direction = int.parse(e["direction_id"]);
-      final headSign = e["trip_headsign"];
+      final direction = Direction(e["trip_headsign"], int.parse(e["direction_id"]));
       if (!destinations.containsKey(routeId)) {
-        destinations[routeId] = {
-          direction: [headSign]
-        };
+        destinations[routeId] = {direction};
         continue;
-      }
-      if (!destinations[routeId]!.containsKey(direction)) {
-        destinations[routeId]![direction] = [headSign];
-        continue;
-      }
-      final lst = destinations[routeId]![direction]!;
-      if (!lst.contains(headSign)) {
-        lst.add(headSign);
+      } else {
+        destinations[routeId]!.add(direction);
       }
     }
     routes = {

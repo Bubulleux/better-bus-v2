@@ -107,9 +107,9 @@ class PolyLine {
   int lineWidth;
 }
 
-class RouteLine  extends BusLine{
+class RouteLine  extends BusLine {
   RouteLine({required this.name, required this.destination, required this.color}):
-  super(name, destination, color, direction: {});
+  super(name, destination, color, directions: {});
 
   RouteLine.fromJson(Map<String, dynamic> json): this(
     name: json["lineName"],
