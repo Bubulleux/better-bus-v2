@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:ui';
 
 import 'package:better_bus_v2/core/models/bus_line.dart';
+import 'package:better_bus_v2/core/models/line_direction.dart';
 import 'package:better_bus_v2/core/models/station.dart';
 import 'package:better_bus_v2/core/models/stop_time.dart';
 import 'package:better_bus_v2/helper.dart';
@@ -33,9 +34,9 @@ class JsonBusLine extends BusLine {
     json["slug"],
     json["name"],
     Color(int.parse(json["color"].replaceAll("#", "0xff"))),
-    direction: {
-      0: json["direction"]["aller"].cast<String>(),
-      1: json["direction"]["retour"].cast<String>(),
+    directions: {
+      ...json["direction"]["aller"].cast<String>().map((e) => Direction(e, 0)).toSet(),
+      ...json["direction"]["retour"].cast<String>().map((e) => Direction(e, 0)).toSet(),
     }
   );
 
@@ -46,9 +47,9 @@ class JsonBusLine extends BusLine {
     // TODO: Get a better function, not from helper.dart
     colorFromHex(json["color"]),
     // TODO: Probably needs to be reimplemented
-      direction: {
-        0: json["direction"]["aller"].cast<String>(),
-        1: json["direction"]["retour"].cast<String>(),
+      directions: {
+        ...json["direction"]["aller"].cast<String>().map((e) => Direction(e, 0)).toSet(),
+        ...json["direction"]["retour"].cast<String>().map((e) => Direction(e, 0)).toSet(),
       }
   );
 }
@@ -59,6 +60,8 @@ class JsonStopTime extends StopTime {
       : super (
     JsonBusLine.fromJson(json["line"]),
     json["destinationName"],
+    // TODO Not the right number need to be dynamic
+    0,
     DateTime.parse(json["expectedDepartureTime"]),
     realTime: json["realtime"] ? DateTime.parse(json["expectedDepartureTime"]) : null,
   );

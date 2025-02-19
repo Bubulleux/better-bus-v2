@@ -74,20 +74,20 @@ class _TimeTableViewState extends State<TimeTableView>
     }
     if (boardingSelected == null) {
       setState(() {
-        boardingSelected = busLineSelected!.direction.keys.first;
+        boardingSelected = busLineSelected!.oldDir.keys.first;
       });
       return;
     }
 
     setState(() {
-      if (boardingSelected == 0 && busLineSelected!.direction[1] != null) {
+      if (boardingSelected == 0 && busLineSelected!.oldDir[1] != null) {
         boardingSelected = 1;
-      } else if (busLineSelected!.direction[0] != null) {
+      } else if (busLineSelected!.oldDir[0] != null) {
         boardingSelected = 0;
       }
     });
-    if (busLineSelected!.direction[0] == null ||
-        busLineSelected!.direction[1] == null) {
+    if (busLineSelected!.oldDir[0] == null ||
+        busLineSelected!.oldDir[1] == null) {
       ScaffoldMessenger.of(context).removeCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text(AppString.onlyOneDirection),
@@ -119,7 +119,7 @@ class _TimeTableViewState extends State<TimeTableView>
     super.build(context);
     String? directionString;
     if (boardingSelected != null) {
-      directionString = busLineSelected!.direction[boardingSelected]!
+      directionString = busLineSelected!.oldDir[boardingSelected]!
           .join(" | ");
     }
 

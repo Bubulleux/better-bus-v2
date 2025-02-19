@@ -5,6 +5,14 @@ class Direction {
   final int directionId;
 
   const Direction(this.destination, this.directionId);
+
+  @override
+  int get hashCode => destination.hashCode ^ directionId.hashCode;
+
+  @override
+  bool operator ==(Object other) {
+    return other is Direction && hashCode == other.hashCode;
+  }
 }
 
 class LineDirection extends Direction {
@@ -13,7 +21,7 @@ class LineDirection extends Direction {
   final BusLine line;
 
   @override
-  int get hashCode => line.hashCode ^ destination.hashCode;
+  int get hashCode => line.hashCode ^ super.hashCode;
 
   @override
   bool operator ==(Object other) {
