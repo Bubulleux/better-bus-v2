@@ -1,7 +1,7 @@
 import 'package:better_bus_v2/core/models/line_direction.dart';
 
 class StopTime extends LineDirection {
-  StopTime(super.line, super.direction, this.aimedTime, {this.realTime});
+  StopTime(super.line, super.direction, super.directionId, this.aimedTime, {this.realTime});
 
   final DateTime aimedTime;
   DateTime? realTime;

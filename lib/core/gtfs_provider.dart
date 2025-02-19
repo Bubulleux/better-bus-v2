@@ -132,10 +132,10 @@ class GTFSProvider extends BusNetwork {
     for (var entry in data.stopTime.entries) {
       GTFSTrip trip = data.trips[entry.key]!;
       if (!validServices.contains(trip.serviceID) ||
-        trip.directionId != direction) {
+        trip.direction.directionId != direction) {
         continue;
       }
-      if (trip.line != line || trip.directionId != direction) {
+      if (trip.line != line || trip.direction.directionId != direction) {
         continue;
       }
       for (var stopTime in entry.value) {

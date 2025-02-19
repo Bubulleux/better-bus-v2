@@ -1,14 +1,17 @@
 import 'dart:convert';
 import 'dart:ui';
 
+import 'package:better_bus_v2/core/models/line_direction.dart';
+
 class BusLine implements Comparable<BusLine>{
   const BusLine(this.id, this.name, this.color,
-  {required this.direction});
+'a' n'est pas reconnu en tant que commande interne
+ou externe, un programme ex�cutable ou un fichier de commandes.
   final String id;
   final String name;
   final Color color;
   // TODO: Implement direction
-  final Map<int, List<String>> direction;
+  final List<Direction> directions;
 
   @override
   int get hashCode => id.hashCode ^ name.hashCode;
@@ -75,12 +78,15 @@ class BusLine implements Comparable<BusLine>{
     return compareID(id, other.id);
   }
   // TODO: old json methode
-  BusLine.fromCleanJson(Map<String, dynamic> json)
-      : this(
+  // TODO: Watch out need to be retrocompatible
+  factory BusLine.fromCleanJson(Map<String, dynamic> json) {
+    retrun BusLine(
     json["id"],
-    json["name"],
-    Color(json["color"]),
-    direction: {},
+  json["name"],
+  Color(json["color"]),
+    )
+  }
+      : this(
     // goDirection: json["goDirection"].cast<String>(),
     // backDirection: json["backDirection"].cast<String>(),
   );
@@ -90,7 +96,6 @@ class BusLine implements Comparable<BusLine>{
       "id": id,
       "name": name,
       "color": color.value,
-      "directions": direction,
       // "goDirection": goDirection,
       // "backDirection": backDirection,
     };
