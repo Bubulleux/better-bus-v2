@@ -11,13 +11,15 @@ import 'package:better_bus_v2/views/common/custom_future.dart';
 import 'package:better_bus_v2/views/common/extendable_view.dart';
 import 'package:better_bus_v2/views/common/informative_box.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
+import 'package:better_bus_v2/views/stop_info/trip_view.dart';
 import 'package:flutter/material.dart';
 import 'package:format/format.dart';
 import 'package:intl/intl.dart';
 import 'dart:math';
 
 class NextPassagePage extends StatefulWidget {
-  const NextPassagePage(this.stop, {this.lines, this.minimal = false, super.key});
+  const NextPassagePage(this.stop,
+      {this.lines, this.minimal = false, super.key});
 
   final Station stop;
   final List<BusLine>? lines;
@@ -105,8 +107,7 @@ class NextPassageListWidget extends StatefulWidget {
 }
 
 class NextPassageListWidgetState extends State<NextPassageListWidget> {
-  final GlobalKey<CustomFutureBuilderState<List<StopTime>>>
-      futureBuilderKey =
+  final GlobalKey<CustomFutureBuilderState<List<StopTime>>> futureBuilderKey =
       GlobalKey<CustomFutureBuilderState<List<StopTime>>>();
 
   void refresh() {
@@ -182,7 +183,6 @@ class _NextPassageWidgetState extends State<NextPassageWidget>
     super.initState();
     expandControler = ExpandableWidgetController(
         duration: const Duration(milliseconds: 300), root: this);
-    print("Trip: ${widget.nextPassage.trip}");
   }
 
   Widget buildNextPassageDetail(Duration delay) {
@@ -206,142 +206,17 @@ class _NextPassageWidgetState extends State<NextPassageWidget>
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       Text(
-                          AppString.initialTime.format(DateFormat.Hm().format(widget.nextPassage.aimedTime)),
+                        AppString.initialTime.format(DateFormat.Hm()
+                            .format(widget.nextPassage.aimedTime)),
                         textScaler: const TextScaler.linear(0.8),
                       )
                     ],
                   ),
                 )
               : Container(),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: SizedBox(
-              height: 80,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: (widget.nextPassage.trip?.stopTimes.length ?? -1) + 1,
-                itemBuilder: (_, i) =>
-                    ((widget.nextPassage.trip?.stopTimes.length ?? 0) == i)
-                        ? buildLineEnd()
-                        : buildWayItem(i, delay),
-              ),
-            ),
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget buildLineEnd() {
-    return const SizedBox(
-      width: 70,
-      height: double.infinity,
-    );
-  }
-
-  Widget buildWayItem(int index, Duration delay) {
-    BusTrip? trip = widget.nextPassage.trip;
-    if (trip == null) return Container();
-    TripStop stopTime = trip.stopTimes[index];
-    String stopName = stopTime.station.name;
-    DateTime arrivalTime = stopTime.time.add(delay);
-
-    return SizedBox(
-      width: 50,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            height: 40,
-            child: OverflowBox(
-              maxHeight: 65,
-              maxWidth: 30,
-              alignment: Alignment.bottomCenter,
-              child: SizedBox(
-                width: 70,
-                child: Transform.rotate(
-                  angle:  pi * .30,
-                  alignment: Alignment.bottomCenter,
-                  child: RotatedBox(
-                    quarterTurns: -1,
-                    child: FittedBox(
-                      //alignment: Alignment.centerRight,
-                      fit: BoxFit.scaleDown,
-                        child: ConstrainedBox(
-                          constraints: const BoxConstraints(maxWidth: 120),
-                          child: Text(stopName,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 15,
-                              )),
-                        )),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: SizedBox(
-              height: 20,
-              child: Row(
-                //alignment: Alignment.center,
-                children: [
-                  Expanded(
-                    child: Container(
-                      height: 5,
-                      alignment: Alignment.centerRight,
-                      decoration: BoxDecoration(
-                        color: widget.nextPassage.line.color,
-                      ),
-                    ),
-                  ),
-                  Container(
-                      height: 20,
-                      padding: const EdgeInsets.all(3),
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: widget.nextPassage.line.color.withAlpha(80),
-                        borderRadius: BorderRadiusDirectional.circular(10),
-                        border: Border.all(
-                            width: 2, color: widget.nextPassage.line.color),
-                      ),
-                      child: Text(DateFormat.Hm().format(arrivalTime.toLocal()),
-                          style: const TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                          ))
-                      // child: RichText(
-                      //     text: TextSpan(
-                      //   style: DefaultTextStyle.of(context).style,
-                      //   children: [
-                      //     TextSpan(
-                      //       text: arrivalTime.hour.toString().padLeft(2, '0') + ":",
-                      //       style: const TextStyle(
-                      //         fontSize: 8,
-                      //         fontWeight: FontWeight.w700,
-                      //       ),
-                      //     ),
-                      //     TextSpan(
-                      //       text: arrivalTime.minute.toString().padLeft(2, '0'),
-                      //       ),
-                      //     )
-                      //   ],
-                      // )),
-                      ),
-                ],
-              ),
-            ),
-          ),
-          // const SizedBox(
-          //   width: 10,
-          // ),
-          // ClipRect(
-          // )
-          // const SizedBox(
-          //   width: 10,
-          // ),
+          widget.nextPassage.trip != null
+              ? TripView(widget.nextPassage.trip!, delay: delay)
+              : Container()
         ],
       ),
     );

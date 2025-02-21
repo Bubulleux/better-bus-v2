@@ -3,23 +3,35 @@ import 'package:better_bus_v2/core/models/gtfs/trip.dart';
 import 'package:better_bus_v2/core/models/station.dart';
 import 'package:better_bus_v2/core/models/stop_time.dart';
 import 'package:better_bus_v2/helper.dart';
+import 'package:flutter/foundation.dart';
 
 class GTFSStopTime  {
-  late final Duration arival;
-  late final int _stopId;
-  final Station station;
+  late final Duration arrival;
+  late final int stopId;
   late final double distanceTravel;
+  late final int tripId;
+  late final int stopIndex;
 
-  GTFSStopTime(Map<String, String> row, this.station) {
+  GTFSStopTime(Map<String, String> row) {
 
-    arival = parseDuration(row["arrival_time"]!);
+    arrival = parseDuration(row["arrival_time"]!);
     distanceTravel = double.parse(row["shape_dist_traveled"]!);
-    _stopId = int.parse(row["stop_id"]!);
+    stopId = int.parse(row["stop_id"]!);
+    tripId = int.parse(row["trip_id"]!);
+    stopIndex = int.parse(row["stop_sequence"]!);
   }
 
-  StopTime toStopTime(GTFSTrip trip, DateTime date) {
-    return StopTime.fromTrip(trip.at(date),
-      date.atMidnight().add(arival));
+  // StopTime toStopTime(GTFSTrip trip, DateTime date) {
+  //   return StopTime.fromTrip(trip.at(date),
+  //     date.atMidnight().add(arival));
+  // }
+
+  @override
+  int get hashCode => stopId ^ tripId ^ stopIndex;
+
+  @override
+  bool operator ==(Object other) {
+    return other is GTFSStopTime && hashCode == other.hashCode;
   }
 
 }
