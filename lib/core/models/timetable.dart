@@ -15,7 +15,10 @@ class Timetable {
 
   Iterable<StopTime> getNext({DateTime? from}) {
     DateTime start = from ?? DateTime.now();
-    return stopTimes.where((stopTime) =>
-      stopTime.time.isAfter(start));
+    var output =  stopTimes.where((stopTime) =>
+      stopTime.time.isAfter(start)).toList();
+
+    output.sort();
+    return output;
   }
 }
