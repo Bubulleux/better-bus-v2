@@ -16,6 +16,10 @@ class BusTrip extends LineDirected {
 
   final List<TripStop> stopTimes;
 
+  Iterable<TripStop> from(Station station) {
+    return stopTimes.skipWhile((e) => e.station != station);
+  }
+
   @override
   String toString() {
     return 'BusTrip{direction: $direction, stopLength: ${stopTimes.length}';

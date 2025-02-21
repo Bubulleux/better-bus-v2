@@ -102,9 +102,9 @@ class ApiProvider extends BusNetwork {
     List<dynamic> rawPassages = body["realtime"];
     List<StopTime> realTime = [];
     for (Map<String, dynamic> rawPassage in rawPassages) {
-      realTime.add(JsonStopTime(rawPassage));
+      realTime.add(JsonStopTime(rawPassage, 0, station));
     }
-    return Timetable(station, DateTime.now(), stopTimes: realTime);
+    return ConstTimetable(station, DateTime.now(), stopTimes: realTime);
 
     // TODO: Move the match realtime Gtfs algorithm
     // List<NextPassage> output = [];

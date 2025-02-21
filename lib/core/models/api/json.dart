@@ -34,10 +34,7 @@ class JsonBusLine extends BusLine {
     json["slug"],
     json["name"],
     Color(int.parse(json["color"].replaceAll("#", "0xff"))),
-    directions: {
-      ...json["direction"]["aller"].cast<String>().map((e) => Direction(e, 0)).toSet(),
-      ...json["direction"]["retour"].cast<String>().map((e) => Direction(e, 0)).toSet(),
-    }
+    directions: {}
   );
 
   JsonBusLine.fromJson(Map<String, dynamic> json)
@@ -48,20 +45,17 @@ class JsonBusLine extends BusLine {
     colorFromHex(json["color"]),
     // TODO: Probably needs to be reimplemented
       directions: {
-        ...json["direction"]["aller"].cast<String>().map((e) => Direction(e, 0)).toSet(),
-        ...json["direction"]["retour"].cast<String>().map((e) => Direction(e, 0)).toSet(),
+        ...(json["direction"]["aller"].map((e) => Direction(e, 0)).toSet()),
+        ...(json["direction"]["retour"].map((e) => Direction(e, 1)).toSet()),
       }
   );
 }
 
 class JsonStopTime extends StopTime {
 
-  JsonStopTime(Map<String, dynamic> json)
-      : super (
-    JsonBusLine.fromJson(json["line"]),
-    json["destinationName"],
-    // TODO Not the right number need to be dynamic
-    0,
+  JsonStopTime(Map<String, dynamic> json, int directionId, Station station)
+      : super (station,
+    LineDirection(JsonBusLine.fromJson(json["line"]), json["destinationName"], directionId),
     DateTime.parse(json["expectedDepartureTime"]),
     realTime: json["realtime"] ? DateTime.parse(json["expectedDepartureTime"]) : null,
   );

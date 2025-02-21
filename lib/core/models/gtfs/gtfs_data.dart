@@ -9,9 +9,8 @@ import 'package:latlong2/latlong.dart';
 
 class GTFSData {
   late final Map<int, Station> stations;
-  late final Map<int, Station> _stopsParent;
+  late final Map<int, Station> stopsParent;
 
-  //late final Map<String, BusStop> stopsParent;
   late final Map<int, GTFSLine> routes;
   late final GTFSCalendar calendar;
   late final Map<int, GTFSTrip> trips;
@@ -70,7 +69,7 @@ class GTFSData {
     }
 
     stations = result;
-    _stopsParent = newStopParent;
+    stopsParent = newStopParent;
   }
 
   void loadRoutes(CSVTable table, CSVTable tripTable) {
@@ -99,7 +98,7 @@ class GTFSData {
         int.parse(e["trip_id"]): GTFSTrip(
             e,
             stopTime[int.parse(e["trip_id"]!)]!,
-            routes[int.parse(e["route_id"])]!)
+            this)
     };
   }
 
@@ -113,14 +112,14 @@ class GTFSData {
       }
 
       int index = int.parse(row["stop_sequence"]) - 1;
-      final station = _stopsParent[int.parse(row["stop_id"]!)]!;
+      final station = stopsParent[int.parse(row["stop_id"]!)]!;
 
       if (stopTimes[tripID]!.length > index) {
-        stopTimes[tripID]![index] = GTFSStopTime(row, station);
+        stopTimes[tripID]![index] = GTFSStopTime(row);
       }
 
       while (stopTimes[tripID]!.length <= index) {
-        stopTimes[tripID]!.add(GTFSStopTime(row, station));
+        stopTimes[tripID]!.add(GTFSStopTime(row));
       }
     }
 

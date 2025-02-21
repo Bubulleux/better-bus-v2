@@ -1,9 +1,10 @@
-
 import 'package:better_bus_v2/core/bus_network.dart';
 import 'package:better_bus_v2/core/gtfs_downloader.dart';
 import 'package:better_bus_v2/core/models/bus_line.dart';
 import 'package:better_bus_v2/core/models/gtfs/gtfs_data.dart';
 import 'package:better_bus_v2/core/models/gtfs/gtfs_path.dart';
+import 'package:better_bus_v2/core/models/gtfs/stop_time.dart';
+import 'package:better_bus_v2/core/models/gtfs/timetable.dart';
 import 'package:better_bus_v2/core/models/gtfs/trip.dart';
 import 'package:better_bus_v2/core/models/line_timetable.dart';
 import 'package:better_bus_v2/core/models/station.dart';
@@ -15,16 +16,16 @@ import 'package:better_bus_v2/helper.dart';
 class GTFSProvider extends BusNetwork {
   GTFSProvider({required this.provider});
 
-  GTFSProvider.vitalis(GTFSPaths paths) : this(
-    provider: GTFSDataDownloader.vitalis(paths)
-  );
+  GTFSProvider.vitalis(GTFSPaths paths)
+      : this(provider: GTFSDataDownloader.vitalis(paths));
 
   final GTFSDataDownloader provider;
   GTFSData? _data;
+
   GTFSData get data => _data!;
 
   @override
-  Future<bool> init() async{
+  Future<bool> init() async {
     bool pathInit = await provider.paths.init();
     if (!pathInit) {
       // TODO: Make it better, test it
@@ -54,7 +55,8 @@ class GTFSProvider extends BusNetwork {
 
   @override
   Future<Map<String, BusLine>> getAllLines() {
-    return Future.value({for (var e in _data!.routes.entries) e.value.id: e.value});
+    return Future.value(
+        {for (var e in _data!.routes.entries) e.value.id: e.value});
   }
 
   @override
@@ -62,35 +64,13 @@ class GTFSProvider extends BusNetwork {
     if (station.stops.isEmpty) {
       throw Exception("Station has no stops");
     }
-    List<int> stopTrips = [];
 
-    Set<int> validIDs = {station.id};
-    validIDs.addAll(station.stops.keys);
+    List<BusLine> result = data.trips.entries
+        .where((e) => e.value.stopTimes.containsKey(station))
+        .map((e) => e.value.line)
+        .toSet()
+        .toList(growable: false);
 
-    for (var e in data.stopTime.entries) {
-      final stopTimes = e.value;
-      for (var stopTime in stopTimes) {
-        if (stopTime.station != station) continue;
-        stopTrips.add(e.key);
-      }
-    }
-
-    // stopTrips.sort(
-    //       (a, b) => data.stopTime[a]!.length
-    //       .compareTo(data.stopTime[b]!.length),
-    // );
-    //
-    // stopTrips = stopTrips.reversed.toList();
-
-    List<BusLine> result = [];
-
-    for (var key in stopTrips) {
-      GTFSTrip trip = data.trips[key]!;
-
-      if (result.contains(trip.line)) continue;
-
-      result.add(trip.line);
-    }
     return Future.value(result);
   }
 
@@ -99,27 +79,25 @@ class GTFSProvider extends BusNetwork {
     DateTime now = DateTime.now();
     DateTime today = DateTime(now.year, now.month, now.day);
 
-    Set<String> validServices = data.calendar.getEnablesServices(today);
-
-    List<StopTime> stopTimes = [];
-
-
-    for (var entrie in data.stopTime.entries) {
-      GTFSTrip trip = data.trips[entrie.key]!;
-      if (!validServices.contains(trip.serviceID)) continue;
-
-      for (var stopTime in entrie.value) {
-        if (station != stopTime.station) continue;
-        stopTimes.add(stopTime.toStopTime(trip, today));
-
-      }
-    }
-
-    return Future.value(Timetable(station, today, stopTimes: stopTimes));
+    // Set<String> validServices = data.calendar.getEnablesServices(today);
+    //
+    // List<StopTime> stopTimes = [];
+    //
+    // for (var entrie in data.stopTime.entries) {
+    //   GTFSTrip trip = data.trips[entrie.key]!;
+    //   if (!validServices.contains(trip.serviceID)) continue;
+    //
+    //   for (var stopTime in entrie.value) {
+    //     if (station != stopTime.station) continue;
+    //     stopTimes.add(stopTime.toStopTime(trip, today));
+    //   }
+    // }
+    return Future.value(GTFSTimeTable(station, now, data.trips.values));
   }
 
   @override
-  Future<LineTimetable> getLineTimetable(Station station, BusLine line, int direction, DateTime date) {
+  Future<LineTimetable> getLineTimetable(
+      Station station, BusLine line, int direction, DateTime date) {
     DateTime today = date.atMidnight();
     Set<String> validServices = data.calendar.getEnablesServices(today);
 
@@ -128,32 +106,27 @@ class GTFSProvider extends BusNetwork {
 
     const labels = "abcdefghijk";
 
-    print(ends);
-    for (var entry in data.stopTime.entries) {
-      GTFSTrip trip = data.trips[entry.key]!;
+    for (var trip in data.trips.values) {
       if (!validServices.contains(trip.serviceID) ||
-        trip.direction.directionId != direction) {
+          !trip.stopTimes.containsKey(station)) {
         continue;
       }
-      if (trip.line != line || trip.direction.directionId != direction) {
-        continue;
+      if (!ends.containsKey(trip.direction.destination)) {
+        ends[trip.direction.destination] = labels[ends.length];
       }
-      for (var stopTime in entry.value) {
-        if (station != stopTime.station) continue;
-        if (!ends.containsKey(trip.direction.destination)) {
-          ends[trip.direction.destination] = labels[ends.length];
-        }
-        stopTimes[today.add(stopTime.arival)] = ends[trip.direction.destination]!;
+      final stopTime = trip.stopTimes[station]!;
+      stopTimes[today.add(stopTime.arrival)] = ends[trip.direction.destination]!;
 
-      }
     }
 
-
-    final result = LineTimetable(station, line, today,
-      destinations: { for (var e in ends.entries) e.value: e.key},
+    final result = LineTimetable(
+      station,
+      line,
+      today,
+      destinations: {for (var e in ends.entries) e.value: e.key},
       passingTimes: stopTimes,
     );
-    
+
     return Future.value(result);
   }
 

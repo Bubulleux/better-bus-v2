@@ -1,16 +1,18 @@
 import 'package:better_bus_v2/core/models/bus_line.dart';
 import 'package:better_bus_v2/core/models/bus_trip.dart';
 import 'package:better_bus_v2/core/models/line_direction.dart';
+import 'package:better_bus_v2/core/models/station.dart';
 
 class StopTime extends LineDirected implements Comparable<StopTime>{
-  StopTime(BusLine line, String direction, int directionId, this.aimedTime, {this.realTime})
-      : super(LineDirection(line, direction, directionId));
+  StopTime(this.station, super.direction, this.aimedTime, {this.trip, this.realTime});
 
-  StopTime.fromDirection(super.direction, this.aimedTime, {this.realTime});
+  StopTime.fromDirection(this.station, super.direction, this.aimedTime, {this.realTime});
 
-  StopTime.fromTrip(BusTrip this.trip, this.aimedTime, {this.realTime}) :
+  StopTime.fromTrip(this.station, BusTrip this.trip, this.aimedTime, {this.realTime}) :
         super(trip);
 
+
+  Station station;
   BusTrip? trip;
   final DateTime aimedTime;
   DateTime? realTime;
