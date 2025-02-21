@@ -35,6 +35,11 @@ class LineDirection extends Direction {
   bool operator ==(Object other) {
     return other is LineDirection && hashCode == other.hashCode;
   }
+
+  @override
+  String toString() {
+    return '{${line.id}, $destination, $directionId}';
+  }
 }
 
 class LineDirected implements LineDirection {

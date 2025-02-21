@@ -1,6 +1,7 @@
 import 'package:better_bus_v2/app_constant/app_string.dart';
 import 'package:better_bus_v2/core/full_provider.dart';
 import 'package:better_bus_v2/core/models/bus_line.dart';
+import 'package:better_bus_v2/core/models/bus_trip.dart';
 import 'package:better_bus_v2/core/models/station.dart';
 import 'package:better_bus_v2/core/models/stop_time.dart';
 import 'package:better_bus_v2/core/models/timetable.dart';
@@ -181,6 +182,7 @@ class _NextPassageWidgetState extends State<NextPassageWidget>
     super.initState();
     expandControler = ExpandableWidgetController(
         duration: const Duration(milliseconds: 300), root: this);
+    print("Trip: ${widget.nextPassage.trip}");
   }
 
   Widget buildNextPassageDetail(Duration delay) {
@@ -211,21 +213,20 @@ class _NextPassageWidgetState extends State<NextPassageWidget>
                   ),
                 )
               : Container(),
-          // TODO: Reimplement trip
-          // Padding(
-          //   padding: const EdgeInsets.all(8.0),
-          //   child: SizedBox(
-          //     height: 80,
-          //     child: ListView.builder(
-          //       scrollDirection: Axis.horizontal,
-          //       itemCount: (widget.nextPassage.arrivingTimes?.length ?? -1) + 1,
-          //       itemBuilder: (_, i) =>
-          //           ((widget.nextPassage.arrivingTimes?.length ?? 0) == i)
-          //               ? buildLineEnd()
-          //               : buildWayItem(i, delay),
-          //     ),
-          //   ),
-          // )
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SizedBox(
+              height: 80,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: (widget.nextPassage.trip?.stopTimes.length ?? -1) + 1,
+                itemBuilder: (_, i) =>
+                    ((widget.nextPassage.trip?.stopTimes.length ?? 0) == i)
+                        ? buildLineEnd()
+                        : buildWayItem(i, delay),
+              ),
+            ),
+          )
         ],
       ),
     );
@@ -238,112 +239,113 @@ class _NextPassageWidgetState extends State<NextPassageWidget>
     );
   }
 
-  // Widget buildWayItem(int index, Duration delay) {
-  //   if (widget.nextPassage.arrivingTimes == null) return Container();
-  //   ArrivingTime arrival = widget.nextPassage.arrivingTimes![index];
-  //   String stopName = arrival.stop;
-  //   DateTime arrivalTime =
-  //       DateTime.now().atMidnight().add(arrival.duration).add(delay);
-  //   return SizedBox(
-  //     width: 50,
-  //     child: Column(
-  //       mainAxisAlignment: MainAxisAlignment.end,
-  //       crossAxisAlignment: CrossAxisAlignment.start,
-  //       children: [
-  //         SizedBox(
-  //           height: 40,
-  //           child: OverflowBox(
-  //             maxHeight: 65,
-  //             maxWidth: 30,
-  //             alignment: Alignment.bottomCenter,
-  //             child: SizedBox(
-  //               width: 70,
-  //               child: Transform.rotate(
-  //                 angle:  pi * .30,
-  //                 alignment: Alignment.bottomCenter,
-  //                 child: RotatedBox(
-  //                   quarterTurns: -1,
-  //                   child: FittedBox(
-  //                     //alignment: Alignment.centerRight,
-  //                     fit: BoxFit.scaleDown,
-  //                       child: ConstrainedBox(
-  //                         constraints: const BoxConstraints(maxWidth: 120),
-  //                         child: Text(stopName,
-  //                             style: const TextStyle(
-  //                               fontWeight: FontWeight.bold,
-  //                               fontSize: 15,
-  //                             )),
-  //                       )),
-  //                 ),
-  //               ),
-  //             ),
-  //           ),
-  //         ),
-  //         Padding(
-  //           padding: const EdgeInsets.only(top: 8),
-  //           child: SizedBox(
-  //             height: 20,
-  //             child: Row(
-  //               //alignment: Alignment.center,
-  //               children: [
-  //                 Expanded(
-  //                   child: Container(
-  //                     height: 5,
-  //                     alignment: Alignment.centerRight,
-  //                     decoration: BoxDecoration(
-  //                       color: widget.nextPassage.line.color,
-  //                     ),
-  //                   ),
-  //                 ),
-  //                 Container(
-  //                     height: 20,
-  //                     padding: const EdgeInsets.all(3),
-  //                     alignment: Alignment.center,
-  //                     decoration: BoxDecoration(
-  //                       color: widget.nextPassage.line.color.withAlpha(80),
-  //                       borderRadius: BorderRadiusDirectional.circular(10),
-  //                       border: Border.all(
-  //                           width: 2, color: widget.nextPassage.line.color),
-  //                     ),
-  //                     child: Text(DateFormat.Hm().format(arrivalTime.toLocal()),
-  //                         style: const TextStyle(
-  //                           fontSize: 10,
-  //                           fontWeight: FontWeight.bold,
-  //                         ))
-  //                     // child: RichText(
-  //                     //     text: TextSpan(
-  //                     //   style: DefaultTextStyle.of(context).style,
-  //                     //   children: [
-  //                     //     TextSpan(
-  //                     //       text: arrivalTime.hour.toString().padLeft(2, '0') + ":",
-  //                     //       style: const TextStyle(
-  //                     //         fontSize: 8,
-  //                     //         fontWeight: FontWeight.w700,
-  //                     //       ),
-  //                     //     ),
-  //                     //     TextSpan(
-  //                     //       text: arrivalTime.minute.toString().padLeft(2, '0'),
-  //                     //       ),
-  //                     //     )
-  //                     //   ],
-  //                     // )),
-  //                     ),
-  //               ],
-  //             ),
-  //           ),
-  //         ),
-  //         // const SizedBox(
-  //         //   width: 10,
-  //         // ),
-  //         // ClipRect(
-  //         // )
-  //         // const SizedBox(
-  //         //   width: 10,
-  //         // ),
-  //       ],
-  //     ),
-  //   );
-  // }
+  Widget buildWayItem(int index, Duration delay) {
+    BusTrip? trip = widget.nextPassage.trip;
+    if (trip == null) return Container();
+    TripStop stopTime = trip.stopTimes[index];
+    String stopName = stopTime.station.name;
+    DateTime arrivalTime = stopTime.time.add(delay);
+
+    return SizedBox(
+      width: 50,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            height: 40,
+            child: OverflowBox(
+              maxHeight: 65,
+              maxWidth: 30,
+              alignment: Alignment.bottomCenter,
+              child: SizedBox(
+                width: 70,
+                child: Transform.rotate(
+                  angle:  pi * .30,
+                  alignment: Alignment.bottomCenter,
+                  child: RotatedBox(
+                    quarterTurns: -1,
+                    child: FittedBox(
+                      //alignment: Alignment.centerRight,
+                      fit: BoxFit.scaleDown,
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 120),
+                          child: Text(stopName,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                              )),
+                        )),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: SizedBox(
+              height: 20,
+              child: Row(
+                //alignment: Alignment.center,
+                children: [
+                  Expanded(
+                    child: Container(
+                      height: 5,
+                      alignment: Alignment.centerRight,
+                      decoration: BoxDecoration(
+                        color: widget.nextPassage.line.color,
+                      ),
+                    ),
+                  ),
+                  Container(
+                      height: 20,
+                      padding: const EdgeInsets.all(3),
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: widget.nextPassage.line.color.withAlpha(80),
+                        borderRadius: BorderRadiusDirectional.circular(10),
+                        border: Border.all(
+                            width: 2, color: widget.nextPassage.line.color),
+                      ),
+                      child: Text(DateFormat.Hm().format(arrivalTime.toLocal()),
+                          style: const TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ))
+                      // child: RichText(
+                      //     text: TextSpan(
+                      //   style: DefaultTextStyle.of(context).style,
+                      //   children: [
+                      //     TextSpan(
+                      //       text: arrivalTime.hour.toString().padLeft(2, '0') + ":",
+                      //       style: const TextStyle(
+                      //         fontSize: 8,
+                      //         fontWeight: FontWeight.w700,
+                      //       ),
+                      //     ),
+                      //     TextSpan(
+                      //       text: arrivalTime.minute.toString().padLeft(2, '0'),
+                      //       ),
+                      //     )
+                      //   ],
+                      // )),
+                      ),
+                ],
+              ),
+            ),
+          ),
+          // const SizedBox(
+          //   width: 10,
+          // ),
+          // ClipRect(
+          // )
+          // const SizedBox(
+          //   width: 10,
+          // ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
