@@ -31,7 +31,7 @@ void main() async {
   const lineId = "2B";
   const directionId = 1;
 
-  // // TODO: Need to be tested
+  // TODO: Need to be tested
   group("Test Vitalis Api reponse", () {
     testNetwork(api, stationName, lineId, directionId);
   });
@@ -90,7 +90,7 @@ void testNetwork(BusNetwork network, String testStationName, String lineTestName
     final timetable = await network.getTimetable(station!);
     // TODO: Make it more robust
     expect(timetable, isNotNull);
-    //expect(timetable.stopTimes, isNotEmpty);
+    expect(timetable.getNext(), isNotEmpty);
   });
 
   test("Get Line Timetable", () async {

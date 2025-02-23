@@ -3,17 +3,11 @@ import 'package:better_bus_v2/core/models/line_direction.dart';
 import 'package:better_bus_v2/core/models/station.dart';
 
 class BusTrip extends LineDirected {
-  BusTrip(LineDirection direction, {required this.stopTimes})
+  BusTrip(LineDirection direction, {required this.stopTimes, required this.id})
       : super(direction);
 
-  BusTrip.fromMap({
-    required LineDirection direction,
-    required Map<DateTime, Station> stopTimes,
-  }) : this(direction,
-            stopTimes: stopTimes.entries
-                .map((e) => TripStop.fromMapEntry(e))
-                .toList());
 
+  final int id;
   final List<TripStop> stopTimes;
 
   Iterable<TripStop> from(Station station) {
@@ -23,6 +17,14 @@ class BusTrip extends LineDirected {
   @override
   String toString() {
     return 'BusTrip{direction: $direction, stopLength: ${stopTimes.length}';
+  }
+
+  @override
+  int get hashCode => super.hashCode ^ id.hashCode;
+
+  @override
+  bool operator ==(Object other) {
+    return other is BusTrip && hashCode == other.hashCode;
   }
 }
 
