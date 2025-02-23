@@ -75,24 +75,15 @@ class GTFSProvider extends BusNetwork {
   }
 
   @override
-  Future<Timetable> getTimetable(Station station) {
+  Future<GTFSTimeTable> getTimetable(Station station) {
     DateTime now = DateTime.now();
-    DateTime today = DateTime(now.year, now.month, now.day);
 
-    // Set<String> validServices = data.calendar.getEnablesServices(today);
-    //
-    // List<StopTime> stopTimes = [];
-    //
-    // for (var entrie in data.stopTime.entries) {
-    //   GTFSTrip trip = data.trips[entrie.key]!;
-    //   if (!validServices.contains(trip.serviceID)) continue;
-    //
-    //   for (var stopTime in entrie.value) {
-    //     if (station != stopTime.station) continue;
-    //     stopTimes.add(stopTime.toStopTime(trip, today));
-    //   }
-    // }
-    return Future.value(GTFSTimeTable(station, now, data.trips.values));
+
+    Set<String> validServices = data.calendar.getEnablesServices(now);
+
+    final trips = data.trips.values.where((e) => validServices.contains(e.serviceID));
+
+    return Future.value(GTFSTimeTable(station, now, trips));
   }
 
   @override

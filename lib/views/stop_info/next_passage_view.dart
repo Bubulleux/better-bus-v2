@@ -112,6 +112,7 @@ class NextPassageListWidgetState extends State<NextPassageListWidget> {
 
   void refresh() {
     futureBuilderKey.currentState!.refresh();
+    getData().then((_) {}, onError: (e, s) => print(s));
   }
 
   Future<List<StopTime>> getData() async {

@@ -5,6 +5,7 @@ import 'package:better_bus_v2/core/models/gtfs/stop_time.dart';
 import 'package:better_bus_v2/core/models/gtfs/trip.dart';
 import 'package:better_bus_v2/core/models/line_direction.dart';
 import 'package:better_bus_v2/core/models/station.dart';
+import 'package:better_bus_v2/helper.dart';
 import 'package:latlong2/latlong.dart';
 
 class GTFSData {
@@ -218,6 +219,7 @@ class GTFSCalendar {
   }
 
   Set<String> getEnablesServices(DateTime date) {
+    date = date.atMidnight();
     Set<String> servicesEnable = {};
     for (var items in services.entries) {
       if (!items.value.isEnable(date)) continue;

@@ -2,7 +2,9 @@ import 'package:better_bus_v2/core/api_provider.dart';
 import 'package:better_bus_v2/core/bus_network.dart';
 import 'package:better_bus_v2/core/gtfs_provider.dart';
 import 'package:better_bus_v2/core/models/bus_line.dart';
+import 'package:better_bus_v2/core/models/gtfs/timetable.dart';
 import 'package:better_bus_v2/core/models/line_timetable.dart';
+import 'package:better_bus_v2/core/models/matching_timetable.dart';
 import 'package:better_bus_v2/core/models/station.dart';
 import 'package:better_bus_v2/core/models/timetable.dart';
 import 'package:better_bus_v2/core/models/traffic_info.dart';
@@ -51,7 +53,16 @@ class FullProvider extends BusNetwork {
 
   // TODO: Prefet api and GTFS
   @override
-  Future<Timetable> getTimetable(Station station) => preferGtfs.getTimetable(station);
+  Future<Timetable> getTimetable(Station station) async {
+    if (!gtfs.isAvailable() || !api.isAvailable()) {
+      return preferApi.getTimetable(station);
+    }
+    GTFSTimeTable gtfsTimes = await gtfs.getTimetable(station);
+    final apiTimes = await api.getTimetable(station);
+
+    return MatchingTimetable(apiTimes, gtfsTimes);
+
+  }
 
   @override
   Future<List<InfoTraffic>> getTrafficInfos() => api.getTrafficInfos();

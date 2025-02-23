@@ -8,7 +8,7 @@ class Direction {
   const Direction(this.destination, this.directionId);
 
   @override
-  int get hashCode => destination.hashCode ^ directionId.hashCode;
+  int get hashCode => destination.hashCode;
 
   @override
   bool operator ==(Object other) {

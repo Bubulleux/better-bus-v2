@@ -8,11 +8,21 @@ abstract class Timetable {
     updateTime = DateTime.now();
   }
 
+  Timetable.copy(Timetable from) : this(from.station, from.date);
+
   final Station station;
   late final DateTime date;
   late DateTime updateTime;
 
   Iterable<StopTime> getNext({DateTime? from});
+
+  @override
+  int get hashCode => station.hashCode ^ date.hashCode;
+
+  @override
+  bool operator ==(Object other) {
+    return other is Timetable && hashCode == other.hashCode;
+  }
 }
 
 class ConstTimetable  extends Timetable{
