@@ -25,7 +25,6 @@ class GTFSTimeTable extends Timetable {
             trip: e.at(date)));
   }
 
-  // TODO: Maybe A better way ?
   StopTime matchTime(StopTime time) {
     assert(time.station == station);
     List<GTFSTrip> validTrip =
@@ -33,10 +32,11 @@ class GTFSTimeTable extends Timetable {
 
     Duration testDuration = time.time.difference(date);
 
-    // TODO: Will only be late
     int i = validTrip
-        .lastIndexWhere((e) => testDuration > e.stopTimes[station]!.arrival);
+        .lastIndexWhere((e) => testDuration >= e.stopTimes[station]!.arrival);
+
     assert(i >= 0);
+
     Duration curDiff = testDuration - validTrip[i].stopTimes[station]!.arrival;
     if (validTrip.length != i + 1 &&
         curDiff > validTrip[i + 1].stopTimes[station]!.arrival - testDuration) {

@@ -56,7 +56,7 @@ class JsonStopTime extends StopTime {
   JsonStopTime(Map<String, dynamic> json, int directionId, Station station)
       : super (station,
     LineDirection(JsonBusLine.fromJson(json["line"]), json["destinationName"], directionId),
-    DateTime.parse(json["expectedDepartureTime"]),
-    realTime: json["realtime"] ? DateTime.parse(json["expectedDepartureTime"]) : null,
+    DateTime.parse(json["expectedDepartureTime"]).toLocal(),
+    realTime: json["realtime"] ? DateTime.parse(json["expectedDepartureTime"]).toLocal() : null,
   );
 }
