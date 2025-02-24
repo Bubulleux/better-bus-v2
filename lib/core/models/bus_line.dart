@@ -96,10 +96,10 @@ class BusLine implements Comparable<BusLine> {
   // TODO: Watch out need to be retrocompatible
   factory BusLine.fromCleanJson(Map<String, dynamic> json) {
     List<Direction> directions = [
-      json["goDirection"].cast<String>().map((e) => Direction(e, 0)).toList(),
-      json["backDirection"].cast<String>().map((e) => Direction(e, 1)).toList(),
+      ...json["goDirection"].cast<String>().map((e) => Direction(e, 0)).toList(),
+      ...json["backDirection"].cast<String>().map((e) => Direction(e, 1)).toList(),
     ];
-    return BusLine(json["id"], json["name"], Color(int.parse(json["color"]!)),
+    return BusLine(json["id"], json["name"], Color(json["color"]),
         directions: directions.toSet());
   }
 
