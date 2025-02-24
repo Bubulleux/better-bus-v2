@@ -24,7 +24,7 @@ class Station extends Place {
   Station.fromCleanJson(Map<String, dynamic> json)
       : this(
           json["name"],
-          int.parse(json["id"]),
+          json["id"],
           LatLng(json["lat"], json["long"]),
           stops: {},
         );
