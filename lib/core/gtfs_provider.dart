@@ -6,6 +6,7 @@ import 'package:better_bus_v2/core/models/gtfs/gtfs_path.dart';
 import 'package:better_bus_v2/core/models/gtfs/stop_time.dart';
 import 'package:better_bus_v2/core/models/gtfs/timetable.dart';
 import 'package:better_bus_v2/core/models/gtfs/trip.dart';
+import 'package:better_bus_v2/core/models/line_direction.dart';
 import 'package:better_bus_v2/core/models/line_timetable.dart';
 import 'package:better_bus_v2/core/models/station.dart';
 import 'package:better_bus_v2/core/models/stop_time.dart';
@@ -95,20 +96,25 @@ class GTFSProvider extends BusNetwork {
     Map<String, String> ends = {};
     Map<DateTime, String> stopTimes = {};
 
-    const labels = "abcdefghijk";
+    const labels = "abcdefghijk............";
 
     for (var trip in data.trips.values) {
       if (!validServices.contains(trip.serviceID) ||
-          !trip.stopTimes.containsKey(station)) {
+          !trip.stopTimes.containsKey(station) ||
+          trip.line != line ||
+          trip.direction.directionId != direction) {
         continue;
       }
       if (!ends.containsKey(trip.direction.destination)) {
-        ends[trip.direction.destination] = labels[ends.length];
+        ends[trip.direction.destination] = ends.length < labels.length
+         ? labels[ends.length]
+            : ends.length.toString();
       }
       final stopTime = trip.stopTimes[station]!;
       stopTimes[today.add(stopTime.arrival)] = ends[trip.direction.destination]!;
 
     }
+    stopTimes = Map.fromEntries(stopTimes.entries.toList()..sort((a, b) => a.key.compareTo(b.key)));
 
     final result = LineTimetable(
       station,

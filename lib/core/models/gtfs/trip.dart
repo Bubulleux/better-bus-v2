@@ -35,4 +35,9 @@ class GTFSTrip {
             .map((e) => TripStop(date.add(e.value.arrival), e.key))
             .toList());
   }
+
+  @override
+  String toString() {
+    return "{$direction, ${_stopTimes.values.first.arrival}, ${_stopTimes.keys.first}}";
+  }
 }

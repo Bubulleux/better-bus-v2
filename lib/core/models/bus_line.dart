@@ -99,7 +99,7 @@ class BusLine implements Comparable<BusLine> {
       json["goDirection"].cast<String>().map((e) => Direction(e, 0)).toList(),
       json["backDirection"].cast<String>().map((e) => Direction(e, 1)).toList(),
     ];
-    return BusLine(json["id"], json["name"], Color(json["color"]),
+    return BusLine(json["id"], json["name"], Color(int.parse(json["color"]!)),
         directions: directions.toSet());
   }
 

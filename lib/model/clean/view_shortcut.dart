@@ -7,6 +7,7 @@ class ViewShortcut {
   ViewShortcut(this.shortcutName, this.isFavorite,  this.stop, this.lines);
 
   factory ViewShortcut.fromJson(Map<String, dynamic> json) {
+    print(json["lines"]);
     return ViewShortcut(
         json["name"],
         json["isFavorite"],
