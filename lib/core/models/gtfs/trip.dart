@@ -25,6 +25,8 @@ class GTFSTrip {
     serviceID = row["service_id"]!;
     id = int.parse(row["trip_id"]!);
     direction = GTFSLineDirection.fromTripRow(row, data.routes[_routeID]!);
+
+    data.routes[_routeID]!.addDirection(this);
   }
 
   BusTrip at(DateTime from) {

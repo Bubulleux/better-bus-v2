@@ -63,7 +63,7 @@ class GTFSProvider extends BusNetwork {
   @override
   Future<List<BusLine>> getPassingLines(Station station) {
     if (station.stops.isEmpty) {
-      throw Exception("Station has no stops");
+      station = data.stations[station.id]!;
     }
 
     List<BusLine> result = data.trips.entries

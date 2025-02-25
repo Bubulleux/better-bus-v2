@@ -74,32 +74,16 @@ class GTFSData {
   }
 
   void loadRoutes(CSVTable table, CSVTable tripTable) {
-    // TODO: What a mess FIX IT PLS
-    Map<int, Set<Direction>> destinations = {};
-    for (var e in tripTable) {
-      final routeId = int.parse(e["route_id"]);
-      final direction = Direction(e["trip_headsign"], int.parse(e["direction_id"]));
-      if (!destinations.containsKey(routeId)) {
-        destinations[routeId] = {direction};
-        continue;
-      } else {
-        destinations[routeId]!.add(direction);
-      }
-    }
     routes = {
-      for (var e in table)
-        int.parse(e["route_id"]):
-            GTFSLine.fromCSV(e, destinations[int.parse(e["route_id"])]!)
+      for (var e in table) int.parse(e["route_id"]): GTFSLine.fromCSV(e)
     };
   }
 
   void loadTrips(CSVTable table) {
     trips = {
       for (var e in table)
-        int.parse(e["trip_id"]): GTFSTrip(
-            e,
-            stopTime[int.parse(e["trip_id"]!)]!,
-            this)
+        int.parse(e["trip_id"]):
+            GTFSTrip(e, stopTime[int.parse(e["trip_id"]!)]!, this)
     };
   }
 
