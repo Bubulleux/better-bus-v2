@@ -7,6 +7,8 @@ import 'package:better_bus_v2/core/models/line_direction.dart';
 import 'package:better_bus_v2/core/models/station.dart';
 import 'package:better_bus_v2/views/common/background.dart';
 import 'package:better_bus_v2/views/common/content_container.dart';
+import 'package:better_bus_v2/views/common/custom_future.dart';
+import 'package:better_bus_v2/views/common/directionSelector.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -27,18 +29,26 @@ class TerminusSelectorPage extends StatefulWidget {
 }
 
 class _TerminusSelectorPageState extends State<TerminusSelectorPage> {
-  // late Station stop;
-  // late List<BusLine> previousData;
-  //
-  // List<BusLine>? validBusLine;
-  // Map<String, Set<Direction>> selectedTerminus = {};
-  //
-  // bool get allIsSelected => validBusLine?.every(
-  //     (line) => line.oldDir.entries.every(
-  //         (d) => d.value.every((n) => selectedTerminus[line.id]?.contains(n) ?? false)
-  //     )
-  // ) ?? false;
-  //
+  late Station stop;
+  late List<BusLine> previousData;
+
+  List<BusLine>? validBusLine;
+  Map<String, Set<Direction>> selectedTerminus = {};
+
+  bool get allIsSelected =>
+      validBusLine?.every((line) => line.oldDir.entries.every((d) => d.value
+          .every((n) => selectedTerminus[line.id]?.contains(n) ?? false))) ??
+      false;
+
+  Future<List<BusLine>> getData() async {
+    if (!mounted) return [];
+
+    FullProvider.of(context)
+        .getPassingLines(stop)
+        .then((v) => print(v), onError: (e, s) => print("$e\n$s"));
+    return FullProvider.of(context).getPassingLines(stop);
+  }
+
   // Future<List<BusLine>> getTerminus() async {
   //   if (validBusLine != null) {
   //     return validBusLine!;
@@ -49,97 +59,88 @@ class _TerminusSelectorPageState extends State<TerminusSelectorPage> {
   //   stopLines.sort();
   //   selectedTerminus = {for (var e in previousData) e.id: e.oldDir};
   //
-  //   // for (int i = 0; i < stopLines.length; i++) {
-  //   //   int previousLineIndex =
-  //   //       previousData.indexWhere((element) => element.id == stopLines[i].id);
-  //   //
-  //   //   if (previousLineIndex == -1) {
-  //   //     selectedTerminus.add(stopLines[i]
-  //   //         .direction
-  //   //         .values
-  //   //         .toList()
-  //   //         .map((e) => e.map((f) => false).toList())
-  //   //         .toList());
-  //   //     continue;
-  //   //   }
-  //   //   final line = previousData[previousLineIndex];
-  //   //
-  //   //   selectedTerminus.add(stopLines[i]
-  //   //       .direction
-  //   //       .entries
-  //   //       .toList()
-  //   //       .map((e) =>
-  //   //           e.value.map((f) => line.direction[e.key]!.contains(f)).toList())
-  //   //       .toList());
-  //   //
-  //   //   setState(() {});
-  //   // }
+  //   for (int i = 0; i < stopLines.length; i++) {
+  //     int previousLineIndex =
+  //         previousData.indexWhere((element) => element.id == stopLines[i].id);
+  //
+  //     if (previousLineIndex == -1) {
+  //       selectedTerminus.add(stopLines[i]
+  //           .direction
+  //           .values
+  //           .toList()
+  //           .map((e) => e.map((f) => false).toList())
+  //           .toList());
+  //       continue;
+  //     }
+  //     final line = previousData[previousLineIndex];
+  //
+  //     selectedTerminus.add(stopLines[i]
+  //         .direction
+  //         .entries
+  //         .toList()
+  //         .map((e) =>
+  //             e.value.map((f) => line.direction[e.key]!.contains(f)).toList())
+  //         .toList());
+  //
+  //     setState(() {});
+  //   }
   //
   //   validBusLine = stopLines;
   //   return stopLines;
   // }
-  //
-  // @override
-  // void initState() {
-  //   super.initState();
-  // }
-  //
-  // @override
-  // void didChangeDependencies() {
-  //   super.didChangeDependencies();
-  //   TerminusSelectorPageArgument argument = ModalRoute.of(context)!
-  //       .settings
-  //       .arguments as TerminusSelectorPageArgument;
-  //   stop = argument.stop;
-  //   previousData = argument.previousData;
-  //   getTerminus();
-  // }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    TerminusSelectorPageArgument argument = ModalRoute.of(context)!
+        .settings
+        .arguments as TerminusSelectorPageArgument;
+    stop = argument.stop;
+    previousData = argument.previousData;
+    // getTerminus();
+  }
 
   @override
   Widget build(BuildContext context) {
-    // return Scaffold(
-    //   body: Background(
-    //     child: SafeArea(
-    //       child: Column(
-    //         children: [
-    //           Expanded(
-    //             child: FutureBuilder<List<BusLine>>(
-    //               future: getTerminus(),
-    //               initialData: validBusLine,
-    //               builder: (context, snapshot) {
-    //                 if (snapshot.hasData) {
-    //                   if (snapshot.hasError) {
-    //                     return const Text(AppString.errorLabel);
-    //                   } else {
-    //                     List<BusLine> lines = snapshot.data!;
-    //                     return getListView(lines);
-    //                   }
-    //                 }
-    //                 return const Center(child: CircularProgressIndicator());
-    //               },
-    //             ),
-    //           ),
-    //           Row(
-    //             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    //             children: [
-    //               ElevatedButton(
-    //                   onPressed: cancel,
-    //                   child: const Text(AppString.cancelLabel)),
-    //               ElevatedButton(
-    //                   onPressed: selectAll,
-    //                   child: Text(allIsSelected
-    //                       ? AppString.unSelectAll
-    //                       : AppString.selectAll)),
-    //               ElevatedButton(
-    //                   onPressed: validate,
-    //                   child: const Text(AppString.validateLabel)),
-    //             ],
-    //           )
-    //         ],
-    //       ),
-    //     ),
-    //   ),
-    // );
+    return Scaffold(
+      body: Background(
+        child: SafeArea(
+          child: Column(
+            children: [
+              Expanded(
+                child: CustomFutureBuilder(
+                  future: getData,
+                  onData: (ctx, data, _) {
+                    return getListView(data);
+                  },
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  // ElevatedButton(
+                  //     onPressed: cancel,
+                  //     child: const Text(AppString.cancelLabel)),
+                  // ElevatedButton(
+                  //     onPressed: selectAll,
+                  //     child: Text(allIsSelected
+                  //         ? AppString.unSelectAll
+                  //         : AppString.selectAll)),
+                  // ElevatedButton(
+                  //     onPressed: validate,
+                  //     child: const Text(AppString.validateLabel)),
+                ],
+              )
+            ],
+          ),
+        ),
+      ),
+    );
     return Container();
   }
 
@@ -176,58 +177,42 @@ class _TerminusSelectorPageState extends State<TerminusSelectorPage> {
   //   Navigator.pop(context, null);
   // }
   //
-  // ListView getListView(List<BusLine> lines) {
-  //   return ListView.builder(
-  //     itemCount: lines.length,
-  //     itemBuilder: (context, index) {
-  //       BusLine line = validBusLine![index];
-  //
-  //       return Padding(
-  //         padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
-  //         child: NormalContentContainer(
-  //           child: Padding(
-  //             padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
-  //             child: Column(
-  //               children: [
-  //                 Row(
-  //                   children: [
-  //                     LineWidget(line, 40),
-  //                     Expanded(
-  //                       child: Padding(
-  //                         padding: const EdgeInsets.only(left: 8),
-  //                         child: Text(
-  //                           line.name,
-  //                           style: const TextStyle(fontSize: 15),
-  //                         ),
-  //                       ),
-  //                     ),
-  //                   ],
-  //                 ),
-  //                 ...(lines[index]
-  //                     .oldDir
-  //                     .entries
-  //                     .map((e) => TerminusSelection(
-  //                           e.value,
-  //                           selectedTerminus[line.id]?[e.key] ?? [],
-  //                           onChanged: (newValue) {
-  //                             setState(() {
-  //                             if (!selectedTerminus.containsKey(line.id)) {
-  //                               selectedTerminus[line.id] = {};
-  //                             }
-  //
-  //                               selectedTerminus[line.id]![e.key] = newValue;
-  //                             });
-  //                           },
-  //                         ))
-  //                     .toList()),
-  //               ],
-  //             ),
-  //           ),
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
+  ListView getListView(List<BusLine> lines) {
+    return ListView.builder(
+      itemCount: lines.length,
+      itemBuilder: (context, index) {
+        BusLine line = lines[index];
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+          child: NormalContentContainer(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      LineWidget(line, 40),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 8),
+                          child: Text(
+                            line.name,
+                            style: const TextStyle(fontSize: 15),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  DirectionSelector(line)
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
 }
 
 class TerminusSelection extends StatefulWidget {
@@ -271,7 +256,8 @@ class _TerminusSelectionState extends State<TerminusSelection>
   }
 
   bool? checkIfAllSelected() {
-    final all = widget.entries.every((e) => widget.selected.contains(e)) ? true : null;
+    final all =
+        widget.entries.every((e) => widget.selected.contains(e)) ? true : null;
     final none = widget.selected.isEmpty ? false : null;
     return all ?? none;
   }
@@ -297,7 +283,8 @@ class _TerminusSelectionState extends State<TerminusSelection>
               onChanged: (value) {
                 print(value);
                 if (value == false) {
-                  widget.onChanged(widget.selected.where((c) => c != e.value).toList());
+                  widget.onChanged(
+                      widget.selected.where((c) => c != e.value).toList());
                 } else {
                   widget.onChanged(widget.selected + [e.value]);
                 }
