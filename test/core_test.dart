@@ -1,4 +1,6 @@
 
+import 'dart:math';
+
 import 'package:better_bus_v2/core/api_provider.dart';
 import 'package:better_bus_v2/core/bus_network.dart';
 import 'package:better_bus_v2/core/full_provider.dart';
@@ -78,6 +80,13 @@ void testNetwork(BusNetwork network, String testStationName, String lineTestName
 
     line = lines[lineTestName];
     expect(line, isNotNull);
+
+    // Check that all line have 1 or 2 directions.
+    for (var curLine in lines.values) {
+      final dirIds = curLine.directions.map((e) => e.directionId).toSet();
+      expect(dirIds, isNotEmpty);
+      expect(dirIds.length, lessThanOrEqualTo(2));
+    }
   });
 
   test("Test getLine from stop", () async {

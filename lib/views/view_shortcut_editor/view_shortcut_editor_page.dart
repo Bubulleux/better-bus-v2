@@ -187,7 +187,7 @@ class _ViewShortcutEditorPageState extends State<ViewShortcutEditorPage> {
       return;
     }
     Navigator.of(context).pushNamed(TerminusSelectorPage.routeName,
-        arguments: TerminusSelectorPageArgument(shortcutBusStop!, shortCutBusLines))
+        arguments: TerminusSelectorPageArgument(shortcutBusStop!, {}))
         .then((value) {
       if (value == null || !mounted) {
         return;

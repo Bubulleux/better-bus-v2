@@ -78,6 +78,12 @@ class CustomFutureBuilderState<T> extends State<CustomFutureBuilder> with Widget
     }
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    setState(() {});
+  }
+
   Future refresh() async{
     setState(() {
       isLoading = true;

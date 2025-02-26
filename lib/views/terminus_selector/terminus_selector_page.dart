@@ -14,7 +14,7 @@ import 'package:flutter/material.dart';
 
 class TerminusSelectorPageArgument {
   final Station stop;
-  final List<BusLine> previousData;
+  final Set<LineDirection> previousData;
 
   const TerminusSelectorPageArgument(this.stop, this.previousData);
 }
@@ -30,23 +30,21 @@ class TerminusSelectorPage extends StatefulWidget {
 
 class _TerminusSelectorPageState extends State<TerminusSelectorPage> {
   late Station stop;
-  late List<BusLine> previousData;
+  late Set<LineDirection> previousData;
 
-  List<BusLine>? validBusLine;
-  Map<String, Set<Direction>> selectedTerminus = {};
+  List<BusLine>? allLines;
+  Set<LineDirection> selected = {};
 
   bool get allIsSelected =>
-      validBusLine?.every((line) => line.oldDir.entries.every((d) => d.value
-          .every((n) => selectedTerminus[line.id]?.contains(n) ?? false))) ??
+      allLines?.every((line) => selected.containsAll(
+          line.directions.map((e) => LineDirection.fromDir(line, e)))) ??
       false;
 
   Future<List<BusLine>> getData() async {
     if (!mounted) return [];
 
-    FullProvider.of(context)
-        .getPassingLines(stop)
-        .then((v) => print(v), onError: (e, s) => print("$e\n$s"));
-    return FullProvider.of(context).getPassingLines(stop);
+    allLines = await FullProvider.of(context).getPassingLines(stop);
+    return allLines!;
   }
 
   // Future<List<BusLine>> getTerminus() async {
@@ -102,7 +100,6 @@ class _TerminusSelectorPageState extends State<TerminusSelectorPage> {
         .arguments as TerminusSelectorPageArgument;
     stop = argument.stop;
     previousData = argument.previousData;
-    // getTerminus();
   }
 
   @override
@@ -115,25 +112,30 @@ class _TerminusSelectorPageState extends State<TerminusSelectorPage> {
               Expanded(
                 child: CustomFutureBuilder(
                   future: getData,
-                  onData: (ctx, data, _) {
-                    return getListView(data);
+                  onData: (ctx, data, r) {
+                    return LineDirectionList(selected: selected, onChanged: (value) {
+                      r();
+                      setState(() {
+                        selected = value;
+                      });
+                    }, lines: data);
                   },
                 ),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  // ElevatedButton(
-                  //     onPressed: cancel,
-                  //     child: const Text(AppString.cancelLabel)),
-                  // ElevatedButton(
-                  //     onPressed: selectAll,
-                  //     child: Text(allIsSelected
-                  //         ? AppString.unSelectAll
-                  //         : AppString.selectAll)),
-                  // ElevatedButton(
-                  //     onPressed: validate,
-                  //     child: const Text(AppString.validateLabel)),
+                  ElevatedButton(
+                      onPressed: cancel,
+                      child: const Text(AppString.cancelLabel)),
+                  ElevatedButton(
+                      onPressed: selectAll,
+                      child: Text(allIsSelected
+                          ? AppString.unSelectAll
+                          : AppString.selectAll)),
+                  ElevatedButton(
+                      onPressed: validate,
+                      child: const Text(AppString.validateLabel)),
                 ],
               )
             ],
@@ -144,44 +146,61 @@ class _TerminusSelectorPageState extends State<TerminusSelectorPage> {
     return Container();
   }
 
-  // void selectAll() {
-  //   bool replaceValue = !allIsSelected;
-  //   if (allIsSelected) {
-  //     selectedTerminus = {};
-  //   } else {
-  //     for (var line in validBusLine!) {
-  //       selectedTerminus[line.id] =
-  //           line.oldDir.map((k, v) =>
-  //             MapEntry(k, v)
-  //           );
-  //     }
-  //   }
-  //   setState(() {});
-  // }
-  //
-  // void validate() {
-  //   if (validBusLine == null) {
-  //     cancel();
-  //     return;
-  //   }
-  //   List<BusLine> result = [];
-  //   for (var curLine in selectedTerminus.entries) {
-  //     BusLine line = validBusLine!.firstWhere((e) => e.id == curLine.key);
-  //     result.add(BusLine(line.id, line.name, line.color, directions: curLine.value));
-  //   }
-  //
-  //   Navigator.pop(context, result);
-  // }
-  //
-  // void cancel() {
-  //   Navigator.pop(context, null);
-  // }
-  //
-  ListView getListView(List<BusLine> lines) {
+  void selectAll() {
+    setState(() {
+      if (allIsSelected) {
+        selected = {};
+      } else {
+        for (var line in allLines!) {
+          selected.addAll(line.getLinesDirection());
+        }
+      }
+    });
+  }
+
+  void validate() {
+    if (allLines == null) {
+      cancel();
+      return;
+    }
+
+    Navigator.pop(context, selected);
+  }
+
+  void cancel() {
+    Navigator.pop(context, null);
+  }
+}
+
+class LineDirectionList extends StatefulWidget {
+  const LineDirectionList(
+      {super.key,
+      required this.selected,
+      required this.onChanged,
+      required this.lines});
+
+  final List<BusLine> lines;
+  final Set<LineDirection> selected;
+  final void Function(Set<LineDirection> value) onChanged;
+
+  @override
+  State<LineDirectionList> createState() => _LineDirectionListState();
+}
+
+class _LineDirectionListState extends State<LineDirectionList> {
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    setState(() {
+
+    });
+  }
+  @override
+  Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: lines.length,
+      itemCount: widget.lines.length,
       itemBuilder: (context, index) {
-        BusLine line = lines[index];
+        BusLine line = widget.lines[index];
 
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
@@ -204,7 +223,15 @@ class _TerminusSelectorPageState extends State<TerminusSelectorPage> {
                       ),
                     ],
                   ),
-                  DirectionSelector(line)
+                  DirectionSelector(
+                    line,
+                    previousData: widget.selected.where((e) => e.line == line).toSet(),
+                    onChanged: (value) {
+                      widget.selected.removeWhere((e) => e.line == line);
+                      widget.selected.addAll(
+                          value.map((e) => LineDirection.fromDir(line, e)));
+                    },
+                  )
                 ],
               ),
             ),
@@ -213,145 +240,4 @@ class _TerminusSelectorPageState extends State<TerminusSelectorPage> {
       },
     );
   }
-}
-
-class TerminusSelection extends StatefulWidget {
-  const TerminusSelection(this.entries, this.selected,
-      {required this.onChanged, super.key});
-
-  final List<String> selected;
-  final ValueChanged<List<String>> onChanged;
-  final List<String> entries;
-
-  @override
-  State<TerminusSelection> createState() => _TerminusSelectionState();
-}
-
-class _TerminusSelectionState extends State<TerminusSelection>
-    with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
-  late AnimationController expandController;
-  late Animation<double> animation;
-
-  bool isExpand = false;
-
-  @override
-  void initState() {
-    super.initState();
-    prepareAnimations();
-  }
-
-  @override
-  void dispose() {
-    expandController.dispose();
-    super.dispose();
-  }
-
-  void prepareAnimations() {
-    expandController = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 500));
-    animation = CurvedAnimation(
-      parent: expandController,
-      curve: Curves.fastOutSlowIn,
-    );
-  }
-
-  bool? checkIfAllSelected() {
-    final all =
-        widget.entries.every((e) => widget.selected.contains(e)) ? true : null;
-    final none = widget.selected.isEmpty ? false : null;
-    return all ?? none;
-  }
-
-  void expand() {
-    if (isExpand) {
-      isExpand = false;
-      expandController.reverse();
-    } else {
-      isExpand = true;
-      expandController.forward();
-    }
-  }
-
-  Widget buildEntries() {
-    return Column(
-      children: widget.entries.asMap().entries.map((e) {
-        String direction = e.value;
-        return Row(
-          children: [
-            Checkbox(
-              value: widget.selected.contains(e.value),
-              onChanged: (value) {
-                print(value);
-                if (value == false) {
-                  widget.onChanged(
-                      widget.selected.where((c) => c != e.value).toList());
-                } else {
-                  widget.onChanged(widget.selected + [e.value]);
-                }
-                setState(() {});
-              },
-            ),
-            Text(direction),
-          ],
-        );
-      }).toList(),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    super.build(context);
-
-    if (widget.entries.isEmpty) {
-      return Container();
-    }
-    return Column(
-      children: [
-        Row(
-          children: [
-            Checkbox(
-              value: checkIfAllSelected(),
-              tristate: true,
-              onChanged: (value) {
-                widget.onChanged(value == true ? widget.entries : []);
-                setState(() {});
-              },
-            ),
-            Expanded(
-              child: Text(
-                widget.entries[0],
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            if (widget.entries.length > 1)
-              TextButton(
-                  onPressed: expand,
-                  child: AnimatedBuilder(
-                      animation: animation,
-                      builder: (context, widget) => Transform.rotate(
-                          angle: animation.value * pi,
-                          child: const Icon(Icons.keyboard_arrow_down))))
-            else
-              Container(),
-          ],
-        ),
-        if (widget.entries.length > 1)
-          SizeTransition(
-            axisAlignment: 1,
-            sizeFactor: animation,
-            child: Padding(
-                padding: const EdgeInsets.only(left: 15.0),
-                child: buildEntries()),
-          )
-        else
-          Container(),
-        const Divider(),
-      ],
-    );
-  }
-
-  @override
-  bool get wantKeepAlive => true;
 }

@@ -24,6 +24,13 @@ class BusLine implements Comparable<BusLine> {
     };
   }
 
+  Set<LineDirection> getLinesDirection() {
+    return directions.map((e) =>
+        LineDirection.fromDir(this, e)
+    ).toSet();
+
+  }
+
   @override
   int get hashCode => id.hashCode ^ name.hashCode;
 
