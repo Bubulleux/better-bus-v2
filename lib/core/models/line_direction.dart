@@ -7,6 +7,7 @@ class Direction {
 
   const Direction(this.destination, this.directionId);
 
+
   @override
   int get hashCode => destination.hashCode;
 
@@ -25,6 +26,9 @@ class Directed implements Direction {
 
 class LineDirection extends Direction {
   const LineDirection(this.line, super.destination, super.directionId);
+
+  LineDirection.fromDir(BusLine line, Direction dir) :
+      this(line, dir.destination, dir.directionId);
 
   final BusLine line;
 
