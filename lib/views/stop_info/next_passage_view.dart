@@ -113,26 +113,15 @@ class NextPassageListWidgetState extends State<NextPassageListWidget> {
 
   void refresh() {
     futureBuilderKey.currentState!.refresh();
-    getData().then((_) {}, onError: (e, s) => print(s));
   }
 
   Future<List<StopTime>> getData() async {
     Timetable timetable =
         await FullProvider.of(context).getTimetable(widget.stop);
     List<StopTime> result = timetable.getNext().toList();
-    // TODO: Re implement filter
-    // if (widget.lines != null) {
-    //   result.removeWhere((element) {
-    //     for (BusLine line in widget.lines!) {
-    //       if (line.id == element.line.id &&
-    //           (line.goDirection.contains(element.destination) ||
-    //               line.backDirection.contains(element.destination))) {
-    //         return false;
-    //       }
-    //     }
-    //     return true;
-    //   });
-    // }
+    if (widget.direction != null) {
+      result.retainWhere((e) => widget.direction!.contains(e.direction));
+    }
 
     return result;
   }
