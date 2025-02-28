@@ -1,7 +1,10 @@
 import 'dart:convert';
 
+import 'package:better_bus_v2/core/full_provider.dart';
+import 'package:better_bus_v2/core/models/bus_line.dart';
 import 'package:better_bus_v2/custom_home_widget.dart';
 import 'package:better_bus_v2/views/common/messages.dart';
+import 'package:flutter/cupertino.dart';
 // import 'package:home_widget/home_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -14,7 +17,7 @@ class LocalDataHandler {
     preferences ??= await SharedPreferences.getInstance();
   }
 
-  static Future<List<ViewShortcut>> loadShortcut() async {
+  static Future<List<ViewShortcut>> loadShortcut(BuildContext ctx) async {
     await checkPreferences();
 
     List<String>? rawShortcuts = preferences!.getStringList("shortcuts");
@@ -22,9 +25,10 @@ class LocalDataHandler {
       return [];
     }
 
+    final lines = await FullProvider.of(ctx).getAllLines();
     List<ViewShortcut> shortcuts = [];
     for (String rawShortcut in rawShortcuts) {
-      shortcuts.add(ViewShortcut.fromJson(jsonDecode(rawShortcut)));
+      shortcuts.add(ViewShortcut.fromJson(jsonDecode(rawShortcut), lines));
     }
 
     return shortcuts;

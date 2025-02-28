@@ -114,7 +114,7 @@ class ShortcutWidgetRootState extends State<ShortcutWidgetRoot> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<ViewShortcut>>(
-      future: LocalDataHandler.loadShortcut(),
+      future: LocalDataHandler.loadShortcut(context),
       initialData: shortcuts,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
@@ -172,8 +172,8 @@ class ShortcutWidgetRootState extends State<ShortcutWidgetRoot> {
                 setState(() {});
               });
         } else if (snapshot.hasError) {
-          return const Center(
-            child: Text(AppString.errorLabel),
+          return Center(
+            child: Text(snapshot.error.toString()),
           );
         }
         return const Center(

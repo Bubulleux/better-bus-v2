@@ -223,7 +223,7 @@ class _ViewShortcutEditorPageState extends State<ViewShortcutEditorPage> {
 
     Navigator.pop(
         context,
-        ViewShortcut.v2(shortcutName, shortcutIsFavorite, shortcutBusStop!,
+        ViewShortcut(shortcutName, shortcutIsFavorite, shortcutBusStop!,
             directions));
   }
 
