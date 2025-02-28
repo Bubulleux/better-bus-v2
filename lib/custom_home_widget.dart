@@ -83,7 +83,7 @@ class CustomHomeWidgetRequest {
 
   static void launchShortcutByWidget(String shortcutRowId, BuildContext context) async {
     if (!available) return;
-    List<ViewShortcut> shortcuts = await LocalDataHandler.loadShortcut();
+    List<ViewShortcut> shortcuts = await LocalDataHandler.loadShortcut(context);
     int shortcutIndex = int.parse(shortcutRowId);
     if (shortcutIndex == -1 || !context.mounted) {
       return;

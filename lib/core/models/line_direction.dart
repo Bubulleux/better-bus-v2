@@ -30,6 +30,9 @@ class LineDirection extends Direction {
   LineDirection.fromDir(BusLine line, Direction dir) :
       this(line, dir.destination, dir.directionId);
 
+  LineDirection.fromJson(Map<String, dynamic> json, Map<String, BusLine> lines) :
+      this(lines[json["lineId"]]!, json["destination"], json["directionId"]);
+
   final BusLine line;
 
   @override
@@ -43,6 +46,14 @@ class LineDirection extends Direction {
   @override
   String toString() {
     return '{${line.id}, $destination, $directionId}';
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "lineId": line.id,
+      "destination": destination,
+      "directionId": directionId,
+    };
   }
 }
 
@@ -60,4 +71,8 @@ class LineDirected implements LineDirection {
   @override
   BusLine get line => direction.line;
 
+  @override
+  Map<String, dynamic> toJson() {
+    throw UnimplementedError();
+  }
 }
