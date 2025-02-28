@@ -1,5 +1,6 @@
 import 'package:better_bus_v2/app_constant/app_string.dart';
 import 'package:better_bus_v2/core/models/bus_line.dart';
+import 'package:better_bus_v2/core/models/line_direction.dart';
 import 'package:better_bus_v2/core/models/station.dart';
 import 'package:better_bus_v2/model/clean/view_shortcut.dart';
 import 'package:better_bus_v2/views/common/background.dart';
@@ -27,7 +28,8 @@ class _ViewShortcutEditorPageState extends State<ViewShortcutEditorPage> {
   String shortcutName = "";
   bool shortcutIsFavorite = false;
   Station? shortcutBusStop;
-  List<BusLine> shortCutBusLines = [];
+  // List<BusLine> shortCutBusLines = [];
+  List<LineDirection> directions = [];
 
   late TextEditingController textFieldNameController;
 
@@ -46,7 +48,7 @@ class _ViewShortcutEditorPageState extends State<ViewShortcutEditorPage> {
       shortcutName = shortcut!.shortcutName;
       shortcutIsFavorite = shortcut!.isFavorite;
       shortcutBusStop = shortcut!.stop;
-      shortCutBusLines = shortcut!.lines;
+      directions = shortcut!.direction;
     }
 
     textFieldNameController.text = shortcutName;
@@ -116,12 +118,12 @@ class _ViewShortcutEditorPageState extends State<ViewShortcutEditorPage> {
                         const SizedBox(
                           height: 5,
                         ),
-                        if (shortCutBusLines.isNotEmpty)
+                        if (directions.isNotEmpty)
                           Wrap(
                             runAlignment: WrapAlignment.start,
                             spacing: 5,
                             runSpacing: 5,
-                            children: shortCutBusLines
+                            children: directions.map((e) => e.line).toSet()
                                 .map((e) => LineWidget(e, 40))
                                 .toList(),
                           )
@@ -176,7 +178,7 @@ class _ViewShortcutEditorPageState extends State<ViewShortcutEditorPage> {
       }
       setState(() {
         shortcutBusStop = value as Station;
-        shortCutBusLines = [];
+        directions = [];
       });
     });
   }
@@ -187,12 +189,12 @@ class _ViewShortcutEditorPageState extends State<ViewShortcutEditorPage> {
       return;
     }
     Navigator.of(context).pushNamed(TerminusSelectorPage.routeName,
-        arguments: TerminusSelectorPageArgument(shortcutBusStop!, {}))
+        arguments: TerminusSelectorPageArgument(shortcutBusStop!, directions.toSet()))
         .then((value) {
       if (value == null || !mounted) {
         return;
       }
-      shortCutBusLines = value as List<BusLine>;
+      directions = (value as Set<LineDirection>).toList(growable: false);
       setState(() {});
     });
   }
@@ -202,7 +204,7 @@ class _ViewShortcutEditorPageState extends State<ViewShortcutEditorPage> {
       return AppString.setShortcutName;
     } else if (shortcutBusStop == null) {
       return AppString.emptyStopSelection;
-    } else if (shortCutBusLines.isEmpty) {
+    } else if (directions.isEmpty) {
       return AppString.emptyLineSelection;
     }
     return null;
@@ -221,8 +223,8 @@ class _ViewShortcutEditorPageState extends State<ViewShortcutEditorPage> {
 
     Navigator.pop(
         context,
-        ViewShortcut(shortcutName, shortcutIsFavorite, shortcutBusStop!,
-            shortCutBusLines));
+        ViewShortcut.v2(shortcutName, shortcutIsFavorite, shortcutBusStop!,
+            directions));
   }
 
   void cancel() {

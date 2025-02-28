@@ -103,7 +103,7 @@ class ShortcutWidgetRootState extends State<ShortcutWidgetRoot> {
   void showShortcutContent(int index) {
     Navigator.of(context).pushNamed(StopInfoPage.routeName,
         arguments: StopInfoPageArgument(
-            shortcuts![index].stop, shortcuts![index].lines));
+            shortcuts![index].stop, shortcuts![index].direction));
   }
 
   @override

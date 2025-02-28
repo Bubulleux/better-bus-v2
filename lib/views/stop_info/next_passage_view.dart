@@ -2,6 +2,7 @@ import 'package:better_bus_v2/app_constant/app_string.dart';
 import 'package:better_bus_v2/core/full_provider.dart';
 import 'package:better_bus_v2/core/models/bus_line.dart';
 import 'package:better_bus_v2/core/models/bus_trip.dart';
+import 'package:better_bus_v2/core/models/line_direction.dart';
 import 'package:better_bus_v2/core/models/station.dart';
 import 'package:better_bus_v2/core/models/stop_time.dart';
 import 'package:better_bus_v2/core/models/timetable.dart';
@@ -19,10 +20,10 @@ import 'dart:math';
 
 class NextPassagePage extends StatefulWidget {
   const NextPassagePage(this.stop,
-      {this.lines, this.minimal = false, super.key});
+      {this.direction, this.minimal = false, super.key});
 
   final Station stop;
-  final List<BusLine>? lines;
+  final List<LineDirection>? direction;
   final bool minimal;
 
   @override
@@ -41,7 +42,7 @@ class _NextPassagePageState extends State<NextPassagePage>
   @override
   void initState() {
     super.initState();
-    if (widget.lines == null || widget.minimal) {
+    if (widget.direction == null || widget.minimal) {
       seeAll = true;
     }
     seeAllAnimationController = AnimationController(
@@ -84,7 +85,7 @@ class _NextPassagePageState extends State<NextPassagePage>
             Expanded(
               child: NextPassageListWidget(
                 widget.stop,
-                seeAll && !widget.minimal ? null : widget.lines,
+                seeAll && !widget.minimal ? null : widget.direction,
                 key: nextPassageWidgetKey,
               ),
             ),
@@ -97,10 +98,10 @@ class _NextPassagePageState extends State<NextPassagePage>
 }
 
 class NextPassageListWidget extends StatefulWidget {
-  const NextPassageListWidget(this.stop, this.lines, {super.key});
+  const NextPassageListWidget(this.stop, this.direction, {super.key});
 
   final Station stop;
-  final List<BusLine>? lines;
+  final List<Direction>? direction;
 
   @override
   State<NextPassageListWidget> createState() => NextPassageListWidgetState();

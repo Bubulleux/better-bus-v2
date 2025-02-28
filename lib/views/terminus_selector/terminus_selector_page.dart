@@ -47,45 +47,6 @@ class _TerminusSelectorPageState extends State<TerminusSelectorPage> {
     return allLines!;
   }
 
-  // Future<List<BusLine>> getTerminus() async {
-  //   if (validBusLine != null) {
-  //     return validBusLine!;
-  //   }
-  //
-  //   List<BusLine> stopLines =
-  //       await FullProvider.of(context).getPassingLines(stop) ?? [];
-  //   stopLines.sort();
-  //   selectedTerminus = {for (var e in previousData) e.id: e.oldDir};
-  //
-  //   for (int i = 0; i < stopLines.length; i++) {
-  //     int previousLineIndex =
-  //         previousData.indexWhere((element) => element.id == stopLines[i].id);
-  //
-  //     if (previousLineIndex == -1) {
-  //       selectedTerminus.add(stopLines[i]
-  //           .direction
-  //           .values
-  //           .toList()
-  //           .map((e) => e.map((f) => false).toList())
-  //           .toList());
-  //       continue;
-  //     }
-  //     final line = previousData[previousLineIndex];
-  //
-  //     selectedTerminus.add(stopLines[i]
-  //         .direction
-  //         .entries
-  //         .toList()
-  //         .map((e) =>
-  //             e.value.map((f) => line.direction[e.key]!.contains(f)).toList())
-  //         .toList());
-  //
-  //     setState(() {});
-  //   }
-  //
-  //   validBusLine = stopLines;
-  //   return stopLines;
-  // }
 
   @override
   void initState() {
@@ -100,6 +61,9 @@ class _TerminusSelectorPageState extends State<TerminusSelectorPage> {
         .arguments as TerminusSelectorPageArgument;
     stop = argument.stop;
     previousData = argument.previousData;
+    setState(() {
+      selected = previousData.toSet();
+    });
   }
 
   @override
@@ -114,29 +78,41 @@ class _TerminusSelectorPageState extends State<TerminusSelectorPage> {
                   future: getData,
                   onData: (ctx, data, r) {
                     return LineDirectionList(selected: selected, onChanged: (value) {
-                      r();
                       setState(() {
-                        selected = value;
                       });
                     }, lines: data);
                   },
                 ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  ElevatedButton(
-                      onPressed: cancel,
-                      child: const Text(AppString.cancelLabel)),
-                  ElevatedButton(
-                      onPressed: selectAll,
-                      child: Text(allIsSelected
-                          ? AppString.unSelectAll
-                          : AppString.selectAll)),
-                  ElevatedButton(
-                      onPressed: validate,
-                      child: const Text(AppString.validateLabel)),
-                ],
+              Material(
+                elevation: 2,
+                //color: Colors.transparent,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 8),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(child: Text(AppString.selectAll)),
+                          Switch(value: allIsSelected, onChanged: (_) => selectAll())
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          ElevatedButton(
+                              onPressed: cancel,
+                              child: const Text(AppString.cancelLabel)),
+
+                          ElevatedButton(
+                              onPressed: validate,
+                              child: const Text(AppString.validateLabel)),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
               )
             ],
           ),
@@ -189,15 +165,9 @@ class LineDirectionList extends StatefulWidget {
 
 class _LineDirectionListState extends State<LineDirectionList> {
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    setState(() {
-
-    });
-  }
-  @override
   Widget build(BuildContext context) {
     return ListView.builder(
+      clipBehavior: Clip.none,
       itemCount: widget.lines.length,
       itemBuilder: (context, index) {
         BusLine line = widget.lines[index];
@@ -225,11 +195,14 @@ class _LineDirectionListState extends State<LineDirectionList> {
                   ),
                   DirectionSelector(
                     line,
-                    previousData: widget.selected.where((e) => e.line == line).toSet(),
+                    selected: widget.selected.where((e) => e.line == line).toSet(),
                     onChanged: (value) {
-                      widget.selected.removeWhere((e) => e.line == line);
-                      widget.selected.addAll(
-                          value.map((e) => LineDirection.fromDir(line, e)));
+                      setState(() {
+                        widget.selected.removeWhere((e) => e.line == line);
+                        widget.selected.addAll(
+                            value.map((e) => LineDirection.fromDir(line, e)));
+                        widget.onChanged(widget.selected);
+                      });
                     },
                   )
                 ],

@@ -1,5 +1,6 @@
 import 'package:better_bus_v2/app_constant/app_string.dart';
 import 'package:better_bus_v2/core/models/bus_line.dart';
+import 'package:better_bus_v2/core/models/line_direction.dart';
 import 'package:better_bus_v2/core/models/station.dart';
 import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
 import 'package:better_bus_v2/views/common/back_arrow.dart';
@@ -14,10 +15,10 @@ import 'package:latlong2/latlong.dart';
 
 class StopInfoPageArgument {
   final Station stop;
-  final List<BusLine>? lines;
+  final List<LineDirection>? direction;
   final bool fromMap;
 
-  const StopInfoPageArgument(this.stop, this.lines,  {this.fromMap = false});
+  const StopInfoPageArgument(this.stop, this.direction,  {this.fromMap = false});
 }
 
 class StopInfoPage extends StatefulWidget {
@@ -32,7 +33,7 @@ class _StopInfoPageState extends State<StopInfoPage>
     with SingleTickerProviderStateMixin {
   late final TabController tabController;
   Station? stop;
-  List<BusLine>? lines;
+  List<LineDirection>? direction;
   late bool fromMap = false;
   double? busStopDistance;
 
@@ -51,7 +52,7 @@ class _StopInfoPageState extends State<StopInfoPage>
     if (stop == null) {
       setState(() {
         stop = argument.stop;
-        lines = argument.lines;
+        direction = argument.direction;
         fromMap = argument.fromMap;
         getBusStopDistance();
       });
@@ -74,7 +75,7 @@ class _StopInfoPageState extends State<StopInfoPage>
       }
       setState(() {
         stop = value as Station;
-        lines = null;
+        direction = null;
       });
     });
   }
@@ -166,7 +167,7 @@ class _StopInfoPageState extends State<StopInfoPage>
                 controller: tabController,
                 key: ObjectKey(stop),
                 children: [
-                  NextPassagePage(stop!, lines: lines),
+                  NextPassagePage(stop!, direction: direction,),
                   TimeTableView(stop!),
                 ],
               ),
