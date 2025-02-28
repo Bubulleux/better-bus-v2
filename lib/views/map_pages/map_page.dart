@@ -189,6 +189,7 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
                     onStationClick: (Station v) => setState(() {
                       focusStation = v;
                       focusedStop = null;
+                      focusedPlace = null;
                     }),
                     onStopClick: (int i) => setState(() {
                       focusedStop = i;
