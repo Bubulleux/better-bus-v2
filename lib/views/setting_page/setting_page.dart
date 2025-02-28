@@ -1,10 +1,12 @@
 import 'package:better_bus_v2/app_constant/app_string.dart';
+import 'package:better_bus_v2/core/full_provider.dart';
 import 'package:better_bus_v2/custom_home_widget.dart';
 import 'package:better_bus_v2/data_provider/cache_data_provider.dart';
 import 'package:better_bus_v2/data_provider/gtfs_data_provider.dart';
 import 'package:better_bus_v2/data_provider/local_data_handler.dart';
 import 'package:better_bus_v2/info_traffic_notification.dart';
 import 'package:better_bus_v2/views/common/back_arrow.dart';
+import 'package:better_bus_v2/views/common/gtfs_download_indicator.dart';
 import 'package:better_bus_v2/views/common/messages.dart';
 import 'package:better_bus_v2/views/common/title_bar.dart';
 import 'package:better_bus_v2/views/interest_line_page/interest_lines_page.dart';
@@ -86,11 +88,16 @@ class _SettingPageState extends State<SettingPage> {
   }
 
   void reDownloadGTFSData() async {
-    AlertDialog alert = const AlertDialog(
+    final downloader = FullProvider.of(context).gtfs.provider;
+    AlertDialog alert = AlertDialog(
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          CircularProgressIndicator(),
+          GtfsDownloadIndicator(
+            width: 150,
+              downloader: downloader,
+            onDone: () => Navigator.of(context).pop(),
+          )
         ],
       ),
     );
@@ -98,8 +105,7 @@ class _SettingPageState extends State<SettingPage> {
         context: context,
         builder: (context) => alert,
         barrierDismissible: false);
-    await GTFSDataProvider.loadFile(forceDownload: true);
-    Navigator.of(context).pop();
+
   }
 
   List<SettingEntry> getOptions() {
