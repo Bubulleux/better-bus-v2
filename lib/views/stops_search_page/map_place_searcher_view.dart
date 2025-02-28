@@ -1,8 +1,7 @@
 import 'dart:convert';
 
 import 'package:better_bus_v2/app_constant/app_string.dart';
-import 'package:better_bus_v2/core/full_provider.dart';
-import 'package:better_bus_v2/core/models/place.dart';
+import 'package:better_bus_core/core.dart';
 import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
 import 'package:better_bus_v2/error_handler/custom_error.dart';
 import 'package:better_bus_v2/views/common/custom_future.dart';

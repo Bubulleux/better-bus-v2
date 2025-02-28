@@ -1,9 +1,7 @@
 import 'dart:async';
 
 import 'package:better_bus_v2/app_constant/app_string.dart';
-import 'package:better_bus_v2/core/full_provider.dart';
-import 'package:better_bus_v2/core/models/place.dart';
-import 'package:better_bus_v2/core/models/station.dart';
+import 'package:better_bus_core/core.dart';
 import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
 import 'package:better_bus_v2/views/common/fake_text_field.dart';
 import 'package:better_bus_v2/views/map_pages/easter_eggs_layer.dart';

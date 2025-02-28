@@ -1,6 +1,5 @@
 import 'package:better_bus_v2/app_constant/app_string.dart';
-import 'package:better_bus_v2/core/api_provider.dart';
-import 'package:better_bus_v2/core/models/traffic_info.dart';
+import 'package:better_bus_core/core.dart';
 import 'package:better_bus_v2/data_provider/connectivity_checker.dart';
 import 'package:better_bus_v2/data_provider/local_data_handler.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';

@@ -1,8 +1,6 @@
 import 'dart:math';
 
-import 'package:better_bus_v2/core/full_provider.dart';
-import 'package:better_bus_v2/core/models/line_direction.dart';
-import 'package:better_bus_v2/core/models/station.dart';
+import 'package:better_bus_core/core.dart';
 import 'package:better_bus_v2/views/stop_info/next_passage_view.dart';
 import 'package:better_bus_v2/views/stops_search_page/stops_search_page.dart';
 import 'package:flutter/material.dart';

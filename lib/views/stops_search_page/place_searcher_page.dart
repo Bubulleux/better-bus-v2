@@ -1,5 +1,4 @@
-import 'package:better_bus_v2/core/models/place.dart';
-import 'package:better_bus_v2/core/models/station.dart';
+import 'package:better_bus_core/core.dart';
 import 'package:better_bus_v2/views/common/background.dart';
 import 'package:better_bus_v2/views/common/custom_text_field.dart';
 import 'package:better_bus_v2/views/common/decorations.dart';

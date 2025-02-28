@@ -1,4 +1,4 @@
-import 'package:better_bus_v2/data_provider/cache_data_provider.dart';
+import 'package:better_bus_core/core.dart';
 
 const String versionURL = "https://pastebin.com/raw/0uFw7Vze";
 const CacheDataProvider cache = CacheDataProvider(key: "version", expiration: Duration(days: 1));

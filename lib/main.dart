@@ -1,8 +1,6 @@
 import 'dart:async';
 
-import 'package:better_bus_v2/core/api_provider.dart';
-import 'package:better_bus_v2/core/full_provider.dart';
-import 'package:better_bus_v2/core/gtfs_provider.dart';
+import 'package:better_bus_core/core.dart';
 import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
 import 'package:better_bus_v2/info_traffic_notification.dart';
 import 'package:better_bus_v2/model/app_paths.dart';

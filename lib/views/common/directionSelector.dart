@@ -1,5 +1,4 @@
-import 'package:better_bus_v2/core/models/bus_line.dart';
-import 'package:better_bus_v2/core/models/line_direction.dart';
+import 'package:better_bus_core/core.dart';
 import 'package:flutter/material.dart';
 
 class DirectionSelector extends StatefulWidget {

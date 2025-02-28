@@ -4,7 +4,7 @@ import 'package:better_bus_v2/views/common/wheel_scroll_selector.dart';
 import 'package:better_bus_v2/views/route_page/route_page.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:better_bus_v2/helper.dart';
+import 'package:better_bus_core/core.dart';
 
 class RouteTimePicker extends StatefulWidget {
   const RouteTimePicker(this.parameter, {super.key});

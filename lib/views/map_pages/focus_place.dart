@@ -1,4 +1,4 @@
-import 'package:better_bus_v2/core/models/place.dart';
+import 'package:better_bus_core/core.dart';
 import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';

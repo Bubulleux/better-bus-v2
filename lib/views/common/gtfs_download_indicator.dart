@@ -1,4 +1,4 @@
-import 'package:better_bus_v2/core/gtfs_downloader.dart';
+import 'package:better_bus_core/core.dart';
 import 'package:flutter/material.dart';
 
 class GtfsDownloadIndicator extends StatefulWidget {

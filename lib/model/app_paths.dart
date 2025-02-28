@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:better_bus_v2/core/models/gtfs/gtfs_path.dart';
+import 'package:better_bus_core/core.dart';
 import 'package:path_provider/path_provider.dart';
 
 class AppPaths extends GTFSPaths {

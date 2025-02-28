@@ -1,5 +1,4 @@
-import 'package:better_bus_v2/core/models/bus_trip.dart';
-import 'package:better_bus_v2/core/models/station.dart';
+import 'package:better_bus_core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';

@@ -1,7 +1,4 @@
-
-import 'package:better_bus_v2/core/full_provider.dart';
-import 'package:better_bus_v2/core/models/bus_line.dart';
-import 'package:better_bus_v2/core/models/station.dart';
+import 'package:better_bus_core/core.dart';
 import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
 import 'package:better_bus_v2/views/common/decorations.dart';
 import 'package:better_bus_v2/views/common/error_handler.dart';

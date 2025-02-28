@@ -1,8 +1,6 @@
 
 import 'package:better_bus_v2/app_constant/app_string.dart';
-import 'package:better_bus_v2/core/models/bus_line.dart';
-import 'package:better_bus_v2/core/models/place.dart';
-import 'package:better_bus_v2/core/models/station.dart';
+import 'package:better_bus_core/core.dart';
 import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
 import 'package:better_bus_v2/views/common/background.dart';
 import 'package:better_bus_v2/views/common/custom_text_field.dart';

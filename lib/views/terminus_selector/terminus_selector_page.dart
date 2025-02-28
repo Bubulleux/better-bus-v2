@@ -1,9 +1,6 @@
 
 import 'package:better_bus_v2/app_constant/app_string.dart';
-import 'package:better_bus_v2/core/full_provider.dart';
-import 'package:better_bus_v2/core/models/bus_line.dart';
-import 'package:better_bus_v2/core/models/line_direction.dart';
-import 'package:better_bus_v2/core/models/station.dart';
+import 'package:better_bus_core/core.dart';
 import 'package:better_bus_v2/views/common/background.dart';
 import 'package:better_bus_v2/views/common/content_container.dart';
 import 'package:better_bus_v2/views/common/custom_future.dart';

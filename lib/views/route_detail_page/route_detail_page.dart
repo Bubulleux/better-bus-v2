@@ -1,5 +1,5 @@
 import 'package:better_bus_v2/app_constant/app_string.dart';
-import 'package:better_bus_v2/core/models/api/route.dart';
+import 'package:better_bus_core/core.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
 import 'package:better_bus_v2/views/route_detail_page/route_step_tab.dart';
 import 'package:flutter/material.dart';

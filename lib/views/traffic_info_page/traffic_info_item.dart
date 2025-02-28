@@ -1,5 +1,4 @@
-import 'package:better_bus_v2/core/models/bus_line.dart';
-import 'package:better_bus_v2/core/models/traffic_info.dart';
+import 'package:better_bus_core/core.dart';
 import 'package:better_bus_v2/views/common/decorations.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
 import 'package:flutter/material.dart';

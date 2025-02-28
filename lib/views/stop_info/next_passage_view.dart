@@ -1,9 +1,5 @@
 import 'package:better_bus_v2/app_constant/app_string.dart';
-import 'package:better_bus_v2/core/full_provider.dart';
-import 'package:better_bus_v2/core/models/line_direction.dart';
-import 'package:better_bus_v2/core/models/station.dart';
-import 'package:better_bus_v2/core/models/stop_time.dart';
-import 'package:better_bus_v2/core/models/timetable.dart';
+import 'package:better_bus_core/core.dart';
 import 'package:better_bus_v2/error_handler/custom_error.dart';
 import 'package:better_bus_v2/views/common/custom_future.dart';
 import 'package:better_bus_v2/views/common/extendable_view.dart';

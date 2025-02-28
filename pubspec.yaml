@@ -26,6 +26,9 @@ environment:
 # dependencies can be manually updated by changing the version numbers below to
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
+workspace:
+  - packages/better_bus_core
+
 dependencies:
   flutter:
     sdk: flutter
@@ -56,6 +59,7 @@ dependencies:
   latlong2: any
   collection: any
   provider: ^6.1.2
+  better_bus_core: any
 
 dev_dependencies:
   flutter_test:
