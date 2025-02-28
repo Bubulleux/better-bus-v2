@@ -96,7 +96,7 @@ class CustomHomeWidgetRequest {
         (route.settings.arguments as StopInfoPageArgument?)?.stop !=
             shortcut.stop));
     Navigator.of(context).pushNamed(StopInfoPage.routeName,
-        arguments: StopInfoPageArgument(shortcut.stop, shortcut.lines));
+        arguments: StopInfoPageArgument(shortcut.stop, shortcut.direction));
   }
 
 

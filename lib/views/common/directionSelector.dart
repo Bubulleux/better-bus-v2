@@ -3,10 +3,11 @@ import 'package:better_bus_v2/core/models/line_direction.dart';
 import 'package:flutter/material.dart';
 
 class DirectionSelector extends StatefulWidget {
-  const DirectionSelector(this.line, {required this.previousData, required this.onChanged, super.key});
+  const DirectionSelector(this.line,
+      {required this.selected, required this.onChanged, super.key});
 
   final BusLine line;
-  final Set<Direction> previousData;
+  final Set<Direction> selected;
   final void Function(Set<Direction> value) onChanged;
 
   @override
@@ -14,38 +15,14 @@ class DirectionSelector extends StatefulWidget {
 }
 
 class _DirectionSelectorState extends State<DirectionSelector> {
-  Set<Direction> selected = {};
-
-  @override
-  void initState() {
-    super.initState();
-    selected = widget.previousData;
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    setState(() {
-      selected = widget.previousData;
-      print(selected);
-    });
-  }
-  @override
-  void setState(VoidCallback fn) {
-    super.setState(fn);
-    widget.onChanged(selected);
-  }
-
   void directionArrowClicked(int dirId) {
     final direction =
-        widget.line.directions.where((e) => e.directionId == dirId).toList();
-    setState(() {
-      if (selected.containsAll(direction)) {
-        selected.removeAll(direction);
-      } else {
-        selected.addAll(direction);
-      }
-    });
+        widget.line.directions.where((e) => e.directionId == dirId).toSet();
+    if (widget.selected.containsAll(direction)) {
+      widget.onChanged(widget.selected.difference(direction));
+    } else {
+      widget.onChanged({...widget.selected, ...direction});
+    }
   }
 
   Widget _buildArrow(int direction, bool? state) {
@@ -56,7 +33,7 @@ class _DirectionSelectorState extends State<DirectionSelector> {
       onTap: () => directionArrowClicked(direction),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 100),
-        margin: EdgeInsets.all(5),
+        margin: const EdgeInsets.all(5),
         width: 30,
         height: 30,
         decoration: BoxDecoration(
@@ -78,8 +55,8 @@ class _DirectionSelectorState extends State<DirectionSelector> {
     assert(dirId == 1 || dirId == 0);
     final directions =
         widget.line.directions.where((e) => e.directionId == dirId).toSet();
-    bool? arrowState = selected.containsAll(directions);
-    if (!arrowState && selected.intersection(directions).isNotEmpty)
+    bool? arrowState = widget.selected.containsAll(directions);
+    if (!arrowState && widget.selected.intersection(directions).isNotEmpty)
       arrowState = null;
 
     final out = [
@@ -97,19 +74,19 @@ class _DirectionSelectorState extends State<DirectionSelector> {
   }
 
   void directionClicked(Direction direction) {
-    setState(() {
-      if (selected.contains(direction)) {
-        selected.remove(direction);
-      } else {
-        selected.add(direction);
-      }
-    });
+    final out = widget.selected.toSet();
+    if (widget.selected.contains(direction)) {
+      out.remove(direction);
+    } else {
+      out.add(direction);
+    }
+    widget.onChanged(out);
   }
 
   Widget _buildOneDirection(Direction direction) {
     final out = [
       Checkbox(
-        value: selected.contains(direction),
+        value: widget.selected.contains(direction),
         onChanged: (value) => directionClicked(direction),
         visualDensity: const VisualDensity(horizontal: -3, vertical: -4),
       ),
@@ -136,8 +113,6 @@ class _DirectionSelectorState extends State<DirectionSelector> {
 
   @override
   Widget build(BuildContext context) {
-    print("Build Dir");
-    print(selected);
     List<Direction> top =
         widget.line.directions.where((e) => e.directionId == 1).toList();
     List<Direction> bot =
@@ -164,7 +139,9 @@ class _DirectionSelectorState extends State<DirectionSelector> {
                       children: top.map((e) => _buildOneDirection(e)).toList(),
                     ),
                   ),
-                  Divider(thickness: 2,),
+                  Divider(
+                    thickness: 2,
+                  ),
                 ]
               : [],
           _buildDirections(

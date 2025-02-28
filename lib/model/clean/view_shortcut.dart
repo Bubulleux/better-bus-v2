@@ -1,10 +1,20 @@
 
 import 'package:better_bus_v2/core/models/bus_line.dart';
+import 'package:better_bus_v2/core/models/line_direction.dart';
 import 'package:better_bus_v2/core/models/station.dart';
 
 
 class ViewShortcut {
-  ViewShortcut(this.shortcutName, this.isFavorite,  this.stop, this.lines);
+  ViewShortcut(this.shortcutName, this.isFavorite,  this.stop, List<BusLine> lines) {
+    direction = [];
+    for (var l in lines) {
+      direction.addAll(l.directions.map(
+        (d) => LineDirection.fromDir(l, d)
+    ));
+    }
+  }
+
+  ViewShortcut.v2(this.shortcutName, this.isFavorite, this.stop, this.direction);
 
   factory ViewShortcut.fromJson(Map<String, dynamic> json) {
     print(json["lines"]);
@@ -27,6 +37,8 @@ class ViewShortcut {
 
   String shortcutName;
   Station stop;
-  List<BusLine> lines;
+  late List<LineDirection> direction;
+  @deprecated
+  List<BusLine> get lines => direction.map((e) => e.line).toSet().toList(growable: false) ;
   bool isFavorite;
 }
