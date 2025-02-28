@@ -1,9 +1,8 @@
 import 'package:better_bus_v2/app_constant/app_string.dart';
+import 'package:better_bus_v2/core/api_provider.dart';
+import 'package:better_bus_v2/core/models/traffic_info.dart';
 import 'package:better_bus_v2/data_provider/connectivity_checker.dart';
-import 'package:better_bus_v2/data_provider/gtfs_data_provider.dart';
 import 'package:better_bus_v2/data_provider/local_data_handler.dart';
-import 'package:better_bus_v2/data_provider/vitalis_data_provider.dart';
-import 'package:better_bus_v2/model/clean/info_traffic.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/intl.dart';
 
@@ -11,7 +10,7 @@ final DateFormat dateFormat = DateFormat("EEEE d MMMM", "fr");
 
 Future<bool> checkInfoTraffic() async {
   // await LocalDataHandler.addLog("Start function");
-  GTFSDataProvider.downloadFile();
+  //GTFSDataProvider.downloadFile();
 
   FlutterLocalNotificationsPlugin flip = FlutterLocalNotificationsPlugin();
   // await LocalDataHandler.addLog("Sep 1");
@@ -45,7 +44,9 @@ Future<bool> checkInfoTraffic() async {
     return true;
   }
   // await LocalDataHandler.addLog("Sep 6");
-  List<InfoTraffic> infoTraffics = await VitalisDataProvider.getTrafficInfo();
+  final provider = ApiProvider.vitalis();
+  await provider.init();
+  List<InfoTraffic> infoTraffics = await provider.getTrafficInfos();
   Set<String> interestedBusLines = await LocalDataHandler.loadInterestedLine();
   Set<int>? alreadyPushNotifications = await LocalDataHandler.loadAlreadyPushNotification();
   DateTime lastNotificationPush = await LocalDataHandler.getLastNotificationPush();

@@ -1,7 +1,7 @@
 
 import 'package:better_bus_v2/app_constant/app_string.dart';
-import 'package:better_bus_v2/data_provider/vitalis_data_provider.dart';
-import 'package:better_bus_v2/model/clean/bus_stop.dart';
+import 'package:better_bus_v2/core/full_provider.dart';
+import 'package:better_bus_v2/core/models/station.dart';
 import 'package:flutter/material.dart';
 
 class StopSearcher extends StatefulWidget {
@@ -13,7 +13,7 @@ class StopSearcher extends StatefulWidget {
 
 class _StopSearcherState extends State<StopSearcher> {
   _StopSearcherState() {
-    VitalisDataProvider.getStops().then((value) => {
+    FullProvider.of(context).getStations().then((value) => {
           setState(() {
             busStops = value;
           })
@@ -21,7 +21,7 @@ class _StopSearcherState extends State<StopSearcher> {
   }
 
   bool showResult = false;
-  List<BusStop>? busStops;
+  List<Station>? busStops;
 
 
   void fieldFocusChange(bool focus) {

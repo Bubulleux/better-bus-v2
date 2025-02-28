@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:better_bus_v2/core/bus_network.dart';
+import 'package:better_bus_v2/core/models/api/expection.dart';
 import 'package:better_bus_v2/core/models/api/line_timetable.dart';
+import 'package:better_bus_v2/core/models/api/place.dart';
 import 'package:better_bus_v2/core/models/api/route.dart';
 import 'package:better_bus_v2/core/models/bus_line.dart';
 import 'package:better_bus_v2/core/models/api/json.dart';
@@ -12,7 +14,7 @@ import 'package:better_bus_v2/core/models/stop_time.dart';
 import 'package:better_bus_v2/core/models/timetable.dart';
 import 'package:better_bus_v2/core/models/traffic_info.dart';
 import 'package:better_bus_v2/data_provider/cache_data_provider.dart';
-import 'package:better_bus_v2/data_provider/vitalis_data_provider.dart';
+
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
@@ -241,5 +243,26 @@ class ApiProvider extends BusNetwork {
         .map((e) => VitalisRoute.fromJson(e))
         .toList()
         .cast<VitalisRoute>();
+  }
+
+  // TODO Move to another file
+  Future<List<Place>> getPlaceAutoComplete(String input) async {
+    Uri uri =
+    Uri.parse("https://autosuggest.search.hereapi.com/v1/autosuggest");
+    uri = uri.replace(queryParameters: {
+      // "types": "address,place",
+      "q": input.replaceAll(" ", "+"),
+      "in": "circle:46.56690062723211,0.34005607254464293;r=50000",
+      "apiKey": "ESWcIHAoVm5EPLoAva-cz0lnaH_NnUZGv4WhmoneSRI",
+    });
+
+    Map<String, dynamic> json = await _sendRequest(uri, needToken: false);
+    List<Place> output = [];
+    for (Map<String, dynamic> e in json["items"]) {
+      if (e.containsKey("position")) {
+        output.add(JsonPlace(e));
+      }
+    }
+    return output;
   }
 }
