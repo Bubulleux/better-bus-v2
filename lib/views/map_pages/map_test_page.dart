@@ -37,7 +37,7 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
   late MapController controller;
-  late Map<LatLng, Station> stopsPos;
+  Map<LatLng, Station>? stopsPos;
   Station? focusStation;
   int? focusedStop;
   Place? focusedPlace;
@@ -86,7 +86,7 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
 
   void LatLngClicked(LatLng point) {
     setState(() {
-      focusStation = stopsPos[point];
+      focusStation = stopsPos![point];
     });
   }
 
@@ -100,25 +100,6 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
     return true;
   }
 
-  MarkerLayer getStopsLayer() {
-    List<Marker> markers = [];
-    for (var stop in stopsPos.keys) {
-      markers.add(Marker(
-        point: stop,
-        child: ElevatedButton(
-            onPressed: () => setState(() {
-                  focusStation = stopsPos[stop];
-                }),
-            style: ElevatedButton.styleFrom(padding: const EdgeInsets.all(0)),
-            child: const Icon(
-              Icons.directions_bus,
-              size: 20,
-            )),
-      ));
-    }
-
-    return MarkerLayer(markers: markers);
-  }
 
   Future goToSearch() async {
     Place? place = await (Navigator.of(context)
@@ -204,7 +185,7 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
                     // Plenty of other options available!
                   ),
                   StopsMapLayer(
-                    stops: stopsPos.values.toList(),
+                    stops: stopsPos?.values.toList() ?? [],
                     onStationClick: (Station v) => setState(() {
                       focusStation = v;
                       focusedStop = null;

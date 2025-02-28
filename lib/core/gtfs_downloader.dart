@@ -9,7 +9,7 @@ import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
 import 'package:http/http.dart' as http;
 
-// TODO: Old Downloader class maybe refactor
+
 class DatasetMetadata {
   Uri ressourceUri;
   DateTime updateTime;
@@ -22,19 +22,12 @@ class GTFSDataDownloader {
     required this.dataSetAPI,
     required this.gtfsFileURL,
     required this.paths,
-    // this.gtfsFilePath = "/gtfs.zip",
-    // this.gtfsDirPath = "/gtfs",
-    // required this.downloadDirectory,
-    // required this.gtfsDirectory,
   });
 
   final Uri dataSetAPI;
   final Uri gtfsFileURL;
   GTFSPaths paths;
-  // final String gtfsFilePath;
-  // final String gtfsDirPath;
-  // final Directory downloadDirectory;
-  // final Directory gtfsDirectory;
+
 
   GTFSData? _gtfsData;
 
@@ -55,7 +48,6 @@ class GTFSDataDownloader {
   }
 
   Future<GTFSData?> loadFile() async {
-    // TODO: Remove Path provider
     Directory gtfsDir = Directory(paths.extractDir);
 
     Map<String, CSVTable> files = loadFiles(gtfsDir);
@@ -73,49 +65,75 @@ class GTFSDataDownloader {
       if (e is! File) continue;
 
       File file = e;
+      if (!file.path.endsWith(".txt")) continue;
       files[basename(file.path)] = CSVTable.fromFile(file);
     }
     return files;
   }
 
-  // TODO: forceDownload is Removed Need to be checked
-
-  Future<bool> isDownloadNeeded(DateTime? lastUpdate) async {
-    if (lastUpdate == null) {
-      return true;
-    }
-    DatasetMetadata metadata = await getFileMetaData();
-    return metadata.updateTime.isAfter(lastUpdate);
-  }
-
-  Future<bool> downloadFile() async {
+  Future<bool> downloadFile(
+      {void Function(double progress)? onProgress}) async {
     // TODO: Remove or handle getDownloadWhenWifi
-    // bool downloadWhenWifi = await LocalDataHandler.getDownloadWhenWifi();
-    // bool isWifiConnected = await ConnectivityChecker.isWifiConnected();
-    // if (downloadWhenWifi && !isWifiConnected && !forceDownload) {
-    //   return false;
-    // }
 
-    late HttpClientResponse? response;
+    final lastUpdate = await getDownloadDate();
+
+    late http.StreamedResponse response;
+    final client = http.Client();
+    final List<int> bytes = [];
+    var received = 0;
     try {
       DatasetMetadata metadata = await getFileMetaData();
+      if (lastUpdate != null && metadata.updateTime.isBefore(lastUpdate)) {
+        print("Download abord recent data found");
+        return false;
+      }
 
-      HttpClient client = HttpClient();
-      var request = await client.getUrl(metadata.ressourceUri);
-      response = await request.close();
-      if (response.statusCode != 200) return false;
+      final request = http.Request("GET", metadata.ressourceUri);
+      response = await client.send(request);
+      final total = response.contentLength ?? 0;
+
+      await for (var value in response.stream) {
+        bytes.addAll(value);
+        received += value.length;
+        onProgress?.call(received / total);
+      }
     } on Exception {
       return false;
     }
 
-    var bytes = await consolidateHttpClientResponseBytes(response);
-    await File(paths.gtfsFilePath).writeAsBytes(bytes);
+    final file = File(paths.gtfsFilePath);
+    await file.writeAsBytes(bytes);
 
     await extractZipFile();
-    // TODO: Need to be reimplmented
-    //await LocalDataHandler.setGTFSDownloadDate(DateTime.now());
+    await setDownloadDate(DateTime.now());
 
     return true;
+  }
+
+  Future<void> forceDownload({void Function(double value)? onProgress}) async {
+    await setDownloadDate(null);
+    await downloadFile(onProgress: onProgress);
+    _gtfsData = await loadFile();
+  }
+
+  Future<void> setDownloadDate(DateTime? time) async {
+    final file = File("${paths.extractDir}download-date");
+    if (time == null) {
+      await file.delete();
+      return;
+    }
+
+    await file.writeAsString(time.millisecondsSinceEpoch.toString());
+  }
+
+  Future<DateTime?> getDownloadDate() async {
+    final file = File("${paths.extractDir}download-date");
+    if (!await file.exists()) return null;
+    final content = await file.readAsString();
+    final value = int.tryParse(content);
+    if (value == null) return null;
+
+    return DateTime.fromMillisecondsSinceEpoch(value);
   }
 
   Future<DatasetMetadata> getFileMetaData() async {

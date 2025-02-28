@@ -31,7 +31,7 @@ void main() async {
   });
   const stationName = "Northampton";
   const lineId = "2B";
-  const directionId = 1;
+  const directionId = 0;
 
   // TODO: Need to be tested
   group("Test Vitalis Api reponse", () {
@@ -123,11 +123,23 @@ void testNetwork(BusNetwork network, String testStationName, String lineTestName
 
 void testGTFSDownloader(GTFSDataDownloader downloader) {
   test("Test downloader getData()", () async {
-    final data = await downloader.getData();
+    var downloadDate = await downloader.getDownloadDate();
+    expect(downloadDate, isNull);
+
+    var sucess = await downloader.downloadFile();
+    expect(sucess, isTrue);
+
+    downloadDate = await downloader.getDownloadDate();
+    expect(downloadDate, isNotNull);
+
+    final data = await downloader.loadFile();
     expect(data, isNotNull);
-    if (data == null) {
-      return;
-    }
+
+    sucess = await downloader.downloadFile();
+    expect(sucess, isFalse);
+
+    if (data == null) return;
+
     expect(data.stations, isNotEmpty);
     expect(data.stopTime, isNotEmpty);
     expect(data.routes, isNotEmpty);

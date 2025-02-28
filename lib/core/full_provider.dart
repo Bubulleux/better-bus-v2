@@ -51,7 +51,7 @@ class FullProvider extends BusNetwork {
   @override
   Future<List<Station>> getStations() => preferGtfs.getStations();
 
-  // TODO: Prefet api and GTFS
+
   @override
   Future<Timetable> getTimetable(Station station) async {
     if (!gtfs.isAvailable() || !api.isAvailable()) {

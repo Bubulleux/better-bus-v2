@@ -107,51 +107,6 @@ class ApiProvider extends BusNetwork {
       realTime.add(JsonStopTime(rawPassage, 0, station));
     }
     return ConstTimetable(station, DateTime.now(), stopTimes: realTime);
-
-    // TODO: Move the match realtime Gtfs algorithm
-    // List<NextPassage> output = [];
-    // Map<LineDirection, DateTime> directionAccuracy = {};
-    // final now = DateTime.now();
-    // for (var realNextTime in realTime) {
-    //   TripPassage? bestMatch;
-    //   final testingTime = realNextTime.betterTime;
-    //   final destinationTimes = fullTimetable.entries.firstWhere((e) =>
-    //       e.key.line.id == realNextTime.line.id &&
-    //       e.key.destination == realNextTime.destination);
-    //
-    //   for (var curTrip in destinationTimes.value) {
-    //     final curTime = curTrip.time;
-    //     bestMatch ??= curTrip;
-    //     final curTimeDiff = testingTime.difference(curTime);
-    //
-    //     if (curTimeDiff.abs() < testingTime.difference(bestMatch.time).abs() &&
-    //         curTimeDiff > const Duration(minutes: -10)) {
-    //       bestMatch = curTrip;
-    //     }
-    //   }
-    //
-    //   output.add(realNextTime.copyWith(
-    //       aimedTime: bestMatch?.time,
-    //       arrivingTimes: GTFSDataProvider.getArrivingTime(
-    //           stop.id.toString(), bestMatch?.tripId ?? "")));
-    //   if (bestMatch == null) continue;
-    //
-    //   if (!directionAccuracy.containsKey(destinationTimes.key) ||
-    //       bestMatch.time.isAfter(directionAccuracy[destinationTimes.key]!)) {
-    //     directionAccuracy[destinationTimes.key] = bestMatch.time;
-    //   }
-    // }
-    // for (var curDirection in fullTimetable.entries) {
-    //   DateTime start = directionAccuracy[curDirection.key] ?? now;
-    //   output.addAll(curDirection.value.where((e) => e.time.isAfter(start)).map(
-    //       (e) => NextPassage(
-    //           curDirection.key.line, curDirection.key.destination, e.time,
-    //           arrivingTimes: GTFSDataProvider.getArrivingTime(
-    //               stop.id.toString(), e.tripId))));
-    // }
-    // output.sort((a, b) => a.betterTime.compareTo(b.betterTime));
-    //
-    // return output;
   }
 
   @deprecated
