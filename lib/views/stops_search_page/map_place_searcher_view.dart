@@ -53,20 +53,19 @@ class _MapPlaceSearcherViewState extends State<MapPlaceSearcherView> {
 
   // TODO: Re implement historic
   Future<List<Place>> getHistoric() async {
-    return [];
-    // preferences ??= await SharedPreferences.getInstance();
-    // List<String> rawHistoric =
-    //     preferences!.getStringList("placeHistoric") ?? [];
-    // List<Place> output =
-    //     rawHistoric.map((e) => Place.fromCleanJson(jsonDecode(e))).toList();
-    // return output;
+
+    preferences ??= await SharedPreferences.getInstance();
+    List<String> rawHistoric =
+        preferences!.getStringList("placeHistoric") ?? [];
+    List<Place> output =
+        rawHistoric.map((e) => Place.fromJson(jsonDecode(e))).toList();
+    return output;
   }
 
   Future<void> saveHistoric() async {
-    return;
-    // preferences ??= await SharedPreferences.getInstance();
-    // await preferences!.setStringList("placeHistoric",
-    //     historic!.map((e) => jsonEncode(e.toJson())).toList().cast<String>());
+    preferences ??= await SharedPreferences.getInstance();
+    await preferences!.setStringList("placeHistoric",
+        historic!.map((e) => jsonEncode(e.toJson())).toList().cast<String>());
   }
 
   void addStopInHistoric(Place place) {

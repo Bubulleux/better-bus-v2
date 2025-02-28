@@ -10,7 +10,7 @@ import 'package:better_bus_v2/views/common/messages.dart';
 import 'package:better_bus_v2/views/credit_page.dart';
 import 'package:better_bus_v2/views/interest_line_page/interest_lines_page.dart';
 import 'package:better_bus_v2/views/log_view.dart';
-import 'package:better_bus_v2/views/map_pages/map_test_page.dart';
+import 'package:better_bus_v2/views/map_pages/map_page.dart';
 import 'package:better_bus_v2/views/preferences_view.dart';
 import 'package:better_bus_v2/views/route_detail_page/route_detail_page.dart';
 import 'package:better_bus_v2/views/route_page/route_page.dart';
