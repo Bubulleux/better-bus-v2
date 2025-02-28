@@ -57,7 +57,7 @@ void main() async {
   Workmanager().registerPeriodicTask("check-traffic-info", "checkTrafficInfo",
       frequency: const Duration(minutes: 15));
   await GpsDataProvider.initGps();
-  void set(BuildContext context) {}
+
   runApp(MultiProvider(
     providers: [
       Provider(
@@ -102,12 +102,7 @@ class _BetterBusAppState extends State<BetterBusApp>
   Future<bool> initProviders() async {
     final provider = FullProvider.of(context);
     final success = await provider.init();
-    if (!success) {
-      print("Error: provider failed to init");
-      return false;
-    }
-    print("Provider init sucess !!!! ");
-    return true;
+    return success;
   }
 
   @override

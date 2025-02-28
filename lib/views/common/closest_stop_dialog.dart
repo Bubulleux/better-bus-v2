@@ -82,7 +82,7 @@ barrierDismissible: false,
       throw CustomErrors.locationDisable;
     }
 
-    for (Station stop in stops!) {
+    for (Station stop in stops) {
       double distance = GpsDataProvider.calculateDistance(
           location.latitude, location.longitude, stop.position.latitude, stop.position.longitude);
       if (distance < 0.1) {

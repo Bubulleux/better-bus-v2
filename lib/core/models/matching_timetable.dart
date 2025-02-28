@@ -1,8 +1,6 @@
-import 'package:better_bus_v2/core/models/bus_trip.dart';
 import 'package:better_bus_v2/core/models/gtfs/timetable.dart';
 import 'package:better_bus_v2/core/models/stop_time.dart';
 import 'package:better_bus_v2/core/models/timetable.dart';
-import 'package:better_bus_v2/helper.dart';
 
 class MatchingTimetable extends Timetable {
   Timetable realTime;

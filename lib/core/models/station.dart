@@ -21,7 +21,7 @@ class Station extends Place {
   }
 
   // TODO: Old Json function
-  Station.fromCleanJson(Map<String, dynamic> json)
+  Station.fromJson(Map<String, dynamic> json)
       : this(
           json["name"],
           json["id"],
@@ -29,6 +29,7 @@ class Station extends Place {
           stops: {},
         );
 
+  @override
   Map<String, dynamic> toJson() {
     return {
       "name": name,
