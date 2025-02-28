@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:better_bus_v2/core/full_provider.dart';
-import 'package:better_bus_v2/core/models/bus_line.dart';
 import 'package:better_bus_v2/custom_home_widget.dart';
 import 'package:better_bus_v2/views/common/messages.dart';
 import 'package:flutter/cupertino.dart';

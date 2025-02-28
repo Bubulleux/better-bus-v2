@@ -25,7 +25,7 @@ class ViewShortcut {
     return ViewShortcut(
       json["name"],
       json["isFavorite"],
-      Station.fromCleanJson(json["busStop"]),
+      Station.fromJson(json["busStop"]),
       direction,
     );
   }

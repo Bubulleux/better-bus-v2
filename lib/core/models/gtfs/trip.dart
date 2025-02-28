@@ -2,7 +2,6 @@ import 'package:better_bus_v2/core/models/bus_line.dart';
 import 'package:better_bus_v2/core/models/bus_trip.dart';
 import 'package:better_bus_v2/core/models/gtfs/direction.dart';
 import 'package:better_bus_v2/core/models/gtfs/gtfs_data.dart';
-import 'package:better_bus_v2/core/models/gtfs/line.dart';
 import 'package:better_bus_v2/core/models/gtfs/stop_time.dart';
 import 'package:better_bus_v2/core/models/line_direction.dart';
 import 'package:better_bus_v2/core/models/station.dart';
@@ -10,7 +9,7 @@ import 'package:better_bus_v2/helper.dart';
 
 class GTFSTrip {
   late final LineDirection direction;
-  late final id;
+  late final int id;
   late final String serviceID;
   late final int _routeID;
   late final Map<Station, GTFSStopTime> _stopTimes;

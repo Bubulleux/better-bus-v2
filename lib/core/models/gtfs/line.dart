@@ -21,7 +21,7 @@ class GTFSLine extends BusLine {
 
   void addDirection(GTFSTrip trip) {
     assert(trip.line == this);
-    assert(trip.line.id == this.id);
+    assert(trip.line.id == id);
     super.directions.add(trip.direction as Direction);
   }
 }

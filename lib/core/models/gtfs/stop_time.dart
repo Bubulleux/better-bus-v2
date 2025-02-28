@@ -1,9 +1,4 @@
 import 'package:better_bus_v2/core/models/gtfs/gtfs_data.dart';
-import 'package:better_bus_v2/core/models/gtfs/trip.dart';
-import 'package:better_bus_v2/core/models/station.dart';
-import 'package:better_bus_v2/core/models/stop_time.dart';
-import 'package:better_bus_v2/helper.dart';
-import 'package:flutter/foundation.dart';
 
 class GTFSStopTime  {
   late final Duration arrival;

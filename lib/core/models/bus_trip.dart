@@ -1,10 +1,8 @@
-import 'package:better_bus_v2/core/models/bus_line.dart';
 import 'package:better_bus_v2/core/models/line_direction.dart';
 import 'package:better_bus_v2/core/models/station.dart';
 
 class BusTrip extends LineDirected {
-  BusTrip(LineDirection direction, {required this.stopTimes, required this.id})
-      : super(direction);
+  BusTrip(super.direction, {required this.stopTimes, required this.id});
 
 
   final int id;

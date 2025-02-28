@@ -1,5 +1,4 @@
 import 'package:better_bus_v2/core/models/bus_line.dart';
-import 'package:better_bus_v2/core/models/line_direction.dart';
 
 class Direction {
   final String destination;
@@ -17,12 +16,6 @@ class Direction {
   }
 }
 
-class Directed implements Direction {
-  String get destination => throw UnimplementedError();
-
-  int get directionId => throw UnimplementedError();
-
-}
 
 class LineDirection extends Direction {
   const LineDirection(this.line, super.destination, super.directionId);

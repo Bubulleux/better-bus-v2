@@ -3,7 +3,6 @@ import 'package:better_bus_v2/core/models/gtfs/line.dart';
 import 'package:better_bus_v2/core/models/gtfs/stop.dart';
 import 'package:better_bus_v2/core/models/gtfs/stop_time.dart';
 import 'package:better_bus_v2/core/models/gtfs/trip.dart';
-import 'package:better_bus_v2/core/models/line_direction.dart';
 import 'package:better_bus_v2/core/models/station.dart';
 import 'package:better_bus_v2/helper.dart';
 import 'package:latlong2/latlong.dart';
@@ -97,7 +96,6 @@ class GTFSData {
       }
 
       int index = int.parse(row["stop_sequence"]) - 1;
-      final station = stopsParent[int.parse(row["stop_id"]!)]!;
 
       if (stopTimes[tripID]!.length > index) {
         stopTimes[tripID]![index] = GTFSStopTime(row);

@@ -1,13 +1,10 @@
 import 'package:better_bus_v2/app_constant/app_string.dart';
 import 'package:better_bus_v2/core/full_provider.dart';
-import 'package:better_bus_v2/core/models/bus_line.dart';
-import 'package:better_bus_v2/core/models/bus_trip.dart';
 import 'package:better_bus_v2/core/models/line_direction.dart';
 import 'package:better_bus_v2/core/models/station.dart';
 import 'package:better_bus_v2/core/models/stop_time.dart';
 import 'package:better_bus_v2/core/models/timetable.dart';
 import 'package:better_bus_v2/error_handler/custom_error.dart';
-import 'package:better_bus_v2/helper.dart';
 import 'package:better_bus_v2/views/common/custom_future.dart';
 import 'package:better_bus_v2/views/common/extendable_view.dart';
 import 'package:better_bus_v2/views/common/informative_box.dart';
@@ -16,7 +13,6 @@ import 'package:better_bus_v2/views/stop_info/trip_view.dart';
 import 'package:flutter/material.dart';
 import 'package:format/format.dart';
 import 'package:intl/intl.dart';
-import 'dart:math';
 
 class NextPassagePage extends StatefulWidget {
   const NextPassagePage(this.stop,

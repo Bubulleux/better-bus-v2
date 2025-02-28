@@ -5,7 +5,6 @@ import 'package:archive/archive_io.dart';
 import 'package:better_bus_v2/core/models/gtfs/csv_parser.dart';
 import 'package:better_bus_v2/core/models/gtfs/gtfs_data.dart';
 import 'package:better_bus_v2/core/models/gtfs/gtfs_path.dart';
-import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
 import 'package:http/http.dart' as http;
 
