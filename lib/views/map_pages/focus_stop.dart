@@ -49,7 +49,6 @@ class _StopFocusWidgetState extends State<StopFocusWidget> {
   }
 
   Widget buildDragBar() {
-    // TODO: Check distance with sub stop
    String? distance =
     widget.position != null ?
        "${(getDistanceInKMeter(widget.station!, widget.position!) * 100).roundToDouble() / 100} km":
@@ -102,8 +101,7 @@ class _StopFocusWidgetState extends State<StopFocusWidget> {
     if (widget.station == null) {
       return Container();
     }
-    // TODO: Re implement filter
-    //final lines = GTFSDataProvider.getStopLines(widget.stop?.id ?? widget.station!.id);
+
     List<LineDirection>? direction;
     final provider = FullProvider.of(context).gtfs;
     if (widget.stop != null && provider.isAvailable()) {
