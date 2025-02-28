@@ -79,10 +79,10 @@ class GTFSProvider extends BusNetwork {
   Future<GTFSTimeTable> getTimetable(Station station) {
     DateTime now = DateTime.now();
 
-
     Set<String> validServices = data.calendar.getEnablesServices(now);
 
-    final trips = data.trips.values.where((e) => validServices.contains(e.serviceID));
+    final trips =
+        data.trips.values.where((e) => validServices.contains(e.serviceID));
 
     return Future.value(GTFSTimeTable(station, now, trips));
   }
@@ -107,14 +107,15 @@ class GTFSProvider extends BusNetwork {
       }
       if (!ends.containsKey(trip.direction.destination)) {
         ends[trip.direction.destination] = ends.length < labels.length
-         ? labels[ends.length]
+            ? labels[ends.length]
             : ends.length.toString();
       }
       final stopTime = trip.stopTimes[station]!;
-      stopTimes[today.add(stopTime.arrival)] = ends[trip.direction.destination]!;
-
+      stopTimes[today.add(stopTime.arrival)] =
+          ends[trip.direction.destination]!;
     }
-    stopTimes = Map.fromEntries(stopTimes.entries.toList()..sort((a, b) => a.key.compareTo(b.key)));
+    stopTimes = Map.fromEntries(
+        stopTimes.entries.toList()..sort((a, b) => a.key.compareTo(b.key)));
 
     final result = LineTimetable(
       station,
@@ -125,6 +126,15 @@ class GTFSProvider extends BusNetwork {
     );
 
     return Future.value(result);
+  }
+
+  List<LineDirection> getStopDirections(int stopId) {
+    final station = data.stopsParent[stopId]!;
+    return data.trips.values
+        .where((t) => t.stopTimes.keys.contains(station) && t.stopTimes[station]!.stopId == stopId)
+        .map((e) => e.direction)
+        .toSet()
+        .toList();
   }
 
   @override

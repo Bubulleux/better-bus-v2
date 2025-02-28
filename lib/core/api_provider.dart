@@ -2,9 +2,11 @@ import 'dart:convert';
 
 import 'package:better_bus_v2/core/bus_network.dart';
 import 'package:better_bus_v2/core/models/api/line_timetable.dart';
+import 'package:better_bus_v2/core/models/api/route.dart';
 import 'package:better_bus_v2/core/models/bus_line.dart';
 import 'package:better_bus_v2/core/models/api/json.dart';
 import 'package:better_bus_v2/core/models/line_timetable.dart';
+import 'package:better_bus_v2/core/models/place.dart';
 import 'package:better_bus_v2/core/models/station.dart';
 import 'package:better_bus_v2/core/models/stop_time.dart';
 import 'package:better_bus_v2/core/models/timetable.dart';
@@ -154,7 +156,8 @@ class ApiProvider extends BusNetwork {
 
   @deprecated
   @override
-  Future<LineTimetable> getLineTimetable(Station station, BusLine line, int direction, DateTime date) async {
+  Future<LineTimetable> getLineTimetable(
+      Station station, BusLine line, int direction, DateTime date) async {
     // TODO: Useless if gtfs provider work
     throw UnimplementedError();
     // TODO: Not a good way to do it;
@@ -168,11 +171,12 @@ class ApiProvider extends BusNetwork {
 
     Map<String, dynamic> boarding = (await _sendRequest(uri))['boarding_ids']!;
     print(boarding);
-    uri = Uri.parse("https://releases-uxb3m2jh5q-ew.a.run.app/gtfs/Horaire/getHoraire.json");
+    uri = Uri.parse(
+        "https://releases-uxb3m2jh5q-ew.a.run.app/gtfs/Horaire/getHoraire.json");
     uri = uri.replace(queryParameters: {
       "boarding_id": station.id.toString(),
       "date": DateFormat("yyyy-MM-dd").format(date),
-      "direction" : direction.toString(),
+      "direction": direction.toString(),
       "line": line.id,
       "stop_id": boarding[direction == 0 ? "aller" : "retour"].toString(),
       "networks": "[1]",
@@ -180,14 +184,12 @@ class ApiProvider extends BusNetwork {
     print(uri);
 
     Map<String, dynamic> body = await _sendRequest(uri);
-    JsonLineTimetable output = JsonLineTimetable(
-      body, station, line, date
-    );
+    JsonLineTimetable output = JsonLineTimetable(body, station, line, date);
     return output;
   }
 
   @override
-  Future<List<InfoTraffic>> getTrafficInfos() async{
+  Future<List<InfoTraffic>> getTrafficInfos() async {
     Uri uri = Uri.parse("$apiUrl/traffics");
     uri = uri.replace(queryParameters: {
       "displayable": "",
@@ -259,4 +261,30 @@ class ApiProvider extends BusNetwork {
     throw ApiProviderException(response!);
   }
 
+  Future<List<VitalisRoute>>? getVitalisRoute(
+      Place start, Place end, DateTime date, String timeType,
+      {int count = 5}) async {
+    Uri uri = Uri.parse(
+        "https://releases-uxb3m2jh5q-ew.a.run.app/gtfs/Itinerary/getItineraries.json");
+    uri = uri.replace(queryParameters: {
+      "start": "[${start.position.latitude},${start.position.longitude}]",
+      "end": "[${end.position.latitude},${end.position.longitude}]",
+      "start_name": start.name,
+      "end_name": end.name,
+      "count": count.toString(),
+      "date": (date.millisecondsSinceEpoch / 1000).round().toString(),
+      "date_type": timeType,
+      "networks": "[1]",
+    });
+
+    dynamic rawJson = await _sendRequest(uri);
+    if (rawJson is Map<String, dynamic>) {
+      return [];
+    }
+    List<dynamic> json = rawJson;
+    return json
+        .map((e) => VitalisRoute.fromJson(e))
+        .toList()
+        .cast<VitalisRoute>();
+  }
 }

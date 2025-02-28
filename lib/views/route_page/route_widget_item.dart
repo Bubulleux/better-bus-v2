@@ -1,10 +1,10 @@
-import 'package:better_bus_v2/model/clean/route.dart';
+import 'package:better_bus_v2/core/models/api/route.dart';
+import 'package:better_bus_v2/views/common/decorations.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
 import 'package:better_bus_v2/views/route_detail_page/route_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../common/decorations.dart';
 
 class RouteItemWidget extends StatefulWidget {
   const RouteItemWidget(this.vitalisRoute, {super.key});

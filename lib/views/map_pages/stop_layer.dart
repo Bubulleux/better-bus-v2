@@ -64,7 +64,7 @@ class _StopsMapLayerState extends State<StopsMapLayer> {
 
   Iterable<Marker> buildSubMarker(Station stop) sync* {
     for (final child in stop.stops.entries) {
-      final focused = child == widget.focusedStop;
+      final focused = child.key == widget.focusedStop;
       yield Marker(
           point: child.value,
           width: 30,
