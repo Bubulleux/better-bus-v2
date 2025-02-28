@@ -1,7 +1,7 @@
 import 'package:better_bus_v2/app_constant/app_string.dart';
 import 'package:better_bus_v2/core/models/bus_line.dart';
 import 'package:better_bus_v2/data_provider/local_data_handler.dart';
-import 'package:better_bus_v2/model/clean/view_shortcut.dart';
+import 'package:better_bus_v2/model/view_shortcut.dart';
 import 'package:better_bus_v2/views/common/content_container.dart';
 import 'package:better_bus_v2/views/common/context_menu.dart';
 import 'package:better_bus_v2/views/common/decorations.dart';

@@ -1,4 +1,6 @@
 
+import 'package:better_bus_v2/app_constant/app_string.dart';
+import 'package:better_bus_v2/core/models/bus_line.dart';
 import 'package:better_bus_v2/core/models/place.dart';
 import 'package:better_bus_v2/core/models/station.dart';
 import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
@@ -8,8 +10,6 @@ import 'package:better_bus_v2/views/stops_search_page/search_bus_stop_view.dart'
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 
-import '../../app_constant/app_string.dart';
-import '../../model/clean/bus_line.dart';
 
 
 // TODO: Move it to helper file

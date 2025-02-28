@@ -5,6 +5,7 @@ import 'package:better_bus_v2/core/models/bus_line.dart';
 import 'package:better_bus_v2/core/models/gtfs/timetable.dart';
 import 'package:better_bus_v2/core/models/line_timetable.dart';
 import 'package:better_bus_v2/core/models/matching_timetable.dart';
+import 'package:better_bus_v2/core/models/place.dart';
 import 'package:better_bus_v2/core/models/station.dart';
 import 'package:better_bus_v2/core/models/timetable.dart';
 import 'package:better_bus_v2/core/models/traffic_info.dart';

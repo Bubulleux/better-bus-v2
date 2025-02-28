@@ -1,6 +1,8 @@
-import 'package:better_bus_v2/model/clean/bus_line.dart';
+import 'package:better_bus_v2/core/models/bus_line.dart';
 
 // TODO: Make it better, old Api Model
+
+
 class InfoTraffic {
   InfoTraffic({
     required this.id,

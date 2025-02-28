@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:better_bus_v2/data_provider/local_data_handler.dart';
-import 'package:better_bus_v2/model/clean/view_shortcut.dart';
+import 'package:better_bus_v2/model/view_shortcut.dart';
 import 'package:better_bus_v2/views/common/closest_stop_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
