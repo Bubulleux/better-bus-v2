@@ -74,7 +74,7 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
   void didChangeDependencies() {
     super.didChangeDependencies();
     final arg = ModalRoute.of(context)!.settings.arguments as MapPageArg?;
-    if (arg != null && focusStation == null) {
+    if (arg != null && focusStation == null && focusedPlace == null) {
       setState(() {
         focusStation = arg.station;
         focusedStop = arg.stop;
