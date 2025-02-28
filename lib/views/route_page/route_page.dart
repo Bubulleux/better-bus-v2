@@ -1,7 +1,9 @@
-import 'package:better_bus_v2/data_provider/vitalis_data_provider.dart';
+import 'package:better_bus_v2/app_constant/app_string.dart';
+import 'package:better_bus_v2/core/full_provider.dart';
+import 'package:better_bus_v2/core/models/api/route.dart';
+import 'package:better_bus_v2/core/models/place.dart';
 import 'package:better_bus_v2/error_handler/custom_error.dart';
 import 'package:better_bus_v2/helper.dart';
-import 'package:better_bus_v2/model/clean/route.dart';
 import 'package:better_bus_v2/views/common/background.dart';
 import 'package:better_bus_v2/views/common/custom_future.dart';
 import 'package:better_bus_v2/views/common/decorations.dart';
@@ -11,9 +13,6 @@ import 'package:better_bus_v2/views/route_page/route_widget_item.dart';
 import 'package:better_bus_v2/views/stops_search_page/place_searcher_page.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
-import '../../app_constant/app_string.dart';
-import '../../model/clean/map_place.dart';
 
 enum RouteTimeType{
   departure,
@@ -36,8 +35,8 @@ class RoutePage extends StatefulWidget {
 }
 
 class _RoutePageState extends State<RoutePage> {
-  MapPlace? startPlace;
-  MapPlace? endPlace;
+  Place? startPlace;
+  Place? endPlace;
 
   RouteTimeParameter timeParameter = RouteTimeParameter(RouteTimeType.departure,
     DateTime.now());
@@ -69,20 +68,22 @@ class _RoutePageState extends State<RoutePage> {
     });
   }
 
-  Future<MapPlace?> getPlace() async {
+  Future<Place?> getPlace() async {
     // ignore: unnecessary_cast
-    MapPlace? place = await (Navigator.of(context).pushNamed(PlaceSearcherPage.routeName) as Future<dynamic>);
+    Place? place = await (Navigator.of(context).pushNamed(PlaceSearcherPage.routeName) as Future<dynamic>);
     return place;
   }
 
 
   Future<List<VitalisRoute>?> getRoutes() async {
-    if (startPlace == null || endPlace == null) {
+    final provider = FullProvider.of(context).api;
+    if (startPlace == null || endPlace == null || !mounted || !provider.isAvailable()) {
       return null;
     }
 
-    return await VitalisDataProvider.getVitalisRoute(
-        startPlace!, endPlace!, timeParameter.time, timeParameter.timeType.name);
+    final result = await (provider.getVitalisRoute(
+        startPlace!, endPlace!, timeParameter.time, timeParameter.timeType.name));
+    return result;
   }
 
   void setTime() async {
@@ -161,7 +162,7 @@ class _RoutePageState extends State<RoutePage> {
                                 color: Colors.green,
                                 ),
                               icon: Icons.search,
-                              value: startPlace?.title,
+                              value: startPlace?.name,
                               ),
                             const SizedBox(
                               height: 5,
@@ -172,7 +173,7 @@ class _RoutePageState extends State<RoutePage> {
                               hint: AppString.endLabel,
                               prefixIcon: const Icon(Icons.flag, color: Colors.red),
                               icon: Icons.search,
-                              value: endPlace?.title,
+                              value: endPlace?.name,
                               ),
                             ],
                           ),

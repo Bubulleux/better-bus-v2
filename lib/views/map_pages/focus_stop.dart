@@ -1,5 +1,7 @@
 import 'dart:math';
 
+import 'package:better_bus_v2/core/full_provider.dart';
+import 'package:better_bus_v2/core/models/line_direction.dart';
 import 'package:better_bus_v2/core/models/station.dart';
 import 'package:better_bus_v2/views/stop_info/next_passage_view.dart';
 import 'package:better_bus_v2/views/stops_search_page/stops_search_page.dart';
@@ -102,6 +104,13 @@ class _StopFocusWidgetState extends State<StopFocusWidget> {
     }
     // TODO: Re implement filter
     //final lines = GTFSDataProvider.getStopLines(widget.stop?.id ?? widget.station!.id);
+    List<LineDirection>? direction;
+    final provider = FullProvider.of(context).gtfs;
+    if (widget.stop != null && provider.isAvailable()) {
+      direction = provider.getStopDirections(widget.stop!);
+    }
+
+
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 100),
@@ -118,7 +127,7 @@ class _StopFocusWidgetState extends State<StopFocusWidget> {
           Expanded(
               child: NextPassagePage(
                 widget.station!,
-                //lines: widget.stop != null ? lines : null,
+                direction: direction,
                 minimal: true,
                 key: Key(widget.station!.name + (widget.stop.toString())),
               )
