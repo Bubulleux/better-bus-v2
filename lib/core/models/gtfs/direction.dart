@@ -1,5 +1,4 @@
 import 'package:better_bus_v2/core/models/bus_line.dart';
-import 'package:better_bus_v2/core/models/gtfs/gtfs_data.dart';
 import 'package:better_bus_v2/core/models/line_direction.dart';
 
 class GTFSLineDirection extends LineDirection {
