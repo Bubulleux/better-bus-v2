@@ -1,5 +1,5 @@
 import 'dart:io';
-// TODO: Rename file to csv_parser
+
 class CSVTable extends Iterable{
   late final List<String>? keys;
   late List<List<String>> table;

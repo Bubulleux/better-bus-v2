@@ -1,4 +1,4 @@
-import 'package:better_bus_v2/core/models/gtfs/cvs_parser.dart';
+import 'package:better_bus_v2/core/models/gtfs/csv_parser.dart';
 import 'package:better_bus_v2/core/models/gtfs/line.dart';
 import 'package:better_bus_v2/core/models/gtfs/stop.dart';
 import 'package:better_bus_v2/core/models/gtfs/stop_time.dart';
