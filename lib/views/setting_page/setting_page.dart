@@ -14,6 +14,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../model/provider.dart';
+
 class SettingPage extends StatefulWidget {
   const SettingPage({super.key});
   static const String routeName = "/setting";

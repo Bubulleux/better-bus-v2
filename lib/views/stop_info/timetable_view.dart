@@ -5,6 +5,7 @@ import 'package:better_bus_v2/views/common/line_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../../model/provider.dart';
 class TimeTableView extends StatefulWidget {
   const TimeTableView(this.stop, {super.key});
 

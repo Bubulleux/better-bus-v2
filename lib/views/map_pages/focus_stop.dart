@@ -6,6 +6,8 @@ import 'package:better_bus_v2/views/stops_search_page/stops_search_page.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 
+import '../../model/provider.dart';
+
 
 class StopFocusWidget extends StatefulWidget {
   const StopFocusWidget({this.station, this.stop, this.position, this.openFocus, super.key});

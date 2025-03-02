@@ -28,6 +28,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:workmanager/workmanager.dart';
+import '../../model/provider.dart';
 
 import 'app_constant/app_string.dart';
 

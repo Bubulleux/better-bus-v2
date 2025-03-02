@@ -9,6 +9,7 @@ import 'package:better_bus_v2/views/stop_info/trip_view.dart';
 import 'package:flutter/material.dart';
 import 'package:format/format.dart';
 import 'package:intl/intl.dart';
+import '../../model/provider.dart';
 
 class NextPassagePage extends StatefulWidget {
   const NextPassagePage(this.stop,

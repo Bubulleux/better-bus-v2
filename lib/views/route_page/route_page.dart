@@ -11,6 +11,8 @@ import 'package:better_bus_v2/views/stops_search_page/place_searcher_page.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../../model/provider.dart';
+
 enum RouteTimeType{
   departure,
   arrival

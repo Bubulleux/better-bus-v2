@@ -11,6 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../model/provider.dart';
+
 typedef PlaceCallback = void Function(Place place);
 
 int maxHistoricSize = 20;

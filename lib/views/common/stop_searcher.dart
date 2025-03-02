@@ -3,6 +3,8 @@ import 'package:better_bus_v2/app_constant/app_string.dart';
 import 'package:better_bus_core/core.dart';
 import 'package:flutter/material.dart';
 
+import '../../model/provider.dart';
+
 class StopSearcher extends StatefulWidget {
   const StopSearcher({super.key});
 

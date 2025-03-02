@@ -7,6 +7,8 @@ import 'package:better_bus_v2/views/stop_info/stop_info_page.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 
+import '../../model/provider.dart';
+
 class ClosestStopDialog {
   static Future show(BuildContext context) async {
     Station? stop = await showDialog(

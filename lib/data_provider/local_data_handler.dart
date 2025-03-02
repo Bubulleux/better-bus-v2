@@ -8,6 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../model/view_shortcut.dart';
+import '../model/provider.dart';
 
 class LocalDataHandler {
   static SharedPreferences? preferences;

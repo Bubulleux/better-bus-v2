@@ -7,6 +7,7 @@ import 'package:better_bus_v2/views/stops_search_page/stops_search_page.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../model/provider.dart';
 
 typedef StopCallback = void Function(Station stop);
 
