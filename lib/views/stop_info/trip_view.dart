@@ -1,4 +1,5 @@
 import 'package:better_bus_core/core.dart';
+import 'package:better_bus_v2/model/bus_line_color.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
