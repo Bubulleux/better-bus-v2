@@ -17,6 +17,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 
+import '../../data_provider/radar_provider.dart';
 import '../../model/provider.dart';
 
 class MapPageArg {
@@ -29,7 +30,7 @@ class MapPageArg {
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
 
-  static const String routeName = "/map_test";
+  static const String routeName = "/map";
 
   @override
   State<MapPage> createState() => _MapPageState();
@@ -38,6 +39,7 @@ class MapPage extends StatefulWidget {
 class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
   late MapController controller;
   Map<LatLng, Station>? stopsPos;
+  Map<Station, Report>? reports;
   Station? focusStation;
   int? focusedStop;
   Place? focusedPlace;
@@ -60,7 +62,6 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
 
   Future<void> updateLocation() async {
     if (!(await GpsDataProvider.available())) return;
-
 
     _posStream = Geolocator.getPositionStream().listen((Position newPos) {
       setState(() {
@@ -100,12 +101,16 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
     final provider = FullProvider.of(context);
     if (!provider.isAvailable()) return false;
     final stations = await FullProvider.of(context).getStations();
+
+    reports = Map.fromEntries(
+        (await AppRadarProvider(provider: provider).getReports())
+            .map((e) => MapEntry(e.station, e)));
+
     setState(() {
       stopsPos = {for (var e in stations) e.position: e};
     });
     return true;
   }
-
 
   Future goToSearch() async {
     Place? place = await (Navigator.of(context)
@@ -168,6 +173,17 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
     });
   }
 
+  Future sendReport(Station station) async {
+    if (!mounted) return;
+    final report = await AppRadarProvider.of(context).sendReport(station);
+    if (report != null) {
+      setState(() {
+        reports ??= {};
+        reports![report.station] = report;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -192,6 +208,7 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
                   ),
                   StopsMapLayer(
                     stops: stopsPos?.values.toList() ?? [],
+                    reports: reports,
                     onStationClick: (Station v) => setState(() {
                       focusStation = v;
                       focusedStop = null;
@@ -233,17 +250,17 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
                   children: [
                     //ElevatedButton(onPressed: test, child: const Text("OUI")),
                     const Spacer(),
-                    position != null ?
-                    Container(
-                        margin: const EdgeInsets.all(5),
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: Theme.of(context).primaryColor),
-                        child: InkWell(
-                            onTap: goToMyLocation,
-                            child: const Icon(Icons.my_location_outlined)))
+                    position != null
+                        ? Container(
+                            margin: const EdgeInsets.all(5),
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                color: Theme.of(context).primaryColor),
+                            child: InkWell(
+                                onTap: goToMyLocation,
+                                child: const Icon(Icons.my_location_outlined)))
                         : Container()
                   ],
                 ),
@@ -251,7 +268,9 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
                   station: focusStation,
                   stop: focusedStop,
                   position: position,
+                  sendReport: focusStation != null ? () => sendReport(focusStation!) : null,
                   openFocus: onFocusOpen,
+                  report: reports?[focusStation],
                 ),
                 focusedPlace != null
                     ? FocusPlace(

@@ -1,3 +1,4 @@
+// TODO: use intl
 class AppString {
   static const appName = "Better Bus";
   static const cityName = "Poitiers";
@@ -113,8 +114,13 @@ class AppString {
 
   static const now = "maintenant";
 
+  // TODO : Grammar check
   static const lateOf = "En retard de {} minutes";
   static const advanceOf = "En avance de {} minutes";
 
   static const initialTime = "Initialement prévue à {}";
+
+  static const controllerSee = "Des controlleurs on été apercus a cette arret il y a {} minute";
+
+  static const signalController = "Signaler un controleur";
 }

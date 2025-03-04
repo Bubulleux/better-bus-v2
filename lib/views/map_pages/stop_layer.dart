@@ -5,17 +5,20 @@ import 'package:flutter_map/flutter_map.dart';
 const animeTime = Duration(milliseconds: 250);
 
 class StopsMapLayer extends StatefulWidget {
-  const StopsMapLayer(
-      {required this.stops,
-      this.onStopClick,
-      this.onStationClick,
-      this.focusedStation,
-      this.focusedStop,
-      super.key});
+  const StopsMapLayer({
+    required this.stops,
+    this.onStopClick,
+    this.onStationClick,
+    this.focusedStation,
+    this.focusedStop,
+    this.reports,
+    super.key,
+  });
 
   final List<Station> stops;
   final Station? focusedStation;
   final int? focusedStop;
+  final Map<Station, Report>? reports;
   final void Function(Station)? onStationClick;
   final void Function(int)? onStopClick;
 
@@ -24,7 +27,8 @@ class StopsMapLayer extends StatefulWidget {
 }
 
 class _StopsMapLayerState extends State<StopsMapLayer> {
-  Marker buildMaker(Station stop, MapCamera camera) {
+
+  Marker buildMaker(Station stop, Report? report, MapCamera camera) {
     final focused = stop == widget.focusedStation;
     final asDot = camera.zoom < 15;
 
@@ -38,7 +42,7 @@ class _StopsMapLayerState extends State<StopsMapLayer> {
             duration: animeTime,
             padding: const EdgeInsets.all(1),
             decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor,
+                color: report == null ? Theme.of(context).primaryColor : Colors.blue,
                 borderRadius: BorderRadius.circular(20),
                 border: focused
                     ? Border.all(color: Colors.black26, width: 3)
@@ -75,7 +79,9 @@ class _StopsMapLayerState extends State<StopsMapLayer> {
               scale: focused ? 0.8 : 0.5,
               child: AnimatedContainer(
                 duration: animeTime,
-                padding: focused ? const EdgeInsets.all(5) : const EdgeInsets.all(15),
+                padding: focused
+                    ? const EdgeInsets.all(5)
+                    : const EdgeInsets.all(15),
                 decoration: BoxDecoration(
                     color: Theme.of(context).primaryColorLight,
                     border: Border.all(
@@ -86,12 +92,11 @@ class _StopsMapLayerState extends State<StopsMapLayer> {
                     boxShadow: const [
                       BoxShadow(blurRadius: 5, spreadRadius: -1)
                     ]),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: Theme.of(context).primaryColorDark
-                      ),
-                    ),
+                child: Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: Theme.of(context).primaryColorDark),
+                ),
               ),
             ),
           ));
@@ -108,7 +113,7 @@ class _StopsMapLayerState extends State<StopsMapLayer> {
         if (stop == widget.focusedStation) {
           yield* buildSubMarker(stop);
         }
-        yield buildMaker(stop, cam);
+        yield buildMaker(stop, widget.reports?[stop], cam);
       }
     }(widget.stops)
             .toList());
