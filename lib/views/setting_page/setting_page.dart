@@ -64,7 +64,8 @@ class _SettingPageState extends State<SettingPage> {
   }
 
   void emptyCache() {
-    CacheDataProvider.emptyCacheData();
+    // TODO: Remove this function
+    //CacheDataProvider.emptyCacheData();
   }
 
   void testNotificationActivation() async {
