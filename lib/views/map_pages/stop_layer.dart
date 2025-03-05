@@ -31,6 +31,10 @@ class _StopsMapLayerState extends State<StopsMapLayer> {
   Marker buildMaker(Station stop, Report? report, MapCamera camera) {
     final focused = stop == widget.focusedStation;
     final asDot = camera.zoom < 15;
+    Color color = Theme.of(context).primaryColor;
+    if (report != null) {
+      color = Color.lerp(color, Colors.blue, report.stillThere) ?? color;
+    }
 
     return Marker(
         key: Key(stop.id.toString()),
@@ -42,7 +46,7 @@ class _StopsMapLayerState extends State<StopsMapLayer> {
             duration: animeTime,
             padding: const EdgeInsets.all(1),
             decoration: BoxDecoration(
-                color: report == null ? Theme.of(context).primaryColor : Colors.blue,
+                color: color,
                 borderRadius: BorderRadius.circular(20),
                 border: focused
                     ? Border.all(color: Colors.black26, width: 3)

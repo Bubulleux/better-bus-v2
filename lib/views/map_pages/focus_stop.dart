@@ -19,7 +19,7 @@ class StopFocusWidget extends StatefulWidget {
     this.position,
     this.openFocus,
     this.report,
-    this.sendReport,
+    this.updateReport,
     super.key,
   });
 
@@ -28,7 +28,7 @@ class StopFocusWidget extends StatefulWidget {
   final Report? report;
   final LatLng? position;
   final VoidCallback? openFocus;
-  final VoidCallback? sendReport;
+  final void Function(bool stillThere)? updateReport;
 
   @override
   State<StopFocusWidget> createState() => _StopFocusWidgetState();
@@ -111,7 +111,7 @@ class _StopFocusWidgetState extends State<StopFocusWidget> {
   Widget buildReportInfo() {
     if (widget.report == null) {
       return ElevatedButton(
-        onPressed: widget.sendReport,
+        onPressed: () => widget.updateReport?.call(true),
         child: Text(AppString.signalController),
       );
     }
@@ -123,7 +123,20 @@ class _StopFocusWidgetState extends State<StopFocusWidget> {
       margin: const EdgeInsets.all(8),
       child: Column(
         children: [
-          Text(AppString.controllerSee.format(report.lastSee.inMinutes))
+          Text(AppString.controllerSee.format(report.lastSee.inMinutes)),
+          Row(
+            children: [
+              ElevatedButton(
+                onPressed: () => widget.updateReport?.call(true),
+                child: Text(AppString.stillThere),
+              ),
+              const Spacer(),
+              ElevatedButton(
+                onPressed: () => widget.updateReport?.call(false),
+                child: Text(AppString.goAway),
+              )
+            ],
+          )
         ],
       ),
     );

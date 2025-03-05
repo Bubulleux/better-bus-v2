@@ -123,4 +123,6 @@ class AppString {
   static const controllerSee = "Des controlleurs on été apercus a cette arret il y a {} minute";
 
   static const signalController = "Signaler un controleur";
+  static const stillThere = "Toujours là";
+  static const goAway = "Partie";
 }
