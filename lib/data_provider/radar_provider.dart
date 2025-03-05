@@ -1,10 +1,37 @@
 import 'package:better_bus_core/core.dart';
 import 'package:better_bus_v2/model/provider.dart';
 import 'package:flutter/cupertino.dart';
+
+const sendThreshold = Duration(minutes: 2);
+
 class AppRadarProvider extends RadarClient {
-  AppRadarProvider({required super.provider}) : super(apiUrl: Uri.parse("http://192.168.188.242:8080"));
-  
+  AppRadarProvider({required super.provider})
+      : super(apiUrl: Uri.parse("http://192.168.188.242:8080"));
+
+  // TODO: Make it not static
+  static DateTime? lastSent;
+
+  bool get sentAvailable =>
+      lastSent == null || DateTime.now().difference(lastSent!) >= sendThreshold;
+
   factory AppRadarProvider.of(BuildContext context) {
     return AppRadarProvider(provider: FullProvider.of(context));
+  }
+  
+  void preventSpam() {
+    if (!sentAvailable) throw "Not available wait pls";
+    lastSent = DateTime.now();
+  }
+
+  @override
+  Future<Report?> sendReport(Station station) {
+    preventSpam();
+    return super.sendReport(station);
+  }
+
+  @override
+  Future<Report?> updateReport(Report report, bool stillThere) {
+    preventSpam();
+    return super.updateReport(report, stillThere);
   }
 }

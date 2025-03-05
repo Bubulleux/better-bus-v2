@@ -173,36 +173,11 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
     });
   }
 
-  Future sendReport(Station station) async {
-    if (!mounted) return;
-    final report = await AppRadarProvider.of(context).sendReport(station);
-    if (report != null) {
-      setState(() {
-        reports ??= {};
-        reports![report.station] = report;
-      });
-    }
-  }
 
-  Future updateReport(Report report, bool stillThere) async {
-    if (!mounted) return;
-    final newReport = await AppRadarProvider.of(context).updateReport(report, stillThere);
-    if (newReport != null)  {
-      setState(() {
-        reports![report.station] = newReport;
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     final report = reports?[focusStation];
-    void Function(bool _)? reportCallback = null;
-    if (focusStation != null) {
-      reportCallback = report != null
-          ? (bool v) => updateReport(report, v)
-          : (bool v) => sendReport(focusStation!);
-    }
 
     return Scaffold(
       body: SafeArea(
@@ -286,9 +261,11 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
                   station: focusStation,
                   stop: focusedStop,
                   position: position,
-                  updateReport: reportCallback,
                   openFocus: onFocusOpen,
-                  report: reports?[focusStation],
+                  report: report,
+                  reportUpdate: (r) => setState(() {
+                    reports![focusStation!] = r;
+                  }),
                 ),
                 focusedPlace != null
                     ? FocusPlace(

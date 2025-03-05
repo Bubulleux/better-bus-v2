@@ -4,6 +4,7 @@ import 'package:better_bus_core/core.dart';
 import 'package:better_bus_v2/app_constant/app_string.dart';
 import 'package:better_bus_v2/data_provider/radar_provider.dart';
 import 'package:better_bus_v2/views/common/informative_box.dart';
+import 'package:better_bus_v2/views/common/report_infobox.dart';
 import 'package:better_bus_v2/views/stop_info/next_passage_view.dart';
 import 'package:better_bus_v2/views/stops_search_page/stops_search_page.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +20,7 @@ class StopFocusWidget extends StatefulWidget {
     this.position,
     this.openFocus,
     this.report,
-    this.updateReport,
+    this.reportUpdate,
     super.key,
   });
 
@@ -28,7 +29,7 @@ class StopFocusWidget extends StatefulWidget {
   final Report? report;
   final LatLng? position;
   final VoidCallback? openFocus;
-  final void Function(bool stillThere)? updateReport;
+  final ValueChanged<Report>? reportUpdate;
 
   @override
   State<StopFocusWidget> createState() => _StopFocusWidgetState();
@@ -38,9 +39,15 @@ class _StopFocusWidgetState extends State<StopFocusWidget> {
   double _height = 200;
 
   @override
+  void initState() {
+    super.initState();
+
+  }
+
+  @override
   void didChangeDependencies() {
-    setState(() {});
     super.didChangeDependencies();
+    setState(() {});
   }
 
   void handleVerticalDrag(DragUpdateDetails detail) {
@@ -101,45 +108,9 @@ class _StopFocusWidgetState extends State<StopFocusWidget> {
                   ],
                 ),
               ),
-              buildReportInfo()
             ],
           ),
         ));
-  }
-
-
-  Widget buildReportInfo() {
-    if (widget.report == null) {
-      return ElevatedButton(
-        onPressed: () => widget.updateReport?.call(true),
-        child: Text(AppString.signalController),
-      );
-    }
-    final report = widget.report!;
-
-    return InfoBox(
-      color: Colors.blue,
-      icon: Icons.local_police,
-      margin: const EdgeInsets.all(8),
-      child: Column(
-        children: [
-          Text(AppString.controllerSee.format(report.lastSee.inMinutes)),
-          Row(
-            children: [
-              ElevatedButton(
-                onPressed: () => widget.updateReport?.call(true),
-                child: Text(AppString.stillThere),
-              ),
-              const Spacer(),
-              ElevatedButton(
-                onPressed: () => widget.updateReport?.call(false),
-                child: Text(AppString.goAway),
-              )
-            ],
-          )
-        ],
-      ),
-    );
   }
 
   @override
@@ -162,15 +133,20 @@ class _StopFocusWidgetState extends State<StopFocusWidget> {
           borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       padding: const EdgeInsets.only(right: 5, left: 5),
       child: Column(
+        key: Key(widget.station!.name + (widget.stop.toString())),
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           buildDragBar(),
+          ReportInfobox(
+            report: widget.report,
+            station: widget.station!,
+            reportUpdate: widget.reportUpdate,
+          ),
           Expanded(
               child: NextPassagePage(
             widget.station!,
             direction: direction,
             minimal: true,
-            key: Key(widget.station!.name + (widget.stop.toString())),
           )),
         ],
       ),

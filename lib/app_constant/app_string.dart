@@ -120,7 +120,7 @@ class AppString {
 
   static const initialTime = "Initialement prévue à {}";
 
-  static const controllerSee = "Des controlleurs on été apercus a cette arret il y a {} minute";
+  static const controllerSee = "Controleur vue il y a {} minutes";
 
   static const signalController = "Signaler un controleur";
   static const stillThere = "Toujours là";
