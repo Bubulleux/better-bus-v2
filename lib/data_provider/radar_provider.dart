@@ -5,8 +5,7 @@ import 'package:flutter/cupertino.dart';
 const sendThreshold = Duration(minutes: 2);
 
 class AppRadarProvider extends RadarClient {
-  AppRadarProvider({required super.provider})
-      : super(apiUrl: Uri.parse("http://192.168.188.242:8080"));
+  AppRadarProvider({required super.provider}) : super.production();
 
   // TODO: Make it not static
   static DateTime? lastSent;
@@ -17,7 +16,7 @@ class AppRadarProvider extends RadarClient {
   factory AppRadarProvider.of(BuildContext context) {
     return AppRadarProvider(provider: FullProvider.of(context));
   }
-  
+
   void preventSpam() {
     if (!sentAvailable) throw "Not available wait pls";
     lastSent = DateTime.now();
