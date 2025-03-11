@@ -8,7 +8,7 @@ const sendThreshold = Duration(minutes: 2);
 class AppRadarProvider extends RadarClient {
   AppRadarProvider({required super.provider})
       : super(
-          apiUrl: kDebugMode
+          apiUrl: kDebugMode && false
               ? RadarClient.localhostEndPoint
               : RadarClient.productionEndpoint,
         );

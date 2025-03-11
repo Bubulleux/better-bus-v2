@@ -5,31 +5,26 @@ import 'package:better_bus_v2/app_constant/app_string.dart';
 import 'package:better_bus_v2/data_provider/radar_provider.dart';
 import 'package:better_bus_v2/views/common/informative_box.dart';
 import 'package:better_bus_v2/views/common/report_infobox.dart';
+import 'package:better_bus_v2/views/map/controller.dart';
 import 'package:better_bus_v2/views/stop_info/next_passage_view.dart';
 import 'package:better_bus_v2/views/stops_search_page/stops_search_page.dart';
 import 'package:flutter/material.dart';
 import 'package:format/format.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 
 import '../../model/provider.dart';
 
 class StopFocusWidget extends StatefulWidget {
   const StopFocusWidget({
-    this.station,
-    this.stop,
-    this.position,
+    required this.controller,
     this.openFocus,
-    this.report,
-    this.reportUpdate,
     super.key,
   });
 
-  final Station? station;
-  final int? stop;
-  final Report? report;
-  final LatLng? position;
+
+  final NetworkMapController controller;
   final VoidCallback? openFocus;
-  final ValueChanged<Report>? reportUpdate;
 
   @override
   State<StopFocusWidget> createState() => _StopFocusWidgetState();
@@ -37,6 +32,11 @@ class StopFocusWidget extends StatefulWidget {
 
 class _StopFocusWidgetState extends State<StopFocusWidget> {
   double _height = 200;
+  LatLng? get position => widget.controller.posCoord;
+  Station get station => widget.controller.focusedStation!;
+  // TODO: Implement stopId
+  int? get stop => null;
+  Report? get report => widget.controller.report;
 
   @override
   void initState() {
@@ -68,8 +68,8 @@ class _StopFocusWidgetState extends State<StopFocusWidget> {
   }
 
   Widget buildDragBar() {
-    String? distance = widget.position != null
-        ? "${(getDistanceInKMeter(widget.station!, widget.position!) * 100).roundToDouble() / 100} km"
+    String? distance = position != null
+        ? "${(getDistanceInKMeter(station, position!) * 100).roundToDouble() / 100} km"
         : null;
 
     return GestureDetector(
@@ -98,7 +98,7 @@ class _StopFocusWidgetState extends State<StopFocusWidget> {
                 child: Row(
                   children: [
                     Text(
-                      widget.station!.name,
+                      station.name,
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                     const Spacer(),
@@ -115,14 +115,15 @@ class _StopFocusWidgetState extends State<StopFocusWidget> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.station == null) {
+    if (widget.controller.focusedStation == null) {
       return Container();
     }
 
     List<LineDirection>? direction;
     final provider = FullProvider.of(context).gtfs;
-    if (widget.stop != null && provider.isAvailable()) {
-      direction = provider.getStopDirections(widget.stop!);
+    final stop = widget.controller.focusedStop;
+    if (stop != null && provider.isAvailable()) {
+      direction = provider.getStopDirections(stop);
     }
 
     return AnimatedContainer(
@@ -133,20 +134,21 @@ class _StopFocusWidgetState extends State<StopFocusWidget> {
           borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       padding: const EdgeInsets.only(right: 5, left: 5),
       child: Column(
-        key: Key(widget.station!.name + (widget.stop.toString())),
+        key: Key(station.name + (stop.toString())),
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           buildDragBar(),
           ReportInfobox(
-            report: widget.report,
-            station: widget.station!,
-            reportUpdate: widget.reportUpdate,
+            report: report,
+            station: station,
+            //reportUpdate: reportUpdate,
           ),
           Expanded(
               child: NextPassagePage(
-            widget.station!,
+            station,
             direction: direction,
             minimal: true,
+                stopTimeSelected: (stopTime) => widget.controller.setTrip(stopTime.trip!),
           )),
         ],
       ),

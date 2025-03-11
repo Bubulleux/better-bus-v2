@@ -7,7 +7,9 @@ import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 
 class PositionLayer extends StatefulWidget {
-  const PositionLayer({super.key});
+  const PositionLayer({this.positionUpdate, super.key});
+
+  final ValueChanged<Position?>? positionUpdate;
 
   @override
   State<PositionLayer> createState() => _PositionLayerState();
@@ -68,6 +70,8 @@ class _PositionLayerState extends State<PositionLayer>
           newPos.timestamp.difference(position!.timestamp) : const Duration(seconds: 1);
         controller.duration = const Duration(milliseconds: 500);
         controller.forward(from: 0);
+
+        widget.positionUpdate?.call(position);
       });
     });
   }

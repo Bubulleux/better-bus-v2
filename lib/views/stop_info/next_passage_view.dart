@@ -13,11 +13,13 @@ import '../../model/provider.dart';
 
 class NextPassagePage extends StatefulWidget {
   const NextPassagePage(this.stop,
-      {this.direction, this.minimal = false, super.key});
+      {this.direction, this.minimal = false, this.stopTimeSelected, super.key});
 
   final Station stop;
   final List<LineDirection>? direction;
   final bool minimal;
+  // TODO: There is a better way
+  final ValueChanged<StopTime>? stopTimeSelected;
 
   @override
   State<NextPassagePage> createState() => _NextPassagePageState();
@@ -80,6 +82,7 @@ class _NextPassagePageState extends State<NextPassagePage>
                 widget.stop,
                 seeAll && !widget.minimal ? null : widget.direction,
                 key: nextPassageWidgetKey,
+                stopTimeSelected: widget.stopTimeSelected,
               ),
             ),
           ],
@@ -91,10 +94,12 @@ class _NextPassagePageState extends State<NextPassagePage>
 }
 
 class NextPassageListWidget extends StatefulWidget {
-  const NextPassageListWidget(this.stop, this.direction, {super.key});
+  const NextPassageListWidget(this.stop, this.direction,
+      {this.stopTimeSelected, super.key});
 
   final Station stop;
   final List<Direction>? direction;
+  final ValueChanged<StopTime>? stopTimeSelected;
 
   @override
   State<NextPassageListWidget> createState() => NextPassageListWidgetState();
@@ -127,7 +132,10 @@ class NextPassageListWidgetState extends State<NextPassageListWidget> {
       onData: (context, data, refresh) {
         return ListView.separated(
           itemCount: data.length,
-          itemBuilder: (context, index) => NextPassageWidget(data[index]),
+          itemBuilder: (context, index) => NextPassageWidget(
+            data[index],
+            onOpen: () => widget.stopTimeSelected?.call(data[index]),
+          ),
           separatorBuilder: (ctx, index) =>
               const Divider(height: 3, color: Colors.black38),
         );
@@ -150,9 +158,10 @@ class NextPassageListWidgetState extends State<NextPassageListWidget> {
 }
 
 class NextPassageWidget extends StatefulWidget {
-  const NextPassageWidget(this.nextPassage, {super.key});
+  const NextPassageWidget(this.nextPassage, {this.onOpen, super.key});
 
   final StopTime nextPassage;
+  final VoidCallback? onOpen;
 
   @override
   State<NextPassageWidget> createState() => _NextPassageWidgetState();
@@ -206,6 +215,13 @@ class _NextPassageWidgetState extends State<NextPassageWidget>
     );
   }
 
+  void handleTap() {
+    if (!expandControler.expanded) {
+      widget.onOpen?.call();
+    }
+    expandControler.tickAnimation();
+  }
+
   @override
   Widget build(BuildContext context) {
     String formattedTime =
@@ -219,7 +235,7 @@ class _NextPassageWidgetState extends State<NextPassageWidget>
     Duration delay =
         widget.nextPassage.time.difference(widget.nextPassage.aimedTime);
     return InkWell(
-      onTap: expandControler.tickAnimation,
+      onTap: handleTap,
       child: Container(
         // height: 55,
         padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 5),

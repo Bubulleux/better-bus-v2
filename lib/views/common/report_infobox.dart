@@ -9,9 +9,10 @@ import '../../app_constant/app_string.dart';
 import 'informative_box.dart';
 
 class ReportInfobox extends StatefulWidget {
-  const ReportInfobox({this.report, required this.station, this.reportUpdate, super.key});
+  const ReportInfobox({this.report, required this.station, this.updatable = false, this.reportUpdate, super.key});
 
   final Report? report;
+  final bool updatable;
   final Station station;
   final ValueChanged<Report>? reportUpdate;
 
@@ -21,24 +22,12 @@ class ReportInfobox extends StatefulWidget {
 
 class _ReportInfoboxState extends State<ReportInfobox> {
   Report? report;
-  bool updatable = false;
 
   @override
   void initState() {
     super.initState();
-    isUpdatable().then((v) => setState(() {
-      updatable = v;
-    }));
   }
 
-  Future<bool> isUpdatable() async {
-    if (!AppRadarProvider.of(context).sentAvailable) return Future.value(false);
-
-    final closestStop = await ClosestStopDialog.getClosestStops(context);
-
-    if (closestStop == null) return false;
-    return closestStop.contains(widget.station);
-  }
 
   @override
   void didChangeDependencies() {
@@ -53,16 +42,13 @@ class _ReportInfoboxState extends State<ReportInfobox> {
     } else {
       report = await provider.updateReport(report!, stillThere);
     }
-    setState(() {
-      updatable = false;
-    });
     widget.reportUpdate?.call(report!);
   }
 
   @override
   Widget build(BuildContext context) {
     if (report == null) {
-      return updatable ? ElevatedButton(
+      return widget.updatable ? ElevatedButton(
         onPressed: () => updateReport(true),
         child: const Text(AppString.signalController),
       ) : Container();
@@ -84,7 +70,7 @@ class _ReportInfoboxState extends State<ReportInfobox> {
           Padding(
             padding: const EdgeInsets.only(right: 10),
             child: Row(
-              children: updatable ? [
+              children: widget.updatable ? [
                 ElevatedButton(
                   onPressed: () => updateReport(false),
                   style: ElevatedButton.styleFrom(

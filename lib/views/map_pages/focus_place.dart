@@ -1,21 +1,28 @@
 import 'package:better_bus_core/core.dart';
 import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
+import 'package:better_bus_v2/views/map/controller.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 
 class FocusPlace extends StatefulWidget {
-  const FocusPlace(this.place, {this.pos, super.key});
+  const FocusPlace({required this.controller, super.key});
 
-  final Place place;
-  final LatLng? pos;
+  final NetworkMapController controller;
 
+  Place get place => controller.focusedPlace!;
+  LatLng? get pos => controller.posCoord;
   @override
   State<FocusPlace> createState() => _FocusPlaceState();
 }
 
 class _FocusPlaceState extends State<FocusPlace> {
+
   @override
   Widget build(BuildContext context) {
+    if (widget.controller.focusedPlace == null) {
+      return Container();
+    }
+
     final pos = widget.place.position;
     String? distance = widget.pos != null
         ? "${(GpsDataProvider.calculateDistancePos(pos, widget.pos!) * 100).roundToDouble() / 100} km"
