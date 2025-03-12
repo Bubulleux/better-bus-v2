@@ -1,5 +1,6 @@
 import 'package:better_bus_core/core.dart';
 import 'package:better_bus_v2/model/provider.dart';
+import 'package:better_bus_v2/views/map/bus_layer.dart';
 import 'package:better_bus_v2/views/map/controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -49,7 +50,7 @@ class NetworkMapState extends State<NetworkMap> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    print("Build ${rootController.focusedTrip}");
+    print("Build ${rootController.focusedStopTime}");
     return SizedBox(
       width: widget.width,
       height: widget.height,
@@ -64,10 +65,8 @@ class NetworkMapState extends State<NetworkMap> with TickerProviderStateMixin {
             userAgentPackageName: 'dev.fleaflet.flutter_map.example',
             // Plenty of other options available!
           ),
-          rootController.focusedTrip != null
-              ? TripLayer(trip: rootController.focusedTrip!)
-              : Container(),
           StopsMapLayer(
+            mapController: rootController,
             stops: rootController.stopsPos?.values.toList() ?? [],
             reports: rootController.reports,
             onStationClick: (station) => setState(() {
@@ -77,6 +76,16 @@ class NetworkMapState extends State<NetworkMap> with TickerProviderStateMixin {
             focusedStation: rootController.focusedStation,
             focusedStop: rootController.focusedStop,
           ),
+          ...(rootController.focusedStopTime != null
+              ? [
+                TripLayer(stopTime: rootController.focusedStopTime!),
+            BusLayer(
+              key: Key(rootController.focusedStopTime!.hashCode.toString()),
+              stopTime: rootController.focusedStopTime!,
+            controller: rootController,
+            )
+          ]
+              : []),
           const EasterEggsLayer(),
           PositionLayer(
             positionUpdate: (v) => rootController.position = v,

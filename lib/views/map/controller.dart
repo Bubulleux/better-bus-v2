@@ -17,7 +17,7 @@ class NetworkMapController {
 
   dynamic _focused;
   int? _focusedStop;
-  BusTrip? _focusedTrip;
+  StopTime? _focusedStopTime;
 
   set focused(newFocus) {
     assert(newFocus == null || newFocus is LatLng || newFocus is Location);
@@ -48,6 +48,7 @@ class NetworkMapController {
 
   set position(Position? pos) {
     _position = pos;
+    notifyChange();
   }
 
   Position? get position => _position;
@@ -56,7 +57,7 @@ class NetworkMapController {
       ? LatLng(_position!.latitude, _position!.longitude)
       : null;
 
-  BusTrip? get focusedTrip => _focusedTrip;
+  StopTime? get focusedStopTime => _focusedStopTime;
 
   ValueNotifier<int> stateChange = ValueNotifier(0);
 
@@ -77,7 +78,7 @@ class NetworkMapController {
       _focused.hashCode ^
       focusedStop.hashCode ^
       (posCoord != null).hashCode ^
-      focusedTrip.hashCode;
+      focusedStopTime.hashCode;
 
   Future loadStation() async {
     if (!provider.isAvailable()) return false;
@@ -110,9 +111,42 @@ class NetworkMapController {
     notifyChange();
   }
 
-  void setTrip(BusTrip trip) {
-    _focusedTrip = trip;
+  void setStopTime(StopTime stopTime) {
+    _focusedStopTime = stopTime;
+    showLate();
     notifyChange();
+  }
+
+  // TODO: Debug function need to be removed
+  Future showLate() async {
+    final stopTime = _focusedStopTime!;
+    final trip = stopTime.trip!;
+    final next = trip.stopTimes
+        .skipWhile((e) => e.station != _focused as Station)
+        .toList();
+    Map<Station, Duration?> lates = {for (var v in next) v.station: null};
+    List<Future> futures = [];
+    print("Launch Futures");
+
+    for (var e in next) {
+      final station = e.station;
+      futures.add(provider.getTimetable(station).then((v) {
+        final st = v
+            .getNext()
+            .where((e) => e.trip!.direction == trip.direction)
+            .firstOrNull;
+        if (st == null) return;
+        lates[station] = st.delay;
+      }));
+    }
+    print("Wait");
+
+    await Future.wait(futures);
+    print("Result: ");
+
+    for (var l in lates.entries) {
+      print("${l.key}: ${l.value}");
+    }
   }
 
   TickerFuture animateCamTo(LatLng dst, {double zoom = 18}) {
@@ -122,7 +156,7 @@ class NetworkMapController {
     );
 
     final Tween<double> zoomTween =
-        Tween(begin: controller.camera.zoom, end: 18);
+        Tween(begin: controller.camera.zoom, end: zoom);
 
     final animationController = AnimationController(
       duration: const Duration(milliseconds: 400),

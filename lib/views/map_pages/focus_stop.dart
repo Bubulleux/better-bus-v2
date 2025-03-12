@@ -148,7 +148,7 @@ class _StopFocusWidgetState extends State<StopFocusWidget> {
             station,
             direction: direction,
             minimal: true,
-                stopTimeSelected: (stopTime) => widget.controller.setTrip(stopTime.trip!),
+                stopTimeSelected: widget.controller.setStopTime,
           )),
         ],
       ),

@@ -1,4 +1,6 @@
 import 'package:better_bus_core/core.dart';
+import 'package:better_bus_v2/model/bus_line_color.dart';
+import 'package:better_bus_v2/views/map/controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 
@@ -6,6 +8,7 @@ const animeTime = Duration(milliseconds: 250);
 
 class StopsMapLayer extends StatefulWidget {
   const StopsMapLayer({
+    required this.mapController,
     required this.stops,
     this.onStopClick,
     this.onStationClick,
@@ -15,6 +18,7 @@ class StopsMapLayer extends StatefulWidget {
     super.key,
   });
 
+  final NetworkMapController mapController;
   final List<Station> stops;
   final Station? focusedStation;
   final int? focusedStop;
@@ -31,9 +35,15 @@ class _StopsMapLayerState extends State<StopsMapLayer> {
   Marker buildMaker(Station stop, Report? report, MapCamera camera) {
     final focused = stop == widget.focusedStation;
     final asDot = camera.zoom < 15;
+    final onTrip = widget.mapController.focusedStopTime?.trip!.isPassingBy(stop) ?? false;
     Color color = Theme.of(context).primaryColor;
     if (report != null) {
       color = Color.lerp(color, Colors.blue, report.stillThere) ?? color;
+    }
+    final trip = widget.mapController.focusedStopTime?.trip!;
+    Color? lineColor;
+    if (trip != null && trip.isPassingBy(stop)) {
+      lineColor = trip.line.color.withAlpha(200);
     }
 
     return Marker(
@@ -48,8 +58,8 @@ class _StopsMapLayerState extends State<StopsMapLayer> {
             decoration: BoxDecoration(
                 color: color,
                 borderRadius: BorderRadius.circular(20),
-                border: focused
-                    ? Border.all(color: Colors.black26, width: 3)
+                border: focused || lineColor != null
+                    ? Border.all(color: lineColor ?? Colors.black26, width: 3)
                     : null,
                 boxShadow: [
                   BoxShadow(
