@@ -109,13 +109,20 @@ class NextPassageListWidgetState extends State<NextPassageListWidget> {
   final GlobalKey<CustomFutureBuilderState<List<StopTime>>> futureBuilderKey =
       GlobalKey<CustomFutureBuilderState<List<StopTime>>>();
 
+  late final FullProvider provider;
+
+  @override
+  void initState() {
+    super.initState();
+    provider = FullProvider.of(context);
+  }
+
   void refresh() {
     futureBuilderKey.currentState!.refresh();
   }
 
   Future<List<StopTime>> getData() async {
-    Timetable timetable =
-        await FullProvider.of(context).getTimetable(widget.stop);
+    Timetable timetable = await provider.getTimetable(widget.stop);
     List<StopTime> result = timetable.getNext().toList();
     if (widget.direction != null) {
       result.retainWhere((e) => widget.direction!.contains(e.direction));
@@ -147,6 +154,8 @@ class NextPassageListWidgetState extends State<NextPassageListWidget> {
         return RefreshIndicator(child: child, onRefresh: refresh);
       },
       errorTest: (data) {
+        print("Error test");
+        print(data);
         if (data.isEmpty) {
           return CustomErrors.emptyNextPassage;
         }

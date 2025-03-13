@@ -37,12 +37,13 @@ class BusMarker {
   late DateTime time;
 
   BusMarker({required this.stopTime}) {
-    iterator = trip.shape.wayPoints.iterator;
-    iterator.moveNext();
-    busPos = trip.shape.wayPoints.first;
+    // iterator = trip.shape.wayPoints.iterator;
+    // iterator.moveNext();
+    // busPos = trip.shape.wayPoints.first;
   }
 
   void updateTween() {
+
     if (next == null || next!.time.isBefore(time)) {
       next = trip.stopTimes.firstWhere((e) => time.isBefore(e.time),
           orElse: () => trip.stopTimes.last);
@@ -75,6 +76,7 @@ class BusMarker {
   }
 
   Marker build(DateTime newTime, BuildContext context) {
+    return Marker(point: LatLng(0, 0 ), child: Container());
     time = newTime.subtract(stopTime.delay);
     if (time.isBefore(start)) {
       time = start;

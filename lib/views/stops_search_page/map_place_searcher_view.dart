@@ -86,7 +86,7 @@ class _MapPlaceSearcherViewState extends State<MapPlaceSearcherView> {
   void initState() {
     super.initState();
     GpsDataProvider.getLocation().then((value) {
-      futureStateKey.currentState?.hideRefresh();
+      futureStateKey.currentState?.refresh();
       setState(() => locationData = value);
     });
 
@@ -95,7 +95,7 @@ class _MapPlaceSearcherViewState extends State<MapPlaceSearcherView> {
 
     futureStateKey = GlobalKey();
     getHistoric().then((value) {
-      futureStateKey.currentState?.hideRefresh();
+      futureStateKey.currentState?.refresh();
       setState(() => historic = value);
     });
   }
@@ -103,7 +103,7 @@ class _MapPlaceSearcherViewState extends State<MapPlaceSearcherView> {
   @override
   void didUpdateWidget(covariant MapPlaceSearcherView oldWidget) {
     if (oldWidget.search != widget.search) {
-      futureStateKey.currentState?.hideRefresh();
+      futureStateKey.currentState?.refresh();
     }
     super.didUpdateWidget(oldWidget);
   }
@@ -115,7 +115,7 @@ class _MapPlaceSearcherViewState extends State<MapPlaceSearcherView> {
 
     if (!mounted) return;
 
-    widget.placeCallback(Place(AppString.myPosition, locationData!));
+    widget.placeCallback(Place(AppString.myPosition, position: locationData!));
   }
 
   @override

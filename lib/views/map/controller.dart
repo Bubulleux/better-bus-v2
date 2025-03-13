@@ -26,7 +26,7 @@ class NetworkMapController {
     stateChange.value = hashCode;
   }
 
-  Location? get focused => _focused is LatLng ? Location(_focused) : _focused;
+  Location? get focused => _focused is LatLng ? Location(position: _focused as LatLng) : _focused;
 
   LatLng? get focusedPos => focused is Location ? focused!.position : _focused;
 

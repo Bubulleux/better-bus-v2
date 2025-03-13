@@ -134,7 +134,7 @@ class SearchBusStopViewState extends State<SearchBusStopView>{
   void didUpdateWidget(covariant SearchBusStopView oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.search != oldWidget.search) {
-      futureBuilderState.currentState?.hideRefresh();
+      futureBuilderState.currentState?.refresh();
     }
   }
 

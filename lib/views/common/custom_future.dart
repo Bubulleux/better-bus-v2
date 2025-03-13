@@ -43,7 +43,8 @@ class CustomFutureBuilder<T> extends StatefulWidget {
 class CustomFutureBuilderState<T> extends State<CustomFutureBuilder> with WidgetsBindingObserver{
   T? data;
   CustomError? error;
-  bool isLoading = false;
+  Future<T>? future;
+  bool get isLoading => future != null;
   AppLifecycleState? _notification;
   bool needRefresh = false;
 
@@ -84,61 +85,84 @@ class CustomFutureBuilderState<T> extends State<CustomFutureBuilder> with Widget
     setState(() {});
   }
 
-  Future refresh() async{
-    setState(() {
-      isLoading = true;
-    });
-    await hideRefresh();
-    if (mounted) {
-      setState(() {
-        isLoading = false;
-      });
+  Future<T?> refresh() {
+    if (!mounted) {
+      needRefresh = true;
+      return Future.value(null);
     }
+    needRefresh = false;
+    error = null;
+    future = widget.future() as Future<T>?;
+    future!.then((v) => onData(v), onError: onError);
+    return future!;
 
   }
 
-  Future autoRefresh() async {
+  void onData(T value) {
+    if (error != null || !mounted) return;
+
+    setState(() {
+      future = null;
+      error = widget.errorTest?.call(value);
+      data = error != null ? value : null;
+    });
+  }
+
+  T? onError(Object error, StackTrace stack) {
+
+    print("Future build got error:");
+    print(error);
+    print(stack);
+    if (!mounted) return null;
+    setState(() {
+      future = null;
+      error = error;
+    });
+    return null;
+  }
+
+  void autoRefresh() {
     if (_notification == AppLifecycleState.paused) {
       needRefresh = true;
       return;
     }
 
-    await hideRefresh();
+    refresh();
     needRefresh = false;
     if (widget.automaticRefresh != null && error == null && mounted) {
       Future.delayed(widget.automaticRefresh!, autoRefresh);
     }
   }
 
-  Future hideRefresh() async {
-    if (!mounted) {
-      return;
-    }
-
-    try {
-      data = await widget.future();
-      error = null;
-
-      if (widget.errorTest != null){
-        error = widget.errorTest!(data);
-      }
-    } on Exception catch(e) {
-     error = e.toError();
-    } on Error catch(e) {
-      error = e is CustomError ? e : CustomError(e.toString(), Icons.error, false);
-    }
-    isLoading = false;
-
-    if (mounted) {
-      setState(() {});
-    }
-  }
+  // Future hideRefresh() async {
+  //   if (!mounted) {
+  //     return;
+  //   }
+  //
+  //   try {
+  //     data = await widget.future();
+  //     error = null;
+  //
+  //     if (widget.errorTest != null){
+  //       error = widget.errorTest!(data);
+  //     }
+  //   } on Exception catch(e) {
+  //    error = e.toError();
+  //   } on Error catch(e) {
+  //     error = e is CustomError ? e : CustomError(e.toString(), Icons.error, false);
+  //   }
+  //   isLoading = false;
+  //
+  //   if (mounted) {
+  //     setState(() {});
+  //   }
+  // }
 
   Widget getRefreshIndicator({required Widget child}) {
     if (widget.refreshIndicator == null) {
       return Container(child:  child,);
     } else {
-      return widget.refreshIndicator!(context, child, hideRefresh);
+      return widget.refreshIndicator!(context, child, refresh);
     }
   }
 
@@ -151,6 +175,11 @@ class CustomFutureBuilderState<T> extends State<CustomFutureBuilder> with Widget
     if (isLoading) {
       return getOnLoadingScreen();
     }
+    if (needRefresh) refresh();
+    if (data is! T) {
+      error = CustomError("Not the right type", null, false);
+    }
+    print("Data $data");
 
     if (error != null){
       if (widget.onError != null){
@@ -160,6 +189,9 @@ class CustomFutureBuilderState<T> extends State<CustomFutureBuilder> with Widget
       return error!.build(context, refresh);
 
     }
+    print("Error: Data:");
+    print(error);
+    print(data);
     return getRefreshIndicator(child: widget.onData(context, data, refresh));
   }
 }
