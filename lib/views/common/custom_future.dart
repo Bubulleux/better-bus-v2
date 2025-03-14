@@ -12,7 +12,10 @@ typedef FutureFunction<T> = Future<T> Function();
 typedef ExceptionTest = CustomError? Function(dynamic data);
 
 typedef WidgetRefresh = RefreshIndicator Function(
-    BuildContext context, Widget child, FutureFunction future,);
+  BuildContext context,
+  Widget child,
+  FutureFunction future,
+);
 
 class CustomFutureBuilder<T> extends StatefulWidget {
   const CustomFutureBuilder({
@@ -40,21 +43,22 @@ class CustomFutureBuilder<T> extends StatefulWidget {
   State<CustomFutureBuilder> createState() => CustomFutureBuilderState<T>();
 }
 
-class CustomFutureBuilderState<T> extends State<CustomFutureBuilder> with WidgetsBindingObserver{
+class CustomFutureBuilderState<T> extends State<CustomFutureBuilder>
+    with WidgetsBindingObserver {
   T? data;
   CustomError? error;
   Future<T>? future;
+
   bool get isLoading => future != null;
   AppLifecycleState? _notification;
   bool needRefresh = false;
-
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     data = widget.initData;
-    if (data == null){
+    if (data == null) {
       refresh();
     }
 
@@ -63,13 +67,11 @@ class CustomFutureBuilderState<T> extends State<CustomFutureBuilder> with Widget
     }
   }
 
-
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
-
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -95,21 +97,20 @@ class CustomFutureBuilderState<T> extends State<CustomFutureBuilder> with Widget
     future = widget.future() as Future<T>?;
     future!.then((v) => onData(v), onError: onError);
     return future!;
-
   }
 
   void onData(T value) {
+    print("Mounted: $mounted");
     if (error != null || !mounted) return;
 
     setState(() {
       future = null;
       error = widget.errorTest?.call(value);
-      data = error != null ? value : null;
+      data = value;
     });
   }
 
   T? onError(Object error, StackTrace stack) {
-
     print("Future build got error:");
     print(error);
     print(stack);
@@ -160,14 +161,18 @@ class CustomFutureBuilderState<T> extends State<CustomFutureBuilder> with Widget
 
   Widget getRefreshIndicator({required Widget child}) {
     if (widget.refreshIndicator == null) {
-      return Container(child:  child,);
+      return Container(
+        child: child,
+      );
     } else {
       return widget.refreshIndicator!(context, child, refresh);
     }
   }
 
   Widget getOnLoadingScreen() {
-    return widget.onLoading != null ? widget.onLoading!(context) : const Center(child: CircularProgressIndicator());
+    return widget.onLoading != null
+        ? widget.onLoading!(context)
+        : const Center(child: CircularProgressIndicator());
   }
 
   @override
@@ -179,19 +184,15 @@ class CustomFutureBuilderState<T> extends State<CustomFutureBuilder> with Widget
     if (data is! T) {
       error = CustomError("Not the right type", null, false);
     }
-    print("Data $data");
 
-    if (error != null){
-      if (widget.onError != null){
+    if (error != null) {
+      if (widget.onError != null) {
         return widget.onError!(context, error!, refresh);
       }
 
       return error!.build(context, refresh);
-
     }
-    print("Error: Data:");
-    print(error);
-    print(data);
+
     return getRefreshIndicator(child: widget.onData(context, data, refresh));
   }
 }

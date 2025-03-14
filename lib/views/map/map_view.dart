@@ -65,6 +65,16 @@ class NetworkMapState extends State<NetworkMap> with TickerProviderStateMixin {
             userAgentPackageName: 'dev.fleaflet.flutter_map.example',
             // Plenty of other options available!
           ),
+          ...(rootController.focusedStopTime != null
+              ? [
+                TripLayer(stopTime: rootController.focusedStopTime!),
+            // BusLayer(
+            //   key: Key(rootController.focusedStopTime!.hashCode.toString()),
+            //   stopTime: rootController.focusedStopTime!,
+            // controller: rootController,
+            // )
+          ]
+              : []),
           StopsMapLayer(
             mapController: rootController,
             stops: rootController.stopsPos?.values.toList() ?? [],
@@ -76,16 +86,6 @@ class NetworkMapState extends State<NetworkMap> with TickerProviderStateMixin {
             focusedStation: rootController.focusedStation,
             focusedStop: rootController.focusedStop,
           ),
-          ...(rootController.focusedStopTime != null
-              ? [
-                TripLayer(stopTime: rootController.focusedStopTime!),
-            BusLayer(
-              key: Key(rootController.focusedStopTime!.hashCode.toString()),
-              stopTime: rootController.focusedStopTime!,
-            controller: rootController,
-            )
-          ]
-              : []),
           const EasterEggsLayer(),
           PositionLayer(
             positionUpdate: (v) => rootController.position = v,

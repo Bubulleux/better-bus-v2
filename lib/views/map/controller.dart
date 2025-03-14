@@ -133,7 +133,7 @@ class NetworkMapController {
       futures.add(provider.getTimetable(station).then((v) {
         final st = v
             .getNext()
-            .where((e) => e.trip!.direction == trip.direction)
+            .where((e) => e.trip!.id == trip.id)
             .firstOrNull;
         if (st == null) return;
         lates[station] = st.delay;
