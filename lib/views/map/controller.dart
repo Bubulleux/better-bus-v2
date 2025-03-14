@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:better_bus_core/core.dart';
 import 'package:better_bus_v2/model/provider.dart';
 import 'package:better_bus_v2/views/map/map_view.dart';
@@ -65,6 +67,9 @@ class NetworkMapController {
   Map<Station, Report>? reports;
 
   Report? get report => reports?[focusedStation];
+
+  var camOffset = Offset.zero;
+  var camPadding = EdgeInsets.zero;
 
   NetworkMapController(BuildContext ctx) {
     provider = FullProvider.of(ctx);
@@ -172,9 +177,20 @@ class NetworkMapController {
     return animationController.forward();
   }
 
+  TickerFuture animateToFit(CameraFit fit) {
+    final cam = fit.fit(controller.camera);
+    print(cam.zoom);
+    return animateCamTo(cam.center, zoom: cam.zoom);
+  }
+
   void goToPosition({double zoom = 18}) {
     if (posCoord != null) {
       animateCamTo(posCoord!, zoom: zoom);
     }
   }
+
+  void setRenderBox(RenderBox box) {
+
+  }
+
 }

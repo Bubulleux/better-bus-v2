@@ -2,6 +2,7 @@ import 'package:better_bus_v2/app_constant/app_string.dart';
 import 'package:better_bus_v2/views/common/segmented_choices.dart';
 import 'package:better_bus_v2/views/common/wheel_scroll_selector.dart';
 import 'package:better_bus_v2/views/route_page/route_page.dart';
+import 'package:better_bus_v2/views/route_page/route_search.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:better_bus_core/core.dart';
@@ -9,7 +10,7 @@ import 'package:better_bus_core/core.dart';
 class RouteTimePicker extends StatefulWidget {
   const RouteTimePicker(this.parameter, {super.key});
 
-  final RouteTimeParameter parameter;
+  final RouteSearchParameter parameter;
 
   @override
   State<RouteTimePicker> createState() => _RouteTimePickerState();
@@ -46,7 +47,7 @@ class _RouteTimePickerState extends State<RouteTimePicker> {
   }
 
   void submit() {
-    Navigator.of(context).pop(RouteTimeParameter(timeType, time));
+    Navigator.of(context).pop(widget.parameter.copyWidth(timeType: timeType, time: time));
   }
 
   @override

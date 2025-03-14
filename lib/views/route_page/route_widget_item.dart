@@ -1,48 +1,52 @@
+
 import 'package:better_bus_core/core.dart';
 import 'package:better_bus_v2/views/common/decorations.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
-import 'package:better_bus_v2/views/route_detail_page/route_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-
 class RouteItemWidget extends StatefulWidget {
-  const RouteItemWidget(this.vitalisRoute, {super.key});
+  const RouteItemWidget(this.vitalisRoute, {this.onClick, super.key});
 
   final VitalisRoute vitalisRoute;
+  final VoidCallback? onClick;
 
   @override
   State<RouteItemWidget> createState() => _RouteItemWidgetState();
 }
 
-final DateFormat timeFormat = DateFormat("EE d MMM\nkk:mm", "fr");
-
 class _RouteItemWidgetState extends State<RouteItemWidget> {
+  DateFormat get timeFormat => DateTime.now().atMidnight() ==
+          widget.vitalisRoute.itinerary.last.endTime.atMidnight()
+      ? DateFormat("kk:mm", "fr")
+      : DateFormat("EE d MMM\nkk:mm", "fr");
+
   Widget getRouteSchema() {
     List<Widget> wrapChildren = [
-      const Icon(
-        Icons.flag,
-        color: Colors.green,
-        size: 15,
-      )
+      // const Icon(
+      //   Icons.flag,
+      //   color: Colors.green,
+      //   size: 15,
+      // )
     ];
     for (RoutePassage passage in widget.vitalisRoute.itinerary) {
       if (passage.lines == null) {
         wrapChildren.add(const Icon(
           Icons.directions_walk,
-          size: 30,
+          size: 25,
         ));
       } else {
-        wrapChildren.add(Column(
+        wrapChildren.add(Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            LineWidget(passage.lines!, 30),
-            const SizedBox(
-              height: 5,
-            ),
             const Icon(
               Icons.directions_bus,
-              size: 30,
+              size: 25
             ),
+            const SizedBox(
+              width: 5,
+            ),
+            LineWidget(passage.lines!, 25),
           ],
         ));
       }
@@ -54,11 +58,11 @@ class _RouteItemWidgetState extends State<RouteItemWidget> {
         ));
       }
     }
-    wrapChildren.add(const Icon(
-      Icons.flag,
-      color: Colors.red,
-      size: 15,
-    ));
+    // wrapChildren.add(const Icon(
+    //   Icons.flag,
+    //   color: Colors.red,
+    //   size: 15,
+    // ));
 
     return Wrap(
       children: wrapChildren,
@@ -69,12 +73,35 @@ class _RouteItemWidgetState extends State<RouteItemWidget> {
   }
 
   void showDetail() {
-    Navigator.of(context).pushNamed(RouteDetailPage.routeName, arguments: widget.vitalisRoute);
+    widget.onClick?.call();
+  }
+
+  Widget buildTraveledDist(int dst, IconData icon) {
+    return Wrap(
+      children: [
+        Icon(
+          icon,
+          size: 15,
+        ),
+        Text("${(dst / 100).round() / 10} km",
+            style: const TextStyle(
+              fontSize: 13,
+            )),
+      ],
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     Duration timeTravel = widget.vitalisRoute.timeTravel;
+
+    final start = timeFormat
+        .format((widget.vitalisRoute.itinerary[0].startTime.toLocal()));
+    final stop =
+        timeFormat.format(widget.vitalisRoute.itinerary.last.endTime.toLocal());
+
+    final time =
+        "${timeTravel.inHours != 0 ? "${timeTravel.inHours} h " : ""}${timeTravel.inMinutes % 60} min";
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
@@ -88,54 +115,40 @@ class _RouteItemWidgetState extends State<RouteItemWidget> {
             // decoration: CustomDecorations.of(context).boxOutlined,
             width: double.infinity,
             padding: const EdgeInsets.all(8),
-            child: Column(
+            child: Row(
               children: [
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(horizontal: 50),
-                  child: Wrap(
-                    alignment: WrapAlignment.spaceBetween,
+                const Divider(),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        timeFormat.format((widget.vitalisRoute.itinerary[0].startTime.toLocal())),
-                        textAlign: TextAlign.center,
-                      ),
-                      const Icon(Icons.keyboard_double_arrow_right),
-                      Text(
-                        timeFormat.format(widget.vitalisRoute.itinerary.last.endTime.toLocal()),
-                        textAlign: TextAlign.center,
-                      ),
+                      getRouteSchema(),
+                      const SizedBox(height: 10),
+                      Text("$start - $stop"),
                     ],
                   ),
                 ),
-                const Divider(),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-                  child: getRouteSchema(),
-                ),
-                const Divider(),
+                const Spacer(),
                 SizedBox(
-                  width: double.infinity,
-                  child: Wrap(
-                    alignment: WrapAlignment.spaceBetween,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Wrap(
-                        children: [
-                          const Icon(Icons.directions_bus),
-                          Text("${(widget.vitalisRoute.busDistanceTravel / 100).round() / 10} Km"),
-                        ],
-                      ),
                       Text(
-                        (timeTravel.inHours != 0 ? "${timeTravel.inHours} h " : "") +
-                            "${timeTravel.inMinutes % 60} min",
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                        time,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 20),
                       ),
-                      Wrap(
-                        children: [
-                          const Icon(Icons.directions_walk),
-                          Text("${(widget.vitalisRoute.walkDistanceTravel / 100).round() / 10} Km"),
-                        ],
-                      ),
+                      const SizedBox(height: 10),
+                      Row(children: [
+                        buildTraveledDist(widget.vitalisRoute.busDistanceTravel,
+                            Icons.directions_bus),
+                        const SizedBox(width: 20),
+                        buildTraveledDist(
+                            widget.vitalisRoute.walkDistanceTravel,
+                            Icons.directions_walk),
+                      ])
                     ],
                   ),
                 ),

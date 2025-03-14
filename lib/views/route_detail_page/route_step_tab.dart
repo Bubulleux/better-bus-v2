@@ -58,9 +58,10 @@ class RouteStepPage extends StatelessWidget {
           busRoute.itinerary[index].lines == null?
               ElevatedButton(
                 child: const Text(AppString.seeOnMaps),
-                onPressed: () => MapsRouter.routeToMap(
-                    busRoute.polyLines[index].lineString[busRoute.polyLines[index].lineString.length - 2],
-                    busRoute.polyLines[index].lineString[busRoute.polyLines[index].lineString.length - 1]),
+                onPressed: null,
+                // onPressed: () => MapsRouter.routeToMap(
+                //     busRoute.polyLines[index].lineString[busRoute.polyLines[index].lineString.length - 2],
+                //     busRoute.polyLines[index].lineString[busRoute.polyLines[index].lineString.length - 1]),
               ):
               Container(),
           Expanded(child: Container()),

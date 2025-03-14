@@ -13,7 +13,7 @@ class BusMarker {
 
   BusTrip get trip => stopTime.trip!;
 
-  DateTime get start => trip.stopTimes.first.time;
+  DateTime get start => trip.stopTimes.first.time!;
 
   // double get distance => next!.time.isAfter(time)
   //   ? next!.travelDist *

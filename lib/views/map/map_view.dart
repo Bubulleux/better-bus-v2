@@ -11,6 +11,7 @@ import '../../data_provider/radar_provider.dart';
 import 'easter_eggs_layer.dart';
 import 'place_layer.dart';
 import 'position_layer.dart';
+import 'route_layer.dart';
 import 'stop_layer.dart';
 import 'trip_layer.dart';
 
@@ -20,12 +21,14 @@ class NetworkMap extends StatefulWidget {
     this.height = double.infinity,
     required this.controller,
     this.showStation = true,
+    this.route,
     super.key,
   });
 
   final double width;
   final double height;
   final NetworkMapController controller;
+  final VitalisRoute? route;
   final bool showStation;
 
   @override
@@ -67,13 +70,13 @@ class NetworkMapState extends State<NetworkMap> with TickerProviderStateMixin {
           ),
           ...(rootController.focusedStopTime != null
               ? [
-                TripLayer(stopTime: rootController.focusedStopTime!),
-            // BusLayer(
-            //   key: Key(rootController.focusedStopTime!.hashCode.toString()),
-            //   stopTime: rootController.focusedStopTime!,
-            // controller: rootController,
-            // )
-          ]
+                  TripLayer(stopTime: rootController.focusedStopTime!),
+                  // BusLayer(
+                  //   key: Key(rootController.focusedStopTime!.hashCode.toString()),
+                  //   stopTime: rootController.focusedStopTime!,
+                  // controller: rootController,
+                  // )
+                ]
               : []),
           StopsMapLayer(
             mapController: rootController,
@@ -86,6 +89,7 @@ class NetworkMapState extends State<NetworkMap> with TickerProviderStateMixin {
             focusedStation: rootController.focusedStation,
             focusedStop: rootController.focusedStop,
           ),
+          widget.route != null ? RouteLayer(route: widget.route!) : Container(),
           const EasterEggsLayer(),
           PositionLayer(
             positionUpdate: (v) => rootController.position = v,

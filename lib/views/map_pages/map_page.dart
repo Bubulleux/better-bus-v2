@@ -6,6 +6,7 @@ import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
 import 'package:better_bus_v2/views/common/fake_text_field.dart';
 import 'package:better_bus_v2/views/map/controller.dart';
 import 'package:better_bus_v2/views/map/map_view.dart';
+import 'package:better_bus_v2/views/map/map_view_port.dart';
 import 'package:better_bus_v2/views/map_pages/focus_place.dart';
 import 'package:better_bus_v2/views/map_pages/focus_stop.dart';
 import 'package:better_bus_v2/views/stop_info/stop_info_page.dart';
@@ -112,7 +113,7 @@ class _MapPageState extends State<MapPage> {
                     ),
                   ],
                 ),
-                const Spacer(),
+                MapViewPort(controller: controller),
                 Row(
                   children: [
                     //ElevatedButton(onPressed: test, child: const Text("OUI")),
