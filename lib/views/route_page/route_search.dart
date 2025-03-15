@@ -25,12 +25,22 @@ class RouteSearchParameter {
 
   RouteSearchParameter copyWidth(
       {Place? start, Place? stop, RouteTimeType? timeType, DateTime? time}) {
+    print("Copy with stop ${stop?.name}");
     return RouteSearchParameter(
       start ?? this.start,
       stop ?? this.stop,
       timeType ?? this.timeType,
       time ?? this.time,
     );
+  }
+
+  @override
+  int get hashCode =>
+      start.hashCode ^ stop.hashCode * 2 ^ time.hashCode ^ timeType.hashCode;
+
+  @override
+  bool operator ==(Object other) {
+    return other is RouteSearchParameter && hashCode == other.hashCode;
   }
 }
 
@@ -51,8 +61,10 @@ class _RouteSearchState extends State<RouteSearch> {
   void initState() {
     super.initState();
     search.addListener(() {
+      print(mounted);
       if (mounted) {
         widget.onSearch(search.value);
+        print("Search changed");
         setState(() {});
       }
     });
@@ -73,9 +85,7 @@ class _RouteSearchState extends State<RouteSearch> {
       if (place == null) {
         return;
       }
-      setState(() {
-        search.value = search.value.copyWidth(stop: place);
-      });
+      search.value = search.value.copyWidth(stop: place);
     });
   }
 
@@ -89,6 +99,9 @@ class _RouteSearchState extends State<RouteSearch> {
   void swapDirection() {
     final v = search.value;
     search.value = v.copyWidth(start: v.stop, stop: v.start);
+    print(search.value.stop?.name);
+    print(v.start?.name);
+    print("Swap");
   }
 
   void setTime() async {
@@ -98,7 +111,7 @@ class _RouteSearchState extends State<RouteSearch> {
     search.value = newParameter;
   }
 
-  Future showFarestStation() async{
+  Future showFarestStation() async {
     print("Start");
     final station = await FullProvider.of(context).getStations();
     print("HAHHA");
@@ -192,10 +205,11 @@ class _RouteSearchState extends State<RouteSearch> {
                 ],
               ),
               ElevatedButton(
-                  onPressed: swapDirection,
-                  child: const Icon(Icons.swap_vert, size: 20),
-                  style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.all(0)))
+                onPressed: swapDirection,
+                style:
+                    ElevatedButton.styleFrom(padding: const EdgeInsets.all(0)),
+                child: const Icon(Icons.swap_vert, size: 20),
+              )
             ],
           ),
           const SizedBox(
