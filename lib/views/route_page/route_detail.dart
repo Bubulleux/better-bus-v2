@@ -79,6 +79,10 @@ class _RouteDetailState extends State<RouteDetail> {
       children: [Text(title)],
     );
   }
+  
+  Widget timeWidget(String text, DateTime time) {
+    return Text(text.format(DateFormat("Hm").format(time.toLocal())));
+  }
 
   Widget buildLineStep(RoutePassage item) {
     assert(item.lines != null);
@@ -94,9 +98,6 @@ class _RouteDetailState extends State<RouteDetail> {
           .toList();
     }
 
-    Widget timeWidget(String text, DateTime time) {
-      return Text(text.format(DateFormat("Hm").format(time.toLocal())));
-    }
 
     return buildRow(
       marge: LineWidget(item.lines!, 35),
@@ -168,22 +169,20 @@ class _RouteDetailState extends State<RouteDetail> {
   }
 
   Widget buildStart() {
-    final time =
-        DateFormat("Hm").format(widget.route.itinerary.first.startTime);
+    final time = widget.route.itinerary.first.startTime;
     final from = widget.parameter.start!.name;
     return buildRow(
       marge: const Icon(Icons.flag, color: Colors.green),
-      children: [Text(from), Text(AppString.startAt.format(time))],
+      children: [Text(from), timeWidget(AppString.startAt, time)],
     );
   }
 
   Widget buildEnd() {
-    final time =
-        DateFormat("Hm").format(widget.route.itinerary.first.startTime);
+    final time = widget.route.itinerary.last.endTime;
     final to = widget.parameter.stop!.name;
     return buildRow(
       marge: const Icon(Icons.flag, color: Colors.red),
-      children: [Text(AppString.endAt.format(time))],
+      children: [timeWidget(AppString.endAt, time)],
     );
   }
 

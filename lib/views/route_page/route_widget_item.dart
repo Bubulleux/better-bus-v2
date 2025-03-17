@@ -95,7 +95,13 @@ class _RouteItemWidgetState extends State<RouteItemWidget> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text("$start - $stop"),
+                      Row(
+                        children: [
+                          Text(start),
+                          Icon(Icons.arrow_right_outlined),
+                          Text(stop),
+                        ],
+                      ),
                       Spacer(),
                       Row(children: [
                         buildTraveledDist(widget.vitalisRoute.busDistanceTravel,
