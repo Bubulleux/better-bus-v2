@@ -2,6 +2,7 @@
 import 'package:better_bus_core/core.dart';
 import 'package:better_bus_v2/views/common/decorations.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
+import 'package:better_bus_v2/views/common/route_schema.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -22,54 +23,7 @@ class _RouteItemWidgetState extends State<RouteItemWidget> {
       : DateFormat("EE d MMM\nkk:mm", "fr");
 
   Widget getRouteSchema() {
-    List<Widget> wrapChildren = [
-      // const Icon(
-      //   Icons.flag,
-      //   color: Colors.green,
-      //   size: 15,
-      // )
-    ];
-    for (RoutePassage passage in widget.vitalisRoute.itinerary) {
-      if (passage.lines == null) {
-        wrapChildren.add(const Icon(
-          Icons.directions_walk,
-          size: 25,
-        ));
-      } else {
-        wrapChildren.add(Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(
-              Icons.directions_bus,
-              size: 25
-            ),
-            const SizedBox(
-              width: 5,
-            ),
-            LineWidget(passage.lines!, 25),
-          ],
-        ));
-      }
-
-      if (passage != widget.vitalisRoute.itinerary.last) {
-        wrapChildren.add(const Icon(
-          Icons.keyboard_double_arrow_right,
-          size: 20,
-        ));
-      }
-    }
-    // wrapChildren.add(const Icon(
-    //   Icons.flag,
-    //   color: Colors.red,
-    //   size: 15,
-    // ));
-
-    return Wrap(
-      children: wrapChildren,
-      spacing: 5,
-      crossAxisAlignment: WrapCrossAlignment.end,
-      alignment: WrapAlignment.start,
-    );
+    return RouteSchema(route: widget.vitalisRoute, size: 23,);
   }
 
   void showDetail() {
@@ -115,32 +69,34 @@ class _RouteItemWidgetState extends State<RouteItemWidget> {
             // decoration: CustomDecorations.of(context).boxOutlined,
             width: double.infinity,
             padding: const EdgeInsets.all(8),
-            child: Row(
+            //height: 200,
+            child: Column(
               children: [
                 const Divider(),
                 Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Row(
+                    //crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.max,
                     children: [
                       getRouteSchema(),
-                      const SizedBox(height: 10),
-                      Text("$start - $stop"),
-                    ],
-                  ),
-                ),
-                const Spacer(),
-                SizedBox(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
+                      const Spacer(),
                       Text(
                         time,
                         style: const TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 20),
                       ),
-                      const SizedBox(height: 10),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 5,),
+                SizedBox(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text("$start - $stop"),
+                      Spacer(),
                       Row(children: [
                         buildTraveledDist(widget.vitalisRoute.busDistanceTravel,
                             Icons.directions_bus),

@@ -34,6 +34,12 @@ class AppString {
   static const andGoToStop = " puis aller jusqu'à l'arrêt ";
   static const seeOnMaps = "Voir sur la carte";
 
+  static const aimedAt = "Prévue à {}";
+  static const arrivalAimedAt = "Arrivé prévue à {}";
+  static const startAt = "Partir à {}";
+  static const endAt = "Arriver à {}";
+
+
   static const startLabel = "Départ";
   static const endLabel = "Arrivée";
   static const departureAt = "Partir";

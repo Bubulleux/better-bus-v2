@@ -10,8 +10,7 @@ import 'route_search.dart';
 import 'route_widget_item.dart';
 
 class RouteSearchResult extends StatefulWidget {
-  RouteSearchResult({required this.parameter, this.routeSelected}) :
-  super(key: ObjectKey(parameter));
+  RouteSearchResult({required this.parameter, this.routeSelected, super.key});
 
   final RouteSearchParameter parameter;
   final ValueChanged<VitalisRoute>? routeSelected;
@@ -20,21 +19,33 @@ class RouteSearchResult extends StatefulWidget {
   State<RouteSearchResult> createState() => _RouteSearchResultState();
 }
 
-class _RouteSearchResultState extends State<RouteSearchResult> {
+class _RouteSearchResultState extends State<RouteSearchResult>
+  with AutomaticKeepAliveClientMixin<RouteSearchResult>{
 
-  RouteSearchParameter get parameter => widget.parameter;
+  RouteSearchParameter? _parameter;
+  RouteSearchParameter get parameter => _parameter!;
 
   GlobalKey<CustomFutureBuilderState<List<VitalisRoute>?>> futureBuilderKey =
   GlobalKey<CustomFutureBuilderState<List<VitalisRoute>?>>();
 
+  @override
+  void initState() {
+    super.initState();
+    _parameter = widget.parameter;
+  }
+
 @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    futureBuilderKey.currentState?.refresh();
+    if (parameter != widget.parameter) {
+      _parameter = widget.parameter;
+      futureBuilderKey.currentState?.refresh();
+    }
   }
 
   Future<List<VitalisRoute>?> getRoutes() async {
     final provider = FullProvider.of(context).api;
+    assert(_parameter != null);
     if (!parameter.valid ||
         !mounted ||
         !provider.isAvailable()) {
@@ -46,14 +57,17 @@ class _RouteSearchResultState extends State<RouteSearchResult> {
 
     return result;
   }
+
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+    assert(_parameter != null);
     return Container(
       //decoration: CustomDecorations.of(context).boxBackground,
       color: Colors.black12,
       // padding: const EdgeInsets.symmetric(horizontal: 5),
       child: CustomFutureBuilder<List<VitalisRoute>?>(
-        // key: futureBuilderKey,
+        key: futureBuilderKey,
         future: getRoutes,
         onData: (context, data, refresh) {
           return ClipRRect(
@@ -79,5 +93,8 @@ class _RouteSearchResultState extends State<RouteSearchResult> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => widget.parameter == _parameter;
 }
 

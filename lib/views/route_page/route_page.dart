@@ -20,7 +20,7 @@ class RoutePage extends StatefulWidget {
 class _RoutePageState extends State<RoutePage> {
   RouteSearchParameter? parameter;
   VitalisRoute? route;
-
+  late PageController _pageController;
 
   late NetworkMapController controller;
 
@@ -28,6 +28,7 @@ class _RoutePageState extends State<RoutePage> {
   void initState() {
     super.initState();
     controller = NetworkMapController(context);
+    _pageController = PageController();
   }
 
   @override
@@ -38,6 +39,7 @@ class _RoutePageState extends State<RoutePage> {
 
   void selectRoute(VitalisRoute newRoute) {
     route = newRoute;
+    goToDetail();
     updateCam();
     setState(() {});
   }
@@ -66,10 +68,13 @@ class _RoutePageState extends State<RoutePage> {
   }
 
   void closeDetail() {
+    _pageController.animateToPage(0, duration: Duration(milliseconds: 200), curve: Curves.linear);
     setState(() {
       route = null;
     });
   }
+
+  void goToDetail() => _pageController.animateToPage(1, duration: Duration(milliseconds: 200), curve: Curves.linear);
 
   @override
   Widget build(BuildContext context) {
@@ -89,13 +94,27 @@ class _RoutePageState extends State<RoutePage> {
             parameter?.valid ?? false || route != null
                 ? SizedBox(
                     height: 300,
-                    child: route == null
-                        ? RouteSearchResult(
-                            parameter: parameter!,
-                            routeSelected: selectRoute,
-                          )
-                        : RouteDetail(route: route!, onClose: closeDetail))
+                    child: PageView(
+                      controller: _pageController,
+                      children: [
+                        RouteSearchResult(
+                          key: ObjectKey(parameter!),
+                          parameter: parameter!,
+                          routeSelected: selectRoute,
+                        ),
+                        route == null ? Container()
+                        : RouteDetail(route: route!, parameter: parameter!, onClose: closeDetail)
+                      ],
+                    ))
                 : Container()
+            // child: route == null
+            //     ?
+            //     : RouteDetail(
+            //         route: route!,
+            //         parameter: parameter!,
+            //         onClose: closeDetail,
+            //       ))
+            //     : Container()
           ],
         ),
       ),
