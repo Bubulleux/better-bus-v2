@@ -50,7 +50,7 @@ class _LineStepDetailState extends State<LineStepDetail>
     const arrow = Expanded(child: Icon(Icons.keyboard_arrow_right));
 
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 5),
+      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 5),
       margin: const EdgeInsets.symmetric(vertical: 2),
       decoration: BoxDecoration(),
       child: Column(
@@ -64,7 +64,10 @@ class _LineStepDetailState extends State<LineStepDetail>
               format(endTime)
             ],
           ),
-          DelayInfobox(stopTime: stopTime, height: 30,),
+          DelayInfobox(
+            stopTime: stopTime,
+            height: 30,
+          ),
         ],
       ),
     );
@@ -95,11 +98,24 @@ class _LineStepDetailState extends State<LineStepDetail>
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
-                color: Colors.black12,
+                // color: const Color(0xffeeeeee),
+                color: Colors.white,
+                boxShadow: const [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 1,
+                    spreadRadius: 2,
+                    offset: Offset(1, 2),
+                  ),
+                ],
               ),
               child: Column(
                 children: [
-                  timesWidget.first,
+                  // TODO : To it this wey Every where !!!!
+                  DefaultTextStyle.merge(
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    child: timesWidget.first,
+                  ),
                   Material(
                     color: Colors.transparent,
                     child: ExpandableWidget(
@@ -107,10 +123,10 @@ class _LineStepDetailState extends State<LineStepDetail>
                       child: Column(
                         children: times != null
                             ? timesWidget
-                                .skip(1)
-                                .separate(const Divider(thickness: 2),
-                                    before: true)
-                                .toList()
+                            .skip(1)
+                            .separate(const Divider(thickness: 2),
+                            before: true)
+                            .toList()
                             : [],
                       ),
                     ),
