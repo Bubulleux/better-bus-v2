@@ -2,6 +2,7 @@ import 'package:better_bus_core/core.dart';
 import 'package:better_bus_v2/views/common/custom_future.dart';
 import 'package:better_bus_v2/views/map/controller.dart';
 import 'package:better_bus_v2/views/map/map_view.dart';
+import 'package:better_bus_v2/views/map/search_parameter_layer.dart';
 import 'package:better_bus_v2/views/route_page/route_detail.dart';
 import 'package:better_bus_v2/views/route_page/route_search.dart';
 import 'package:better_bus_v2/views/route_page/route_search_result.dart';
@@ -47,6 +48,7 @@ class _RoutePageState extends State<RoutePage> {
   void setSearch(RouteSearchParameter newParameter) {
     parameter = newParameter;
     route = null;
+    goToSearch();
     updateCam();
     setState(() {});
   }
@@ -68,13 +70,17 @@ class _RoutePageState extends State<RoutePage> {
   }
 
   void closeDetail() {
-    _pageController.animateToPage(0, duration: Duration(milliseconds: 200), curve: Curves.linear);
-    setState(() {
-      route = null;
-    });
+    goToSearch();
   }
 
-  void goToDetail() => _pageController.animateToPage(1, duration: Duration(milliseconds: 200), curve: Curves.linear);
+  final animationDuration = const Duration(milliseconds: 200);
+  void goToSearch() => goToI(0);
+  void goToDetail() => goToI(1);
+  void goToI(int index) {
+    if ((parameter?.valid ?? false) && _pageController.hasClients) {
+      _pageController.animateToPage(index, duration: animationDuration, curve: Curves.linear);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,6 +94,8 @@ class _RoutePageState extends State<RoutePage> {
                 NetworkMap(
                   controller: controller,
                   route: route,
+                  layers: parameter != null ?
+                  [RouteParameterLayer(parameter: parameter!)] : [],
                 ),
               ]),
             ),
@@ -101,6 +109,7 @@ class _RoutePageState extends State<RoutePage> {
                           key: ObjectKey(parameter!),
                           parameter: parameter!,
                           routeSelected: selectRoute,
+                          route: route,
                         ),
                         route == null ? Container()
                         : RouteDetail(route: route!, parameter: parameter!, onClose: closeDetail)

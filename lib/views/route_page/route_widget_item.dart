@@ -7,10 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class RouteItemWidget extends StatefulWidget {
-  const RouteItemWidget(this.vitalisRoute, {this.onClick, super.key});
+  const RouteItemWidget(this.vitalisRoute, {this.onClick, this.selected = false, super.key});
 
   final VitalisRoute vitalisRoute;
   final VoidCallback? onClick;
+  final bool selected;
 
   @override
   State<RouteItemWidget> createState() => _RouteItemWidgetState();
@@ -61,18 +62,17 @@ class _RouteItemWidgetState extends State<RouteItemWidget> {
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: Material(
         borderRadius: CustomDecorations.borderRadius,
-        elevation: 2,
+        elevation: widget.selected ? 5 : 2,
         child: InkWell(
           borderRadius: CustomDecorations.borderRadius,
           onTap: showDetail,
           child: Container(
             // decoration: CustomDecorations.of(context).boxOutlined,
             width: double.infinity,
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(13),
             //height: 200,
             child: Column(
               children: [
-                const Divider(),
                 Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 5, vertical: 5),

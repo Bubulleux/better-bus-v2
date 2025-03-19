@@ -2,6 +2,7 @@ import 'package:better_bus_core/core.dart';
 import 'package:better_bus_v2/model/provider.dart';
 import 'package:better_bus_v2/views/common/close_cross.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
+import 'package:better_bus_v2/views/route_page/line_step_detail.dart';
 import 'package:better_bus_v2/views/route_page/route_search.dart';
 import 'package:flutter/material.dart';
 import 'package:format/format.dart';
@@ -19,10 +20,10 @@ class RouteDetail extends StatefulWidget {
   final VoidCallback onClose;
 
   @override
-  State<RouteDetail> createState() => _RouteDetailState();
+  State<RouteDetail> createState() => RouteDetailState();
 }
 
-class _RouteDetailState extends State<RouteDetail> {
+class RouteDetailState extends State<RouteDetail> {
   Map<Station, Timetable?> timeTable = {};
   Map<String, Station>? stations;
   late FullProvider provider;
@@ -80,7 +81,7 @@ class _RouteDetailState extends State<RouteDetail> {
     );
   }
   
-  Widget timeWidget(String text, DateTime time) {
+  static Widget timeWidget(String text, DateTime time) {
     return Text(text.format(DateFormat("Hm").format(time.toLocal())));
   }
 
@@ -88,13 +89,13 @@ class _RouteDetailState extends State<RouteDetail> {
     assert(item.lines != null);
     final station = stations?[item.startPlace]!;
     final endStation = stations?[item.endPlace]!;
-    const arrow = Expanded(child: Icon(Icons.keyboard_double_arrow_right));
     List<StopTime>? times;
     if (station != null && endStation != null) {
       times = timeTable[station]
           ?.getNext(from: item.startTime)
-          .where((e) => e.trip != null && e.trip!.isPassingBy(station) && e.trip!.isPassingBy(endStation)
-      && e.trip!.line.id == item.lines!.id)
+          .where((e) => e.trip != null && e.trip!.isPassingBy(station)
+          && e.trip!.isPassingBy(endStation) && e.trip!.line.id == item.lines!.id
+      && e.isRealTime)
           .toList();
     }
 
@@ -102,32 +103,7 @@ class _RouteDetailState extends State<RouteDetail> {
     return buildRow(
       marge: LineWidget(item.lines!, 35),
       children: [
-        Row(
-          children: [
-            Text(item.startPlace),
-            const Spacer(),
-            Text(item.endPlace)
-          ],
-        ),
-        Material(
-          textStyle: TextStyle(
-            color: Colors.black.withAlpha(170),
-          ),
-          child: Row(
-            children: [
-              timeWidget(AppString.aimedAt, item.startTime),
-              arrow,
-              timeWidget(AppString.arrivalAimedAt, item.endTime),
-            ],
-          ),
-        ),
-        station != null
-            ? Row(
-                children:
-                    times?.map((e) => timeWidget("{}, ", e.time)).toList() ??
-                        [],
-              )
-            : CircularProgressIndicator()
+            LineStepDetail(routeStep: item, times: times)
       ],
     );
   }

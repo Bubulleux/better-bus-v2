@@ -10,10 +10,11 @@ import 'route_search.dart';
 import 'route_widget_item.dart';
 
 class RouteSearchResult extends StatefulWidget {
-  RouteSearchResult({required this.parameter, this.routeSelected, super.key});
+  RouteSearchResult({required this.parameter, this.routeSelected, this.route, super.key});
 
   final RouteSearchParameter parameter;
   final ValueChanged<VitalisRoute>? routeSelected;
+  final VitalisRoute? route;
 
   @override
   State<RouteSearchResult> createState() => _RouteSearchResultState();
@@ -76,6 +77,7 @@ class _RouteSearchResultState extends State<RouteSearchResult>
               padding: const EdgeInsets.symmetric(horizontal: 5),
               itemBuilder: (context, index) => RouteItemWidget(
                 data[index],
+                selected: widget.route == data[index],
                 onClick: () => widget.routeSelected?.call(data[index]),
               ),
               itemCount: data!.length,

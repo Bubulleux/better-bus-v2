@@ -20,6 +20,7 @@ class NetworkMap extends StatefulWidget {
     this.width = double.infinity,
     this.height = double.infinity,
     required this.controller,
+    this.layers = const [],
     this.showStation = true,
     this.route,
     super.key,
@@ -30,6 +31,8 @@ class NetworkMap extends StatefulWidget {
   final NetworkMapController controller;
   final VitalisRoute? route;
   final bool showStation;
+
+  final List<Widget> layers;
 
   @override
   State<NetworkMap> createState() => NetworkMapState();
@@ -90,6 +93,7 @@ class NetworkMapState extends State<NetworkMap> with TickerProviderStateMixin {
             focusedStop: rootController.focusedStop,
           ),
           widget.route != null ? RouteLayer(route: widget.route!) : Container(),
+          ...widget.layers,
           const EasterEggsLayer(),
           PositionLayer(
             positionUpdate: (v) => rootController.position = v,

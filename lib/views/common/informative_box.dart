@@ -7,6 +7,7 @@ class InfoBox extends StatelessWidget {
       required this.child,
       this.margin = EdgeInsets.zero,
       this.width = double.infinity,
+      this.height = 30,
       super.key});
 
   final IconData? icon;
@@ -14,6 +15,7 @@ class InfoBox extends StatelessWidget {
   final EdgeInsets margin;
   final Widget child;
   final double width;
+  final double? height;
 
   @override
   Widget build(BuildContext context) {
@@ -26,8 +28,8 @@ class InfoBox extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
             color: color.shade100,
             border: Border.all(
-                color: color.shade700,
-                width: 2,
+              color: color.shade700,
+              width: 2,
             )),
         child: Row(
           children: [
@@ -36,7 +38,7 @@ class InfoBox extends StatelessWidget {
                 child: Icon(
                   icon,
                   color: color,
-                  size: 30,
+                  size: height,
                 )),
             Expanded(child: child),
           ],

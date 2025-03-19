@@ -5,6 +5,7 @@ import 'package:better_bus_v2/views/common/custom_future.dart';
 import 'package:better_bus_v2/views/common/extendable_view.dart';
 import 'package:better_bus_v2/views/common/informative_box.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
+import 'package:better_bus_v2/views/stop_info/delay_infobox.dart';
 import 'package:better_bus_v2/views/stop_info/trip_view.dart';
 import 'package:flutter/material.dart';
 import 'package:format/format.dart';
@@ -192,30 +193,7 @@ class _NextPassageWidgetState extends State<NextPassageWidget>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          delay.abs().inMinutes >= 1
-              ? InfoBox(
-                  width: double.infinity,
-                  color: delay.isNegative ? Colors.red : Colors.orange,
-                  margin: const EdgeInsets.all(5),
-                  icon: Icons.warning_amber,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        delay.isNegative
-                            ? AppString.advanceOf.format(delay.abs().inMinutes)
-                            : AppString.lateOf.format(delay.abs().inMinutes),
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        AppString.initialTime.format(DateFormat.Hm()
-                            .format(widget.nextPassage.aimedTime)),
-                        textScaler: const TextScaler.linear(0.8),
-                      )
-                    ],
-                  ),
-                )
-              : Container(),
+          DelayInfobox(stopTime: widget.nextPassage),
           widget.nextPassage.trip != null
               ? TripView(widget.nextPassage.trip!, delay: delay)
               : Container()
