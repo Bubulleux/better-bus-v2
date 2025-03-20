@@ -87,8 +87,8 @@ class RouteDetailState extends State<RouteDetail> {
 
   Widget buildLineStep(RoutePassage item) {
     assert(item.lines != null);
-    final station = stations?[item.startPlace]!;
-    final endStation = stations?[item.endPlace]!;
+    final station = stations?[item.startPlace];
+    final endStation = stations?[item.endPlace];
     List<StopTime>? times;
     if (station != null && endStation != null) {
       times = timeTable[station]
