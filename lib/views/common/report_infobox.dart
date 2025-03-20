@@ -47,6 +47,7 @@ class _ReportInfoboxState extends State<ReportInfobox> {
 
   @override
   Widget build(BuildContext context) {
+    print("Report box build");
     if (report == null) {
       return widget.updatable ? ElevatedButton(
         onPressed: () => updateReport(true),

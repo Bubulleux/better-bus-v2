@@ -1,16 +1,12 @@
 import 'dart:math';
 
 import 'package:better_bus_core/core.dart';
-import 'package:better_bus_v2/app_constant/app_string.dart';
 import 'package:better_bus_v2/data_provider/radar_provider.dart';
-import 'package:better_bus_v2/views/common/informative_box.dart';
 import 'package:better_bus_v2/views/common/report_infobox.dart';
 import 'package:better_bus_v2/views/map/controller.dart';
 import 'package:better_bus_v2/views/stop_info/next_passage_view.dart';
 import 'package:better_bus_v2/views/stops_search_page/stops_search_page.dart';
 import 'package:flutter/material.dart';
-import 'package:format/format.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 
 import '../../model/provider.dart';
@@ -22,7 +18,6 @@ class StopFocusWidget extends StatefulWidget {
     super.key,
   });
 
-
   final NetworkMapController controller;
   final VoidCallback? openFocus;
 
@@ -32,16 +27,18 @@ class StopFocusWidget extends StatefulWidget {
 
 class _StopFocusWidgetState extends State<StopFocusWidget> {
   double _height = 200;
+
   LatLng? get position => widget.controller.posCoord;
+
   Station get station => widget.controller.focusedStation!;
-  // TODO: Implement stopId
+
   int? get stop => null;
+
   Report? get report => widget.controller.report;
 
   @override
   void initState() {
     super.initState();
-
   }
 
   @override
@@ -113,12 +110,10 @@ class _StopFocusWidgetState extends State<StopFocusWidget> {
         ));
   }
 
+
+
   @override
   Widget build(BuildContext context) {
-    if (widget.controller.focusedStation == null) {
-      return Container();
-    }
-
     List<LineDirection>? direction;
     final provider = FullProvider.of(context).gtfs;
     final stop = widget.controller.focusedStop;
@@ -139,16 +134,17 @@ class _StopFocusWidgetState extends State<StopFocusWidget> {
         children: [
           buildDragBar(),
           ReportInfobox(
+            updatable: widget.controller.canSentReport(station),
             report: report,
             station: station,
-            //reportUpdate: reportUpdate,
+            reportUpdate: widget.controller.updateReport,
           ),
           Expanded(
               child: NextPassagePage(
             station,
             direction: direction,
             minimal: true,
-                stopTimeSelected: widget.controller.setStopTime,
+            stopTimeSelected: widget.controller.setStopTime,
           )),
         ],
       ),

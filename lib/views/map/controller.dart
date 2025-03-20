@@ -65,6 +65,7 @@ class NetworkMapController {
 
   Map<LatLng, Station>? stopsPos;
   Map<Station, Report>? reports;
+  bool get sendAvailable => AppRadarProvider(provider: provider).sentAvailable;
 
   Report? get report => reports?[focusedStation];
 
@@ -76,14 +77,17 @@ class NetworkMapController {
     stateChange.value = hashCode;
   }
 
-  void notifyChange() => stateChange.value = hashCode;
+  void notifyChange() {
+    print("Last ${stateChange.value} \t New: $hashCode");
+    stateChange.value = hashCode;
+  }
 
   @override
   int get hashCode =>
       _focused.hashCode ^
       focusedStop.hashCode ^
       (posCoord != null).hashCode ^
-      focusedStopTime.hashCode;
+      focusedStopTime.hashCode ^ Object.hashAll(reports?.values ?? []);
 
   Future loadStation() async {
     if (!provider.isAvailable()) return false;
@@ -121,6 +125,21 @@ class NetworkMapController {
     showLate();
     notifyChange();
   }
+
+  void updateReport(Report report) {
+    assert(reports != null);
+    final radar = AppRadarProvider(provider: provider);
+    radar.updateReport(report, report.updates.values.last);
+    reports![report.station] = report;
+    notifyChange();
+  }
+
+  bool canSentReport(Station station) {
+    if (!sendAvailable || posCoord == null) return false;
+
+    return station.position.distance(posCoord!) < 0.6;
+  }
+
 
   // TODO: Debug function need to be removed
   Future showLate() async {

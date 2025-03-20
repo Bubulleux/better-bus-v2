@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:better_bus_v2/app_constant/app_string.dart';
 import 'package:better_bus_core/core.dart';
-import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
 import 'package:better_bus_v2/views/common/fake_text_field.dart';
 import 'package:better_bus_v2/views/map/controller.dart';
 import 'package:better_bus_v2/views/map/map_view.dart';
@@ -12,16 +11,7 @@ import 'package:better_bus_v2/views/map_pages/focus_stop.dart';
 import 'package:better_bus_v2/views/stop_info/stop_info_page.dart';
 import 'package:better_bus_v2/views/stops_search_page/place_searcher_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_map/flutter_map.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:latlong2/latlong.dart';
 
-import '../../data_provider/radar_provider.dart';
-import '../../model/provider.dart';
-import '../map/easter_eggs_layer.dart';
-import '../map/place_layer.dart';
-import '../map/position_layer.dart';
-import '../map/stop_layer.dart';
 
 class MapPageArg {
   const MapPageArg({this.station, this.stop});
@@ -132,10 +122,10 @@ class _MapPageState extends State<MapPage> {
                         : Container()
                   ],
                 ),
-                StopFocusWidget(
+                controller.focusedStation != null ? StopFocusWidget(
                   controller: controller,
                   openFocus: onFocusOpen,
-                ),
+                ) : Container(),
                 controller.focusedPlace != null
                     ? FocusPlace(
                         controller: controller,
