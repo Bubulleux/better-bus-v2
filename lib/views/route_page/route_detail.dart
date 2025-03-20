@@ -1,6 +1,8 @@
 import 'package:better_bus_core/core.dart';
+import 'package:better_bus_v2/model/bus_line_color.dart';
 import 'package:better_bus_v2/model/provider.dart';
 import 'package:better_bus_v2/views/common/close_cross.dart';
+import 'package:better_bus_v2/views/common/directed_line.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
 import 'package:better_bus_v2/views/route_page/line_step_detail.dart';
 import 'package:better_bus_v2/views/route_page/route_search.dart';
@@ -44,7 +46,8 @@ class RouteDetailState extends State<RouteDetail> {
 
     for (var e in widget.route.itinerary) {
       if (e.lines == null) continue;
-      final station = stations![e.startPlace]!;
+      final station = stations![e.startPlace];
+      if (station == null) continue;
       timeTable[station] = null;
 
       provider.getTimetable(station).then((v) {
@@ -77,10 +80,10 @@ class RouteDetailState extends State<RouteDetail> {
         "${item.endPlace}";
     return buildRow(
       marge: Icon(Icons.directions_walk),
-      children: [Text(title)],
+      title: Text(title),
     );
   }
-  
+
   static Widget timeWidget(String text, DateTime time) {
     return Text(text.format(DateFormat("Hm").format(time.toLocal())));
   }
@@ -93,41 +96,86 @@ class RouteDetailState extends State<RouteDetail> {
     if (station != null && endStation != null) {
       times = timeTable[station]
           ?.getNext(from: item.startTime)
-          .where((e) => e.trip != null && e.trip!.isPassingBy(station)
-          && e.trip!.isPassingBy(endStation) && e.trip!.line.id == item.lines!.id
-      && e.isRealTime)
+          .where((e) =>
+              e.trip != null &&
+              e.trip!.isPassingBy(station) &&
+              e.trip!.isPassingBy(endStation) &&
+              e.trip!.line.id == item.lines!.id &&
+              e.isRealTime)
           .toList();
     }
+    final trip = times?.firstOrNull;
+    final color = item.lines!.color;
 
+    buildStop(String name) => Container(
+          decoration: BoxDecoration(
+              border: Border.all(color: color, width: 3),
+              color: color.withAlpha(50),
+              borderRadius: BorderRadius.circular(12)),
+          padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 3),
+          child: Text(name),
+        );
+
+    final line = Expanded(
+        child: Container(
+      width: double.infinity,
+      height: 3,
+      color: color,
+    ));
+
+    final schema = Row(children: [
+      buildStop(item.startPlace),
+      line,
+      buildStop(item.endPlace),
+    ]);
+
+    final instruction = item.instruction;
 
     return buildRow(
-      marge: LineWidget(item.lines!, 35),
-      children: [
-            LineStepDetail(routeStep: item, times: times)
-      ],
+      marge: Icon(Icons.directions_bus),
+      title: LabeledLine(line: item.lines!, label: trip?.destination ?? item.endPlace,),
+      subTitle: Text(instruction),
+      body: Column(
+        children: [
+          schema,
+          SizedBox(height: 5,),
+          LineStepDetail(routeStep: item, times: times),
+        ],
+      ),
     );
   }
 
-  Widget buildRow({required Widget marge, required List<Widget> children}) {
+  Widget buildRow(
+      {required Widget marge, required Widget title, Widget? subTitle, Widget? body}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Column(
         children: [
-          SizedBox(
-            width: 40,
-            child: Center(child: marge),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: 40,
+                child: Center(child: marge),
+              ),
+              const SizedBox(width: 5),
+              Expanded(
+                  child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  DefaultTextStyle.merge(
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                        fontSize: 15),
+                    child: title,
+                  ),
+                  subTitle ?? Container(),
+                ],
+              )),
+            ],
           ),
-          const SizedBox(width: 5),
-          Expanded(
-              child: Material(
-            textStyle: const TextStyle(
-                fontWeight: FontWeight.bold, color: Colors.black, fontSize: 15),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: children,
-            ),
-          )),
+          body ?? Container()
         ],
       ),
     );
@@ -150,7 +198,8 @@ class RouteDetailState extends State<RouteDetail> {
     final from = widget.parameter.start!.name;
     return buildRow(
       marge: const Icon(Icons.flag, color: Colors.green),
-      children: [Text(from), timeWidget(AppString.startAt, time)],
+      title: Text(from),
+      subTitle: timeWidget(AppString.startAt, time),
     );
   }
 
@@ -159,7 +208,8 @@ class RouteDetailState extends State<RouteDetail> {
     final to = widget.parameter.stop!.name;
     return buildRow(
       marge: const Icon(Icons.flag, color: Colors.red),
-      children: [timeWidget(AppString.endAt, time)],
+      title: timeWidget(AppString.endAt, time),
+      subTitle: Text(to),
     );
   }
 

@@ -66,7 +66,8 @@ class _LineStepDetailState extends State<LineStepDetail>
           ),
           DelayInfobox(
             stopTime: stopTime,
-            height: 30,
+            fontSize: 14,
+            //height: 30,
           ),
         ],
       ),
@@ -83,59 +84,48 @@ class _LineStepDetailState extends State<LineStepDetail>
       timesWidget = [buildTimeRow(null)];
     }
 
-    return InkWell(
-      onTap: controller.tickAnimation,
-      child: Column(
-        children: [
-          Row(
+    return Material(
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          // color: const Color(0xffeeeeee),
+          color: Colors.white,
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black26,
+              blurRadius: 1,
+              spreadRadius: 2,
+              offset: Offset(1, 2),
+            ),
+          ],
+        ),
+        child: InkWell(
+          onTap: controller.tickAnimation,
+          child: Column(
             children: [
-              Text(item.startPlace),
-              const Spacer(),
-              Text(item.endPlace)
+              // TODO : To it this wey Every where !!!!
+              DefaultTextStyle.merge(
+                style: const TextStyle(fontWeight: FontWeight.bold),
+                child: timesWidget.first,
+              ),
+              Material(
+                color: Colors.transparent,
+                child: ExpandableWidget(
+                  controller: controller,
+                  child: Column(
+                    children: times != null
+                        ? timesWidget
+                        .skip(1)
+                        .separate(const Divider(thickness: 2),
+                        before: true)
+                        .toList()
+                        : [],
+                  ),
+                ),
+              )
             ],
           ),
-          Material(
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                // color: const Color(0xffeeeeee),
-                color: Colors.white,
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 1,
-                    spreadRadius: 2,
-                    offset: Offset(1, 2),
-                  ),
-                ],
-              ),
-              child: Column(
-                children: [
-                  // TODO : To it this wey Every where !!!!
-                  DefaultTextStyle.merge(
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                    child: timesWidget.first,
-                  ),
-                  Material(
-                    color: Colors.transparent,
-                    child: ExpandableWidget(
-                      controller: controller,
-                      child: Column(
-                        children: times != null
-                            ? timesWidget
-                            .skip(1)
-                            .separate(const Divider(thickness: 2),
-                            before: true)
-                            .toList()
-                            : [],
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-          )
-        ],
+        ),
       ),
     );
   }
