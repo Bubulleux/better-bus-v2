@@ -28,9 +28,14 @@ class LineWidget extends StatelessWidget {
       ),
       width: dynamicWidth ? null : size,
       height: size,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(5),
+        color: line.color,
+      ),
       child: Padding(
         padding: const EdgeInsets.all(2.0),
         child: FittedBox(
+          fit: dynamicWidth ? BoxFit.fitHeight : BoxFit.contain,
           child: Text(
             line.id,
             textAlign: TextAlign.center,
@@ -39,12 +44,7 @@ class LineWidget extends StatelessWidget {
               fontWeight: FontWeight.normal
             ),
           ),
-          fit: dynamicWidth ? BoxFit.fitHeight : BoxFit.contain,
         ),
-      ),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(5),
-        color: line.color,
       ),
     );
   }

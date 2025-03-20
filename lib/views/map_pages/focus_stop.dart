@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:better_bus_core/core.dart';
-import 'package:better_bus_v2/data_provider/radar_provider.dart';
 import 'package:better_bus_v2/views/common/report_infobox.dart';
 import 'package:better_bus_v2/views/map/controller.dart';
 import 'package:better_bus_v2/views/stop_info/next_passage_view.dart';

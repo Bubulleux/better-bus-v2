@@ -1,4 +1,3 @@
-import 'dart:ui';
 
 import 'package:better_bus_core/core.dart';
 import 'package:better_bus_v2/model/provider.dart';
@@ -78,7 +77,6 @@ class NetworkMapController {
   }
 
   void notifyChange() {
-    print("Last ${stateChange.value} \t New: $hashCode");
     stateChange.value = hashCode;
   }
 
@@ -122,7 +120,6 @@ class NetworkMapController {
 
   void setStopTime(StopTime stopTime) {
     _focusedStopTime = stopTime;
-    showLate();
     notifyChange();
   }
 
@@ -140,38 +137,6 @@ class NetworkMapController {
     return station.position.distance(posCoord!) < 0.6;
   }
 
-
-  // TODO: Debug function need to be removed
-  Future showLate() async {
-    final stopTime = _focusedStopTime!;
-    final trip = stopTime.trip!;
-    final next = trip.stopTimes
-        .skipWhile((e) => e.station != _focused as Station)
-        .toList();
-    Map<Station, Duration?> lates = {for (var v in next) v.station: null};
-    List<Future> futures = [];
-    print("Launch Futures");
-
-    for (var e in next) {
-      final station = e.station;
-      futures.add(provider.getTimetable(station).then((v) {
-        final st = v
-            .getNext()
-            .where((e) => e.trip!.id == trip.id)
-            .firstOrNull;
-        if (st == null) return;
-        lates[station] = st.delay;
-      }));
-    }
-    print("Wait");
-
-    await Future.wait(futures);
-    print("Result: ");
-
-    for (var l in lates.entries) {
-      print("${l.key}: ${l.value}");
-    }
-  }
 
   TickerFuture animateCamTo(LatLng dst, {double zoom = 18}) {
     final LatLngTween tween = LatLngTween(

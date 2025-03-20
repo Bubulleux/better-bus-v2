@@ -20,8 +20,8 @@ class CustomNavigationBar extends StatelessWidget {
             width: double.infinity,
             color: Colors.white,
             child: Wrap(
-              children: child,
               alignment: WrapAlignment.spaceAround,
+              children: child,
             ),
           ),
         ],

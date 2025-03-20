@@ -117,8 +117,8 @@ class _DirectionSelectorState extends State<DirectionSelector> {
     List<Direction> bot =
         widget.line.directions.where((e) => e.directionId == 0).toList();
     return Container(
-      padding: EdgeInsets.all(8),
-      margin: EdgeInsets.all(8),
+      padding: const EdgeInsets.all(8),
+      margin: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         border: Border.all(
           color: Theme.of(context).primaryColor.withAlpha(150),
@@ -138,7 +138,7 @@ class _DirectionSelectorState extends State<DirectionSelector> {
                       children: top.map((e) => _buildOneDirection(e)).toList(),
                     ),
                   ),
-                  Divider(
+                  const Divider(
                     thickness: 2,
                   ),
                 ]

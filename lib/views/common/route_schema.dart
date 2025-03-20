@@ -54,10 +54,10 @@ class RouteSchema extends StatelessWidget {
     // ));
 
     return Wrap(
-      children: wrapChildren,
       spacing: size / 5,
       crossAxisAlignment: WrapCrossAlignment.end,
       alignment: WrapAlignment.start,
+      children: wrapChildren,
     );
   }
 }

@@ -1,4 +1,3 @@
-import 'dart:math';
 
 import 'package:better_bus_core/core.dart';
 import 'package:better_bus_v2/model/provider.dart';
@@ -6,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../app_constant/app_string.dart';
-import '../common/decorations.dart';
 import '../common/fake_text_field.dart';
 import '../stops_search_page/place_searcher_page.dart';
 import 'route_time_picker.dart';
@@ -25,7 +23,6 @@ class RouteSearchParameter {
 
   RouteSearchParameter copyWidth(
       {Place? start, Place? stop, RouteTimeType? timeType, DateTime? time}) {
-    print("Copy with stop ${stop?.name}");
     return RouteSearchParameter(
       start ?? this.start,
       stop ?? this.stop,
@@ -61,10 +58,8 @@ class _RouteSearchState extends State<RouteSearch> {
   void initState() {
     super.initState();
     search.addListener(() {
-      print(mounted);
       if (mounted) {
         widget.onSearch(search.value);
-        print("Search changed");
         setState(() {});
       }
     });
@@ -98,10 +93,8 @@ class _RouteSearchState extends State<RouteSearch> {
 
   void swapDirection() {
     final v = search.value;
+    if (!v.valid) return;
     search.value = v.copyWidth(start: v.stop, stop: v.start);
-    print(search.value.stop?.name);
-    print(v.start?.name);
-    print("Swap");
   }
 
   void setTime() async {
@@ -109,27 +102,6 @@ class _RouteSearchState extends State<RouteSearch> {
         context: context, builder: (ctx) => RouteTimePicker(search.value));
 
     search.value = newParameter;
-  }
-
-  Future showFarestStation() async {
-    print("Start");
-    final station = await FullProvider.of(context).getStations();
-    print("HAHHA");
-    var a = station.first;
-    var b = station.first;
-    var maxDst = 0.0;
-    for (var curA in station) {
-      for (var curB in station) {
-        final dst = curA.position.distance(curB.position);
-        if (dst > maxDst) {
-          maxDst = dst;
-          a = curA;
-          b = curB;
-        }
-        if (maxDst > 40) break;
-      }
-    }
-    print("Fearest Stations : $a, $b, $maxDst");
   }
 
   String getTimeString() {
@@ -141,7 +113,7 @@ class _RouteSearchState extends State<RouteSearch> {
     Duration diffNow = timeParameter.time.difference(DateTime.now());
 
     if (diffNow.inMinutes < 1 && !diffNow.isNegative) {
-      return timeTypeText + " " + AppString.now;
+      return "$timeTypeText ${AppString.now}";
     }
 
     Duration dayDiff =
@@ -156,7 +128,7 @@ class _RouteSearchState extends State<RouteSearch> {
     }
 
     String timeText = DateFormat("HH:mm").format(timeParameter.time);
-    return timeTypeText + " " + dateText + " à " + timeText;
+    return "$timeTypeText $dateText à $timeText";
   }
 
   @override

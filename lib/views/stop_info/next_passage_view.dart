@@ -3,12 +3,10 @@ import 'package:better_bus_core/core.dart';
 import 'package:better_bus_v2/error_handler/custom_error.dart';
 import 'package:better_bus_v2/views/common/custom_future.dart';
 import 'package:better_bus_v2/views/common/extendable_view.dart';
-import 'package:better_bus_v2/views/common/informative_box.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
 import 'package:better_bus_v2/views/stop_info/delay_infobox.dart';
 import 'package:better_bus_v2/views/stop_info/trip_view.dart';
 import 'package:flutter/material.dart';
-import 'package:format/format.dart';
 import 'package:intl/intl.dart';
 import '../../model/provider.dart';
 
@@ -152,11 +150,9 @@ class NextPassageListWidgetState extends State<NextPassageListWidget> {
         return error.build(context, refresh);
       },
       refreshIndicator: (context, child, refresh) {
-        return RefreshIndicator(child: child, onRefresh: refresh);
+        return RefreshIndicator(onRefresh: refresh, child: child);
       },
       errorTest: (data) {
-        print("Error test");
-        print(data);
         if (data.isEmpty) {
           return CustomErrors.emptyNextPassage;
         }

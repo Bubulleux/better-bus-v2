@@ -76,7 +76,7 @@ class BusMarker {
   }
 
   Marker build(DateTime newTime, BuildContext context) {
-    return Marker(point: LatLng(0, 0 ), child: Container());
+    return Marker(point: const LatLng(0, 0 ), child: Container());
     time = newTime.subtract(stopTime.delay);
     if (time.isBefore(start)) {
       time = start;

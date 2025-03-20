@@ -1,4 +1,5 @@
 import 'package:better_bus_v2/error_handler/custom_error.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 typedef WidgetBuilderData<T> = Widget Function(
@@ -100,7 +101,6 @@ class CustomFutureBuilderState<T> extends State<CustomFutureBuilder>
   }
 
   void onData(T value) {
-    print("Mounted: $mounted");
     if (error != null || !mounted) return;
 
     setState(() {
@@ -111,9 +111,11 @@ class CustomFutureBuilderState<T> extends State<CustomFutureBuilder>
   }
 
   T? onError(Object error, StackTrace stack) {
-    print("Future build got error:");
-    print(error);
-    print(stack);
+    if (kDebugMode) {
+      print("Future build got error:");
+      print(error);
+      print(stack);
+    }
     if (!mounted) return null;
     setState(() {
       future = null;

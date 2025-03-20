@@ -1,10 +1,8 @@
 import 'dart:convert';
 
-import 'package:better_bus_core/core.dart';
 import 'package:better_bus_v2/custom_home_widget.dart';
 import 'package:better_bus_v2/views/common/messages.dart';
 import 'package:flutter/cupertino.dart';
-// import 'package:home_widget/home_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../model/view_shortcut.dart';

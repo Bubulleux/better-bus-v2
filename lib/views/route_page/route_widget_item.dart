@@ -98,11 +98,11 @@ class _RouteItemWidgetState extends State<RouteItemWidget> {
                       Row(
                         children: [
                           Text(start),
-                          Icon(Icons.arrow_right_outlined),
+                          const Icon(Icons.arrow_right_outlined),
                           Text(stop),
                         ],
                       ),
-                      Spacer(),
+                      const Spacer(),
                       Row(children: [
                         buildTraveledDist(widget.vitalisRoute.busDistanceTravel,
                             Icons.directions_bus),

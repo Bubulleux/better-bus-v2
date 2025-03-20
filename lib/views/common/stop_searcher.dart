@@ -53,8 +53,8 @@ class _StopSearcherState extends State<StopSearcher> {
     return Column(
       children: [
         Focus(
-          child: searchBar,
           onFocusChange: fieldFocusChange,
+          child: searchBar,
         ),
         Container(
           child: outputWidget,

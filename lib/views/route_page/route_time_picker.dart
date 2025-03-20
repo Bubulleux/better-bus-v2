@@ -1,7 +1,6 @@
 import 'package:better_bus_v2/app_constant/app_string.dart';
 import 'package:better_bus_v2/views/common/segmented_choices.dart';
 import 'package:better_bus_v2/views/common/wheel_scroll_selector.dart';
-import 'package:better_bus_v2/views/route_page/route_page.dart';
 import 'package:better_bus_v2/views/route_page/route_search.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';

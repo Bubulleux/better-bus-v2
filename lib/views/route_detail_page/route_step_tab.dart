@@ -1,6 +1,5 @@
 import 'package:better_bus_v2/app_constant/app_string.dart';
 import 'package:better_bus_core/core.dart';
-import 'package:better_bus_v2/data_provider/maps_router.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -45,20 +44,20 @@ class RouteStepPage extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: Wrap(
+              alignment: WrapAlignment.spaceBetween,
               children: [
                 Text(DateFormat("Hm").format(busRoute.itinerary[index].startTime.toLocal())),
                 const Icon(Icons.keyboard_double_arrow_right),
                 Text(DateFormat("Hm").format(busRoute.itinerary[index].endTime.toLocal())),
               ],
-              alignment: WrapAlignment.spaceBetween,
             ),
           ),
           const Divider(),
           body,
           busRoute.itinerary[index].lines == null?
-              ElevatedButton(
-                child: const Text(AppString.seeOnMaps),
+              const ElevatedButton(
                 onPressed: null,
+                child: Text(AppString.seeOnMaps),
                 // onPressed: () => MapsRouter.routeToMap(
                 //     busRoute.polyLines[index].lineString[busRoute.polyLines[index].lineString.length - 2],
                 //     busRoute.polyLines[index].lineString[busRoute.polyLines[index].lineString.length - 1]),

@@ -32,6 +32,9 @@ class FakeTextField extends StatelessWidget {
         child: Container(
           height: 60,
           padding: const EdgeInsets.all(10),
+          decoration: CustomDecorations.of(context).boxOutlined.copyWith(
+            color: backgroundColor,
+          ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -59,9 +62,6 @@ class FakeTextField extends StatelessWidget {
               ) :
               Container(),
             ],
-          ),
-          decoration: CustomDecorations.of(context).boxOutlined.copyWith(
-            color: backgroundColor,
           ),
         ),
       ),

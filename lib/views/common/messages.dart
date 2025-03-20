@@ -22,7 +22,7 @@ class _MessageViewState extends State<MessageView> {
     super.didChangeDependencies();
     message = ModalRoute.of(context)!.settings.arguments as Message;
     rootBundle
-        .loadString("assets/messages/" + message.fileName)
+        .loadString("assets/messages/${message.fileName}")
         .then((value) => setState(() => body = value));
   }
 

@@ -3,7 +3,6 @@ import 'package:better_bus_v2/model/bus_line_color.dart';
 import 'package:better_bus_v2/model/provider.dart';
 import 'package:better_bus_v2/views/common/close_cross.dart';
 import 'package:better_bus_v2/views/common/directed_line.dart';
-import 'package:better_bus_v2/views/common/line_widget.dart';
 import 'package:better_bus_v2/views/route_page/line_step_detail.dart';
 import 'package:better_bus_v2/views/route_page/route_search.dart';
 import 'package:flutter/material.dart';
@@ -34,7 +33,6 @@ class RouteDetailState extends State<RouteDetail> {
   void initState() {
     super.initState();
     provider = FullProvider.of(context);
-    getRealtimes().then((v) => print("Realtimes : $v"));
   }
 
   Future<bool> getRealtimes() async {
@@ -79,7 +77,7 @@ class RouteDetailState extends State<RouteDetail> {
         "${item == widget.route.itinerary.last ? AppString.walkToPlace : AppString.walkToStop} "
         "${item.endPlace}";
     return buildRow(
-      marge: Icon(Icons.directions_walk),
+      marge: const Icon(Icons.directions_walk),
       title: Text(title),
     );
   }
@@ -132,13 +130,13 @@ class RouteDetailState extends State<RouteDetail> {
     final instruction = item.instruction;
 
     return buildRow(
-      marge: Icon(Icons.directions_bus),
+      marge: const Icon(Icons.directions_bus),
       title: LabeledLine(line: item.lines!, label: trip?.destination ?? item.endPlace,),
       subTitle: Text(instruction),
       body: Column(
         children: [
           schema,
-          SizedBox(height: 5,),
+          const SizedBox(height: 5,),
           LineStepDetail(routeStep: item, times: times),
         ],
       ),

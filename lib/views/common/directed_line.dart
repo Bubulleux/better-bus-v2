@@ -1,6 +1,5 @@
 import 'package:better_bus_core/core.dart';
 import 'package:better_bus_v2/model/bus_line_color.dart';
-import 'package:better_bus_v2/views/common/line_widget.dart';
 import 'package:flutter/material.dart';
 
 class LabeledLine extends StatelessWidget {
@@ -24,7 +23,7 @@ class LabeledLine extends StatelessWidget {
     return DefaultTextStyle.merge(
       style: TextStyle(fontSize: size),
       child: Container(
-        padding: EdgeInsets.only(right: 5),
+        padding: const EdgeInsets.only(right: 5),
         decoration: BoxDecoration(
           border: Border.all(color: line.color, width: 3),
           borderRadius: radius,

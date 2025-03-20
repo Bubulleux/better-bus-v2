@@ -1,5 +1,4 @@
 import 'package:better_bus_core/core.dart';
-import 'package:better_bus_v2/views/common/custom_future.dart';
 import 'package:better_bus_v2/views/map/controller.dart';
 import 'package:better_bus_v2/views/map/map_view.dart';
 import 'package:better_bus_v2/views/map/search_parameter_layer.dart';
@@ -64,7 +63,7 @@ class _RoutePageState extends State<RoutePage> {
                 .expand((e) => e)
                 .toList()
             : [])
-      ], padding: EdgeInsets.all(20));
+      ], padding: const EdgeInsets.all(20));
       controller.animateToFit(cam);
     }
   }

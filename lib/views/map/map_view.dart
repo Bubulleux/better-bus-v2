@@ -1,13 +1,9 @@
 import 'package:better_bus_core/core.dart';
-import 'package:better_bus_v2/model/provider.dart';
-import 'package:better_bus_v2/views/map/bus_layer.dart';
 import 'package:better_bus_v2/views/map/controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart';
 
 import '../../data_provider/gps_data_provider.dart';
-import '../../data_provider/radar_provider.dart';
 import 'easter_eggs_layer.dart';
 import 'place_layer.dart';
 import 'position_layer.dart';
@@ -56,7 +52,6 @@ class NetworkMapState extends State<NetworkMap> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    print("Build ${rootController.focusedStopTime}");
     return SizedBox(
       width: widget.width,
       height: widget.height,

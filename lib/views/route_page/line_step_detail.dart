@@ -1,15 +1,11 @@
 import 'package:better_bus_core/core.dart';
-import 'package:better_bus_v2/views/common/decorations.dart';
 import 'package:better_bus_v2/views/common/extendable_view.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
 import 'package:better_bus_v2/views/common/separator.dart';
-import 'package:better_bus_v2/views/route_page/route_detail.dart';
 import 'package:better_bus_v2/views/stop_info/delay_infobox.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
 
-import '../../app_constant/app_string.dart';
 
 class LineStepDetail extends StatefulWidget {
   const LineStepDetail({required this.routeStep, this.times, super.key});
@@ -52,7 +48,7 @@ class _LineStepDetailState extends State<LineStepDetail>
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 5),
       margin: const EdgeInsets.symmetric(vertical: 2),
-      decoration: BoxDecoration(),
+      decoration: const BoxDecoration(),
       child: Column(
         children: [
           Row(

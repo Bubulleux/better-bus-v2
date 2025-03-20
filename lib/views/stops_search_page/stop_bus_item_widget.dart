@@ -127,6 +127,7 @@ class _BusStopWidgetState extends State<BusStopWidget>
           decoration: CustomDecorations.of(context).boxBackground,
           padding: const EdgeInsets.all(8),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
@@ -184,7 +185,6 @@ class _BusStopWidgetState extends State<BusStopWidget>
                 ),
               )
             ],
-            crossAxisAlignment: CrossAxisAlignment.start,
           ),
         ),
       ),

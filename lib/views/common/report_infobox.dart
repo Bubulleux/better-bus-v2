@@ -1,9 +1,7 @@
 import 'package:better_bus_core/core.dart';
 import 'package:better_bus_v2/data_provider/radar_provider.dart';
-import 'package:better_bus_v2/views/common/closest_stop_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:format/format.dart';
-import 'package:provider/provider.dart';
 
 import '../../app_constant/app_string.dart';
 import 'informative_box.dart';
@@ -47,7 +45,6 @@ class _ReportInfoboxState extends State<ReportInfobox> {
 
   @override
   Widget build(BuildContext context) {
-    print("Report box build");
     if (report == null) {
       return widget.updatable ? ElevatedButton(
         onPressed: () => updateReport(true),

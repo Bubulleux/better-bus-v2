@@ -71,7 +71,7 @@ class _MapPageState extends State<MapPage> {
     if (station == null) return;
     Navigator.of(context)
         .pushNamed(StopInfoPage.routeName,
-            arguments: StopInfoPageArgument(station!, null, fromMap: true))
+            arguments: StopInfoPageArgument(station, null, fromMap: true))
         .then((value) => controller.focus(value));
   }
 

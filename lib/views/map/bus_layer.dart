@@ -1,14 +1,10 @@
-import 'dart:math';
-import 'dart:ui';
 
 import 'package:better_bus_core/core.dart';
-import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
 import 'package:better_bus_v2/views/map/bus_marker.dart';
 import 'package:better_bus_v2/views/map/controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart';
 
 class BusLayer extends StatefulWidget {
   const BusLayer({required this.stopTime, required this.controller, super.key});
@@ -54,7 +50,7 @@ class _BusLayerState extends State<BusLayer>
     //widget.controller.animateCamTo(marker.busPos, zoom: 15);
 
     return MarkerLayer(markers: [
-      marker.build(now, context)!,
+      marker.build(now, context),
     ]);
   }
 }

@@ -94,7 +94,7 @@ class _PositionLayerState extends State<PositionLayer>
                   width: 2,
                 ),
                 borderRadius: BorderRadius.circular(20),
-                boxShadow: [
+                boxShadow: const [
                   BoxShadow(offset: Offset(1, 1),
                   blurRadius: 3,
                   color: Colors.black54)

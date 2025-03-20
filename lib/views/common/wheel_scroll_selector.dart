@@ -49,7 +49,6 @@ class _WheelScrollSelectorState extends State<WheelScrollSelector> {
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
               alignment: Alignment.center,
-              child: Text(e.$2),
               padding: const EdgeInsets.all(5),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
@@ -66,7 +65,8 @@ class _WheelScrollSelectorState extends State<WheelScrollSelector> {
                     color: Colors.black26
                   )
                 ]
-              ),                        
+              ),
+              child: Text(e.$2),
             ),
           ),
         )

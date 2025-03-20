@@ -59,6 +59,7 @@ dependencies:
   collection: any
   provider: ^6.1.2
   better_bus_core: any
+  fuzzywuzzy: ^1.2.0
 
 dev_dependencies:
   flutter_test:

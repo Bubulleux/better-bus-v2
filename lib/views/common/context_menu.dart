@@ -45,6 +45,15 @@ class _CustomContextMenuState extends State<CustomContextMenu> {
             ContextMenuAction e = widget.actions[index];
             return TextButton(
               onPressed: () => actionPressed(e.action),
+              style: TextButton.styleFrom(
+                  foregroundColor: e.isDangerous
+                      ? const Color(0xffff0000)
+                      : Colors.black, shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(3)),
+                  padding:
+                  const EdgeInsets.symmetric(horizontal: 10),
+                  tapTargetSize:
+                  MaterialTapTargetSize.shrinkWrap),
               child: Row(
                 children: [
                   e.icon != null ?
@@ -69,15 +78,6 @@ class _CustomContextMenuState extends State<CustomContextMenu> {
                   )
                 ],
               ),
-              style: TextButton.styleFrom(
-                  foregroundColor: e.isDangerous
-                      ? const Color(0xffff0000)
-                      : Colors.black, shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(3)),
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 10),
-                  tapTargetSize:
-                  MaterialTapTargetSize.shrinkWrap),
             );
           },
         ),

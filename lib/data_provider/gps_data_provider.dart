@@ -42,9 +42,8 @@ class GpsDataProvider {
   static Future<bool> available() async{
     if (!_available) {
       final perm = await Geolocator.checkPermission();
-      print(perm);
       _available = (perm == LocationPermission.always || perm == LocationPermission.whileInUse);
-    };
+    }
     if (!_available) return false;
     _available &= (await Geolocator.isLocationServiceEnabled());
     return _available;

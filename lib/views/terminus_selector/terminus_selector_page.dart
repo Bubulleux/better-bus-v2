@@ -91,7 +91,7 @@ class _TerminusSelectorPageState extends State<TerminusSelectorPage> {
                     children: [
                       Row(
                         children: [
-                          Expanded(child: Text(AppString.selectAll)),
+                          const Expanded(child: Text(AppString.selectAll)),
                           Switch(value: allIsSelected, onChanged: (_) => selectAll())
                         ],
                       ),

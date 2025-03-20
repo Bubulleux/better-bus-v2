@@ -5,6 +5,7 @@ import 'package:better_bus_v2/views/common/custom_future.dart';
 import 'package:better_bus_v2/views/stops_search_page/stop_bus_item_widget.dart';
 import 'package:better_bus_v2/views/stops_search_page/stops_search_page.dart';
 import 'package:flutter/material.dart';
+import 'package:fuzzywuzzy/fuzzywuzzy.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../model/provider.dart';
@@ -44,11 +45,13 @@ class SearchBusStopViewState extends State<SearchBusStopView>{
 
   late GlobalKey<CustomFutureBuilderState> futureBuilderState;
 
+
+
   // TODO: Make it less blocking and update more
   Future<List<Station>> getValidStops() async{
     stops ??= await FullProvider.of(context).getStations();
     historic ??= await getHistoric();
-    location ??= await GpsDataProvider.getLocation();
+    // location ??= await GpsDataProvider.getLocation();
 
     if (location != null) {
       stopDistance = {};
@@ -66,19 +69,9 @@ class SearchBusStopViewState extends State<SearchBusStopView>{
       stops!.sort((a, b) => stopDistance![a.id]!.compareTo(stopDistance![b.id]!));
     }
 
-
-    for (Station stops in historic!) {
-      if (stops.name.toLowerCase().contains(widget.search!.toLowerCase())) {
-        output.add(stops);
-      }
-    }
-
-    for (Station busStop in stops!) {
-      if (busStop.name.toLowerCase().contains(widget.search!.toLowerCase()) && !historic!.contains(busStop)) {
-        output.add(busStop);
-      }
-    }
-    return output;
+    return extractTop(query: widget.search!, choices: stops!, limit: 20, getter: (e) => e.name).map(
+        (e) => e.choice
+    ).toList();
   }
 
   Future<List<Station>> getHistoric() async {
@@ -128,6 +121,12 @@ class SearchBusStopViewState extends State<SearchBusStopView>{
   void initState() {
     super.initState();
     futureBuilderState = GlobalKey();
+    GpsDataProvider.getLocation().then((v) {
+      location = v;
+      if (mounted) {
+        futureBuilderState.currentState?.refresh();
+      }
+    });
   }
 
   @override
