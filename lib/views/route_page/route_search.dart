@@ -63,7 +63,6 @@ class _RouteSearchState extends State<RouteSearch> {
         setState(() {});
       }
     });
-    showFarestStation();
   }
 
   void getStartPlace() {

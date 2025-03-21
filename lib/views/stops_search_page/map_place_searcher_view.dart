@@ -86,8 +86,10 @@ class _MapPlaceSearcherViewState extends State<MapPlaceSearcherView> {
   void initState() {
     super.initState();
     GpsDataProvider.getLocation().then((value) {
-      futureStateKey.currentState?.refresh();
-      setState(() => locationData = value);
+      if (mounted) {
+        futureStateKey.currentState?.refresh();
+        setState(() => locationData = value);
+      }
     });
 
     GpsDataProvider.askForGPSPermission()

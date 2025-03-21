@@ -12,7 +12,6 @@ import 'package:better_bus_v2/views/stop_info/stop_info_page.dart';
 import 'package:better_bus_v2/views/stops_search_page/place_searcher_page.dart';
 import 'package:flutter/material.dart';
 
-
 class MapPageArg {
   const MapPageArg({this.station, this.stop});
 
@@ -37,16 +36,18 @@ class _MapPageState extends State<MapPage> {
     super.initState();
     controller = NetworkMapController(context);
     controller.loadStation().then((_) => print("Map load finish"));
-    controller.stateChange.addListener(()  {
+    controller.stateChange.addListener(() {
       setState(() {});
-    }
-    );
+    });
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final arg = ModalRoute.of(context)!.settings.arguments as MapPageArg?;
+    final arg = ModalRoute
+        .of(context)!
+        .settings
+        .arguments as MapPageArg?;
     if (true) {
       // TODO: Do it
     }
@@ -71,69 +72,46 @@ class _MapPageState extends State<MapPage> {
     if (station == null) return;
     Navigator.of(context)
         .pushNamed(StopInfoPage.routeName,
-            arguments: StopInfoPageArgument(station, null, fromMap: true))
+        arguments: StopInfoPageArgument(station, null, fromMap: true))
         .then((value) => controller.focus(value));
   }
 
   @override
   Widget build(BuildContext context) {
+    Widget? overlay;
+    if (controller.focusedStation != null) {
+      overlay = StopFocusWidget(
+        controller: controller,
+        openFocus: onFocusOpen,
+      );
+    }
+
+    if (controller.focusedPlace != null) {
+      overlay = FocusPlace(controller: controller);
+    }
 
     return Scaffold(
       body: SafeArea(
-        child: Stack(
-          alignment: Alignment.bottomCenter,
-          children: [
-            NetworkMap(controller: controller),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Row(
-                  children: [
-                    const BackButton(),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: FakeTextField(
-                          onPress: goToSearch,
-                          icon: Icons.search,
-                          value: controller.focusedName,
-                          hint: AppString.searchLabel,
-                        ),
-                      ),
-                    ),
-                  ],
+        child: NetworkMap(
+          controller: controller,
+          input: Row(
+            children: [
+              const BackButton(),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: FakeTextField(
+                    onPress: goToSearch,
+                    icon: Icons.search,
+                    value: controller.focusedName,
+                    hint: AppString.searchLabel,
+                  ),
                 ),
-                MapViewPort(controller: controller),
-                Row(
-                  children: [
-                    //ElevatedButton(onPressed: test, child: const Text("OUI")),
-                    const Spacer(),
-                    controller.position != null
-                        ? Container(
-                            margin: const EdgeInsets.all(5),
-                            width: 40,
-                            height: 40,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                color: Theme.of(context).primaryColor),
-                            child: InkWell(
-                                onTap: controller.goToPosition,
-                                child: const Icon(Icons.my_location_outlined)))
-                        : Container()
-                  ],
-                ),
-                controller.focusedStation != null ? StopFocusWidget(
-                  controller: controller,
-                  openFocus: onFocusOpen,
-                ) : Container(),
-                controller.focusedPlace != null
-                    ? FocusPlace(
-                        controller: controller,
-                      )
-                    : Container()
-              ],
-            )
-          ],
+              ),
+            ],
+          ),
+          overlayAsDrawer: controller.focusedStation != null,
+          overlay: overlay,
         ),
       ),
     );

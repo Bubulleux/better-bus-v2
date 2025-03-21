@@ -29,9 +29,6 @@ class _FocusPlaceState extends State<FocusPlace> {
         : null;
 
     return Container(
-      decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       padding: const EdgeInsets.symmetric(
         horizontal: 10,
         vertical: 20

@@ -25,7 +25,6 @@ class StopFocusWidget extends StatefulWidget {
 }
 
 class _StopFocusWidgetState extends State<StopFocusWidget> {
-  double _height = 200;
 
   LatLng? get position => widget.controller.posCoord;
 
@@ -46,67 +45,36 @@ class _StopFocusWidgetState extends State<StopFocusWidget> {
     setState(() {});
   }
 
-  void handleVerticalDrag(DragUpdateDetails detail) {
-    setState(() {
-      _height -= detail.delta.dy;
-      _height = max(_height, 100);
-    });
-  }
 
-  void handleEndVerticalDrag(DragEndDetails detail) {
-    if (detail.localPosition.dy.isNegative &&
-        detail.velocity.pixelsPerSecond.dy < -60) {
-      setState(() {
-        _height = 300;
-      });
-      widget.openFocus?.call();
-    }
-  }
-
-  Widget buildDragBar() {
+  Widget buildTitle() {
     String? distance = position != null
         ? "${(getDistanceInKMeter(station, position!) * 100).roundToDouble() / 100} km"
         : null;
 
-    return GestureDetector(
-        onVerticalDragUpdate: handleVerticalDrag,
-        onVerticalDragEnd: handleEndVerticalDrag,
-        child: Material(
-          color: Colors.transparent,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                alignment: Alignment.center,
-                width: double.infinity,
-                padding: const EdgeInsets.only(bottom: 10, top: 8),
-                child: Container(
-                  width: 100,
-                  height: 4,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(3),
-                      color: Colors.black.withAlpha(30)),
+    return Material(
+      color: Colors.transparent,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+            child: Row(
+              children: [
+                Text(
+                  station.name,
+                  style: Theme.of(context).textTheme.titleLarge,
                 ),
-              ),
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                child: Row(
-                  children: [
-                    Text(
-                      station.name,
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    const Spacer(),
-                    ...(distance != null
-                        ? [const Icon(Icons.directions_walk), Text(distance)]
-                        : [])
-                  ],
-                ),
-              ),
-            ],
+                const Spacer(),
+                ...(distance != null
+                    ? [const Icon(Icons.directions_walk), Text(distance)]
+                    : [])
+              ],
+            ),
           ),
-        ));
+        ],
+      ),
+    );
   }
 
 
@@ -120,33 +88,28 @@ class _StopFocusWidgetState extends State<StopFocusWidget> {
       direction = provider.getStopDirections(stop);
     }
 
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 100),
-      height: _height,
-      decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      padding: const EdgeInsets.only(right: 5, left: 5),
-      child: Column(
-        key: Key(station.name + (stop.toString())),
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          buildDragBar(),
-          ReportInfobox(
-            updatable: widget.controller.canSentReport(station),
-            report: report,
-            station: station,
-            reportUpdate: widget.controller.updateReport,
-          ),
-          Expanded(
-              child: NextPassagePage(
-            station,
-            direction: direction,
-            minimal: true,
-            stopTimeSelected: widget.controller.setStopTime,
-          )),
-        ],
-      ),
+    return Column(
+      key: Key(station.name + (stop.toString())),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        buildTitle(),
+        ReportInfobox(
+          updatable: widget.controller.canSentReport(station),
+          report: report,
+          station: station,
+          reportUpdate: widget.controller.updateReport,
+        ),
+        SizedBox(
+          height: 300,
+          child: NextPassagePage(
+                    station,
+                    direction: direction,
+                    minimal: true,
+                    stopTimeSelected: widget.controller.setStopTime,
+                  ),
+        ),
+      ],
     );
   }
 }
