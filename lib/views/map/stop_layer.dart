@@ -34,7 +34,7 @@ class _StopsMapLayerState extends State<StopsMapLayer> {
 
   Marker buildMaker(Station stop, Report? report, MapCamera camera) {
     final focused = stop == widget.focusedStation;
-    final asDot = camera.zoom < 15;
+    final asDot = camera.zoom < 15.3;
     final onTrip = widget.mapController.focusedStopTime?.trip!.isPassingBy(stop) ?? false;
     Color color = Theme.of(context).primaryColor;
     if (report != null) {
@@ -51,7 +51,7 @@ class _StopsMapLayerState extends State<StopsMapLayer> {
         point: stop.position,
         child: AnimatedScale(
           duration: animeTime,
-          scale: asDot ? 0.5 : 1,
+          scale: asDot ? 0 : 1,
           child: AnimatedContainer(
             duration: animeTime,
             padding: const EdgeInsets.all(1),
@@ -117,19 +117,54 @@ class _StopsMapLayerState extends State<StopsMapLayer> {
     }
   }
 
+  Widget buildImage(MapCamera cam) {
+    final circles = widget.stops.map(
+        (e) => CircleMarker(point: e.position, radius: 100,
+        useRadiusInMeter: cam.zoom > 10,
+        color: Theme.of(context).primaryColor,
+            borderColor: Colors.black38,
+          borderStrokeWidth: 5,
+        )
+    ).toList();
+    return IgnorePointer(
+      ignoring: true,
+      child: AnimatedOpacity(
+        duration: Duration(milliseconds: 200),
+          opacity: cam.zoom < 15.5 ? 1 : 0,
+          child: CircleLayer(circles: circles)
+      ),
+    );
+  }
+
+  Iterable<Marker> getMarkers(MapCamera cam) sync* {
+    if (cam.zoom < 15.5) {
+      if (widget.mapController.focusedStation != null) {
+        final s = widget.mapController.focusedStation!;
+        yield buildMaker(s, widget.reports?[s], cam);
+      }
+      return;
+    }
+
+    for (final stop in widget.stops) {
+      if (stop == widget.focusedStation) {
+        yield* buildSubMarker(stop);
+      }
+       yield buildMaker(stop, widget.reports?[stop], cam);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final cam = MapCamera.of(context);
-
-    return MarkerLayer(
-        markers: (List<Station> stops) sync* {
-      for (final stop in stops) {
-        if (stop == widget.focusedStation) {
-          yield* buildSubMarker(stop);
-        }
-        yield buildMaker(stop, widget.reports?[stop], cam);
-      }
-    }(widget.stops)
-            .toList());
+    print(cam.zoom);
+    return Stack(
+      children: [
+        MarkerLayer(markers: getMarkers(cam).toList()),
+        buildImage(cam),
+      ],
+    );
+    if (cam.zoom < 14) {
+      return buildImage(cam);
+    }
   }
 }

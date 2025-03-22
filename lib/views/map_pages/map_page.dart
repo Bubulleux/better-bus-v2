@@ -4,6 +4,7 @@ import 'package:better_bus_v2/app_constant/app_string.dart';
 import 'package:better_bus_core/core.dart';
 import 'package:better_bus_v2/views/common/fake_text_field.dart';
 import 'package:better_bus_v2/views/map/controller.dart';
+import 'package:better_bus_v2/views/map/map_layout.dart';
 import 'package:better_bus_v2/views/map/map_view.dart';
 import 'package:better_bus_v2/views/map/map_view_port.dart';
 import 'package:better_bus_v2/views/map_pages/focus_place.dart';
@@ -38,6 +39,7 @@ class _MapPageState extends State<MapPage> {
     controller.loadStation().then((_) => print("Map load finish"));
     controller.stateChange.addListener(() {
       setState(() {});
+      print("Page Update");
     });
   }
 
@@ -78,6 +80,7 @@ class _MapPageState extends State<MapPage> {
 
   @override
   Widget build(BuildContext context) {
+    print("Rebuild ${controller.focusedStation != null}");
     Widget? overlay;
     if (controller.focusedStation != null) {
       overlay = StopFocusWidget(
@@ -92,9 +95,9 @@ class _MapPageState extends State<MapPage> {
 
     return Scaffold(
       body: SafeArea(
-        child: NetworkMap(
-          controller: controller,
-          input: Row(
+        child: MapLayout(
+          map: NetworkMap(controller: controller),
+          topBar: Row(
             children: [
               const BackButton(),
               Expanded(
@@ -110,8 +113,8 @@ class _MapPageState extends State<MapPage> {
               ),
             ],
           ),
-          overlayAsDrawer: controller.focusedStation != null,
           overlay: overlay,
+          overlaySizable: controller.focusedPlace == null,
         ),
       ),
     );

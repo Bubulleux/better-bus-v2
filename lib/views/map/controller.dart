@@ -78,6 +78,7 @@ class NetworkMapController {
 
   void notifyChange() {
     stateChange.value = hashCode;
+    widgetState?.update();
   }
 
   @override

@@ -100,14 +100,15 @@ class _StopFocusWidgetState extends State<StopFocusWidget> {
           station: station,
           reportUpdate: widget.controller.updateReport,
         ),
-        SizedBox(
-          height: 300,
-          child: NextPassagePage(
-                    station,
-                    direction: direction,
-                    minimal: true,
-                    stopTimeSelected: widget.controller.setStopTime,
-                  ),
+        Expanded(
+          child: Material(
+            child: NextPassagePage(
+                      station,
+                      direction: direction,
+                      minimal: true,
+                      stopTimeSelected: widget.controller.setStopTime,
+                    ),
+          ),
         ),
       ],
     );

@@ -21,9 +21,6 @@ class NetworkMap extends StatefulWidget {
     this.layers = const [],
     this.showStation = true,
     this.route,
-    this.input,
-    this.overlay,
-    this.overlayAsDrawer,
     super.key,
   });
 
@@ -32,9 +29,6 @@ class NetworkMap extends StatefulWidget {
   final NetworkMapController controller;
   final VitalisRoute? route;
   final bool showStation;
-  final Widget? input;
-  final Widget? overlay;
-  final bool? overlayAsDrawer;
 
   final List<Widget> layers;
 
@@ -46,135 +40,39 @@ class NetworkMapState extends State<NetworkMap> with TickerProviderStateMixin {
   late MapController controller;
 
   NetworkMapController get rootController => widget.controller;
-  double _overlayHeight = double.nan;
-  double _viewPortHeight = double.nan;
-  double? _overleyVelocity = null;
-  bool overlayOpened = false;
 
   @override
   void initState() {
     super.initState();
     controller = MapController();
     widget.controller.setWidgetState(this);
+
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    print("Deps changed");
     update();
   }
 
   void update() {
-    print("Update");
-    if (!(widget.overlayAsDrawer ?? false)) {
-      _overlayHeight = double.nan;
-    }
-    if (widget.overlay != null && (widget.overlayAsDrawer ?? false) && _overlayHeight.isNaN) {
-      print("Height set");
-        _overlayHeight = 200;
-    }
-    print("Fuck");
-    setState(() {});
-  }
-
-  Widget buildDragBar() {
-    if (widget.overlay == null) return Container();
-    const r = Radius.circular(20);
-    final padding = _overlayHeight.isNaN ?
-        EdgeInsets.symmetric(vertical: 4) : EdgeInsets.only(bottom: 10, top: 8);
-
-    return Container(
-      alignment: Alignment.center,
-      width: double.infinity,
-      padding: padding,
-      decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: r),
-          boxShadow: [
-            BoxShadow(
-                color: Colors.black12,
-                blurRadius: 2,
-                spreadRadius: 1,
-                offset: Offset(2, -1))
-          ]),
-      child: _overlayHeight.isNaN ?
-      Container() :Container(
-        width: 100,
-        height: 4,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(3),
-            color: Colors.black.withAlpha(30)),
-      ),
-    );
-  }
-
-  void handleVerticalDrag(DragUpdateDetails detail) {
-    assert(!_overlayHeight.isNaN);
     setState(() {
-      _overlayHeight -= detail.delta.dy;
-      _overlayHeight = max(_overlayHeight, 100);
+      // print("Update");
+      // if (!(widget.overlayAsDrawer ?? false)) {
+      //   _overlayHeight = double.nan;
+      //   print("Set Nan");
+      // }
+      // if (widget.overlay != null && (widget.overlayAsDrawer ?? false) && _overlayHeight.isNaN) {
+      //   print("Height set");
+      //   _overlayHeight = 200;
+      // }
+      // print("Fuck");
     });
   }
 
-  void handleEndVerticalDrag(DragEndDetails detail) {
-    _overleyVelocity = detail.velocity.pixelsPerSecond.dy;
-  }
 
-  Widget buildOverlay() {
-    final enable = !_overlayHeight.isNaN;
-    return GestureDetector(
-      onVerticalDragUpdate: enable ? handleVerticalDrag : null,
-      onVerticalDragEnd: enable ? handleEndVerticalDrag : null,
-      key: ObjectKey(widget.overlay),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          buildDragBar(),
-          // Expanded(
-          //   child: Container(
-          //     height: double.infinity,
-          //     width: double.infinity,
-          //     color: Colors.red,
-          //   ),
-          // )
-          Container(
-            color: Colors.white,
-            child: widget.overlay ?? Container(),
-          )
-        ],
-      ),
-    );
-  }
 
-  Widget buildBottomLayout(BuildContext context, BoxConstraints constrains) {
-    if (_overlayHeight.isNaN) {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          buildMapButtons(),
-          widget.overlay != null ?
-          buildOverlay() : Container()
-        ],
-      );
-    }
-    return Stack(
-      alignment: Alignment.bottomCenter,
-      clipBehavior: Clip.none,
-      children: [
-        Positioned(
-            width: constrains.maxWidth,
-            bottom: _overlayHeight,
-            child: buildMapButtons()),
-        AnimatedPositioned(
-          duration: const Duration(milliseconds: 50),
-          height: _overlayHeight,
-          width: constrains.maxWidth,
-          child: buildOverlay(),
-        )
-      ],
-    );
-  }
 
   Widget buildMap() {
     return FlutterMap(
@@ -251,15 +149,15 @@ class NetworkMapState extends State<NetworkMap> with TickerProviderStateMixin {
       child: Stack(
         children: [
           buildMap(),
-          Column(
-            children: [
-              widget.input ?? Container(),
-              Expanded(
-                  child: LayoutBuilder(
-                builder: buildBottomLayout,
-              )),
-            ],
-          )
+          // Column(
+          //   children: [
+          //     widget.input ?? Container(),
+          //     Expanded(
+          //         child: LayoutBuilder(
+          //       builder: buildBottomLayout,
+          //     )),
+          //   ],
+          // )
         ],
       ),
     );
