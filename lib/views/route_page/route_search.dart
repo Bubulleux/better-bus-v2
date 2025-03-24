@@ -130,68 +130,74 @@ class _RouteSearchState extends State<RouteSearch> {
     return "$timeTypeText $dateText à $timeText";
   }
 
+
   @override
   Widget build(BuildContext context) {
     final v = search.value;
     return Container(
-      // decoration:
-      //     CustomDecorations.of(context).boxBackground.copyWith(boxShadow: [
-      //   const BoxShadow(
-      //     color: Colors.grey,
-      //     spreadRadius: 2,
-      //     blurRadius: 7,
-      //   )
-      // ]),
-      color: Colors.black12,
       padding: const EdgeInsets.all(8),
       child: Column(
         children: [
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              Column(
-                children: [
-                  FakeTextField(
-                    onPress: getStartPlace,
-                    backgroundColor: Theme.of(context).colorScheme.background,
-                    hint: AppString.startLabel,
-                    prefixIcon: const Icon(
-                      Icons.flag,
-                      color: Colors.green,
+          Flexible(
+            flex: 2,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Column(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Expanded(
+                      child: FakeTextField(
+                        onPress: getStartPlace,
+                        height: null,
+                        backgroundColor: Theme.of(context).colorScheme.background,
+                        hint: AppString.startLabel,
+                        prefixIcon: const Icon(
+                          Icons.flag,
+                          color: Colors.green,
+                        ),
+                        icon: Icons.search,
+                        value: v.start?.name,
+                      ),
                     ),
-                    icon: Icons.search,
-                    value: v.start?.name,
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  FakeTextField(
-                    onPress: getStopPlace,
-                    backgroundColor: Theme.of(context).colorScheme.background,
-                    hint: AppString.endLabel,
-                    prefixIcon: const Icon(Icons.flag, color: Colors.red),
-                    icon: Icons.search,
-                    value: v.stop?.name,
-                  ),
-                ],
-              ),
-              ElevatedButton(
-                onPressed: swapDirection,
-                style:
-                    ElevatedButton.styleFrom(padding: const EdgeInsets.all(0)),
-                child: const Icon(Icons.swap_vert, size: 20),
-              )
-            ],
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    Expanded(
+                      child: FakeTextField(
+                        onPress: getStopPlace,
+                        height: null,
+                        backgroundColor: Theme.of(context).colorScheme.background,
+                        hint: AppString.endLabel,
+                        prefixIcon: const Icon(Icons.flag, color: Colors.red),
+                        icon: Icons.search,
+                        value: v.stop?.name,
+                      ),
+                    ),
+                  ],
+                ),
+                ElevatedButton(
+                  onPressed: swapDirection,
+                  style:
+                      ElevatedButton.styleFrom(padding: const EdgeInsets.all(0)),
+                  child: const Icon(Icons.swap_vert, size: 20),
+                )
+              ],
+            ),
           ),
           const SizedBox(
             height: 5,
           ),
-          FakeTextField(
-            value: getTimeString(),
-            onPress: setTime,
-            prefixIcon: const Icon(Icons.access_time),
-            icon: Icons.autorenew,
-            backgroundColor: Theme.of(context).colorScheme.background,
+          Flexible(
+            flex: 1,
+            child: FakeTextField(
+              height: null,
+              value: getTimeString(),
+              onPress: setTime,
+              prefixIcon: const Icon(Icons.access_time),
+              icon: Icons.autorenew,
+              backgroundColor: Theme.of(context).colorScheme.background,
+            ),
           )
         ],
       ),

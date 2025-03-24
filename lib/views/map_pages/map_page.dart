@@ -5,8 +5,6 @@ import 'package:better_bus_core/core.dart';
 import 'package:better_bus_v2/views/common/fake_text_field.dart';
 import 'package:better_bus_v2/views/map/controller.dart';
 import 'package:better_bus_v2/views/map/map_layout.dart';
-import 'package:better_bus_v2/views/map/map_view.dart';
-import 'package:better_bus_v2/views/map/map_view_port.dart';
 import 'package:better_bus_v2/views/map_pages/focus_place.dart';
 import 'package:better_bus_v2/views/map_pages/focus_stop.dart';
 import 'package:better_bus_v2/views/stop_info/stop_info_page.dart';
@@ -97,6 +95,7 @@ class _MapPageState extends State<MapPage> {
       body: SafeArea(
         child: MapLayout(
           controller: controller,
+          topBarHeight: 100,
           topBar: Row(
             children: [
               const BackButton(),

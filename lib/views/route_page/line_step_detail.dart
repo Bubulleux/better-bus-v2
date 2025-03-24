@@ -1,6 +1,7 @@
 import 'package:better_bus_core/core.dart';
 import 'package:better_bus_v2/views/common/extendable_view.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
+import 'package:better_bus_v2/views/common/report_infobox.dart';
 import 'package:better_bus_v2/views/common/separator.dart';
 import 'package:better_bus_v2/views/stop_info/delay_infobox.dart';
 import 'package:flutter/material.dart';

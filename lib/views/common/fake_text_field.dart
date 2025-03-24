@@ -7,6 +7,7 @@ class FakeTextField extends StatelessWidget {
     this.value,
     this.hint,
     this.icon,
+    this.height = 60,
     this.prefixIcon,
     this.backgroundColor,
     required this.onPress,
@@ -15,6 +16,7 @@ class FakeTextField extends StatelessWidget {
 
   final String? value;
   final String? hint;
+  final double? height;
   final IconData? icon;
   final Icon? prefixIcon;
   final VoidCallback onPress;
@@ -30,7 +32,7 @@ class FakeTextField extends StatelessWidget {
         onTap: onPress,
         borderRadius: CustomDecorations.borderRadius,
         child: Container(
-          height: 60,
+          height: height,
           padding: const EdgeInsets.all(10),
           decoration: CustomDecorations.of(context).boxOutlined.copyWith(
             color: backgroundColor,

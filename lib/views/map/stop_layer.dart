@@ -40,10 +40,7 @@ class _StopsMapLayerState extends State<StopsMapLayer> {
   Marker buildMaker(Station stop, Report? report, MapCamera camera) {
     final focused = stop == widget.focusedStation;
     final onTrip = widget.mapController.focusedStopTime?.trip!.isPassingBy(stop) ?? false;
-    Color color = Theme.of(context).primaryColor;
-    if (report != null) {
-      color = Color.lerp(color, Colors.blue, report.stillThere) ?? color;
-    }
+    final color = stationColor(stop);
     final trip = widget.mapController.focusedStopTime?.trip!;
     Color? lineColor;
     if (trip != null && trip.isPassingBy(stop)) {
@@ -77,6 +74,16 @@ class _StopsMapLayerState extends State<StopsMapLayer> {
         ));
   }
 
+
+  Color stationColor(Station station) {
+    var out = Theme.of(context).primaryColor;
+    final report = widget.reports?[station];
+
+    if (report != null) {
+      out = Color.lerp(out, Colors.blue, report.stillThere) ?? out;
+    }
+    return out;
+  }
 
 
   Iterable<Marker> buildSubMarker(Station stop) sync* {
@@ -146,13 +153,16 @@ class _StopsMapLayerState extends State<StopsMapLayer> {
       r *= 8.5;
     }
     final circles = widget.stops.map(
-        (e) => CircleMarker(
-          point: e.position, radius: r,
-        useRadiusInMeter: cam.zoom < _staticCircleSizeMaxZoom,
-        color: Theme.of(context).primaryColor,
-            borderColor: Theme.of(context).primaryColorDark,
-          borderStrokeWidth: r / 5,
-        )
+        (e) {
+          final c = stationColor(e);
+          return CircleMarker(
+            point: e.position, radius: r,
+            useRadiusInMeter: cam.zoom < _staticCircleSizeMaxZoom,
+            color: c,
+            borderColor: Color.lerp(c, Colors.black, 0.3)!,
+            borderStrokeWidth: r / 5,
+          );
+        }
     ).toList();
 
     return IgnorePointer(

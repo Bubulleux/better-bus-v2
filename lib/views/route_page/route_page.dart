@@ -1,6 +1,8 @@
 import 'package:better_bus_core/core.dart';
 import 'package:better_bus_v2/views/map/controller.dart';
+import 'package:better_bus_v2/views/map/map_layout.dart';
 import 'package:better_bus_v2/views/map/map_view.dart';
+import 'package:better_bus_v2/views/map/route_layer.dart';
 import 'package:better_bus_v2/views/map/search_parameter_layer.dart';
 import 'package:better_bus_v2/views/route_page/route_detail.dart';
 import 'package:better_bus_v2/views/route_page/route_search.dart';
@@ -54,7 +56,7 @@ class _RoutePageState extends State<RoutePage> {
 
   void updateCam() {
     if (parameter!.valid) {
-      final cam = CameraFit.coordinates(coordinates: [
+      final bound = LatLngBounds.fromPoints([
         parameter!.start!.position,
         parameter!.stop!.position,
         ...(route != null
@@ -63,8 +65,8 @@ class _RoutePageState extends State<RoutePage> {
                 .expand((e) => e)
                 .toList()
             : [])
-      ], padding: const EdgeInsets.all(20));
-      controller.animateToFit(cam);
+      ]);
+      controller.animateToBound(bound);
     }
   }
 
@@ -73,11 +75,15 @@ class _RoutePageState extends State<RoutePage> {
   }
 
   final animationDuration = const Duration(milliseconds: 200);
+
   void goToSearch() => goToI(0);
+
   void goToDetail() => goToI(1);
+
   void goToI(int index) {
     if ((parameter?.valid ?? false) && _pageController.hasClients) {
-      _pageController.animateToPage(index, duration: animationDuration, curve: Curves.linear);
+      _pageController.animateToPage(index,
+          duration: animationDuration, curve: Curves.linear);
     }
   }
 
@@ -85,47 +91,37 @@ class _RoutePageState extends State<RoutePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          children: [
-            RouteSearch(onSearch: setSearch),
-            Expanded(
-              child: Stack(children: [
-                NetworkMap(
-                  controller: controller,
-                  route: route,
-                  layers: parameter != null ?
-                  [RouteParameterLayer(parameter: parameter!)] : [],
-                ),
-              ]),
-            ),
-            parameter?.valid ?? false || route != null
-                ? SizedBox(
-                    height: 300,
-                    child: PageView(
-                      controller: _pageController,
-                      children: [
-                        RouteSearchResult(
-                          key: ObjectKey(parameter!),
-                          parameter: parameter!,
-                          routeSelected: selectRoute,
-                          route: route,
-                        ),
-                        route == null ? Container()
-                        : RouteDetail(route: route!, parameter: parameter!, onClose: closeDetail)
-                      ],
-                    ))
-                : Container()
-            // child: route == null
-            //     ?
-            //     : RouteDetail(
-            //         route: route!,
-            //         parameter: parameter!,
-            //         onClose: closeDetail,
-            //       ))
-            //     : Container()
-          ],
-        ),
-      ),
+          child: MapLayout(
+        controller: controller,
+        topBar: RouteSearch(onSearch: setSearch),
+        topBarHeight: 200,
+        mapLayers: [
+          route != null ? RouteLayer(route: route!) : Container(),
+          parameter != null ? RouteParameterLayer(parameter: parameter!)
+              : Container(),
+        ],
+        overlay: parameter?.valid ?? false || route != null
+            ? SizedBox(
+                child: PageView(
+                  controller: _pageController,
+                  children: [
+                    RouteSearchResult(
+                      key: ObjectKey(parameter!),
+                      parameter: parameter!,
+                      routeSelected: selectRoute,
+                      route: route,
+                    ),
+                    route != null
+                        ? RouteDetail(
+                            route: route!,
+                            parameter: parameter!,
+                            onClose: closeDetail,
+                          )
+                        : Container()
+                  ],
+                ))
+            : null,
+      )),
     );
   }
 }

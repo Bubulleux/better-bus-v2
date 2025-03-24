@@ -162,9 +162,10 @@ class NetworkMapController {
     return animationController.forward();
   }
 
-  TickerFuture animateToFit(CameraFit fit) {
+  TickerFuture animateToBound(LatLngBounds bound) {
+    final fit = CameraFit.bounds(bounds: bound, padding: camPadding);
     final cam = fit.fit(controller.camera);
-    print(cam.zoom);
+
     return animateCamTo(cam.center, zoom: cam.zoom);
   }
 
@@ -174,8 +175,8 @@ class NetworkMapController {
     }
   }
 
-  void setRenderBox(RenderBox box) {
-
+  void setCamPadding(EdgeInsets padding) {
+    camPadding = padding;
   }
 
 }

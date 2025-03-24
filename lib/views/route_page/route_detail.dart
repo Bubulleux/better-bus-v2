@@ -1,8 +1,10 @@
 import 'package:better_bus_core/core.dart';
+import 'package:better_bus_v2/data_provider/radar_provider.dart';
 import 'package:better_bus_v2/model/bus_line_color.dart';
 import 'package:better_bus_v2/model/provider.dart';
 import 'package:better_bus_v2/views/common/close_cross.dart';
 import 'package:better_bus_v2/views/common/directed_line.dart';
+import 'package:better_bus_v2/views/common/report_infobox.dart';
 import 'package:better_bus_v2/views/route_page/line_step_detail.dart';
 import 'package:better_bus_v2/views/route_page/route_search.dart';
 import 'package:flutter/material.dart';
@@ -27,12 +29,14 @@ class RouteDetail extends StatefulWidget {
 class RouteDetailState extends State<RouteDetail> {
   Map<Station, Timetable?> timeTable = {};
   Map<String, Station>? stations;
+  Map<Station, Report> reports = {};
   late FullProvider provider;
 
   @override
   void initState() {
     super.initState();
     provider = FullProvider.of(context);
+    getRealtimes();
   }
 
   Future<bool> getRealtimes() async {
@@ -47,7 +51,6 @@ class RouteDetailState extends State<RouteDetail> {
       final station = stations![e.startPlace];
       if (station == null) continue;
       timeTable[station] = null;
-
       provider.getTimetable(station).then((v) {
         if (!mounted) return;
         setState(() {
@@ -55,6 +58,12 @@ class RouteDetailState extends State<RouteDetail> {
         });
       });
     }
+    final r = await AppRadarProvider.of(context).getReports();
+    reports.addEntries(r
+        .where((e) => timeTable.containsKey(e.station))
+        .map((e) => MapEntry(e.station, e)));
+    if (mounted) setState(() {});
+
     return true;
   }
 
@@ -131,12 +140,23 @@ class RouteDetailState extends State<RouteDetail> {
 
     return buildRow(
       marge: const Icon(Icons.directions_bus),
-      title: LabeledLine(line: item.lines!, label: trip?.destination ?? item.endPlace,),
+      title: LabeledLine(
+        line: item.lines!,
+        label: trip?.destination ?? item.endPlace,
+      ),
       subTitle: Text(instruction),
       body: Column(
         children: [
+          station != null
+              ? ReportInfobox(
+                  station: station,
+                  report: reports[station],
+                )
+              : Container(),
           schema,
-          const SizedBox(height: 5,),
+          const SizedBox(
+            height: 5,
+          ),
           LineStepDetail(routeStep: item, times: times),
         ],
       ),
@@ -144,7 +164,10 @@ class RouteDetailState extends State<RouteDetail> {
   }
 
   Widget buildRow(
-      {required Widget marge, required Widget title, Widget? subTitle, Widget? body}) {
+      {required Widget marge,
+      required Widget title,
+      Widget? subTitle,
+      Widget? body}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
       child: Column(
