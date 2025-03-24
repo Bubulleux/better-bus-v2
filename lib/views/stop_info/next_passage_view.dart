@@ -270,6 +270,7 @@ class _NextPassageWidgetState extends State<NextPassageWidget>
                 )
               ],
             ),
+            // Text(widget.nextPassage.trip?.id.toString() ?? "NULL"),
             ExpandableWidget(
               controller: expandControler,
               child: buildNextPassageDetail(delay),
