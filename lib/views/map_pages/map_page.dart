@@ -96,7 +96,7 @@ class _MapPageState extends State<MapPage> {
     return Scaffold(
       body: SafeArea(
         child: MapLayout(
-          map: NetworkMap(controller: controller),
+          controller: controller,
           topBar: Row(
             children: [
               const BackButton(),

@@ -4,7 +4,6 @@ import 'package:better_bus_v2/views/map/controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 
-const animeTime = Duration(milliseconds: 250);
 
 class StopsMapLayer extends StatefulWidget {
   const StopsMapLayer({
@@ -30,11 +29,16 @@ class StopsMapLayer extends StatefulWidget {
   State<StopsMapLayer> createState() => _StopsMapLayerState();
 }
 
+
 class _StopsMapLayerState extends State<StopsMapLayer> {
+
+  static const _animeTime = Duration(milliseconds: 250);
+  static const _staticCircleSizeMaxZoom = 14;
+  static const _minWidgetZoom = 15;
+  static const _zoomWidgetAppear = 16;
 
   Marker buildMaker(Station stop, Report? report, MapCamera camera) {
     final focused = stop == widget.focusedStation;
-    final asDot = camera.zoom < 15.3;
     final onTrip = widget.mapController.focusedStopTime?.trip!.isPassingBy(stop) ?? false;
     Color color = Theme.of(context).primaryColor;
     if (report != null) {
@@ -49,35 +53,31 @@ class _StopsMapLayerState extends State<StopsMapLayer> {
     return Marker(
         key: Key(stop.id.toString()),
         point: stop.position,
-        child: AnimatedScale(
-          duration: animeTime,
-          scale: asDot ? 0 : 1,
-          child: AnimatedContainer(
-            duration: animeTime,
-            padding: const EdgeInsets.all(1),
-            decoration: BoxDecoration(
-                color: color,
-                borderRadius: BorderRadius.circular(20),
-                border: focused || lineColor != null
-                    ? Border.all(color: lineColor ?? Colors.black26, width: 3)
-                    : null,
-                boxShadow: [
-                  BoxShadow(
-                      offset: const Offset(2, 2),
-                      spreadRadius: focused ? -1 : -2,
-                      blurRadius: focused ? 5 : 2)
-                ]),
-            child: !asDot
-                ? InkWell(
-                    onTap: () => widget.onStationClick?.call(stop),
-                    child: const Icon(
-                      Icons.directions_bus,
-                      size: 19,
-                    ))
-                : Container(),
-          ),
+        child: AnimatedContainer(
+          duration: _animeTime,
+          padding: const EdgeInsets.all(1),
+          decoration: BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.circular(20),
+              border: focused || lineColor != null
+                  ? Border.all(color: lineColor ?? Colors.black26, width: 3)
+                  : null,
+              boxShadow: [
+                BoxShadow(
+                    offset: const Offset(2, 2),
+                    spreadRadius: focused ? -1 : -2,
+                    blurRadius: focused ? 5 : 2)
+              ]),
+          child: InkWell(
+                  onTap: () => widget.onStationClick?.call(stop),
+                  child: const Icon(
+                    Icons.directions_bus,
+                    size: 19,
+                  )),
         ));
   }
+
+
 
   Iterable<Marker> buildSubMarker(Station stop) sync* {
     for (final child in stop.stops.entries) {
@@ -89,10 +89,10 @@ class _StopsMapLayerState extends State<StopsMapLayer> {
           child: InkWell(
             onTap: () => widget.onStopClick?.call(child.key),
             child: AnimatedScale(
-              duration: animeTime,
+              duration: _animeTime,
               scale: focused ? 0.8 : 0.5,
               child: AnimatedContainer(
-                duration: animeTime,
+                duration: _animeTime,
                 padding: focused
                     ? const EdgeInsets.all(5)
                     : const EdgeInsets.all(15),
@@ -117,49 +117,62 @@ class _StopsMapLayerState extends State<StopsMapLayer> {
     }
   }
 
-  Widget buildImage(MapCamera cam) {
-    final circles = widget.stops.map(
-        (e) => CircleMarker(point: e.position, radius: 100,
-        useRadiusInMeter: cam.zoom > 10,
-        color: Theme.of(context).primaryColor,
-            borderColor: Colors.black38,
-          borderStrokeWidth: 5,
-        )
-    ).toList();
-    return IgnorePointer(
-      ignoring: true,
-      child: AnimatedOpacity(
-        duration: Duration(milliseconds: 200),
-          opacity: cam.zoom < 15.5 ? 1 : 0,
-          child: CircleLayer(circles: circles)
-      ),
-    );
-  }
-
   Iterable<Marker> getMarkers(MapCamera cam) sync* {
-    if (cam.zoom < 15.5) {
-      if (widget.mapController.focusedStation != null) {
-        final s = widget.mapController.focusedStation!;
-        yield buildMaker(s, widget.reports?[s], cam);
-      }
-      return;
-    }
 
     for (final stop in widget.stops) {
       if (stop == widget.focusedStation) {
         yield* buildSubMarker(stop);
       }
-       yield buildMaker(stop, widget.reports?[stop], cam);
+      yield buildMaker(stop, widget.reports?[stop], cam);
     }
   }
+
+  Widget buildMarkerLayer(MapCamera cam) {
+    var markers = getMarkers(cam);
+    if (cam.zoom < _minWidgetZoom) {
+      return Container();
+    }
+
+    return AnimatedOpacity(
+      duration: _animeTime,
+      opacity: cam.zoom < _zoomWidgetAppear ? 0 : 1,
+      child: MarkerLayer(markers: markers.toList()),
+    );
+  }
+
+  Widget buildImage(MapCamera cam) {
+    double r = 10;
+    if (cam.zoom < _staticCircleSizeMaxZoom) {
+      r *= 8.5;
+    }
+    final circles = widget.stops.map(
+        (e) => CircleMarker(
+          point: e.position, radius: r,
+        useRadiusInMeter: cam.zoom < _staticCircleSizeMaxZoom,
+        color: Theme.of(context).primaryColor,
+            borderColor: Theme.of(context).primaryColorDark,
+          borderStrokeWidth: r / 5,
+        )
+    ).toList();
+
+    return IgnorePointer(
+      ignoring: true,
+      child: AnimatedOpacity(
+        duration: _animeTime,
+          opacity: cam.zoom < _zoomWidgetAppear ? 1 : 0,
+          child: CircleLayer(circles: circles)
+      ),
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
     final cam = MapCamera.of(context);
-    print(cam.zoom);
+    // print(cam.zoom);
     return Stack(
       children: [
-        MarkerLayer(markers: getMarkers(cam).toList()),
+        buildMarkerLayer(cam),
         buildImage(cam),
       ],
     );

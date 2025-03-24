@@ -46,35 +46,20 @@ class NetworkMapState extends State<NetworkMap> with TickerProviderStateMixin {
     super.initState();
     controller = MapController();
     widget.controller.setWidgetState(this);
-
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    print("Deps changed");
     update();
   }
 
   void update() {
-    setState(() {
-      // print("Update");
-      // if (!(widget.overlayAsDrawer ?? false)) {
-      //   _overlayHeight = double.nan;
-      //   print("Set Nan");
-      // }
-      // if (widget.overlay != null && (widget.overlayAsDrawer ?? false) && _overlayHeight.isNaN) {
-      //   print("Height set");
-      //   _overlayHeight = 200;
-      // }
-      // print("Fuck");
-    });
+    setState(() {});
   }
 
-
-
-
-  Widget buildMap() {
+  @override
+  Widget build(BuildContext context) {
     return FlutterMap(
       mapController: controller,
       options: const MapOptions(
@@ -88,13 +73,13 @@ class NetworkMapState extends State<NetworkMap> with TickerProviderStateMixin {
         ),
         ...(rootController.focusedStopTime != null
             ? [
-                TripLayer(stopTime: rootController.focusedStopTime!),
-                // BusLayer(
-                //   key: Key(rootController.focusedStopTime!.hashCode.toString()),
-                //   stopTime: rootController.focusedStopTime!,
-                // controller: rootController,
-                // )
-              ]
+          TripLayer(stopTime: rootController.focusedStopTime!),
+          // BusLayer(
+          //   key: Key(rootController.focusedStopTime!.hashCode.toString()),
+          //   stopTime: rootController.focusedStopTime!,
+          // controller: rootController,
+          // )
+        ]
             : []),
         StopsMapLayer(
           mapController: rootController,
@@ -117,49 +102,6 @@ class NetworkMapState extends State<NetworkMap> with TickerProviderStateMixin {
             ? PlaceLayer(rootController.focusedPlace!)
             : Container(),
       ],
-    );
-  }
-
-  Widget buildMapButtons() {
-    return Row(
-      children: [
-        //ElevatedButton(onPressed: test, child: const Text("OUI")),
-        const Spacer(),
-        widget.controller.position != null
-            ? Container(
-                margin: const EdgeInsets.all(5),
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: Theme.of(context).primaryColor),
-                child: InkWell(
-                    onTap: widget.controller.goToPosition,
-                    child: const Icon(Icons.my_location_outlined)))
-            : Container()
-      ],
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: widget.width,
-      height: widget.height,
-      child: Stack(
-        children: [
-          buildMap(),
-          // Column(
-          //   children: [
-          //     widget.input ?? Container(),
-          //     Expanded(
-          //         child: LayoutBuilder(
-          //       builder: buildBottomLayout,
-          //     )),
-          //   ],
-          // )
-        ],
-      ),
     );
   }
 }
