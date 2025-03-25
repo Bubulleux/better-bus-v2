@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:better_bus_v2/app_constant/app_string.dart';
 import 'package:better_bus_v2/views/map/controller.dart';
 import 'package:better_bus_v2/views/map/map_buttons.dart';
 import 'package:flutter/material.dart';
@@ -30,7 +31,9 @@ class MapLayout extends StatefulWidget {
 
 class _MapLayoutState extends State<MapLayout> {
   double _overlayHeight = 0;
+  Tween<double> _overlayHeightTween = Tween(begin: 0, end: 0);
   double _layoutHeight = double.infinity;
+  late final AnimationController animationController;
 
   bool get overlayFullScreen => _overlayHeight == _layoutHeight;
 
@@ -52,22 +55,24 @@ class _MapLayoutState extends State<MapLayout> {
   }
 
 
-  Widget layoutBuilder(BuildContext ctx, BoxConstraints constraint) {
+  Widget layoutBuilder(BuildContext ctx, BoxConstraints constraint, double overlayHeight) {
     _layoutHeight = constraint.maxHeight;
     var showButton = true;
     if (!widget.overlaySizable && widget.overlay != null) {
       _overlayHeight = constraint.maxHeight;
     }
 
+    final botMaxHeight = constraint.maxHeight - widget.topBarHeight! - _buttonHeight;
+    final fullscreen = overlayHeight >= botMaxHeight;
     final finalOverlay = Column(
       children: [
         SizedBox(
           height: widget.topBarHeight,
           child: widget.topBar,
         ),
-        const Spacer(),
+        fullscreen ? buildMapButton() : const Spacer(),
         SizedBox(
-          height: min(_overlayHeight, constraint.maxHeight - widget.topBarHeight!),
+          height: min(overlayHeight, botMaxHeight),
           child: widget.overlay,
         )
       ],
@@ -77,18 +82,18 @@ class _MapLayoutState extends State<MapLayout> {
       clipBehavior: Clip.none,
       children: [
         Positioned.fill(
-            bottom: _overlayHeight - _dragBarSize,
+            bottom: overlayHeight - _dragBarSize,
             child: NetworkMap(
               controller: widget.controller,
               layers: widget.mapLayers ?? [],
             )),
         Positioned.fill(
-          top: constraint.maxHeight - _overlayHeight - _dragBarSize,
+          top: constraint.maxHeight - overlayHeight - _dragBarSize,
             child: buildDrawer()
         ),
         Positioned.fill(child: finalOverlay),
         Positioned(
-          bottom: _overlayHeight + _dragBarSize,
+          bottom: overlayHeight + _dragBarSize,
           right: 0,
           // TODO: Fix IT height = 100 is bad
           height: 100,
@@ -115,6 +120,53 @@ class _MapLayoutState extends State<MapLayout> {
       height: constraint.maxHeight,
       child: stack,
     );
+  }
+
+
+  static const _buttonHeight = 40.0;
+  Widget buildMapButton() {
+    final color =Theme.of(context).primaryColor;
+    return GestureDetector(
+      onTap: openMap,
+      child: Container(
+        height: _buttonHeight,
+        width: double.infinity,
+        decoration: BoxDecoration(
+            color: color.withAlpha(170),
+          boxShadow: [
+            const BoxShadow(
+              color: Colors.black,
+            ),
+            BoxShadow(
+              color: color,
+              spreadRadius: -3,
+              blurRadius: _buttonHeight /4
+            ),
+          ]
+        ),
+        alignment: Alignment.center,
+        child: const Opacity(
+          opacity: 0.8,
+          child:  Wrap(
+            alignment: WrapAlignment.center,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              Icon(Icons.map),
+              Text(AppString.seeOnMaps, style: TextStyle(fontWeight: FontWeight.bold),)
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void openMap() {
+    setState(() {
+      if (widget.overlay != null) {
+        _overlayHeightTween = Tween(begin: _overlayHeight, end: 400);
+        _overlayHeight = _overlayHeightTween.end!;
+      }
+    });
   }
 
   Widget buildBottom() {
@@ -148,8 +200,8 @@ class _MapLayoutState extends State<MapLayout> {
     if (widget.overlay == null || !widget.overlaySizable) return Container();
     const r = Radius.circular(_dragBarSize);
     final padding = _overlayHeight.isNaN
-        ? EdgeInsets.symmetric(vertical: 4)
-        : EdgeInsets.only(bottom: 10, top: 8);
+        ? const EdgeInsets.symmetric(vertical: 4)
+        : const EdgeInsets.only(bottom: 10, top: 8);
 
     return handleDrag(Container(
         alignment: Alignment.topCenter,
@@ -181,6 +233,7 @@ class _MapLayoutState extends State<MapLayout> {
 
   void handleVerticalDrag(DragUpdateDetails detail) {
     assert(!_overlayHeight.isNaN);
+    _overlayHeightTween = Tween(begin: _overlayHeight, end: _overlayHeight);
     setState(() {
       _overlayHeight -= detail.delta.dy;
       _overlayHeight = max(_overlayHeight, 100);
@@ -196,6 +249,13 @@ class _MapLayoutState extends State<MapLayout> {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(builder: layoutBuilder);
+    return LayoutBuilder(builder: (BuildContext ctx, BoxConstraints constrain) {
+      return TweenAnimationBuilder(
+        tween: _overlayHeightTween,
+        curve: Curves.fastLinearToSlowEaseIn,
+        duration: const Duration(milliseconds: 300),
+        builder: (BuildContext ctx, double h, _) => layoutBuilder(ctx, constrain, h) ,
+      );
+    });
   }
 }
