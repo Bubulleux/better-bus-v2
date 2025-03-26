@@ -1,10 +1,8 @@
-import 'dart:math';
-
 import 'package:better_bus_core/core.dart';
 import 'package:better_bus_v2/views/common/report_infobox.dart';
 import 'package:better_bus_v2/views/map/controller.dart';
 import 'package:better_bus_v2/views/stop_info/next_passage_view.dart';
-import 'package:better_bus_v2/views/stops_search_page/stops_search_page.dart';
+import 'package:better_bus_v2/views/stop_info/timetable_view.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 
@@ -13,19 +11,18 @@ import '../../model/provider.dart';
 class StopFocusWidget extends StatefulWidget {
   const StopFocusWidget({
     required this.controller,
-    this.openFocus,
+    required this.goToRoute,
     super.key,
   });
 
   final NetworkMapController controller;
-  final VoidCallback? openFocus;
+  final VoidCallback goToRoute;
 
   @override
   State<StopFocusWidget> createState() => _StopFocusWidgetState();
 }
 
 class _StopFocusWidgetState extends State<StopFocusWidget> {
-
   LatLng? get position => widget.controller.posCoord;
 
   Station get station => widget.controller.focusedStation!;
@@ -34,9 +31,14 @@ class _StopFocusWidgetState extends State<StopFocusWidget> {
 
   Report? get report => widget.controller.report;
 
+  Widget? body;
+
+  List<BusLine>? passingLines = null;
+
   @override
   void initState() {
     super.initState();
+
   }
 
   @override
@@ -45,39 +47,52 @@ class _StopFocusWidgetState extends State<StopFocusWidget> {
     setState(() {});
   }
 
+  Widget buildClose()  {
+    return CloseButton(onPressed: () => setState(() {
+      body = null;
+    }),);
+  }
 
-  Widget buildTitle() {
-    String? distance = position != null
-        ? "${(getDistanceInKMeter(station, position!) * 100).roundToDouble() / 100} km"
-        : null;
+  void showTimetable() {
+    body = Column(
+      children: [
+        buildClose(),
+        Expanded(child: TimeTableView(station))
+      ],
+    );
+    setState(() {});
+  }
+  
+
+  Widget buildHeader() {
+
+    Widget btn(String content, VoidCallback onPressed) {
+      return ElevatedButton(onPressed: onPressed, child: Text(content));
+    }
+
+    final buttons = [
+      btn("Itineraire", widget.goToRoute),
+      btn("TimeTable", showTimetable),
+      //report == null ? ReportInfobox(station: station) : Container(),
+      // btn("InfTraif", () {}),
+    ];
 
     return Material(
       color: Colors.transparent,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding:
-                const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-            child: Row(
-              children: [
-                Text(
-                  station.name,
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                const Spacer(),
-                ...(distance != null
-                    ? [const Icon(Icons.directions_walk), Text(distance)]
-                    : [])
-              ],
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 5),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Wrap(
+              spacing: 5,
+              children: buttons,
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -93,7 +108,7 @@ class _StopFocusWidgetState extends State<StopFocusWidget> {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        buildTitle(),
+        buildHeader(),
         ReportInfobox(
           updatable: widget.controller.canSentReport(station),
           report: report,
@@ -102,14 +117,18 @@ class _StopFocusWidgetState extends State<StopFocusWidget> {
         ),
         Expanded(
           child: Material(
-            child: NextPassagePage(
-                      station,
-                      direction: direction,
-                      minimal: true,
-                      stopTimeSelected: widget.controller.setStopTime,
-                    ),
-          ),
-        ),
+            child: AnimatedSwitcher(
+              duration: Duration(milliseconds: 300),
+              child: body ?? NextPassagePage(
+                station,
+                direction: direction,
+                minimal: true,
+                stopTimeSelected: widget.controller.setStopTime,
+              ),
+            )
+    
+    ))
+
       ],
     );
   }

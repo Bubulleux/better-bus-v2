@@ -11,6 +11,8 @@ import 'package:better_bus_v2/views/stop_info/stop_info_page.dart';
 import 'package:better_bus_v2/views/stops_search_page/place_searcher_page.dart';
 import 'package:flutter/material.dart';
 
+import '../stops_search_page/stops_search_page.dart';
+
 class MapPageArg {
   const MapPageArg({this.station, this.stop});
 
@@ -44,10 +46,7 @@ class _MapPageState extends State<MapPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final arg = ModalRoute
-        .of(context)!
-        .settings
-        .arguments as MapPageArg?;
+    final arg = ModalRoute.of(context)!.settings.arguments as MapPageArg?;
     if (true) {
       // TODO: Do it
     }
@@ -72,23 +71,58 @@ class _MapPageState extends State<MapPage> {
     if (station == null) return;
     Navigator.of(context)
         .pushNamed(StopInfoPage.routeName,
-        arguments: StopInfoPageArgument(station, null, fromMap: true))
+            arguments: StopInfoPageArgument(station, null, fromMap: true))
         .then((value) => controller.focus(value));
+  }
+
+  Widget buildOverlayTitle() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 5.0),
+      child: Row(
+        children: [
+          Text(
+            controller.focusedStation!.name,
+            style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 20),
+          ),
+          const Spacer(),
+          buildDist(),
+        ],
+      ),
+    );
+  }
+
+  Widget buildDist() {
+    final position = controller.posCoord;
+    String? distance = position != null
+        ? "${(getDistanceInKMeter(controller.focusedStation!, position) * 100).roundToDouble() / 100} km"
+        : null;
+    return Wrap(
+      children: [
+        const Icon(Icons.directions_walk, size: 20),
+        Text(distance.toString())
+      ],
+    );
+  }
+
+  void goToRoute() {
+    // TODO: DO it;
   }
 
   @override
   Widget build(BuildContext context) {
     print("Rebuild ${controller.focusedStation != null}");
+    Widget? overlayTitle;
     Widget? overlay;
     if (controller.focusedStation != null) {
+      overlayTitle = buildOverlayTitle();
       overlay = StopFocusWidget(
         controller: controller,
-        openFocus: onFocusOpen,
+        goToRoute: goToRoute,
       );
     }
 
     if (controller.focusedPlace != null) {
-      overlay = FocusPlace(controller: controller);
+      overlayTitle = FocusPlace(controller: controller);
     }
 
     return Scaffold(
@@ -112,7 +146,8 @@ class _MapPageState extends State<MapPage> {
               ),
             ],
           ),
-          overlay: overlay,
+          overlayTitle: overlayTitle,
+          body: overlay,
           overlaySizable: controller.focusedPlace == null,
         ),
       ),
