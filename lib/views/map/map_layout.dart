@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:better_bus_v2/app_constant/app_string.dart';
 import 'package:better_bus_v2/views/drawer/drawer.dart';
+import 'package:better_bus_v2/views/drawer/drawer_controller.dart';
 import 'package:better_bus_v2/views/map/controller.dart';
 import 'package:better_bus_v2/views/map/map_buttons.dart';
 import 'package:flutter/material.dart';
@@ -34,7 +35,9 @@ class MapLayout extends StatefulWidget {
 
 class _MapLayoutState extends State<MapLayout>
   with SingleTickerProviderStateMixin {
-  double? _drawerHeight = 0;
+
+  ValueNotifier<double> drawerHeight = ValueNotifier(0);
+  late final MapDrawerController drawerController;
 
   @override
   void initState() {
@@ -42,20 +45,19 @@ class _MapLayoutState extends State<MapLayout>
     assert(widget.topBar != null && widget.topBarHeight != null);
     widget.controller.setCamPadding(EdgeInsets.only(top: widget.topBarHeight!) +
         const EdgeInsets.symmetric(horizontal: 20, vertical: 10));
-  }
+    drawerHeight.addListener(() => setState(() {
 
+    }));
+
+  }
   @override
-  void didUpdateWidget(covariant MapLayout oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    // if (widget.body != oldWidget.body) {
-    //   _overlayHeight = widget.body == null ? 0 : max(_overlayHeight, 200);
-    // }
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    drawerController = MapDrawerController();
+    setState(() {});
   }
 
-  void setDrawerHeight(double v) {
-    print("New v $v");
-    _drawerHeight = v;
-  }
+
 
   Widget layoutBuilder(BuildContext ctx, BoxConstraints constraint) {
     final map = NetworkMap(
@@ -65,7 +67,8 @@ class _MapLayoutState extends State<MapLayout>
 
     final drawer = MapDrawer(
       vsync: this,
-      onHeightChanged: setDrawerHeight,
+      controller: drawerController,
+      heightChange: drawerHeight,
       body: widget.overlayTitle != null || widget.body != null
           ? Column(
               children: [
@@ -76,11 +79,28 @@ class _MapLayoutState extends State<MapLayout>
           : null,
     );
 
+
+
+    final drawerFullyOpened = drawerHeight.value.isInfinite;
+    final botPadding = drawerHeight.value.isFinite ? drawerHeight.value :
+    constraint.maxHeight - widget.topBarHeight! - _buttonHeight;
+    
+    // if (botPadding.isNaN) {
+    //   return Column(
+    //     children: [
+    //       SizedBox(height: widget.topBarHeight,
+    //       child: widget.topBar,),
+    //       buildMapButton(),
+    //       Expanded(child: drawer)
+    //     ],
+    //   );
+    // }
+
     final stack = Stack(
       clipBehavior: Clip.none,
       children: [
-        Positioned.fill(bottom: _drawerHeight, child: map),
-        Positioned.fill(child: drawer),
+        Positioned.fill(bottom: botPadding, child: map),
+        Positioned.fill(top: widget.topBarHeight! + _buttonHeight,child: drawer),
         Positioned(
           top: 0,
           right: 0,
@@ -89,12 +109,20 @@ class _MapLayoutState extends State<MapLayout>
           child: widget.topBar ?? Container(),
         ),
         Positioned(
-          bottom: _drawerHeight,
+          bottom: botPadding,
           right: 0,
           // TODO: Fix IT height = 100 is bad
           height: 100,
           child: MapButtons(widget.controller),
         ),
+        drawerFullyOpened ?
+        Positioned(
+          top: widget.topBarHeight,
+          height: _buttonHeight,
+          right: 0,
+          left: 0,
+          child: buildMapButton(),
+        ) : Container(),
       ],
     );
 
@@ -139,7 +167,10 @@ class _MapLayoutState extends State<MapLayout>
     );
   }
 
-  void openMap() {}
+  void openMap() {
+    print("Map open");
+    drawerController.lowerDrawer();
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -1,34 +1,36 @@
 import 'dart:math';
 
+import 'package:better_bus_v2/views/drawer/drawer_controller.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class MapDrawer extends StatefulWidget {
   const MapDrawer({
     required this.vsync,
+    required this.controller,
     this.body,
     this.sizeable = true,
     this.onHeightChanged,
-    this.heightChange,
+    required this.heightChange,
     super.key,
   });
 
+  final MapDrawerController controller;
   final Widget? body;
   final bool sizeable;
   final ValueChanged<double>? onHeightChanged;
-  final ValueListenable<double>? heightChange;
+  final ValueNotifier<double> heightChange;
   final TickerProvider vsync;
 
   @override
-  State<MapDrawer> createState() => _MapDrawerState();
+  State<MapDrawer> createState() => MapDrawerState();
 }
 
-class _MapDrawerState extends State<MapDrawer>
-    with SingleTickerProviderStateMixin {
+class MapDrawerState extends State<MapDrawer> {
   double _overlayHeight = 0;
   late final AnimationController animationController;
   Animation<double>? animation;
-  double _widgetHeight = double.nan;
+  double _widgetHeight = 500;
 
   // Tween<double> _overlayHeightTween = Tween(begin: 0, end: 0);
 
@@ -38,32 +40,40 @@ class _MapDrawerState extends State<MapDrawer>
   void initState() {
     super.initState();
     animationController = AnimationController(vsync: widget.vsync);
-    setDrawerHeight(0, animate: false);
+    widget.controller.setState(this);
+  }
+  @override
+  void dispose() {
+    super.dispose();
+    animationController.dispose();
   }
 
   @override
-  void didUpdateWidget(covariant MapDrawer oldWidget) {
-    super.didUpdateWidget(oldWidget);
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    print("Nice");
     if (widget.body == null) {
       setDrawerHeight(0);
-    }
-    if (_overlayHeight < 200 && widget.body != null) {
-      setDrawerHeight(300);
+    } else {
+      setDrawerHeight(max(_overlayHeight, 200));
     }
   }
 
-  void setDrawerHeight(double h, {bool animate = true}) {
-    animation = Tween(begin: animate ? _overlayHeight : h, end: h).animate(animationController);
+  void setDrawerHeight(double? h, {bool animate = true}) {
+    animation = Tween(begin: animate ? _overlayHeight : h, end: h ?? _widgetHeight)
+        .animate(animationController);
+
     animation!.addListener(() {
-      // widget.heightChange!.value = 0;
-      widget.onHeightChanged?.call(animation!.value);
+      widget.heightChange.value = animation!.value;
     });
-    _overlayHeight = h;
-    if (animate) {
-      animationController.duration = Duration(milliseconds: 200);
-      animationController.forward(from: 0);
-    }
-    setState(() {});
+
+    _overlayHeight = h ?? _widgetHeight;
+    _overlayHeight = min(_widgetHeight, max(0, _overlayHeight));
+    animationController.duration =
+        animate ? Duration(milliseconds: 200) : Duration.zero;
+    animationController.forward(from: 0).then((_) =>
+      widget.heightChange.value = h ?? double.infinity);
+
   }
 
   void handleVerticalDrag(DragUpdateDetails detail) {
@@ -74,7 +84,8 @@ class _MapDrawerState extends State<MapDrawer>
   void handleEndVerticalDrag(DragEndDetails detail) {
     final vel = detail.velocity.pixelsPerSecond.dy;
     if (_overlayHeight / _widgetHeight > 0.8 || vel < -3000) {
-      setDrawerHeight(_widgetHeight);
+      setDrawerHeight(null);
+      print(_widgetHeight);
     }
   }
 
@@ -125,12 +136,16 @@ class _MapDrawerState extends State<MapDrawer>
 
   @override
   Widget build(BuildContext context) {
+    if (widget.body != null && _overlayHeight < 200) {
+      setDrawerHeight(200);
+    }
     return LayoutBuilder(
       builder: (BuildContext ctx, BoxConstraints constraint) {
         _widgetHeight = constraint.maxHeight;
         return Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
+            Spacer(),
             AnimatedBuilder(
               animation: animation!,
               builder: (BuildContext context, Widget? child) => Container(
