@@ -4,6 +4,8 @@ import 'package:better_bus_v2/views/drawer/drawer_controller.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+typedef CloseButtonBuilder = Widget Function(BuildContext context, VoidCallback onClick);
+
 class MapDrawer extends StatefulWidget {
   const MapDrawer({
     required this.vsync,
@@ -12,6 +14,7 @@ class MapDrawer extends StatefulWidget {
     this.sizeable = true,
     this.onHeightChanged,
     required this.heightChange,
+    this.btnChild,
     super.key,
   });
 
@@ -21,6 +24,7 @@ class MapDrawer extends StatefulWidget {
   final ValueChanged<double>? onHeightChanged;
   final ValueNotifier<double> heightChange;
   final TickerProvider vsync;
+  final Widget? btnChild;
 
   @override
   State<MapDrawer> createState() => MapDrawerState();
@@ -100,16 +104,17 @@ class MapDrawerState extends State<MapDrawer> {
 
   Widget buildDrawer(Widget child) {
     const r = Radius.circular(_dragBarSize);
-    final padding = _overlayHeight.isNaN
-        ? const EdgeInsets.symmetric(vertical: 4)
+    final padding =  overlayFullScreen
+        ? const EdgeInsets.symmetric(vertical: 2)
         : const EdgeInsets.only(bottom: 10, top: 8);
 
     return handleDrag(Container(
       padding: padding,
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: r),
-          boxShadow: [
+          borderRadius: BorderRadius.vertical(
+              top:  overlayFullScreen ? Radius.zero : r),
+          boxShadow: const [
             BoxShadow(
                 color: Colors.black12,
                 blurRadius: 2,
@@ -119,9 +124,10 @@ class MapDrawerState extends State<MapDrawer> {
       child: widget.sizeable
           ? Column(
               children: [
-                Container(
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
                   width: 80,
-                  height: 5,
+                  height: overlayFullScreen ? 0 : 5,
                   decoration: const BoxDecoration(
                     color: Colors.black12,
                     borderRadius: BorderRadius.all(r),
@@ -134,29 +140,65 @@ class MapDrawerState extends State<MapDrawer> {
     ));
   }
 
+  static const _buttonHeight = 40.0;
+  Widget buildBtn() {
+    final color = Theme.of(context).primaryColor;
+
+    return GestureDetector(
+      onTap: () => setDrawerHeight(400),
+      child: AnimatedOpacity(
+        duration: const Duration(milliseconds: 100),
+        opacity: overlayFullScreen ? 1 : 0,
+        child: Container(
+          height: _buttonHeight,
+          width: double.infinity,
+          decoration: BoxDecoration(
+              color: color.withAlpha(170),
+              boxShadow: [
+            const BoxShadow(
+              color: Colors.black,
+            ),
+            BoxShadow(
+                color: color, spreadRadius: -3, blurRadius: _buttonHeight / 4),
+          ]),
+          alignment: Alignment.center,
+          child: Opacity(
+            opacity: 0.8,
+            child: widget.btnChild ?? Container(),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (widget.body != null && _overlayHeight < 200) {
       setDrawerHeight(200);
     }
-    return LayoutBuilder(
-      builder: (BuildContext ctx, BoxConstraints constraint) {
-        _widgetHeight = constraint.maxHeight;
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Spacer(),
-            AnimatedBuilder(
-              animation: animation!,
-              builder: (BuildContext context, Widget? child) => Container(
-                height: animation?.value ?? 0,
-                child: child,
+
+    return Column(
+      children: [
+        buildBtn(),
+        Expanded(child: LayoutBuilder(
+          builder: (BuildContext ctx, BoxConstraints constraint) {
+            _widgetHeight = constraint.maxHeight;
+
+            return Align(
+              alignment: Alignment.bottomCenter,
+              child: AnimatedBuilder(
+                animation: animation!,
+                builder: (BuildContext context, Widget? child) => Container(
+                  height: animation?.value ?? 0,
+                  child: child,
+                ),
+                child: buildDrawer(widget.body ?? Container()),
               ),
-              child: buildDrawer(widget.body ?? Container()),
-            ),
-          ],
-        );
-      },
+            );
+          },
+
+        ))
+      ],
     );
   }
 }

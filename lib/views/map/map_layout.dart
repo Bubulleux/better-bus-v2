@@ -57,6 +57,17 @@ class _MapLayoutState extends State<MapLayout>
     setState(() {});
   }
 
+  static const btnChild = Wrap(
+    alignment: WrapAlignment.center,
+    crossAxisAlignment: WrapCrossAlignment.center,
+    children: [
+      Icon(Icons.map),
+      Text(
+        AppString.seeOnMaps,
+        style: TextStyle(fontWeight: FontWeight.bold),
+      )
+    ],
+  );
 
 
   Widget layoutBuilder(BuildContext ctx, BoxConstraints constraint) {
@@ -65,6 +76,9 @@ class _MapLayoutState extends State<MapLayout>
       layers: widget.mapLayers ?? [],
     );
 
+    final drawerFullyOpened = drawerHeight.value.isInfinite;
+    final botPadding = drawerHeight.value.isFinite ? drawerHeight.value : 0.0;
+
     final drawer = MapDrawer(
       vsync: this,
       controller: drawerController,
@@ -72,19 +86,27 @@ class _MapLayoutState extends State<MapLayout>
       body: widget.overlayTitle != null || widget.body != null
           ? Column(
               children: [
-                widget.overlayTitle ?? Container(),
+                !drawerFullyOpened ? widget.overlayTitle ?? Container() : Container(),
                 Expanded(child: widget.body ?? Container())
               ],
             )
           : null,
+      btnChild: btnChild,
     );
 
 
+    // constraint.maxHeight - widget.topBarHeight! - _buttonHeight;
 
-    final drawerFullyOpened = drawerHeight.value.isInfinite;
-    final botPadding = drawerHeight.value.isFinite ? drawerHeight.value :
-    constraint.maxHeight - widget.topBarHeight! - _buttonHeight;
-    
+    final overlay = Column(
+        children: [
+          SizedBox(
+            height: widget.topBarHeight!,
+            child: widget.topBar,
+          ),
+          // drawerFullyOpened ? buildOpenMapBtn(): Container(),
+          Expanded(child: drawer),
+        ]
+    );
     // if (botPadding.isNaN) {
     //   return Column(
     //     children: [
@@ -100,14 +122,15 @@ class _MapLayoutState extends State<MapLayout>
       clipBehavior: Clip.none,
       children: [
         Positioned.fill(bottom: botPadding, child: map),
-        Positioned.fill(top: widget.topBarHeight! + _buttonHeight,child: drawer),
-        Positioned(
-          top: 0,
-          right: 0,
-          left: 0,
-          height: widget.topBarHeight,
-          child: widget.topBar ?? Container(),
-        ),
+        Positioned.fill(child: overlay),
+        // Positioned.fill(top: widget.topBarHeight! + _buttonHeight,child: drawer),
+        // Positioned(
+        //   top: 0,
+        //   right: 0,
+        //   left: 0,
+        //   height: widget.topBarHeight,
+        //   child: widget.topBar ?? Container(),
+        // ),
         Positioned(
           bottom: botPadding,
           right: 0,
@@ -115,14 +138,14 @@ class _MapLayoutState extends State<MapLayout>
           height: 100,
           child: MapButtons(widget.controller),
         ),
-        drawerFullyOpened ?
-        Positioned(
-          top: widget.topBarHeight,
-          height: _buttonHeight,
-          right: 0,
-          left: 0,
-          child: buildMapButton(),
-        ) : Container(),
+        // drawerFullyOpened ?
+        // Positioned(
+        //   top: widget.topBarHeight,
+        //   height: _buttonHeight,
+        //   right: 0,
+        //   left: 0,
+        //   child: buildOpenMapBtn(),
+        // ) : Container(),
       ],
     );
 
@@ -134,7 +157,7 @@ class _MapLayoutState extends State<MapLayout>
 
   static const _buttonHeight = 40.0;
 
-  Widget buildMapButton() {
+  Widget buildOpenMapBtn() {
     final color = Theme.of(context).primaryColor;
     return GestureDetector(
       onTap: openMap,
