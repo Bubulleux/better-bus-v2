@@ -135,7 +135,7 @@ class NetworkMapController {
   bool canSentReport(Station station) {
     if (!sendAvailable || posCoord == null) return false;
 
-    return station.position.distance(posCoord!) < 0.6;
+    return station.position.distance(posCoord!) < 0.3;
   }
 
 

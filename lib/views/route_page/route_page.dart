@@ -1,4 +1,6 @@
 import 'package:better_bus_core/core.dart';
+import 'package:better_bus_v2/app_constant/app_string.dart';
+import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
 import 'package:better_bus_v2/views/map/controller.dart';
 import 'package:better_bus_v2/views/map/map_layout.dart';
 import 'package:better_bus_v2/views/map/map_view.dart';
@@ -34,9 +36,33 @@ class _RoutePageState extends State<RoutePage> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    getArgs();
+  }
+
+  @override
   void dispose() {
     controller.dispose();
     super.dispose();
+  }
+
+  void getArgs() {
+    if (parameter != null) return;
+    final arg = ModalRoute.of(context)!.settings.arguments as RouteSearchParameter?;
+    if (arg != null) {
+      parameter = arg;
+      if ((arg.start == null || arg.stop == null) && arg.start != arg.stop) {
+        GpsDataProvider.getLocation().then((pos){
+          if (!mounted) return;
+          final myPlace = Place(AppString.myPosition, position: pos!);
+          setSearch(parameter!.copyWidth(
+            start: arg.start ?? myPlace,
+            stop: arg.stop ?? myPlace,
+          ));
+        });
+      }
+    }
   }
 
   void selectRoute(VitalisRoute newRoute) {
@@ -93,7 +119,7 @@ class _RoutePageState extends State<RoutePage> {
       body: SafeArea(
           child: MapLayout(
         controller: controller,
-        topBar: RouteSearch(onSearch: setSearch),
+        topBar: RouteSearch(onSearch: setSearch, parameter: parameter),
         topBarHeight: 200,
         mapLayers: [
           route != null ? RouteLayer(route: route!) : Container(),

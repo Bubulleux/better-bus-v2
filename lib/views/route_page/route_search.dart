@@ -1,4 +1,3 @@
-
 import 'package:better_bus_core/core.dart';
 import 'package:better_bus_v2/model/provider.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +20,9 @@ class RouteSearchParameter {
 
   const RouteSearchParameter(this.start, this.stop, this.timeType, this.time);
 
+  RouteSearchParameter.nowToPlace(Place place)
+      : this(null, place, RouteTimeType.departure, DateTime.now());
+
   RouteSearchParameter copyWidth(
       {Place? start, Place? stop, RouteTimeType? timeType, DateTime? time}) {
     return RouteSearchParameter(
@@ -42,27 +44,41 @@ class RouteSearchParameter {
 }
 
 class RouteSearch extends StatefulWidget {
-  const RouteSearch({required this.onSearch, super.key});
+  const RouteSearch({required this.onSearch, this.parameter, super.key});
 
   final ValueChanged<RouteSearchParameter> onSearch;
+  final RouteSearchParameter? parameter;
 
   @override
   State<RouteSearch> createState() => _RouteSearchState();
 }
 
 class _RouteSearchState extends State<RouteSearch> {
-  final search = ValueNotifier(RouteSearchParameter(
-      null, null, RouteTimeType.departure, DateTime.now()));
+  late ValueNotifier<RouteSearchParameter> search;
 
   @override
   void initState() {
     super.initState();
+    newNotifier(RouteSearchParameter(
+        null, null, RouteTimeType.departure, DateTime.now()));
+  }
+
+  void newNotifier(RouteSearchParameter value) {
+    search = ValueNotifier(value);
     search.addListener(() {
       if (mounted) {
         widget.onSearch(search.value);
         setState(() {});
       }
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (widget.parameter != null) {
+      newNotifier(widget.parameter!);
+    }
   }
 
   void getStartPlace() {
@@ -130,7 +146,6 @@ class _RouteSearchState extends State<RouteSearch> {
     return "$timeTypeText $dateText à $timeText";
   }
 
-
   @override
   Widget build(BuildContext context) {
     final v = search.value;
@@ -150,7 +165,8 @@ class _RouteSearchState extends State<RouteSearch> {
                       child: FakeTextField(
                         onPress: getStartPlace,
                         height: null,
-                        backgroundColor: Theme.of(context).colorScheme.background,
+                        backgroundColor:
+                            Theme.of(context).colorScheme.background,
                         hint: AppString.startLabel,
                         prefixIcon: const Icon(
                           Icons.flag,
@@ -167,7 +183,8 @@ class _RouteSearchState extends State<RouteSearch> {
                       child: FakeTextField(
                         onPress: getStopPlace,
                         height: null,
-                        backgroundColor: Theme.of(context).colorScheme.background,
+                        backgroundColor:
+                            Theme.of(context).colorScheme.background,
                         hint: AppString.endLabel,
                         prefixIcon: const Icon(Icons.flag, color: Colors.red),
                         icon: Icons.search,
@@ -178,8 +195,8 @@ class _RouteSearchState extends State<RouteSearch> {
                 ),
                 ElevatedButton(
                   onPressed: swapDirection,
-                  style:
-                      ElevatedButton.styleFrom(padding: const EdgeInsets.all(0)),
+                  style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.all(0)),
                   child: const Icon(Icons.swap_vert, size: 20),
                 )
               ],

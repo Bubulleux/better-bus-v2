@@ -128,7 +128,7 @@ class AppString {
 
   static const controllerSee = "Controleur vue il y a {} minutes";
 
-  static const signalController = "Signaler un controleur";
+  static const signalController = "Controlleur vue !";
   static const stillThere = "Toujours là";
   static const goAway = "Partie";
 }

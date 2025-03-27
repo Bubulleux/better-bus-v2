@@ -1,11 +1,14 @@
 import 'package:better_bus_core/core.dart';
 import 'package:better_bus_v2/views/common/report_infobox.dart';
 import 'package:better_bus_v2/views/map/controller.dart';
+import 'package:better_bus_v2/views/route_page/route_page.dart';
+import 'package:better_bus_v2/views/route_page/route_search.dart';
 import 'package:better_bus_v2/views/stop_info/next_passage_view.dart';
 import 'package:better_bus_v2/views/stop_info/timetable_view.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 
+import '../../app_constant/app_string.dart';
 import '../../model/provider.dart';
 
 class StopFocusWidget extends StatefulWidget {
@@ -35,6 +38,7 @@ class _StopFocusWidgetState extends State<StopFocusWidget> {
 
   List<BusLine>? passingLines = null;
 
+
   @override
   void initState() {
     super.initState();
@@ -62,18 +66,45 @@ class _StopFocusWidgetState extends State<StopFocusWidget> {
     );
     setState(() {});
   }
-  
+
+  void goToRoute() {
+    assert(position != null);
+    final arg = RouteSearchParameter(
+      Place(AppString.myPosition, position: position!),
+      station,
+      RouteTimeType.departure,
+      DateTime.now(),
+    );
+    Navigator.of(context).pushNamed(RoutePage.routeName, arguments: arg);
+  }
+
+  Widget buildReport() {
+    return ReportInfobox(
+      updatable: widget.controller.canSentReport(station),
+      report: report,
+      station: station,
+      reportUpdate: widget.controller.updateReport,
+    );
+  }
+
 
   Widget buildHeader() {
 
-    Widget btn(String content, VoidCallback onPressed) {
-      return ElevatedButton(onPressed: onPressed, child: Text(content));
-    }
-
     final buttons = [
-      btn("Itineraire", widget.goToRoute),
-      btn("TimeTable", showTimetable),
-      //report == null ? ReportInfobox(station: station) : Container(),
+      report == null ? buildReport() : Container(),
+      ElevatedButton.icon(
+        onPressed: showTimetable,
+        icon: Icon(Icons.schedule),
+        label: const Text(AppString.allSchedule),
+
+      ),
+      // btn(AppString.allSchedule, showTimetable),
+      ElevatedButton.icon(
+        onPressed: position != null ? goToRoute : null,
+        icon: Icon(Icons.route),
+        label: const Text(AppString.routeLabel),
+
+      ),
       // btn("InfTraif", () {}),
     ];
 
@@ -109,12 +140,7 @@ class _StopFocusWidgetState extends State<StopFocusWidget> {
       mainAxisSize: MainAxisSize.min,
       children: [
         buildHeader(),
-        ReportInfobox(
-          updatable: widget.controller.canSentReport(station),
-          report: report,
-          station: station,
-          reportUpdate: widget.controller.updateReport,
-        ),
+        report != null ? buildReport() : Container(),
         Expanded(
           child: Material(
             child: AnimatedSwitcher(

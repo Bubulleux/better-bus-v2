@@ -92,10 +92,11 @@ class _MapPageState extends State<MapPage> {
   }
 
   Widget buildDist() {
-    final position = controller.posCoord;
-    String? distance = position != null
-        ? "${(getDistanceInKMeter(controller.focusedStation!, position) * 100).roundToDouble() / 100} km"
-        : null;
+    final pos = controller.posCoord;
+    if (pos == null) return Container();
+
+    String? distance = "${(getDistanceInKMeter(controller.focusedStation!, pos!) * 100).roundToDouble() / 100} km";
+
     return Wrap(
       children: [
         const Icon(Icons.directions_walk, size: 20),
