@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:better_bus_v2/app_constant/app_string.dart';
 import 'package:better_bus_core/core.dart';
+import 'package:better_bus_v2/model/view_shortcut.dart';
 import 'package:better_bus_v2/views/common/fake_text_field.dart';
+import 'package:better_bus_v2/views/home_page/shortcut_section.dart';
 import 'package:better_bus_v2/views/map/controller.dart';
 import 'package:better_bus_v2/views/map/map_layout.dart';
 import 'package:better_bus_v2/views/map_pages/focus_place.dart';
@@ -31,6 +33,8 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> {
   late NetworkMapController controller;
+  ViewShortcut? selectedShortcut;
+
 
   @override
   void initState() {
@@ -39,7 +43,6 @@ class _MapPageState extends State<MapPage> {
     controller.loadStation().then((_) => print("Map load finish"));
     controller.stateChange.addListener(() {
       setState(() {});
-      print("Page Update");
     });
   }
 
@@ -56,6 +59,20 @@ class _MapPageState extends State<MapPage> {
   void dispose() {
     controller.dispose();
     super.dispose();
+  }
+
+  void handlePop(bool didPop, Object? result) async {
+    if (controller.focused != null) {
+      controller.focused = null;
+      return;
+    }
+    Navigator.of(context).pop();
+  }
+
+  void setShortCut(ViewShortcut newShortcut) {
+    selectedShortcut = newShortcut;
+    controller.focus(selectedShortcut!.stop);
+    setState(() {});
   }
 
   Future goToSearch() async {
@@ -113,12 +130,16 @@ class _MapPageState extends State<MapPage> {
   Widget build(BuildContext context) {
     print("Rebuild ${controller.focusedStation != null}");
     Widget? overlayTitle;
-    Widget? overlay;
+    Widget? overlay = ShortcutWidgetRoot(
+      onClicked: setShortCut,
+    );
+
     if (controller.focusedStation != null) {
       overlayTitle = buildOverlayTitle();
       overlay = StopFocusWidget(
         controller: controller,
         goToRoute: goToRoute,
+        shortcut: selectedShortcut,
       );
     }
 
@@ -128,28 +149,32 @@ class _MapPageState extends State<MapPage> {
 
     return Scaffold(
       body: SafeArea(
-        child: MapLayout(
-          controller: controller,
-          topBarHeight: 100,
-          topBar: Row(
-            children: [
-              const BackButton(),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: FakeTextField(
-                    onPress: goToSearch,
-                    icon: Icons.search,
-                    value: controller.focusedName,
-                    hint: AppString.searchLabel,
+        child: PopScope(
+          canPop: false,
+          onPopInvokedWithResult: handlePop,
+          child: MapLayout(
+            controller: controller,
+            topBarHeight: 100,
+            topBar: Row(
+              children: [
+                const BackButton(),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: FakeTextField(
+                      onPress: goToSearch,
+                      icon: Icons.search,
+                      value: controller.focusedName,
+                      hint: AppString.searchLabel,
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
+            overlayTitle: overlayTitle,
+            body: overlay,
+            overlaySizable: controller.focusedPlace == null,
           ),
-          overlayTitle: overlayTitle,
-          body: overlay,
-          overlaySizable: controller.focusedPlace == null,
         ),
       ),
     );

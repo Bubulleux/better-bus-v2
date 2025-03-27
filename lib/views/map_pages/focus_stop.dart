@@ -1,4 +1,5 @@
 import 'package:better_bus_core/core.dart';
+import 'package:better_bus_v2/model/view_shortcut.dart';
 import 'package:better_bus_v2/views/common/report_infobox.dart';
 import 'package:better_bus_v2/views/map/controller.dart';
 import 'package:better_bus_v2/views/route_page/route_page.dart';
@@ -15,11 +16,13 @@ class StopFocusWidget extends StatefulWidget {
   const StopFocusWidget({
     required this.controller,
     required this.goToRoute,
+    this.shortcut,
     super.key,
   });
 
   final NetworkMapController controller;
   final VoidCallback goToRoute;
+  final ViewShortcut? shortcut;
 
   @override
   State<StopFocusWidget> createState() => _StopFocusWidgetState();
@@ -42,7 +45,6 @@ class _StopFocusWidgetState extends State<StopFocusWidget> {
   @override
   void initState() {
     super.initState();
-
   }
 
   @override
@@ -147,7 +149,7 @@ class _StopFocusWidgetState extends State<StopFocusWidget> {
               duration: Duration(milliseconds: 300),
               child: body ?? NextPassagePage(
                 station,
-                direction: direction,
+                direction: widget.shortcut?.direction ?? direction,
                 minimal: true,
                 stopTimeSelected: widget.controller.setStopTime,
               ),
