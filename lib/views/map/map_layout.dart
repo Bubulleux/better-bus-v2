@@ -99,7 +99,9 @@ class _MapLayoutState extends State<MapLayout>
 
     final overlay = Column(
         children: [
-          SizedBox(
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            color: drawerFullyOpened ? Colors.white : Colors.white.withAlpha(0),
             height: widget.topBarHeight!,
             child: widget.topBar,
           ),
@@ -107,30 +109,11 @@ class _MapLayoutState extends State<MapLayout>
           Expanded(child: drawer),
         ]
     );
-    // if (botPadding.isNaN) {
-    //   return Column(
-    //     children: [
-    //       SizedBox(height: widget.topBarHeight,
-    //       child: widget.topBar,),
-    //       buildMapButton(),
-    //       Expanded(child: drawer)
-    //     ],
-    //   );
-    // }
 
     final stack = Stack(
       clipBehavior: Clip.none,
       children: [
-        Positioned.fill(bottom: botPadding, child: map),
-        Positioned.fill(child: overlay),
-        // Positioned.fill(top: widget.topBarHeight! + _buttonHeight,child: drawer),
-        // Positioned(
-        //   top: 0,
-        //   right: 0,
-        //   left: 0,
-        //   height: widget.topBarHeight,
-        //   child: widget.topBar ?? Container(),
-        // ),
+        Positioned.fill(bottom: botPadding - MapDrawerState.dragBarHeight, child: map),
         Positioned(
           bottom: botPadding,
           right: 0,
@@ -138,14 +121,7 @@ class _MapLayoutState extends State<MapLayout>
           height: 100,
           child: MapButtons(widget.controller),
         ),
-        // drawerFullyOpened ?
-        // Positioned(
-        //   top: widget.topBarHeight,
-        //   height: _buttonHeight,
-        //   right: 0,
-        //   left: 0,
-        //   child: buildOpenMapBtn(),
-        // ) : Container(),
+        Positioned.fill(child: overlay),
       ],
     );
 

@@ -93,7 +93,7 @@ class MapDrawerState extends State<MapDrawer> {
     }
   }
 
-  static const _dragBarSize = 20.0;
+  static const dragBarHeight = 20.0;
 
   Widget handleDrag(Widget child) => GestureDetector(
         onVerticalDragUpdate: handleVerticalDrag,
@@ -103,7 +103,7 @@ class MapDrawerState extends State<MapDrawer> {
       );
 
   Widget buildDrawer(Widget child) {
-    const r = Radius.circular(_dragBarSize);
+    const r = Radius.circular(dragBarHeight);
     final padding =  overlayFullScreen
         ? const EdgeInsets.symmetric(vertical: 2)
         : const EdgeInsets.only(bottom: 10, top: 8);
