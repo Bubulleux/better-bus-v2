@@ -4,11 +4,13 @@ import 'package:better_bus_v2/app_constant/app_string.dart';
 import 'package:better_bus_core/core.dart';
 import 'package:better_bus_v2/model/view_shortcut.dart';
 import 'package:better_bus_v2/views/common/fake_text_field.dart';
+import 'package:better_bus_v2/views/home_page/home_page.dart';
 import 'package:better_bus_v2/views/home_page/shortcut_section.dart';
 import 'package:better_bus_v2/views/map/controller.dart';
 import 'package:better_bus_v2/views/map/map_layout.dart';
 import 'package:better_bus_v2/views/map_pages/focus_place.dart';
 import 'package:better_bus_v2/views/map_pages/focus_stop.dart';
+import 'package:better_bus_v2/views/map_pages/map_home.dart';
 import 'package:better_bus_v2/views/stop_info/stop_info_page.dart';
 import 'package:better_bus_v2/views/stops_search_page/place_searcher_page.dart';
 import 'package:flutter/material.dart';
@@ -62,6 +64,7 @@ class _MapPageState extends State<MapPage> {
   }
 
   void handlePop(bool didPop, Object? result) async {
+    if (didPop) return;
     if (controller.focused != null) {
       controller.focused = null;
       return;
@@ -69,7 +72,7 @@ class _MapPageState extends State<MapPage> {
     Navigator.of(context).pop();
   }
 
-  void setShortCut(ViewShortcut newShortcut) {
+  void openShortcut(ViewShortcut newShortcut) {
     selectedShortcut = newShortcut;
     controller.focus(selectedShortcut!.stop);
     setState(() {});
@@ -130,8 +133,8 @@ class _MapPageState extends State<MapPage> {
   Widget build(BuildContext context) {
     print("Rebuild ${controller.focusedStation != null}");
     Widget? overlayTitle;
-    Widget? overlay = ShortcutWidgetRoot(
-      onClicked: setShortCut,
+    Widget? overlay = MapHome(
+      onClicked: openShortcut,
     );
 
     if (controller.focusedStation != null) {

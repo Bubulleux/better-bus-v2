@@ -207,99 +207,95 @@ class ShortcutWidget extends StatelessWidget {
     List<Widget> linesWidget = [];
     shortcut.lines.sort();
     for (BusLine line in shortcut.lines) {
-      linesWidget.add(LineWidget(line, 18, dynamicWidth: true));
+      linesWidget.add(LineWidget(line, 13, dynamicWidth: true, rounded: true,));
     }
 
-    return CustomContentContainer(
-      margin: const EdgeInsets.only(bottom: 8),
-      onTap: onPressed,
-      child: Column(
+    final stationWidget = Container(
+      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+      margin: const EdgeInsets.only(right: 3),
+      decoration: BoxDecoration(
+        color: Theme.of(context).primaryColor,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          SizedBox(
-            width: double.infinity,
-            child: Row(
-              // alignment: WrapAlignment.spaceBetween,
-              // crossAxisAlignment: WrapCrossAlignment.center,
-              children: [
-                if (shortcut.isFavorite)
-                  Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    child: Icon(
-                      Icons.star,
-                      color: Theme.of(context).primaryColorDark,
-                    ),
-                  )
-                else
-                  Container(width: 0),
-                Expanded(
-                  child: Text(
-                    shortcut.shortcutName,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: shortcut.isFavorite
-                          ? FontWeight.w700
-                          : FontWeight.normal,
-                    ),
-                    softWrap: false,
-                    maxLines: 1,
-                    overflow: TextOverflow.fade,
-                  ),
-                ),
-                InkWell(
-                  onTap: onLongPressed,
-                  child: const Padding(
-                    padding: EdgeInsets.all(3),
-                    child: Icon(Icons.more_vert),
-                  ),
-                ),
-                // IconButton(
-                //   onPressed: onLongPressed,
-                //   icon: const Icon(Icons.more_vert),
-                //   visualDensity: VisualDensity.compact,
-                //   padding: EdgeInsets.zero,
-                // )
-              ],
-            ),
+          const Icon(
+            Icons.directions_bus,
+            size: 13,
           ),
           const SizedBox(
-            // height: 3,
+            width: 4,
           ),
-          Row(
-            children: [
-              Expanded(
-                child: Wrap(
+          Text(
+            shortcut.stop.name,
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+
+    return CustomContentContainer(
+      margin: const EdgeInsets.symmetric(vertical: 3, horizontal: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+      onTap: onPressed,
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    if (shortcut.isFavorite)
+                      Padding(
+                        padding: const EdgeInsets.only(right: 8.0),
+                        child: Icon(
+                          Icons.star,
+                          color: Theme.of(context).primaryColorDark,
+                        ),
+                      )
+                    else
+                      Container(width: 0),
+                    Expanded(
+                      child: Text(
+                        shortcut.shortcutName,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: shortcut.isFavorite
+                              ? FontWeight.w700
+                              : FontWeight.normal,
+                        ),
+                        softWrap: false,
+                        maxLines: 1,
+                        overflow: TextOverflow.fade,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4,),
+                Wrap(
                   alignment: WrapAlignment.start,
                   crossAxisAlignment: WrapCrossAlignment.end,
                   spacing: 2,
                   runSpacing: 3,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                      margin: const EdgeInsets.only(right: 3),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(Icons.directions_bus, size: 13,),
-                          const SizedBox(width: 4,),
-                          Text(
-                            shortcut.stop.name,
-                            style: const TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    stationWidget,
                     ...linesWidget,
                   ],
                 ),
-              )
-            ],
+              ],
+            ),
+          ),
+          InkWell(
+            onTap: onLongPressed,
+            child: const Padding(
+              padding: EdgeInsets.all(3),
+              child: Icon(Icons.more_vert),
+            ),
           ),
         ],
       ),
