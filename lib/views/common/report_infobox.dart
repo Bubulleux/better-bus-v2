@@ -48,8 +48,7 @@ class _ReportInfoboxState extends State<ReportInfobox> {
     if (report == null) {
       return widget.updatable ? ElevatedButton.icon(
         onPressed: () => updateReport(true),
-        icon: Icon(Icons.local_police_outlined),
-        label: const Text(AppString.signalController),
+        label: const Icon(Icons.local_police_outlined),
         style: OutlinedButton.styleFrom(
           backgroundColor: Colors.blue[500],
           // side: BorderSide(

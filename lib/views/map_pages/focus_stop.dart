@@ -15,13 +15,11 @@ import '../../model/provider.dart';
 class StopFocusWidget extends StatefulWidget {
   const StopFocusWidget({
     required this.controller,
-    required this.goToRoute,
     this.shortcut,
     super.key,
   });
 
   final NetworkMapController controller;
-  final VoidCallback goToRoute;
   final ViewShortcut? shortcut;
 
   @override
@@ -39,12 +37,19 @@ class _StopFocusWidgetState extends State<StopFocusWidget> {
 
   Widget? body;
 
-  List<BusLine>? passingLines = null;
+  List<BusLine>? passingLines;
 
+  ViewShortcut? actualFilter;
 
   @override
   void initState() {
     super.initState();
+    actualFilter ??= widget.shortcut;
+    widget.controller.stateChange.addListener(() {
+      if (widget.controller.focusedStation != actualFilter?.stop) {
+        actualFilter = null;
+      }
+    });
   }
 
   @override
@@ -53,20 +58,15 @@ class _StopFocusWidgetState extends State<StopFocusWidget> {
     setState(() {});
   }
 
-  Widget buildClose()  {
-    return CloseButton(onPressed: () => setState(() {
-      body = null;
-    }),);
-  }
 
   void showTimetable() {
-    body = Column(
-      children: [
-        buildClose(),
-        Expanded(child: TimeTableView(station))
-      ],
-    );
+    body = TimeTableView(station);
     setState(() {});
+  }
+  void removeFilter() {
+    setState(() {
+      actualFilter = null;
+    });
   }
 
   void goToRoute() {
@@ -89,43 +89,68 @@ class _StopFocusWidgetState extends State<StopFocusWidget> {
     );
   }
 
-
   Widget buildHeader() {
+    final menuBtn = body == null
+        ? ElevatedButton.icon(
+            onPressed: showTimetable,
+            icon: Icon(Icons.calendar_month),
+            label: const Text(AppString.allSchedule),
+          )
+        : ElevatedButton.icon(
+            onPressed: () => setState(() {
+              body = null;
+            }),
+            icon: Icon(Icons.share_arrival_time),
+            label: const Text(AppString.nextPassage),
+          );
+
+    final seeAll = actualFilter != null ?
+        ElevatedButton.icon(
+          onPressed: removeFilter,
+          icon: Icon(Icons.filter_alt_off),
+          label: Text(AppString.seeAllLabel),
+        ) : Container();
 
     final buttons = [
-      report == null ? buildReport() : Container(),
-      ElevatedButton.icon(
-        onPressed: showTimetable,
-        icon: Icon(Icons.schedule),
-        label: const Text(AppString.allSchedule),
-
-      ),
+      seeAll,
+      menuBtn,
       // btn(AppString.allSchedule, showTimetable),
       ElevatedButton.icon(
         onPressed: position != null ? goToRoute : null,
         icon: Icon(Icons.route),
         label: const Text(AppString.routeLabel),
-
       ),
-      // btn("InfTraif", () {}),
+      report == null ? buildReport() : Container(),
     ];
 
-    return Material(
-      color: Colors.transparent,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 5),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Wrap(
-              spacing: 5,
-              children: buttons,
-            ),
-          ],
-        ),
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 5),
+      margin: const EdgeInsets.only(bottom: 4),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26,
+            offset: Offset(0, 5),
+            blurRadius: 3,
+            spreadRadius: -1
+          )
+        ]
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Wrap(
+            spacing: 5,
+            verticalDirection: VerticalDirection.up,
+            children: buttons,
+          ),
+        ],
       ),
     );
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -136,27 +161,25 @@ class _StopFocusWidgetState extends State<StopFocusWidget> {
       direction = provider.getStopDirections(stop);
     }
 
+
     return Column(
       key: Key(station.name + (stop.toString())),
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        buildHeader(),
         report != null ? buildReport() : Container(),
+        buildHeader(),
         Expanded(
-          child: Material(
-            child: AnimatedSwitcher(
-              duration: Duration(milliseconds: 300),
-              child: body ?? NextPassagePage(
+            child: Material(
+                child: AnimatedSwitcher(
+          duration: Duration(milliseconds: 300),
+          child: body ??
+              NextPassageListWidget(
                 station,
-                direction: widget.shortcut?.direction ?? direction,
-                minimal: true,
+                actualFilter?.direction ?? direction,
                 stopTimeSelected: widget.controller.setStopTime,
               ),
-            )
-    
-    ))
-
+        )))
       ],
     );
   }

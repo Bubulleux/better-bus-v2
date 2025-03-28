@@ -47,11 +47,6 @@ class _NextPassagePageState extends State<NextPassagePage>
   }
 
   @override
-  void setState(VoidCallback fn) {
-    super.setState(fn);
-  }
-
-  @override
   Widget build(BuildContext context) {
     super.build(context);
     return SizedBox(
@@ -116,8 +111,23 @@ class NextPassageListWidgetState extends State<NextPassageListWidget> {
     provider = FullProvider.of(context);
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    refresh();
+  }
+
+  @override
+  void didUpdateWidget(covariant NextPassageListWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.direction != null && widget.direction == null) {
+      refresh();
+    }
+    setState(() {});
+  }
+
   void refresh() {
-    futureBuilderKey.currentState!.refresh();
+    futureBuilderKey.currentState?.refresh();
   }
 
   Future<List<StopTime>> getData() async {
@@ -182,6 +192,12 @@ class _NextPassageWidgetState extends State<NextPassageWidget>
     super.initState();
     expandControler = ExpandableWidgetController(
         duration: const Duration(milliseconds: 300), root: this);
+  }
+
+  @override
+  void dispose() {
+    expandControler.dispose();
+    super.dispose();
   }
 
   Widget buildNextPassageDetail(Duration delay) {

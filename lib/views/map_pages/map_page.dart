@@ -37,7 +37,6 @@ class _MapPageState extends State<MapPage> {
   late NetworkMapController controller;
   ViewShortcut? selectedShortcut;
 
-
   @override
   void initState() {
     super.initState();
@@ -82,7 +81,6 @@ class _MapPageState extends State<MapPage> {
     Place? place = await (Navigator.of(context)
         .pushNamed(PlaceSearcherPage.routeName) as Future<dynamic>);
     if (place == null) return;
-
     controller.focus(place);
   }
 
@@ -95,18 +93,28 @@ class _MapPageState extends State<MapPage> {
         .then((value) => controller.focus(value));
   }
 
+  void camToFocus() {
+    if (controller.focused == null) return;
+    controller.animateCamTo(controller.focused!.position);
+  }
+
   Widget buildOverlayTitle() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 5.0),
-      child: Row(
-        children: [
-          Text(
-            controller.focusedStation!.name,
-            style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 20),
+    return Material(
+      child: InkWell(
+        onTap: camToFocus,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5),
+          child: Row(
+            children: [
+              Text(
+                controller.focusedStation!.name,
+                style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 20),
+              ),
+              const Spacer(),
+              buildDist(),
+            ],
           ),
-          const Spacer(),
-          buildDist(),
-        ],
+        ),
       ),
     );
   }
@@ -115,7 +123,8 @@ class _MapPageState extends State<MapPage> {
     final pos = controller.posCoord;
     if (pos == null) return Container();
 
-    String? distance = "${(getDistanceInKMeter(controller.focusedStation!, pos!) * 100).roundToDouble() / 100} km";
+    String? distance =
+        "${(getDistanceInKMeter(controller.focusedStation!, pos!) * 100).roundToDouble() / 100} km";
 
     return Wrap(
       children: [
@@ -125,13 +134,9 @@ class _MapPageState extends State<MapPage> {
     );
   }
 
-  void goToRoute() {
-    // TODO: DO it;
-  }
 
   @override
   Widget build(BuildContext context) {
-    print("Rebuild ${controller.focusedStation != null}");
     Widget? overlayTitle;
     Widget? overlay = MapHome(
       onClicked: openShortcut,
@@ -141,8 +146,9 @@ class _MapPageState extends State<MapPage> {
       overlayTitle = buildOverlayTitle();
       overlay = StopFocusWidget(
         controller: controller,
-        goToRoute: goToRoute,
-        shortcut: selectedShortcut,
+        shortcut: controller.focusedStation == selectedShortcut?.stop
+            ? selectedShortcut
+            : null,
       );
     }
 

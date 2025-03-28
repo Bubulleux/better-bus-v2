@@ -131,4 +131,6 @@ class AppString {
   static const signalController = "Controlleur vue !";
   static const stillThere = "Toujours là";
   static const goAway = "Partie";
+
+  static const removeFilter = "Voir tout";
 }

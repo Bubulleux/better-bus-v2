@@ -139,7 +139,7 @@ class NetworkMapController {
   }
 
 
-  TickerFuture animateCamTo(LatLng dst, {double zoom = 18}) {
+  TickerFuture animateCamTo(LatLng dst, {double zoom = 17}) {
     final LatLngTween tween = LatLngTween(
       begin: controller.camera.center,
       end: dst,
