@@ -133,4 +133,6 @@ class AppString {
   static const goAway = "Partie";
 
   static const removeFilter = "Voir tout";
+
+  static const mapLabel = "Carte";
 }

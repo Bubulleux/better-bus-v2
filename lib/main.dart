@@ -134,8 +134,9 @@ class _BetterBusAppState extends State<BetterBusApp>
         Locale('fr', ""),
         Locale('en', ""),
       ],
-      initialRoute: "/",
+      initialRoute: MapPage.routeName,
       routes: {
+        // TODO: Eurk...
         HomePage.routeName: (context) => const HomePage(),
         SettingPage.routeName: (context) => const SettingPage(),
         MessageView.routeName: (context) => const MessageView(),

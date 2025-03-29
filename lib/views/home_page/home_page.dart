@@ -157,10 +157,13 @@ class _HomePageState extends State<HomePage> {
                   if (snapshot.hasData && snapshot.data != null) {
                     String url = snapshot.data as String;
                     return CustomContentContainer(
-                      onTap: () => launchUrlString(url,
-                          mode: LaunchMode.externalApplication),
+                      onTap: () =>
+                          launchUrlString(url,
+                              mode: LaunchMode.externalApplication),
                       margin: const EdgeInsets.only(top: 5, right: 8, left: 8),
-                      color: Theme.of(context).primaryColor,
+                      color: Theme
+                          .of(context)
+                          .primaryColor,
                       child: const Row(
                         children: [
                           Text(
@@ -178,14 +181,17 @@ class _HomePageState extends State<HomePage> {
               ),
               CustomContentContainer(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                 margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
                 child: Row(
                   children: [
                     Expanded(
                       child: Text(
                         AppString.shortcut,
-                        style: Theme.of(context).textTheme.titleLarge,
+                        style: Theme
+                            .of(context)
+                            .textTheme
+                            .titleLarge,
                       ),
                     ),
                     IconButton(
@@ -206,39 +212,12 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
-              CustomNavigationBar(
-                child: [
-                  CustomNavigationItem(
-                    label: AppString.searchLabel,
-                    icon: Icons.search,
-                    onPress: searchBusStop,
-                  ),
-                  CustomNavigationItem(
-                    label: AppString.closestStopLabel,
-                    icon: Icons.location_searching,
-                    onPress: findClosestStop,
-                  ),
-                  CustomNavigationItem(
-                    label: AppString.routeLabel,
-                    icon: Icons.route,
-                    onPress: goToRoutePage,
-                  ),
-                  CustomNavigationItem(
-                    label: "Carte",
-                    icon: Icons.map,
-                    onPress: goToMapTest,
-                  ),
-                  CustomNavigationItem(
-                    label: AppString.trafficInfoLabel,
-                    icon: Icons.bus_alert,
-                    onPress: goToTrafficInfo,
-                  )
-                ],
-              ),
+              const CustomNavigationBar(map: true,),
             ],
           ),
         ),
       ),
     );
   }
+
 }

@@ -11,7 +11,7 @@ class CustomTitleBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      elevation: 20,
+      elevation: 10,
       color: Theme.of(context).colorScheme.background,
       child: Column(
         children: [

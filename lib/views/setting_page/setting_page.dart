@@ -20,6 +20,11 @@ class SettingPage extends StatefulWidget {
   const SettingPage({super.key});
   static const String routeName = "/setting";
 
+  static MaterialPageRoute get pageRoute => MaterialPageRoute(builder: (_) => const SettingPage());
+  static void push(BuildContext context) {
+    Navigator.of(context).push(pageRoute);
+  }
+
   @override
   State<SettingPage> createState() => _SettingPageState();
 }
@@ -27,41 +32,18 @@ class SettingPage extends StatefulWidget {
 class _SettingPageState extends State<SettingPage> {
   bool gtfsDownloadWIFI = false;
 
+
   @override
   void initState() {
     super.initState();
     LocalDataHandler.getDownloadWhenWifi().then(setgtfsWifiDownload);
   }
 
-  void showPrivacyPolicy() {
-    Uri uri = Uri.parse(
-        "https://github.com/Bubulleux/better-bus-v2/blob/master/Privacy%20policy.md");
-    launchUrl(uri, mode: LaunchMode.externalApplication);
-  }
-
-  void showSourceCode() {
-    Uri uri = Uri.parse("https://github.com/Bubulleux/better-bus-v2");
-    launchUrl(uri, mode: LaunchMode.externalApplication);
-  }
-
-  void makeATip() {
-    Uri uri = Uri.parse("https://www.buymeacoffee.com/Bubulle");
-    launchUrl(uri, mode: LaunchMode.externalApplication);
-  }
 
   void gotToNotificationSetting() {
     Navigator.of(context).pushNamed(InterestLinePage.routeName);
   }
 
-  void goToImportantMessage() {
-    Navigator.of(context)
-        .pushNamed(MessageView.routeName, arguments: Messages.importantMessage);
-  }
-
-  void goToMessageToVitalis() {
-    Navigator.of(context)
-        .pushNamed(MessageView.routeName, arguments: Messages.toVitalis);
-  }
 
   void emptyCache() {
     // TODO: Remove this function
@@ -124,26 +106,6 @@ class _SettingPageState extends State<SettingPage> {
       SettingEntry(
         AppString.reDownloadGTFSData,
         onClick: reDownloadGTFSData,
-      ),
-      SettingEntry(
-        AppString.privicyPolicy,
-        onClick: showPrivacyPolicy,
-      ),
-      SettingEntry(
-        AppString.sourceCode,
-        onClick: showSourceCode,
-      ),
-      SettingEntry(
-        AppString.makeTips,
-        onClick: makeATip,
-      ),
-      SettingEntry(
-        AppString.importantMessage,
-        onClick: goToImportantMessage,
-      ),
-      SettingEntry(
-        AppString.messageToVitalis,
-        onClick: goToMessageToVitalis,
       ),
       SettingEntry(
         AppString.emptyCache,

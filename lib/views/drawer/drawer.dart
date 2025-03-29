@@ -104,12 +104,12 @@ class MapDrawerState extends State<MapDrawer> {
 
   Widget buildDrawer(Widget child) {
     const r = Radius.circular(dragBarHeight);
-    final padding =  overlayFullScreen
-        ? const EdgeInsets.symmetric(vertical: 2)
-        : const EdgeInsets.only(bottom: 10, top: 8);
+    // final padding =  overlayFullScreen
+    //     ? const EdgeInsets.symmetric(vertical: 2)
+    //     : const EdgeInsets.only(bottom: 10, top: 8);
 
     return handleDrag(Container(
-      padding: padding,
+      padding: EdgeInsets.only(top: 8),
       decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.vertical(
