@@ -89,8 +89,10 @@ class NetworkMapController {
       focusedStopTime.hashCode ^ Object.hashAll(reports?.values ?? []);
 
   Future loadStation() async {
-    if (!provider.isAvailable()) return false;
+    await provider.init();
+    assert(provider.isAvailable());
     final stations = await provider.getStations();
+    widgetState?.update();
 
     reports = Map.fromEntries(
         (await AppRadarProvider(provider: provider).getReports())

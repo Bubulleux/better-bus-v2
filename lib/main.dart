@@ -100,6 +100,7 @@ class _BetterBusAppState extends State<BetterBusApp>
   Future<bool> initProviders() async {
     final provider = FullProvider.of(context);
     final success = await provider.init();
+    print("Provider sucress: $success ---------------");
     return success;
   }
 

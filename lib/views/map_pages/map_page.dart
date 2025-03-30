@@ -44,7 +44,10 @@ class _MapPageState extends State<MapPage> {
   void initState() {
     super.initState();
     controller = NetworkMapController(context);
-    controller.loadStation().then((_) => print("Map load finish"));
+    controller.loadStation().then((_) => print("Map load finish"), onError:
+    (Object e, s) {
+      throw e;
+    });
     controller.stateChange.addListener(() {
       setState(() {});
     });

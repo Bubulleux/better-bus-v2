@@ -45,9 +45,10 @@ class _MapLayoutState extends State<MapLayout>
     assert(widget.topBar != null && widget.topBarHeight != null);
     widget.controller.setCamPadding(EdgeInsets.only(top: widget.topBarHeight!) +
         const EdgeInsets.symmetric(horizontal: 20, vertical: 10));
-    drawerHeight.addListener(() => setState(() {
+    drawerHeight.addListener(() {
+      if (mounted) setState(() {});
+    });
 
-    }));
 
   }
   @override
