@@ -38,7 +38,7 @@ class MapDrawerState extends State<MapDrawer> {
 
   // Tween<double> _overlayHeightTween = Tween(begin: 0, end: 0);
 
-  bool get overlayFullScreen => _overlayHeight == _widgetHeight;
+  bool get overlayFullScreen => _overlayHeight >= _widgetHeight;
 
   @override
   void initState() {
@@ -55,7 +55,6 @@ class MapDrawerState extends State<MapDrawer> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    print("Nice");
     if (widget.body == null) {
       setDrawerHeight(0);
     } else {
@@ -145,11 +144,11 @@ class MapDrawerState extends State<MapDrawer> {
     final color = Theme.of(context).primaryColor;
 
     return GestureDetector(
-      onTap: () => setDrawerHeight(400),
-      child: AnimatedOpacity(
+      onTap: () => setDrawerHeight(200),
+      child: AnimatedCrossFade(
         duration: const Duration(milliseconds: 100),
-        opacity: overlayFullScreen ? 1 : 0,
-        child: Container(
+        crossFadeState: overlayFullScreen ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+        firstChild: Container(
           height: _buttonHeight,
           width: double.infinity,
           decoration: BoxDecoration(
@@ -167,6 +166,7 @@ class MapDrawerState extends State<MapDrawer> {
             child: widget.btnChild ?? Container(),
           ),
         ),
+        secondChild: Container(),
       ),
     );
   }

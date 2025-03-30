@@ -53,11 +53,11 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
         icon: Icons.search,
         onPress: searchBusStop,
       ),
-      CustomNavigationItem(
-        label: AppString.closestStopLabel,
-        icon: Icons.location_searching,
-        onPress: findClosestStop,
-      ),
+      // CustomNavigationItem(
+      //   label: AppString.closestStopLabel,
+      //   icon: Icons.location_searching,
+      //   onPress: findClosestStop,
+      // ),
       CustomNavigationItem(
         label: AppString.routeLabel,
         icon: Icons.route,

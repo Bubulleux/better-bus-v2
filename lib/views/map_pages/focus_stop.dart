@@ -138,15 +138,12 @@ class _StopFocusWidgetState extends State<StopFocusWidget> {
           )
         ]
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Wrap(
-            spacing: 5,
-            verticalDirection: VerticalDirection.up,
-            children: buttons,
-          ),
-        ],
+      child: DefaultTextStyle.merge(
+        child: Wrap(
+          spacing: 5,
+          verticalDirection: VerticalDirection.up,
+          children: buttons,
+        ),
       ),
     );
   }

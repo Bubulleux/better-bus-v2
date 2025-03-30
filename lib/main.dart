@@ -90,7 +90,6 @@ class BetterBusApp extends StatefulWidget {
 
 class _BetterBusAppState extends State<BetterBusApp>
     with WidgetsBindingObserver {
-
   @override
   void initState() {
     super.initState();
@@ -117,13 +116,18 @@ class _BetterBusAppState extends State<BetterBusApp>
           backgroundColor: const Color(0xdde4e4e4),
         ),
         textTheme: const TextTheme(
-          bodyMedium: TextStyle(
-            fontSize: 16,
-          ),
-          bodySmall: TextStyle(fontSize: 13),
-        ),
+            // bodyMedium: TextStyle(
+            //   fontSize: 16,
+            // ),
+            // bodySmall: TextStyle(fontSize: 13),
+            ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
+            // padding: EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+            // textStyle: TextStyle(
+            //   fontSize: 13
+            // ),
+            // iconSize: 20,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(40),
             ),
