@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:better_bus_core/core.dart';
 import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
@@ -30,6 +31,8 @@ import 'package:workmanager/workmanager.dart';
 import '../../model/provider.dart';
 
 import 'app_constant/app_string.dart';
+import 'custom_home_widget.dart';
+import 'data_provider/local_data_handler.dart';
 
 @pragma('vm:entry-point')
 void callbackDispatcher() {
@@ -95,7 +98,6 @@ class _BetterBusAppState extends State<BetterBusApp>
   void initState() {
     super.initState();
     initProviders();
-    checkTimeZone();
   }
 
   Future<bool> initProviders() async {
@@ -106,8 +108,6 @@ class _BetterBusAppState extends State<BetterBusApp>
     return success;
   }
 
-  static void checkTimeZone() async {
-  }
 
   @override
   Widget build(BuildContext context) {

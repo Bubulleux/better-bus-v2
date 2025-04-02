@@ -33,7 +33,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   GlobalKey<ShortcutWidgetRootState> shortcutSection = GlobalKey();
-  late FlutterLocalNotificationsPlugin flip;
 
   void searchBusStop() {
     Navigator.of(context).pushNamed(SearchPage.routeName).then((value) {
@@ -63,65 +62,6 @@ class _HomePageState extends State<HomePage> {
 
   Future findClosestStop() async {
     ClosestStopDialog.show(context);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    GpsDataProvider.askForGPSPermission();
-    initFlutterNotificationPlugin();
-    checkIfAppIsNotificationLaunched();
-    checkIfFisrtTimeOpenningApp();
-    CustomHomeWidgetRequest.init(context);
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    CustomHomeWidgetRequest.init(context);
-  }
-
-  Future checkIfAppIsNotificationLaunched() async {
-    if (!Platform.isAndroid) return;
-     NotificationAppLaunchDetails? launchNotificationDetails =
-         await FlutterLocalNotificationsPlugin()
-             .getNotificationAppLaunchDetails();
-     if (launchNotificationDetails == null) {
-       return;
-     }
-     receiveNotification(launchNotificationDetails.notificationResponse);
-  }
-
-   void receiveNotification(NotificationResponse? response) {
-     if (response == null) {
-       return;
-     }
-     Navigator.of(context)
-         .popUntil((route) => route.settings.name != TrafficInfoPage.routeName);
-     Navigator.of(context)
-         .pushNamed(TrafficInfoPage.routeName, arguments: response.id);
-   }
-
-  void checkIfFisrtTimeOpenningApp() async {
-    bool showImportantMessage = await LocalDataHandler.showImportantMessage();
-    if (!showImportantMessage) {
-      return;
-    }
-    Navigator.of(context)
-        .pushNamed(MessageView.routeName, arguments: Messages.importantMessage);
-  }
-
-  Future initFlutterNotificationPlugin() async {
-    flip = FlutterLocalNotificationsPlugin();
-
-    AndroidFlutterLocalNotificationsPlugin? androidImp =
-    flip.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
-    androidImp?.requestNotificationsPermission();
-
-    var android = const AndroidInitializationSettings('@mipmap/ic_launcher');
-    var settings = InitializationSettings(android: android);
-    await flip.initialize(settings,
-        onDidReceiveNotificationResponse: receiveNotification);
   }
 
   void goToSetting() {

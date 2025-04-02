@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:better_bus_v2/app_constant/app_string.dart';
 import 'package:better_bus_core/core.dart';
+import 'package:better_bus_v2/loader.dart';
 import 'package:better_bus_v2/model/view_shortcut.dart';
 import 'package:better_bus_v2/views/common/fake_text_field.dart';
 import 'package:better_bus_v2/views/home_page/home_page.dart';
@@ -31,6 +32,7 @@ class MapPage extends StatefulWidget {
   const MapPage({super.key});
 
   static const String routeName = "/";
+
 
   @override
   State<MapPage> createState() => _MapPageState();
@@ -164,39 +166,41 @@ class _MapPageState extends State<MapPage> {
 
     return Scaffold(
       drawer: HomeDrawer(),
-      body: SafeArea(
-        child: PopScope(
-          canPop: false,
-          onPopInvokedWithResult: handlePop,
-          child: Column(
-            children: [
-              Expanded(
-                child: MapLayout(
-                  controller: controller,
-                  topBarHeight: 80,
-                  topBar: Row(
-                    children: [
-                      HomeDrawerBtn(),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: FakeTextField(
-                            onPress: goToSearch,
-                            icon: Icons.search,
-                            value: controller.focusedName,
-                            hint: AppString.searchLabel,
+      body: Loader(
+        child: SafeArea(
+          child: PopScope(
+            canPop: false,
+            onPopInvokedWithResult: handlePop,
+            child: Column(
+              children: [
+                Expanded(
+                  child: MapLayout(
+                    controller: controller,
+                    topBarHeight: 80,
+                    topBar: Row(
+                      children: [
+                        HomeDrawerBtn(),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: FakeTextField(
+                              onPress: goToSearch,
+                              icon: Icons.search,
+                              value: controller.focusedName,
+                              hint: AppString.searchLabel,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
+                    overlayTitle: overlayTitle,
+                    body: overlay,
+                    overlaySizable: controller.focusedPlace == null,
                   ),
-                  overlayTitle: overlayTitle,
-                  body: overlay,
-                  overlaySizable: controller.focusedPlace == null,
                 ),
-              ),
-              CustomNavigationBar()
-            ],
+                CustomNavigationBar()
+              ],
+            ),
           ),
         ),
       ),
