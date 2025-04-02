@@ -68,7 +68,7 @@ class _RouteSearchResultState extends State<RouteSearchResult>
       future: getRoutes,
       onData: (context, data, refresh) {
         return Container(
-          padding: EdgeInsets.only(top: 5),
+          padding: const EdgeInsets.only(top: 5),
           child: ListView.builder(
             padding: const EdgeInsets.symmetric(horizontal: 5),
             itemBuilder: (context, index) => RouteItemWidget(

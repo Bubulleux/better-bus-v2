@@ -55,6 +55,7 @@ class RouteSchema extends StatelessWidget {
 
     return Wrap(
       spacing: size / 5,
+      runSpacing: size / 4,
       crossAxisAlignment: WrapCrossAlignment.end,
       alignment: WrapAlignment.start,
       children: wrapChildren,

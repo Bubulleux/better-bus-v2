@@ -53,10 +53,14 @@ class _RouteItemWidgetState extends State<RouteItemWidget> {
   Widget build(BuildContext context) {
     Duration timeTravel = widget.vitalisRoute.timeTravel;
 
-    final start = timeFormat
-        .format((widget.vitalisRoute.itinerary[0].startTime.toLocal()));
-    final stop =
-        timeFormat.format(widget.vitalisRoute.itinerary.last.endTime.toLocal());
+    final route = widget.vitalisRoute;
+    final timeFormat = DateFormat("kk:mm", "fr");
+
+    final start = timeFormat.format(route.startTime);
+    final stop = timeFormat.format(route.arrivalTime);
+    final date = (DateTime.now().atMidnight() != route.startTime.atMidnight())
+        ? DateFormat("EE d MMM", "fr").format(route.startTime)
+        : null;
 
     final time =
         "${timeTravel.inHours != 0 ? "${timeTravel.inHours} h " : ""}${timeTravel.inMinutes % 60} min";
@@ -82,31 +86,31 @@ class _RouteItemWidgetState extends State<RouteItemWidget> {
                   )
                 ]),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-                  child: Row(
-                    //crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      getRouteSchema(),
-                      const Spacer(),
-                      Text(
-                        time,
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 20),
-                      ),
-                    ],
-                  ),
+                Row(
+                  //crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Expanded(child: getRouteSchema()),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      time,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 20),
+                    ),
+                  ],
                 ),
                 const SizedBox(
                   height: 5,
                 ),
                 Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(start),
                         const Icon(Icons.arrow_right_outlined),
@@ -123,6 +127,12 @@ class _RouteItemWidgetState extends State<RouteItemWidget> {
                     ])
                   ],
                 ),
+                date != null
+                    ? Text(
+                        date,
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      )
+                    : Container()
               ],
             ),
           ),
