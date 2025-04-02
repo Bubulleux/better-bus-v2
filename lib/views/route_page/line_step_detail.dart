@@ -1,4 +1,5 @@
 import 'package:better_bus_core/core.dart';
+import 'package:better_bus_v2/views/common/directed_line.dart';
 import 'package:better_bus_v2/views/common/extendable_view.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
 import 'package:better_bus_v2/views/common/report_infobox.dart';
@@ -39,6 +40,7 @@ class _LineStepDetailState extends State<LineStepDetail>
 
   Widget buildTimeRow(StopTime? stopTime) {
     final line = stopTime?.line ?? widget.routeStep.lines!;
+    final direction = stopTime?.destination ?? widget.routeStep.endPlace;
     final startTime = stopTime?.time ?? widget.routeStep.startTime;
     final delay = stopTime?.delay ?? Duration.zero;
     final endTime = widget.routeStep.endTime
@@ -56,7 +58,7 @@ class _LineStepDetailState extends State<LineStepDetail>
             children: [
               format(startTime),
               arrow,
-              LineWidget(line, 20),
+              LabeledLine(line: line, label: direction, size: 14,),
               arrow,
               format(endTime)
             ],

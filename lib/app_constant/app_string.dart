@@ -135,4 +135,6 @@ class AppString {
   static const removeFilter = "Voir tout";
 
   static const mapLabel = "Carte";
+
+  static const stopYouTo = "Arrêtez vous à ";
 }

@@ -56,6 +56,7 @@ void main() async {
       frequency: const Duration(minutes: 15));
   await GpsDataProvider.initGps();
 
+
   runApp(MultiProvider(
     providers: [
       Provider(
@@ -94,13 +95,18 @@ class _BetterBusAppState extends State<BetterBusApp>
   void initState() {
     super.initState();
     initProviders();
+    checkTimeZone();
   }
 
   Future<bool> initProviders() async {
     final provider = FullProvider.of(context);
     final success = await provider.init();
     print("Provider sucress: $success ---------------");
+
     return success;
+  }
+
+  static void checkTimeZone() async {
   }
 
   @override
@@ -142,7 +148,8 @@ class _BetterBusAppState extends State<BetterBusApp>
       initialRoute: MapPage.routeName,
       routes: {
         // TODO: Eurk...
-        HomePage.routeName: (context) => const HomePage(),
+        // HomePage.routeName: (context) => const HomePage(),
+        MapPage.routeName: (context) => const MapPage(),
         SettingPage.routeName: (context) => const SettingPage(),
         MessageView.routeName: (context) => const MessageView(),
         SearchPage.routeName: (context) => const SearchPage(),
@@ -159,7 +166,6 @@ class _BetterBusAppState extends State<BetterBusApp>
         LogView.routeName: (context) => const LogView(),
         PreferencesView.routeName: (context) => const PreferencesView(),
         AppInfo.routeName: (context) => const AppInfo(),
-        MapPage.routeName: (context) => const MapPage(),
       },
     );
   }

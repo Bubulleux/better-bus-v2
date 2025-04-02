@@ -207,7 +207,7 @@ class _NextPassageWidgetState extends State<NextPassageWidget>
         children: [
           DelayInfobox(stopTime: widget.nextPassage),
           widget.nextPassage.trip != null
-              ? TripView(widget.nextPassage.trip!, delay: delay)
+              ? TripView(widget.nextPassage.trip!, delay: delay, from: widget.nextPassage.station,)
               : Container()
         ],
       ),

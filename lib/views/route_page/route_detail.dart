@@ -7,6 +7,7 @@ import 'package:better_bus_v2/views/common/directed_line.dart';
 import 'package:better_bus_v2/views/common/report_infobox.dart';
 import 'package:better_bus_v2/views/route_page/line_step_detail.dart';
 import 'package:better_bus_v2/views/route_page/route_search.dart';
+import 'package:better_bus_v2/views/stop_info/trip_view.dart';
 import 'package:flutter/material.dart';
 import 'package:format/format.dart';
 import 'package:intl/intl.dart';
@@ -36,25 +37,40 @@ class RouteDetailState extends State<RouteDetail> {
   void initState() {
     super.initState();
     provider = FullProvider.of(context);
-    getRealtimes();
+    getMoreDetails().onError((e, s) {
+      print("Fuck error");
+      print(e);
+      print(s);
+      return false;
+    });
   }
 
-  Future<bool> getRealtimes() async {
+  Future<bool> getMoreDetails() async {
     assert(provider.isAvailable());
 
     if (stations == null) await loadStation();
     assert(stations != null);
+    print("Start geting more detail");
 
     for (var e in widget.route.itinerary) {
       if (e.lines == null) continue;
       final station = stations![e.startPlace];
+      print(e.startPlace);
+      print("Station $station");
       if (station == null) continue;
       timeTable[station] = null;
-      provider.getTimetable(station).then((v) {
+      print("Start getting timetable");
+      provider.getTimetable(station, time: e.startTime).then((v) {
+        print("Sucess get timetable");
         if (!mounted) return;
         setState(() {
           timeTable[station] = v;
         });
+      },
+      onError: (Object? e, st) {
+        print("Failed to retrive timetable of $station");
+        print(e);
+        print(st);
       });
     }
     final r = await AppRadarProvider.of(context).getReports();
@@ -100,16 +116,18 @@ class RouteDetailState extends State<RouteDetail> {
     final endStation = stations?[item.endPlace];
     List<StopTime>? times;
     if (station != null && endStation != null) {
-      times = timeTable[station]
-          ?.getNext(from: item.startTime)
-          .where((e) =>
+      final next = timeTable[station]
+          ?.getNext(from: item.startTime);
+      print("Next lenght ${next?.length}");
+      times = next?.where((e) =>
               e.trip != null &&
+              e.trip!.followDirection(station, endStation) &&
               e.trip!.isPassingBy(station) &&
               e.trip!.isPassingBy(endStation) &&
-              e.trip!.line.id == item.lines!.id &&
-              e.isRealTime)
+              e.trip!.line.id == item.lines!.id)
           .toList();
     }
+    print("Times lenght: ${times?.length}");
     final trip = times?.firstOrNull;
     final color = item.lines!.color;
 
@@ -129,13 +147,16 @@ class RouteDetailState extends State<RouteDetail> {
       color: color,
     ));
 
-    final schema = Row(children: [
+    Widget schema = Row(children: [
       buildStop(item.startPlace),
       line,
       buildStop(item.endPlace),
     ]);
 
-    final instruction = item.instruction;
+    if (trip != null && trip.trip != null) {
+      schema = TripView.fromRoute(item, trip.trip!, trip.delay);
+    }
+
 
     return buildRow(
       marge: const Icon(Icons.directions_bus),
@@ -143,7 +164,14 @@ class RouteDetailState extends State<RouteDetail> {
         line: item.lines!,
         label: trip?.destination ?? item.endPlace,
       ),
-      subTitle: Text(instruction),
+      subTitle: RichText(text:TextSpan(
+        style: TextStyle(color: Colors.black),
+        children: [
+          TextSpan(text: AppString.stopYouTo),
+          TextSpan(text: item.endPlace,
+          style: TextStyle(fontWeight: FontWeight.bold))
+        ]
+      )),
       body: Column(
         children: [
           station != null
@@ -166,7 +194,8 @@ class RouteDetailState extends State<RouteDetail> {
       {required Widget marge,
       required Widget title,
       Widget? subTitle,
-      Widget? body}) {
+      Widget? body,
+      bool closeBtn = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
       child: Column(
@@ -193,6 +222,12 @@ class RouteDetailState extends State<RouteDetail> {
                   subTitle ?? Container(),
                 ],
               )),
+              if (closeBtn)
+                CloseCross(
+                  onTap: widget.onClose,
+                )
+              else
+                Container()
             ],
           ),
           body ?? Container()
@@ -217,10 +252,10 @@ class RouteDetailState extends State<RouteDetail> {
     final time = widget.route.itinerary.first.startTime;
     final from = widget.parameter.start!.name;
     return buildRow(
-      marge: const Icon(Icons.flag, color: Colors.green),
-      title: Text(from),
-      subTitle: timeWidget(AppString.startAt, time),
-    );
+        marge: const Icon(Icons.flag, color: Colors.green),
+        title: Text(from),
+        subTitle: timeWidget(AppString.startAt, time),
+        closeBtn: true);
   }
 
   Widget buildEnd() {
@@ -239,24 +274,13 @@ class RouteDetailState extends State<RouteDetail> {
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Align(
-            alignment: Alignment.centerRight,
-            child: CloseCross(onTap: widget.onClose),
-          ),
-          Expanded(
-            child: ListView.separated(
-              itemBuilder: buildItem,
-              separatorBuilder: (_, __) => const Divider(
-                height: 5,
-                color: Colors.black54,
-              ),
-              itemCount: widget.route.itinerary.length + 2,
-            ),
-          ),
-        ],
+      child: ListView.separated(
+        itemBuilder: buildItem,
+        separatorBuilder: (_, __) => const Divider(
+          height: 5,
+          color: Colors.black54,
+        ),
+        itemCount: widget.route.itinerary.length + 2,
       ),
     );
   }

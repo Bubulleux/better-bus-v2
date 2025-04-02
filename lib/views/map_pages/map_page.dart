@@ -30,7 +30,7 @@ class MapPageArg {
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
 
-  static const String routeName = "/map";
+  static const String routeName = "/";
 
   @override
   State<MapPage> createState() => _MapPageState();
@@ -173,7 +173,7 @@ class _MapPageState extends State<MapPage> {
               Expanded(
                 child: MapLayout(
                   controller: controller,
-                  topBarHeight: 100,
+                  topBarHeight: 80,
                   topBar: Row(
                     children: [
                       HomeDrawerBtn(),
