@@ -154,7 +154,7 @@ class _RouteSearchState extends State<RouteSearch> {
       child: Column(
         children: [
           Flexible(
-            flex: 2,
+            flex: 5,
             child: Stack(
               alignment: Alignment.center,
               children: [
@@ -164,9 +164,6 @@ class _RouteSearchState extends State<RouteSearch> {
                     Expanded(
                       child: FakeTextField(
                         onPress: getStartPlace,
-                        height: null,
-                        backgroundColor:
-                            Theme.of(context).colorScheme.background,
                         hint: AppString.startLabel,
                         prefixIcon: const Icon(
                           Icons.flag,
@@ -182,9 +179,6 @@ class _RouteSearchState extends State<RouteSearch> {
                     Expanded(
                       child: FakeTextField(
                         onPress: getStopPlace,
-                        height: null,
-                        backgroundColor:
-                            Theme.of(context).colorScheme.background,
                         hint: AppString.endLabel,
                         prefixIcon: const Icon(Icons.flag, color: Colors.red),
                         icon: Icons.search,
@@ -206,14 +200,13 @@ class _RouteSearchState extends State<RouteSearch> {
             height: 5,
           ),
           Flexible(
-            flex: 1,
+            flex: 2,
             child: FakeTextField(
-              height: null,
               value: getTimeString(),
               onPress: setTime,
               prefixIcon: const Icon(Icons.access_time),
               icon: Icons.autorenew,
-              backgroundColor: Theme.of(context).colorScheme.background,
+              small : true,
             ),
           )
         ],

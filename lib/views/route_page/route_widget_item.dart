@@ -1,4 +1,3 @@
-
 import 'package:better_bus_core/core.dart';
 import 'package:better_bus_v2/views/common/decorations.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
@@ -7,7 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class RouteItemWidget extends StatefulWidget {
-  const RouteItemWidget(this.vitalisRoute, {this.onClick, this.selected = false, super.key});
+  const RouteItemWidget(this.vitalisRoute,
+      {this.onClick, this.selected = false, super.key});
 
   final VitalisRoute vitalisRoute;
   final VoidCallback? onClick;
@@ -24,7 +24,10 @@ class _RouteItemWidgetState extends State<RouteItemWidget> {
       : DateFormat("EE d MMM\nkk:mm", "fr");
 
   Widget getRouteSchema() {
-    return RouteSchema(route: widget.vitalisRoute, size: 23,);
+    return RouteSchema(
+      route: widget.vitalisRoute,
+      size: 23,
+    );
   }
 
   void showDetail() {
@@ -62,15 +65,22 @@ class _RouteItemWidgetState extends State<RouteItemWidget> {
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: Material(
         borderRadius: CustomDecorations.borderRadius,
-        elevation: widget.selected ? 5 : 2,
         child: InkWell(
           borderRadius: CustomDecorations.borderRadius,
           onTap: showDetail,
           child: Container(
-            // decoration: CustomDecorations.of(context).boxOutlined,
-            width: double.infinity,
-            padding: const EdgeInsets.all(13),
-            //height: 200,
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 14),
+            decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: CustomDecorations.borderRadius,
+                boxShadow: const [
+                  BoxShadow(
+                    spreadRadius: 3,
+                    blurRadius: 3,
+                    offset: Offset(2, 2),
+                    color: Colors.black12,
+                  )
+                ]),
             child: Column(
               children: [
                 Padding(
@@ -90,29 +100,28 @@ class _RouteItemWidgetState extends State<RouteItemWidget> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 5,),
-                SizedBox(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Row(
-                        children: [
-                          Text(start),
-                          const Icon(Icons.arrow_right_outlined),
-                          Text(stop),
-                        ],
-                      ),
-                      const Spacer(),
-                      Row(children: [
-                        buildTraveledDist(widget.vitalisRoute.busDistanceTravel,
-                            Icons.directions_bus),
-                        const SizedBox(width: 20),
-                        buildTraveledDist(
-                            widget.vitalisRoute.walkDistanceTravel,
-                            Icons.directions_walk),
-                      ])
-                    ],
-                  ),
+                const SizedBox(
+                  height: 5,
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(start),
+                        const Icon(Icons.arrow_right_outlined),
+                        Text(stop),
+                      ],
+                    ),
+                    const Spacer(),
+                    Row(children: [
+                      buildTraveledDist(widget.vitalisRoute.busDistanceTravel,
+                          Icons.directions_bus),
+                      const SizedBox(width: 20),
+                      buildTraveledDist(widget.vitalisRoute.walkDistanceTravel,
+                          Icons.directions_walk),
+                    ])
+                  ],
                 ),
               ],
             ),

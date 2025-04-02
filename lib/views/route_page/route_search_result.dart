@@ -63,36 +63,31 @@ class _RouteSearchResultState extends State<RouteSearchResult>
   Widget build(BuildContext context) {
     super.build(context);
     assert(_parameter != null);
-    return Container(
-      //decoration: CustomDecorations.of(context).boxBackground,
-      color: Colors.black12,
-      // padding: const EdgeInsets.symmetric(horizontal: 5),
-      child: CustomFutureBuilder<List<VitalisRoute>?>(
-        key: futureBuilderKey,
-        future: getRoutes,
-        onData: (context, data, refresh) {
-          return ClipRRect(
-            borderRadius: CustomDecorations.borderRadius,
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 5),
-              itemBuilder: (context, index) => RouteItemWidget(
-                data[index],
-                selected: widget.route == data[index],
-                onClick: () => widget.routeSelected?.call(data[index]),
-              ),
-              itemCount: data!.length,
+    return CustomFutureBuilder<List<VitalisRoute>?>(
+      key: futureBuilderKey,
+      future: getRoutes,
+      onData: (context, data, refresh) {
+        return Container(
+          padding: EdgeInsets.only(top: 5),
+          child: ListView.builder(
+            padding: const EdgeInsets.symmetric(horizontal: 5),
+            itemBuilder: (context, index) => RouteItemWidget(
+              data[index],
+              selected: widget.route == data[index],
+              onClick: () => widget.routeSelected?.call(data[index]),
             ),
-          );
-        },
-        errorTest: (data) {
-          if (data == null) {
-            return CustomErrors.routeInputError;
-          } else if (data!.isEmpty) {
-            return CustomErrors.routeResultEmpty;
-          }
-          return null;
-        },
-      ),
+            itemCount: data!.length,
+          ),
+        );
+      },
+      errorTest: (data) {
+        if (data == null) {
+          return CustomErrors.routeInputError;
+        } else if (data!.isEmpty) {
+          return CustomErrors.routeResultEmpty;
+        }
+        return null;
+      },
     );
   }
 

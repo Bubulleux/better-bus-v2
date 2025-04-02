@@ -120,7 +120,7 @@ class _RoutePageState extends State<RoutePage> {
           child: MapLayout(
         controller: controller,
         topBar: RouteSearch(onSearch: setSearch, parameter: parameter),
-        topBarHeight: 200,
+        topBarHeight: 160,
         mapLayers: [
           route != null ? RouteLayer(route: route!) : Container(),
           parameter != null ? RouteParameterLayer(parameter: parameter!)

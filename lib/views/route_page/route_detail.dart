@@ -42,7 +42,6 @@ class RouteDetailState extends State<RouteDetail> {
   Future<bool> getRealtimes() async {
     assert(provider.isAvailable());
 
-    if (!provider.api.isAvailable()) return false;
     if (stations == null) await loadStation();
     assert(stations != null);
 
