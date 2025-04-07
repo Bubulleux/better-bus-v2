@@ -69,7 +69,6 @@ class NetworkMapState extends State<NetworkMap> with TickerProviderStateMixin {
         TileLayer(
           urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
           userAgentPackageName: 'dev.fleaflet.flutter_map.example',
-          // Plenty of other options available!
         ),
         ...(rootController.focusedStopTime != null
             ? [
@@ -84,7 +83,6 @@ class NetworkMapState extends State<NetworkMap> with TickerProviderStateMixin {
         StopsMapLayer(
           mapController: rootController,
           stops: rootController.stopsPos?.values.toList() ?? [],
-          reports: rootController.reports,
           onStationClick: (station) => setState(() {
             rootController.focused = station;
           }),

@@ -4,7 +4,6 @@ import 'package:better_bus_v2/views/map/controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 
-
 class StopsMapLayer extends StatefulWidget {
   const StopsMapLayer({
     required this.mapController,
@@ -13,7 +12,7 @@ class StopsMapLayer extends StatefulWidget {
     this.onStationClick,
     this.focusedStation,
     this.focusedStop,
-    this.reports,
+    // this.reports,
     super.key,
   });
 
@@ -21,7 +20,8 @@ class StopsMapLayer extends StatefulWidget {
   final List<Station> stops;
   final Station? focusedStation;
   final int? focusedStop;
-  final Map<Station, Report>? reports;
+
+  // final Map<Station, Report>? reports;
   final void Function(Station)? onStationClick;
   final void Function(int)? onStopClick;
 
@@ -29,17 +29,26 @@ class StopsMapLayer extends StatefulWidget {
   State<StopsMapLayer> createState() => _StopsMapLayerState();
 }
 
-
 class _StopsMapLayerState extends State<StopsMapLayer> {
-
   static const _animeTime = Duration(milliseconds: 250);
   static const _staticCircleSizeMaxZoom = 14;
   static const _minWidgetZoom = 15;
   static const _zoomWidgetAppear = 16;
 
+  Map<Station, Report> get reports => widget.mapController.reports ?? {};
+
+  @override
+  void initState() {
+    super.initState();
+    widget.mapController.stateChange.addListener(() {
+      if (mounted) setState(() {});
+    });
+  }
+
   Marker buildMaker(Station stop, Report? report, MapCamera camera) {
     final focused = stop == widget.focusedStation;
-    final onTrip = widget.mapController.focusedStopTime?.trip!.isPassingBy(stop) ?? false;
+    final onTrip =
+        widget.mapController.focusedStopTime?.trip!.isPassingBy(stop) ?? false;
     final color = stationColor(stop);
     final trip = widget.mapController.focusedStopTime?.trip!;
     Color? lineColor;
@@ -66,25 +75,23 @@ class _StopsMapLayerState extends State<StopsMapLayer> {
                     blurRadius: focused ? 5 : 2)
               ]),
           child: InkWell(
-                  onTap: () => widget.onStationClick?.call(stop),
-                  child: const Icon(
-                    Icons.directions_bus,
-                    size: 19,
-                  )),
+              onTap: () => widget.onStationClick?.call(stop),
+              child: const Icon(
+                Icons.directions_bus,
+                size: 19,
+              )),
         ));
   }
 
-
   Color stationColor(Station station) {
     var out = Theme.of(context).primaryColor;
-    final report = widget.reports?[station];
+    final report = reports[station];
 
     if (report != null) {
       out = Color.lerp(out, Colors.blue, report.stillThere) ?? out;
     }
     return out;
   }
-
 
   Iterable<Marker> buildSubMarker(Station stop) sync* {
     for (final child in stop.stops.entries) {
@@ -125,12 +132,11 @@ class _StopsMapLayerState extends State<StopsMapLayer> {
   }
 
   Iterable<Marker> getMarkers(MapCamera cam) sync* {
-
     for (final stop in widget.stops) {
       if (stop == widget.focusedStation) {
         yield* buildSubMarker(stop);
       }
-      yield buildMaker(stop, widget.reports?[stop], cam);
+      yield buildMaker(stop, reports[stop], cam);
     }
   }
 
@@ -152,29 +158,26 @@ class _StopsMapLayerState extends State<StopsMapLayer> {
     if (cam.zoom < _staticCircleSizeMaxZoom) {
       r *= 8.5;
     }
-    final circles = widget.stops.map(
-        (e) {
-          final c = stationColor(e);
-          return CircleMarker(
-            point: e.position, radius: r,
-            useRadiusInMeter: cam.zoom < _staticCircleSizeMaxZoom,
-            color: c,
-            borderColor: Color.lerp(c, Colors.black, 0.3)!,
-            borderStrokeWidth: r / 5,
-          );
-        }
-    ).toList();
+    final circles = widget.stops.map((e) {
+      final c = stationColor(e);
+      return CircleMarker(
+        point: e.position,
+        radius: r,
+        useRadiusInMeter: cam.zoom < _staticCircleSizeMaxZoom,
+        color: c,
+        borderColor: Color.lerp(c, Colors.black, 0.3)!,
+        borderStrokeWidth: r / 5,
+      );
+    }).toList();
 
     return IgnorePointer(
       ignoring: true,
       child: AnimatedOpacity(
-        duration: _animeTime,
+          duration: _animeTime,
           opacity: cam.zoom < _zoomWidgetAppear ? 1 : 0,
-          child: CircleLayer(circles: circles)
-      ),
+          child: CircleLayer(circles: circles)),
     );
   }
-
 
   @override
   Widget build(BuildContext context) {

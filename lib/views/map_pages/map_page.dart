@@ -33,7 +33,6 @@ class MapPage extends StatefulWidget {
 
   static const String routeName = "/";
 
-
   @override
   State<MapPage> createState() => _MapPageState();
 }
@@ -46,22 +45,18 @@ class _MapPageState extends State<MapPage> {
   void initState() {
     super.initState();
     controller = NetworkMapController(context);
-    controller.loadStation().then((_) => print("Map load finish"), onError:
-    (Object e, s) {
+    controller.loadStation().then((_) => print("Map load finish"),
+        onError: (Object e, s) {
       throw e;
     });
     controller.stateChange.addListener(() {
-      setState(() {});
+      if (mounted) setState(() {});
     });
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final arg = ModalRoute.of(context)!.settings.arguments as MapPageArg?;
-    if (true) {
-      // TODO: Do it
-    }
   }
 
   @override
@@ -116,7 +111,8 @@ class _MapPageState extends State<MapPage> {
             children: [
               Text(
                 controller.focusedStation!.name,
-                style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 20),
+                style:
+                    const TextStyle(fontWeight: FontWeight.w500, fontSize: 20),
               ),
               const Spacer(),
               buildDist(),
@@ -141,7 +137,6 @@ class _MapPageState extends State<MapPage> {
       ],
     );
   }
-
 
   @override
   Widget build(BuildContext context) {

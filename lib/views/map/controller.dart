@@ -2,6 +2,7 @@
 import 'package:better_bus_core/core.dart';
 import 'package:better_bus_v2/model/provider.dart';
 import 'package:better_bus_v2/views/map/map_view.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
@@ -135,6 +136,7 @@ class NetworkMapController {
   }
 
   bool canSentReport(Station station) {
+    if (kDebugMode) return true; // TODO: Remove
     if (!sendAvailable || posCoord == null) return false;
 
     return station.position.distance(posCoord!) < 0.3;

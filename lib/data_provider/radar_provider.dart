@@ -16,8 +16,9 @@ class AppRadarProvider extends RadarClient {
   // TODO: Make it not static
   static DateTime? lastSent;
 
+  // TODO: Watch out
   bool get sentAvailable =>
-      lastSent == null || DateTime.now().difference(lastSent!) >= sendThreshold;
+      lastSent == null || DateTime.now().difference(lastSent!) >= sendThreshold || kDebugMode; // Retrun alayse true if debug
 
   factory AppRadarProvider.of(BuildContext context) {
     return AppRadarProvider(provider: FullProvider.of(context));
