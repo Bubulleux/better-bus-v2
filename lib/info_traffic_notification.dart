@@ -1,5 +1,6 @@
 import 'package:better_bus_v2/app_constant/app_string.dart';
 import 'package:better_bus_core/core.dart';
+import 'package:better_bus_v2/data_provider/app_api_provider.dart';
 import 'package:better_bus_v2/data_provider/connectivity_checker.dart';
 import 'package:better_bus_v2/data_provider/local_data_handler.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -30,8 +31,8 @@ Future<bool> checkInfoTraffic() async {
   await flip.initialize(settings);
 
   // await LocalDataHandler.addLog("Sep 3");
-
-  if (!await ConnectivityChecker.isConnected()) {
+  final conn = ConnectivityStatus(autoUpdate: false);
+  if (!await conn.isConnected()) {
     // await LocalDataHandler.addLog("No internet");
     return false;
   }
@@ -43,7 +44,7 @@ Future<bool> checkInfoTraffic() async {
     return true;
   }
   // await LocalDataHandler.addLog("Sep 6");
-  final provider = ApiProvider.vitalis();
+  final provider = AppApiProvider(conn);
   await provider.init();
   List<InfoTraffic> infoTraffics = await provider.getTrafficInfos();
   Set<String> interestedBusLines = await LocalDataHandler.loadInterestedLine();

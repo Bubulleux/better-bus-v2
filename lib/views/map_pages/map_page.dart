@@ -65,6 +65,10 @@ class _MapPageState extends State<MapPage> {
     super.dispose();
   }
 
+  Future updateReports() async {
+
+  }
+
   void handlePop(bool didPop, Object? result) async {
     if (didPop) return;
     if (controller.focused != null) {

@@ -1,17 +1,31 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/animation.dart';
+// TODO: Remove this file
+class ConnectivityStatus {
+  final Connectivity connectivity = Connectivity();
+  List<ConnectivityResult>? _connection;
 
-class ConnectivityChecker {
-  static final Connectivity connectivity = Connectivity();
+  bool? get connected => disconnected == false;
+  bool? get disconnected => _connection?.contains(ConnectivityResult.none);
 
-  static Future<bool> isConnected() async {
-    List<ConnectivityResult> result = await connectivity.checkConnectivity();
-
-    return !result.contains(ConnectivityResult.none);
+  ConnectivityStatus({bool autoUpdate = true}) {
+    if (autoUpdate) {
+      connectivity.onConnectivityChanged.listen((data) {
+        _connection = data;
+      });
+    }
   }
 
-    static Future<bool> isWifiConnected() async {
-      List<ConnectivityResult> result = await connectivity.checkConnectivity();
 
-      return result.contains(ConnectivityResult.wifi);
-    }
+  Future<bool> isConnected() async {
+    _connection = await connectivity.checkConnectivity();
+
+    return connected ?? false;
+  }
+
+  Future<bool> isWifiConnected() async {
+    _connection = await connectivity.checkConnectivity();
+
+    return _connection?.contains(ConnectivityResult.wifi) ?? false;
+  }
 }

@@ -6,7 +6,7 @@ import 'package:better_bus_v2/views/common/custom_future.dart';
 import 'package:better_bus_v2/views/common/line_widget.dart';
 import 'package:flutter/material.dart';
 
-import '../../model/provider.dart';
+import '../../data_provider/app_provider.dart';
 
 typedef CheckCallBack = void Function(bool checked, BusLine line);
 

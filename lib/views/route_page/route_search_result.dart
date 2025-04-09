@@ -3,7 +3,7 @@ import 'package:better_bus_core/core.dart';
 import 'package:flutter/material.dart';
 
 import '../../error_handler/custom_error.dart';
-import '../../model/provider.dart';
+import '../../data_provider/app_provider.dart';
 import '../common/custom_future.dart';
 import '../common/decorations.dart';
 import 'route_search.dart';

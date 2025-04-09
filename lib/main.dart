@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:better_bus_core/core.dart';
+import 'package:better_bus_v2/data_provider/app_api_provider.dart';
+import 'package:better_bus_v2/data_provider/connectivity_checker.dart';
 import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
 import 'package:better_bus_v2/info_traffic_notification.dart';
 import 'package:better_bus_v2/model/app_paths.dart';
@@ -20,6 +22,7 @@ import 'package:better_bus_v2/views/stops_search_page/stops_search_page.dart';
 import 'package:better_bus_v2/views/terminus_selector/terminus_selector_page.dart';
 import 'package:better_bus_v2/views/traffic_info_page/traffic_info_page.dart';
 import 'package:better_bus_v2/views/view_shortcut_editor/view_shortcut_editor_page.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:better_bus_v2/views/home_page/home_page.dart';
 import 'package:flutter/services.dart';
@@ -28,11 +31,9 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:workmanager/workmanager.dart';
-import '../../model/provider.dart';
+import 'data_provider/app_provider.dart';
 
 import 'app_constant/app_string.dart';
-import 'custom_home_widget.dart';
-import 'data_provider/local_data_handler.dart';
 
 @pragma('vm:entry-point')
 void callbackDispatcher() {
@@ -49,6 +50,16 @@ void callbackDispatcher() {
 final StreamController<String?> selectNotificationStream =
     StreamController<String?>.broadcast();
 
+FullProvider createProviders(_) {
+  final conn = ConnectivityStatus();
+  print("Connection Status: ${conn.connected}");
+  return FullProvider(
+    api: AppApiProvider(conn),
+    gtfs: GTFSProvider.vitalis(AppPaths()),
+    connStatus: conn,
+  );
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations(
@@ -62,11 +73,7 @@ void main() async {
 
   runApp(MultiProvider(
     providers: [
-      Provider(
-          create: (_) => FullProvider(
-                api: ApiProvider.vitalis(),
-                gtfs: GTFSProvider.vitalis(AppPaths()),
-              ))
+      Provider(create: createProviders)
     ],
     child: const BetterBusApp(),
   ));

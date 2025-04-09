@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 
 import '../../app_constant/app_string.dart';
-import '../../model/provider.dart';
+import '../../data_provider/app_provider.dart';
 
 class StopFocusWidget extends StatefulWidget {
   const StopFocusWidget({

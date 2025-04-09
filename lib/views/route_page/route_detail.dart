@@ -1,7 +1,7 @@
 import 'package:better_bus_core/core.dart';
 import 'package:better_bus_v2/data_provider/radar_provider.dart';
 import 'package:better_bus_v2/model/bus_line_color.dart';
-import 'package:better_bus_v2/model/provider.dart';
+import 'package:better_bus_v2/data_provider/app_provider.dart';
 import 'package:better_bus_v2/views/common/close_cross.dart';
 import 'package:better_bus_v2/views/common/directed_line.dart';
 import 'package:better_bus_v2/views/common/report_infobox.dart';

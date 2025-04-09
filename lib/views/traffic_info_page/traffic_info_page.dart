@@ -10,7 +10,7 @@ import 'package:better_bus_v2/views/traffic_info_page/traffic_info_item.dart';
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-import '../../model/provider.dart';
+import '../../data_provider/app_provider.dart';
 
 
 class TrafficInfoPage extends StatefulWidget {

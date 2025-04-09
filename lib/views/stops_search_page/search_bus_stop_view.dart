@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:fuzzywuzzy/fuzzywuzzy.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../model/provider.dart';
+import '../../data_provider/app_provider.dart';
 
 typedef StopCallback = void Function(Station stop);
 

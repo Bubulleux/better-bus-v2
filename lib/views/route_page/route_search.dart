@@ -1,5 +1,5 @@
 import 'package:better_bus_core/core.dart';
-import 'package:better_bus_v2/model/provider.dart';
+import 'package:better_bus_v2/data_provider/app_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 

@@ -1,6 +1,5 @@
-
 import 'package:better_bus_core/core.dart';
-import 'package:better_bus_v2/model/provider.dart';
+import 'package:better_bus_v2/data_provider/app_provider.dart';
 import 'package:better_bus_v2/views/map/map_view.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +27,8 @@ class NetworkMapController {
     stateChange.value = hashCode;
   }
 
-  Location? get focused => _focused is LatLng ? Location(position: _focused as LatLng) : _focused;
+  Location? get focused =>
+      _focused is LatLng ? Location(position: _focused as LatLng) : _focused;
 
   LatLng? get focusedPos => focused is Location ? focused!.position : _focused;
 
@@ -65,7 +65,10 @@ class NetworkMapController {
 
   Map<LatLng, Station>? stopsPos;
   Map<Station, Report>? reports;
+
   bool get sendAvailable => AppRadarProvider(provider: provider).sentAvailable;
+
+  Future? _nextFetch;
 
   Report? get report => reports?[focusedStation];
 
@@ -87,19 +90,32 @@ class NetworkMapController {
       _focused.hashCode ^
       focusedStop.hashCode ^
       (posCoord != null).hashCode ^
-      focusedStopTime.hashCode ^ Object.hashAll(reports?.values ?? []);
+      focusedStopTime.hashCode ^
+      Object.hashAll(reports?.values ?? []);
 
   Future loadStation() async {
     await provider.init();
     assert(provider.isAvailable());
+    if (_nextFetch == null) fetchLoop();
     final stations = await provider.getStations();
     widgetState?.update();
 
-    reports = Map.fromEntries(
-        (await AppRadarProvider(provider: provider).getReports())
-            .map((e) => MapEntry(e.station, e)));
-
     stopsPos = {for (var e in stations) e.position: e};
+    widgetState?.update();
+  }
+
+  Future fetchLoop() async {
+    await fetchReports();
+    _nextFetch?.ignore();
+    if (!(widgetState?.mounted ?? false)) return;
+    _nextFetch = Future.delayed(const Duration(minutes: 1), fetchLoop);
+    return _nextFetch;
+  }
+
+  Future fetchReports() async {
+    List<Report> rawReports =
+        await AppRadarProvider(provider: provider).getReports();
+    reports = Map.fromEntries(rawReports.map((e) => MapEntry(e.station, e)));
     widgetState?.update();
   }
 
@@ -107,7 +123,9 @@ class NetworkMapController {
     widgetState = state;
   }
 
-  void dispose() {}
+  void dispose() {
+    _nextFetch?.ignore();
+  }
 
   void focus(dynamic newFocus, {double zoom = 18}) {
     focused = newFocus;
@@ -141,7 +159,6 @@ class NetworkMapController {
 
     return station.position.distance(posCoord!) < 0.3;
   }
-
 
   TickerFuture animateCamTo(LatLng dst, {double zoom = 17}) {
     final LatLngTween tween = LatLngTween(
@@ -182,5 +199,4 @@ class NetworkMapController {
   void setCamPadding(EdgeInsets padding) {
     camPadding = padding;
   }
-
 }
