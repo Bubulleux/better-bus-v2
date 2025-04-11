@@ -1,6 +1,7 @@
 import 'package:better_bus_v2/app_constant/app_string.dart';
 import 'package:better_bus_core/core.dart';
 import 'package:better_bus_v2/data_provider/local_data_handler.dart';
+import 'package:better_bus_v2/error_handler/custom_error.dart';
 import 'package:better_bus_v2/views/common/back_arrow.dart';
 import 'package:better_bus_v2/views/common/background.dart';
 import 'package:better_bus_v2/views/common/custom_future.dart';
@@ -31,6 +32,9 @@ class TrafficInfoPageState extends State<TrafficInfoPage> {
 
   Future<InfoTrafficObject> getAllInformation() async {
     final provider = FullProvider.of(context);
+    if (provider.offline) {
+      throw CustomErrors.noInternet;
+    }
     List<InfoTraffic> infoList = await provider.getTrafficInfos();
     Map<String, BusLine> busLines = await provider.getAllLines();
     Set<String> favoriteLines = await LocalDataHandler.loadInterestedLine();

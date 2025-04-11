@@ -45,7 +45,7 @@ class _MapPageState extends State<MapPage> {
   void initState() {
     super.initState();
     controller = NetworkMapController(context);
-    controller.loadStation().then((_) => print("Map load finish"),
+    controller.loadStation().then((_) =>     print("Map load finish"),
         onError: (Object e, s) {
       throw e;
     });
@@ -53,6 +53,7 @@ class _MapPageState extends State<MapPage> {
       if (mounted) setState(() {});
     });
   }
+
 
   @override
   void didChangeDependencies() {

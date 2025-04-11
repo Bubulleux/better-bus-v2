@@ -48,9 +48,8 @@ class CustomFutureBuilderState<T> extends State<CustomFutureBuilder>
     with WidgetsBindingObserver {
   T? data;
   CustomError? error;
-  Future<T>? future;
 
-  bool get isLoading => future != null;
+  bool get isLoading => data == null && error == null;
   AppLifecycleState? _notification;
   bool needRefresh = false;
 
@@ -88,40 +87,27 @@ class CustomFutureBuilderState<T> extends State<CustomFutureBuilder>
     setState(() {});
   }
 
-  Future<T?> refresh() {
+  Future refresh() async {
     if (!mounted) {
       needRefresh = true;
-      return Future.value(null);
+      return;
     }
     needRefresh = false;
-    error = null;
-    future = widget.future() as Future<T>?;
-    future!.then((v) => onData(v), onError: onError);
-    return future!;
-  }
-
-  void onData(T value) {
-    if (error != null || !mounted) return;
-
-    setState(() {
-      future = null;
-      error = widget.errorTest?.call(value);
-      data = value;
-    });
-  }
-
-  T? onError(Object error, StackTrace stack) {
-    if (kDebugMode) {
-      print("Future build got error:");
-      print(error);
-      print(stack);
+    T? newData;
+    try {
+      error = null;
+      newData = await widget.future();
+      error = widget.errorTest?.call(newData);
+    } on CustomError catch (e){
+      error = e;
+    } catch (e) {
+      error = CustomError(e.toString(), null, true);
+    } finally {
+      data = newData;
     }
-    if (!mounted) return null;
-    setState(() {
-      future = null;
-      error = error;
-    });
-    return null;
+    if (!mounted) return;
+    setState(() {});
+
   }
 
   void autoRefresh() {
@@ -179,22 +165,23 @@ class CustomFutureBuilderState<T> extends State<CustomFutureBuilder>
 
   @override
   Widget build(BuildContext context) {
+    print("Build fufure loading $isLoading");
     if (isLoading) {
       return getOnLoadingScreen();
     }
     if (needRefresh) refresh();
-    if (data is! T) {
-      error = CustomError("Not the right type", null, false);
-    }
 
     if (error != null) {
+      print("Build with error");
       if (widget.onError != null) {
         return widget.onError!(context, error!, refresh);
       }
 
       return error!.build(context, refresh);
     }
-
+    if (data is! T) {
+      return Container();
+    }
     return getRefreshIndicator(child: widget.onData(context, data, refresh));
   }
 }

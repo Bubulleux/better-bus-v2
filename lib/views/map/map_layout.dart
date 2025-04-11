@@ -45,18 +45,25 @@ class _MapLayoutState extends State<MapLayout>
     assert(widget.topBar != null && widget.topBarHeight != null);
     widget.controller.setCamPadding(EdgeInsets.only(top: widget.topBarHeight!) +
         const EdgeInsets.symmetric(horizontal: 20, vertical: 10));
+
     drawerHeight.addListener(() {
       if (mounted) setState(() {});
     });
 
-
+    widget.controller.provider.connStatus.isConnected().then((connected) {
+      if (connected) return;
+      print("Not connecteccd");
+      drawerHeight.value = double.infinity;
+    });
   }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     drawerController = MapDrawerController();
     setState(() {});
   }
+
 
   static const btnChild = Wrap(
     alignment: WrapAlignment.center,
