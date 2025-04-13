@@ -43,8 +43,10 @@ class _LineStepDetailState extends State<LineStepDetail>
     final direction = stopTime?.destination ?? widget.routeStep.endPlace;
     final startTime = stopTime?.time ?? widget.routeStep.startTime;
     final delay = stopTime?.delay ?? Duration.zero;
+
+    // TODO: Use trip value instead.
     final endTime = widget.routeStep.endTime
-        .add(stopTime?.time.difference(startTime) ?? Duration.zero);
+        .add(stopTime?.time.difference(widget.routeStep.startTime) ?? Duration.zero);
     format(DateTime time) => Text(DateFormat("Hm").format(time.toLocal()));
     const arrow = Expanded(child: Icon(Icons.keyboard_arrow_right));
 
