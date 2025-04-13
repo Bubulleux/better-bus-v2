@@ -5,25 +5,47 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class FullProvider extends NetworkProvider {
-  final ConnectivityStatus connStatus;
+  final ConnectivityStatus connStatus = ConnectivityStatus();
   bool get online => connStatus.connected ?? false;
   bool get offline => !online;
 
   FullProvider({
     required super.api,
     required super.gtfs,
-    required this.connStatus,
   });
+
 
   factory FullProvider.of(BuildContext context) {
     return context.read<FullProvider>();
   }
 
   @override
+  Future<bool> init() async {
+    await connStatus.isConnected();
+    if (offline) {
+      print("No Internet connected only GTFS DATA");
+      connStatus.onConnected(() async {
+        print("Internet connection found Api'll get inited");
+        await api.init();
+        gtfs.init();
+        print("Api inited: ${api.isAvailable()}");
+
+      });
+
+      await gtfs.init(offline: true);
+      return gtfs.isAvailable();
+    }
+    return super.init();
+  }
+
+
+  @override
   bool isAvailable() {
     return api.isAvailable() || gtfs.isAvailable();
   }
-  
+
+
+
   @override
   Future<List<InfoTraffic>> getTrafficInfos() {
     print("Connec status ${connStatus.connected}, ${connStatus.disconnected}");

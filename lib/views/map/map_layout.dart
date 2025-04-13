@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:better_bus_v2/app_constant/app_string.dart';
+import 'package:better_bus_v2/data_provider/app_provider.dart';
 import 'package:better_bus_v2/views/drawer/drawer.dart';
 import 'package:better_bus_v2/views/drawer/drawer_controller.dart';
 import 'package:better_bus_v2/views/map/controller.dart';
@@ -39,6 +40,8 @@ class _MapLayoutState extends State<MapLayout>
   ValueNotifier<double> drawerHeight = ValueNotifier(0);
   late final MapDrawerController drawerController;
 
+  bool offline = false;
+
   @override
   void initState() {
     super.initState();
@@ -53,7 +56,14 @@ class _MapLayoutState extends State<MapLayout>
     widget.controller.provider.connStatus.isConnected().then((connected) {
       if (connected) return;
       print("Not connecteccd");
-      drawerHeight.value = double.infinity;
+      drawerController.lockOpen();
+      setState(() {
+        offline = true;
+      });
+      widget.controller.provider.connStatus.onConnected(() => setState(() {
+        drawerController.unLock();
+        offline = false;
+      }));
     });
   }
 
@@ -70,6 +80,7 @@ class _MapLayoutState extends State<MapLayout>
     crossAxisAlignment: WrapCrossAlignment.center,
     children: [
       Icon(Icons.map),
+      SizedBox(width: 10,),
       Text(
         AppString.seeOnMaps,
         style: TextStyle(fontWeight: FontWeight.bold),
@@ -77,12 +88,28 @@ class _MapLayoutState extends State<MapLayout>
     ],
   );
 
+  static const noInternetInfo = Wrap(
+    alignment: WrapAlignment.center,
+    crossAxisAlignment: WrapCrossAlignment.center,
+    children: [
+      Icon(Icons.signal_wifi_connected_no_internet_4),
+      SizedBox(width: 10,),
+      Text(
+        AppString.offline,
+        style: TextStyle(fontWeight: FontWeight.bold),
+      )
+    ],
+  );
+
 
   Widget layoutBuilder(BuildContext ctx, BoxConstraints constraint) {
-    final map = NetworkMap(
+    Widget map = NetworkMap(
       controller: widget.controller,
       layers: widget.mapLayers ?? [],
     );
+    if (FullProvider.of(context).offline) {
+      map = Container();
+    }
 
     final drawerFullyOpened = drawerHeight.value.isInfinite;
     final botPadding = drawerHeight.value.isFinite ? drawerHeight.value : 0.0;
@@ -99,7 +126,7 @@ class _MapLayoutState extends State<MapLayout>
               ],
             )
           : null,
-      btnChild: btnChild,
+      btnChild: offline ?  noInternetInfo : btnChild,
     );
 
 
@@ -139,45 +166,6 @@ class _MapLayoutState extends State<MapLayout>
     );
   }
 
-  static const _buttonHeight = 40.0;
-
-  Widget buildOpenMapBtn() {
-    final color = Theme.of(context).primaryColor;
-    return GestureDetector(
-      onTap: openMap,
-      child: Container(
-        height: _buttonHeight,
-        width: double.infinity,
-        decoration: BoxDecoration(color: color.withAlpha(170), boxShadow: [
-          const BoxShadow(
-            color: Colors.black,
-          ),
-          BoxShadow(
-              color: color, spreadRadius: -3, blurRadius: _buttonHeight / 4),
-        ]),
-        alignment: Alignment.center,
-        child: const Opacity(
-          opacity: 0.8,
-          child: Wrap(
-            alignment: WrapAlignment.center,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              Icon(Icons.map),
-              Text(
-                AppString.seeOnMaps,
-                style: TextStyle(fontWeight: FontWeight.bold),
-              )
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  void openMap() {
-    print("Map open");
-    drawerController.lowerDrawer();
-  }
 
   @override
   Widget build(BuildContext context) {

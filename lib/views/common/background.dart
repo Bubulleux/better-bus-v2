@@ -8,27 +8,30 @@ class Background extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Container(
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage("assets/images/bg_map.png"),
-              repeat: ImageRepeat.repeat,
-              fit: BoxFit.fitHeight,
-              colorFilter:
-                  ColorFilter.mode(Color(0xffbbbbbb), BlendMode.multiply),
+    return Material(
+      child: Stack(
+        clipBehavior: Clip.hardEdge,
+        children: [
+          Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage("assets/images/bg_map.png"),
+                repeat: ImageRepeat.repeat,
+                fit: BoxFit.fitHeight,
+                colorFilter:
+                    ColorFilter.mode(Color(0xffbbbbbb), BlendMode.multiply),
+              ),
             ),
           ),
-        ),
-        BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-          child: Material(
-            type: MaterialType.transparency,
-              child: child,
+          BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+            child: Material(
+              type: MaterialType.transparency,
+                child: child,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

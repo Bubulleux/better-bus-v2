@@ -2,8 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:better_bus_core/core.dart';
-import 'package:better_bus_v2/data_provider/app_api_provider.dart';
-import 'package:better_bus_v2/data_provider/connectivity_checker.dart';
 import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
 import 'package:better_bus_v2/info_traffic_notification.dart';
 import 'package:better_bus_v2/model/app_paths.dart';
@@ -51,12 +49,9 @@ final StreamController<String?> selectNotificationStream =
     StreamController<String?>.broadcast();
 
 FullProvider createProviders(_) {
-  final conn = ConnectivityStatus();
-  print("Connection Status: ${conn.connected}");
   return FullProvider(
-    api: AppApiProvider(conn),
+    api: ApiProvider.vitalis(),
     gtfs: GTFSProvider.vitalis(AppPaths()),
-    connStatus: conn,
   );
 }
 

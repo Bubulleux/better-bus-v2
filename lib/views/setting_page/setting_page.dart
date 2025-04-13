@@ -2,6 +2,7 @@ import 'package:better_bus_v2/app_constant/app_string.dart';
 import 'package:better_bus_core/core.dart';
 import 'package:better_bus_v2/custom_home_widget.dart';
 import 'package:better_bus_v2/data_provider/local_data_handler.dart';
+import 'package:better_bus_v2/error_handler/custom_error.dart';
 import 'package:better_bus_v2/info_traffic_notification.dart';
 import 'package:better_bus_v2/views/common/back_arrow.dart';
 import 'package:better_bus_v2/views/common/gtfs_download_indicator.dart';
@@ -18,9 +19,12 @@ import '../../data_provider/app_provider.dart';
 
 class SettingPage extends StatefulWidget {
   const SettingPage({super.key});
+
   static const String routeName = "/setting";
 
-  static MaterialPageRoute get pageRoute => MaterialPageRoute(builder: (_) => const SettingPage());
+  static MaterialPageRoute get pageRoute =>
+      MaterialPageRoute(builder: (_) => const SettingPage());
+
   static void push(BuildContext context) {
     Navigator.of(context).push(pageRoute);
   }
@@ -32,18 +36,15 @@ class SettingPage extends StatefulWidget {
 class _SettingPageState extends State<SettingPage> {
   bool gtfsDownloadWIFI = false;
 
-
   @override
   void initState() {
     super.initState();
     LocalDataHandler.getDownloadWhenWifi().then(setgtfsWifiDownload);
   }
 
-
   void gotToNotificationSetting() {
     Navigator.of(context).pushNamed(InterestLinePage.routeName);
   }
-
 
   void emptyCache() {
     // TODO: Remove this function
@@ -71,14 +72,25 @@ class _SettingPageState extends State<SettingPage> {
   }
 
   void reDownloadGTFSData() async {
-    final downloader = FullProvider.of(context).gtfs.provider;
+    final provider = FullProvider.of(context);
+    if (provider.offline) {
+      showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            actionsAlignment: MainAxisAlignment.center,
+                content: CustomErrors.noInternet.build(context, null),
+            actions: [ElevatedButton(onPressed: Navigator.of(context).pop, child:
+            const Text("Ok"))],
+              ), );
+    }
+    final downloader = provider.gtfs.downloader;
     AlertDialog alert = AlertDialog(
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           GtfsDownloadIndicator(
             width: 150,
-              downloader: downloader,
+            downloader: downloader,
             onDone: () => Navigator.of(context).pop(),
           )
         ],
@@ -88,7 +100,14 @@ class _SettingPageState extends State<SettingPage> {
         context: context,
         builder: (context) => alert,
         barrierDismissible: false);
+  }
 
+  void deleteGtfs() async {
+    final result = await FullProvider.of(context).gtfs.downloader.removeFiles();
+    AlertDialog alert = AlertDialog(
+      content: Text("Removing GTFS files: $result"),
+    );
+    showDialog(context: context, builder: (context) => alert);
   }
 
   List<SettingEntry> getOptions() {
@@ -119,13 +138,17 @@ class _SettingPageState extends State<SettingPage> {
         onClick: gotoPrefs,
       ),
       SettingEntry(
-          "Test Notifiaction",
-          onClick: testNotificationActivation,
+        "Test Notifiaction",
+        onClick: testNotificationActivation,
       ),
       SettingEntry(
         "Test Widget Launch",
         onClick: () => CustomHomeWidgetRequest.checkWidgetLaunch(context),
-      )
+      ),
+      SettingEntry(
+        "Remove all GTFS data",
+        onClick: deleteGtfs,
+      ),
     ];
     return options;
   }
@@ -161,6 +184,7 @@ class SettingEntry extends StatelessWidget {
 
   final void Function()? onClick;
   final Widget? child;
+
   @override
   Widget build(BuildContext context) {
     return InkWell(

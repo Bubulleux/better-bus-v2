@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:better_bus_v2/app_constant/app_string.dart';
 import 'package:better_bus_core/core.dart';
+import 'package:better_bus_v2/data_provider/app_provider.dart';
 import 'package:better_bus_v2/loader.dart';
 import 'package:better_bus_v2/model/view_shortcut.dart';
 import 'package:better_bus_v2/views/common/fake_text_field.dart';
@@ -45,7 +46,7 @@ class _MapPageState extends State<MapPage> {
   void initState() {
     super.initState();
     controller = NetworkMapController(context);
-    controller.loadStation().then((_) =>     print("Map load finish"),
+    controller.loadStation().then((_) => print("Map load finish"),
         onError: (Object e, s) {
       throw e;
     });
@@ -53,7 +54,6 @@ class _MapPageState extends State<MapPage> {
       if (mounted) setState(() {});
     });
   }
-
 
   @override
   void didChangeDependencies() {
@@ -66,9 +66,7 @@ class _MapPageState extends State<MapPage> {
     super.dispose();
   }
 
-  Future updateReports() async {
-
-  }
+  Future updateReports() async {}
 
   void handlePop(bool didPop, Object? result) async {
     if (didPop) return;

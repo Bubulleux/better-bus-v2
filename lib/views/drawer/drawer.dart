@@ -4,7 +4,8 @@ import 'package:better_bus_v2/views/drawer/drawer_controller.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-typedef CloseButtonBuilder = Widget Function(BuildContext context, VoidCallback onClick);
+typedef CloseButtonBuilder = Widget Function(
+    BuildContext context, VoidCallback onClick);
 
 class MapDrawer extends StatefulWidget {
   const MapDrawer({
@@ -35,6 +36,7 @@ class MapDrawerState extends State<MapDrawer> {
   late final AnimationController animationController;
   Animation<double>? animation;
   double _widgetHeight = 500;
+  bool locked = false;
 
   // Tween<double> _overlayHeightTween = Tween(begin: 0, end: 0);
 
@@ -46,6 +48,7 @@ class MapDrawerState extends State<MapDrawer> {
     animationController = AnimationController(vsync: widget.vsync);
     widget.controller.setState(this);
   }
+
   @override
   void dispose() {
     super.dispose();
@@ -63,8 +66,9 @@ class MapDrawerState extends State<MapDrawer> {
   }
 
   void setDrawerHeight(double? h, {bool animate = true}) {
-    animation = Tween(begin: animate ? _overlayHeight : h, end: h ?? _widgetHeight)
-        .animate(animationController);
+    animation =
+        Tween(begin: animate ? _overlayHeight : h, end: h ?? _widgetHeight)
+            .animate(animationController);
 
     animation!.addListener(() {
       widget.heightChange.value = animation!.value;
@@ -74,17 +78,19 @@ class MapDrawerState extends State<MapDrawer> {
     _overlayHeight = min(_widgetHeight, max(0, _overlayHeight));
     animationController.duration =
         animate ? Duration(milliseconds: 200) : Duration.zero;
-    animationController.forward(from: 0).then((_) =>
-      widget.heightChange.value = h ?? double.infinity);
-
+    animationController
+        .forward(from: 0)
+        .then((_) => widget.heightChange.value = h ?? double.infinity);
   }
 
   void handleVerticalDrag(DragUpdateDetails detail) {
     assert(!_overlayHeight.isNaN);
+    if (locked) return;
     setDrawerHeight(_overlayHeight - detail.delta.dy, animate: false);
   }
 
   void handleEndVerticalDrag(DragEndDetails detail) {
+    if (locked) return;
     final vel = detail.velocity.pixelsPerSecond.dy;
     if (_overlayHeight / _widgetHeight > 0.8 || vel < -3000) {
       setDrawerHeight(null);
@@ -111,8 +117,8 @@ class MapDrawerState extends State<MapDrawer> {
       padding: EdgeInsets.only(top: 8),
       decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.vertical(
-              top:  overlayFullScreen ? Radius.zero : r),
+          borderRadius:
+              BorderRadius.vertical(top: overlayFullScreen ? Radius.zero : r),
           boxShadow: const [
             BoxShadow(
                 color: Colors.black12,
@@ -140,20 +146,22 @@ class MapDrawerState extends State<MapDrawer> {
   }
 
   static const _buttonHeight = 40.0;
+
   Widget buildBtn() {
-    final color = Theme.of(context).primaryColor;
+    final color = Color.lerp(
+        Theme.of(context).primaryColor, Colors.grey, locked ? 0.4 : 0)!;
 
     return GestureDetector(
-      onTap: () => setDrawerHeight(200),
+      onTap: locked ? null : () => setDrawerHeight(200),
       child: AnimatedCrossFade(
         duration: const Duration(milliseconds: 100),
-        crossFadeState: overlayFullScreen ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+        crossFadeState: overlayFullScreen
+            ? CrossFadeState.showFirst
+            : CrossFadeState.showSecond,
         firstChild: Container(
           height: _buttonHeight,
           width: double.infinity,
-          decoration: BoxDecoration(
-              color: color.withAlpha(170),
-              boxShadow: [
+          decoration: BoxDecoration(color: color.withAlpha(170), boxShadow: [
             const BoxShadow(
               color: Colors.black,
             ),
@@ -196,7 +204,6 @@ class MapDrawerState extends State<MapDrawer> {
               ),
             );
           },
-
         ))
       ],
     );

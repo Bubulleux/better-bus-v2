@@ -11,6 +11,7 @@ class CustomError extends Error {
   Widget build(BuildContext context, VoidCallback? retry) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
       children: [
         Icon(
           icon ?? Icons.error,

@@ -1,10 +1,11 @@
 import 'package:better_bus_v2/app_constant/app_string.dart';
 import 'package:better_bus_core/core.dart';
-import 'package:better_bus_v2/data_provider/app_api_provider.dart';
 import 'package:better_bus_v2/data_provider/connectivity_checker.dart';
 import 'package:better_bus_v2/data_provider/local_data_handler.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/intl.dart';
+
+import 'data_provider/app_provider.dart';
 
 final DateFormat dateFormat = DateFormat("EEEE d MMMM", "fr");
 
@@ -44,7 +45,7 @@ Future<bool> checkInfoTraffic() async {
     return true;
   }
   // await LocalDataHandler.addLog("Sep 6");
-  final provider = AppApiProvider(conn);
+  final provider = ApiProvider.vitalis();
   await provider.init();
   List<InfoTraffic> infoTraffics = await provider.getTrafficInfos();
   Set<String> interestedBusLines = await LocalDataHandler.loadInterestedLine();

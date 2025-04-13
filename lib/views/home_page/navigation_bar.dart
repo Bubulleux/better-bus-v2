@@ -35,15 +35,6 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
     ClosestStopDialog.show(context);
   }
 
-  void searchBusStop() {
-    Navigator.of(context).pushNamed(SearchPage.routeName).then((value) {
-      if (value == null) {
-        return;
-      }
-      Navigator.of(context).pushNamed(StopInfoPage.routeName,
-          arguments: StopInfoPageArgument(value as Station, null));
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,13 +42,9 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
       CustomNavigationItem(
         label: AppString.searchLabel,
         icon: Icons.search,
-        onPress: searchBusStop,
+        // TODO: Make it do something
+        onPress: () {},
       ),
-      // CustomNavigationItem(
-      //   label: AppString.closestStopLabel,
-      //   icon: Icons.location_searching,
-      //   onPress: findClosestStop,
-      // ),
       CustomNavigationItem(
         label: AppString.routeLabel,
         icon: Icons.route,

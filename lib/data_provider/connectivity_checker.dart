@@ -8,10 +8,16 @@ class ConnectivityStatus {
   bool? get connected => disconnected == false;
   bool? get disconnected => _connection?.contains(ConnectivityResult.none);
 
+  Set<VoidCallback> _onConnect = {};
+
   ConnectivityStatus({bool autoUpdate = true}) {
     if (autoUpdate) {
       connectivity.onConnectivityChanged.listen((data) {
         _connection = data;
+        if (connected ?? false) {
+          _onConnect.forEach((e) => e());
+          _onConnect = {};
+        }
       });
     }
   }
@@ -27,5 +33,9 @@ class ConnectivityStatus {
     _connection = await connectivity.checkConnectivity();
 
     return _connection?.contains(ConnectivityResult.wifi) ?? false;
+  }
+
+  void onConnected(VoidCallback onConnect) {
+    _onConnect.add(onConnect);
   }
 }

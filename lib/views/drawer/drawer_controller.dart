@@ -10,8 +10,29 @@ class MapDrawerController {
   void lowerDrawer() {
     assert(state != null);
     if (state!.mounted) {
-      print("Height set");
       state!.setDrawerHeight(200);
+    }
+  }
+
+  void fullyOppen() {
+    assert(state != null);
+    if (state!.mounted) {
+      state!.setDrawerHeight(double.infinity);
+    }
+  }
+
+  void lockOpen() {
+    assert(state != null);
+    if (state!.mounted) {
+      state!.locked = true;
+      state!.setDrawerHeight(double.infinity, animate: false);
+    }
+  }
+
+  void unLock() {
+    assert(state != null);
+    if (state!.mounted) {
+      state!.locked = false;
     }
   }
 }

@@ -137,4 +137,6 @@ class AppString {
   static const mapLabel = "Carte";
 
   static const stopYouTo = "Arrêtez vous à ";
+
+  static const offline = "Hors-Ligne";
 }
