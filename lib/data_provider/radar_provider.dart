@@ -6,28 +6,35 @@ import 'package:flutter/foundation.dart';
 const sendThreshold = Duration(minutes: 2);
 
 class AppRadarProvider extends RadarClient {
-  @override
-  FullProvider provider;
-  static DateTime? lastSent;
+  late final FullProvider _provider;
 
-  AppRadarProvider({required this.provider})
+  @override
+  FullProvider get provider => _provider;
+
+  DateTime? lastSent;
+
+  AppRadarProvider({required FullProvider provider})
       : super(
           provider: provider,
           apiUrl: kDebugMode && false
               ? RadarClient.localhostEndPoint
               : RadarClient.productionEndpoint,
-        );
+        ){
+    _provider = provider;
+  }
+
 
   // TODO: Make it not static
 
   // TODO: Watch out
-  bool get sentAvailable =>
+  bool get sentAvailable => provider.online && (
       lastSent == null ||
-      DateTime.now().difference(lastSent!) >= sendThreshold ||
-      kDebugMode; // Retrun alayse true if debug
+      DateTime.now().difference(lastSent!) >= sendThreshold
+          //|| kDebugMode // Retrun alayse true if debug
+  );
 
   factory AppRadarProvider.of(BuildContext context) {
-    return AppRadarProvider(provider: FullProvider.of(context));
+    return FullProvider.of(context).radar;
   }
 
   void preventSpam() {
@@ -49,11 +56,11 @@ class AppRadarProvider extends RadarClient {
 
   @override
   Future<List<Report>> getReports() async {
-    // TODO: Do this calculation in server too
     if (provider.offline) {
       return [];
     }
 
+    // TODO: Do this calculation in server too
     const timeLimit = Duration(hours: 1);
     final reports = await super.getReports();
     return reports.where((e) => e.lastSee < timeLimit).toList();

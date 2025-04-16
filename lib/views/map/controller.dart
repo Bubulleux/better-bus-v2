@@ -105,6 +105,7 @@ class NetworkMapController {
   }
 
   Future fetchLoop() async {
+    if (!provider.isAvailable()) return;
     await fetchReports();
     _nextFetch?.ignore();
     if (!(widgetState?.mounted ?? false)) return;
@@ -113,8 +114,7 @@ class NetworkMapController {
   }
 
   Future fetchReports() async {
-    List<Report> rawReports =
-        await AppRadarProvider(provider: provider).getReports();
+    List<Report> rawReports = await provider.radar.getReports();
     reports = Map.fromEntries(rawReports.map((e) => MapEntry(e.station, e)));
     widgetState?.update();
   }
@@ -147,17 +147,16 @@ class NetworkMapController {
 
   void updateReport(Report report) {
     assert(reports != null);
-    final radar = AppRadarProvider(provider: provider);
+    final radar = provider.radar;
     radar.updateReport(report, report.updates.values.last);
     reports![report.station] = report;
     notifyChange();
   }
 
   bool canSentReport(Station station) {
-    if (kDebugMode) return true; // TODO: Remove
     if (!sendAvailable || posCoord == null) return false;
 
-    return station.position.distance(posCoord!) < 0.3;
+    return station.position.distance(posCoord!) < 0.3 || kDebugMode;
   }
 
   TickerFuture animateCamTo(LatLng dst, {double zoom = 17}) {

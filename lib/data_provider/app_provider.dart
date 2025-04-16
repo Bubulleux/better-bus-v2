@@ -4,15 +4,20 @@ import 'package:better_bus_v2/error_handler/custom_error.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'radar_provider.dart';
+
 class FullProvider extends NetworkProvider {
   final ConnectivityStatus connStatus = ConnectivityStatus();
+  late final AppRadarProvider radar;
   bool get online => connStatus.connected ?? false;
   bool get offline => !online;
 
   FullProvider({
     required super.api,
     required super.gtfs,
-  });
+  }) {
+    radar = AppRadarProvider(provider: this);
+  }
 
 
   factory FullProvider.of(BuildContext context) {
@@ -35,7 +40,10 @@ class FullProvider extends NetworkProvider {
       await gtfs.init(offline: true);
       return gtfs.isAvailable();
     }
-    return super.init();
+    bool success = await super.init();
+    success &= await radar.init();
+
+    return success;
   }
 
 

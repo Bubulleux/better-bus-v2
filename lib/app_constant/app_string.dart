@@ -139,4 +139,6 @@ class AppString {
   static const stopYouTo = "Arrêtez vous à ";
 
   static const offline = "Hors-Ligne";
+
+  static const seelAll = "Tout Voir";
 }

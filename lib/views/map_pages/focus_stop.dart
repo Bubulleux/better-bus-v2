@@ -108,19 +108,19 @@ class _StopFocusWidgetState extends State<StopFocusWidget> {
         ElevatedButton.icon(
           onPressed: removeFilter,
           icon: Icon(Icons.filter_alt_off),
-          label: Text(AppString.seeAllLabel),
+          label: Text(AppString.seelAll),
         ) : Container();
 
     final buttons = [
       seeAll,
-      menuBtn,
+      report == null ? buildReport() : Container(),
       // btn(AppString.allSchedule, showTimetable),
       ElevatedButton.icon(
         onPressed: position != null ? goToRoute : null,
         icon: Icon(Icons.route),
         label: const Text(AppString.routeLabel),
       ),
-      report == null ? buildReport() : Container(),
+      menuBtn,
     ];
 
     return Container(
@@ -139,10 +139,13 @@ class _StopFocusWidgetState extends State<StopFocusWidget> {
         ]
       ),
       child: DefaultTextStyle.merge(
-        child: Wrap(
-          spacing: 5,
-          verticalDirection: VerticalDirection.up,
-          children: buttons,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            spacing: 5,
+            verticalDirection: VerticalDirection.up,
+            children: buttons,
+          ),
         ),
       ),
     );
