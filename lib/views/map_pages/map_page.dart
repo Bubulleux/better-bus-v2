@@ -50,6 +50,7 @@ class _MapPageState extends State<MapPage> {
         onError: (Object e, s) {
       throw e;
     });
+
     controller.stateChange.addListener(() {
       if (mounted) setState(() {});
     });

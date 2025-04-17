@@ -43,7 +43,15 @@ class FullProvider extends NetworkProvider {
     bool success = await super.init();
     success &= await radar.init();
 
+    print("App Provider full init sucess $success");
+
     return success;
+  }
+
+  Future awaitInit() async {
+    while(!isAvailable()) {
+      await Future.delayed(const Duration(milliseconds: 50));
+    }
   }
 
 

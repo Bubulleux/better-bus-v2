@@ -113,11 +113,6 @@ class ShortcutWidgetRootState extends State<ShortcutWidgetRoot> {
   }
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<ViewShortcut>>(
       future: LocalDataHandler.loadShortcut(context),

@@ -94,7 +94,7 @@ class NetworkMapController {
       Object.hashAll(reports?.values ?? []);
 
   Future loadStation() async {
-    await provider.init();
+    await provider.awaitInit();
     assert(provider.isAvailable());
     if (_nextFetch == null) fetchLoop();
     final stations = await provider.getStations();
