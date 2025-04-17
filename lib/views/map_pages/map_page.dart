@@ -2,13 +2,10 @@ import 'dart:async';
 
 import 'package:better_bus_v2/app_constant/app_string.dart';
 import 'package:better_bus_core/core.dart';
-import 'package:better_bus_v2/data_provider/app_provider.dart';
+import 'package:better_bus_v2/custom_home_widget.dart';
 import 'package:better_bus_v2/loader.dart';
 import 'package:better_bus_v2/model/view_shortcut.dart';
 import 'package:better_bus_v2/views/common/fake_text_field.dart';
-import 'package:better_bus_v2/views/home_page/home_page.dart';
-import 'package:better_bus_v2/views/home_page/navigation_bar.dart';
-import 'package:better_bus_v2/views/home_page/shortcut_section.dart';
 import 'package:better_bus_v2/views/map/controller.dart';
 import 'package:better_bus_v2/views/map/map_layout.dart';
 import 'package:better_bus_v2/views/map_pages/focus_place.dart';
@@ -20,6 +17,7 @@ import 'package:better_bus_v2/views/stop_info/stop_info_page.dart';
 import 'package:better_bus_v2/views/stops_search_page/place_searcher_page.dart';
 import 'package:flutter/material.dart';
 
+import '../../data_provider/local_data_handler.dart';
 import '../stops_search_page/stops_search_page.dart';
 
 class MapPageArg {
@@ -54,6 +52,7 @@ class _MapPageState extends State<MapPage> {
     controller.stateChange.addListener(() {
       if (mounted) setState(() {});
     });
+    CustomHomeWidgetRequest.init(context, uriReceive);
   }
 
   @override
@@ -65,6 +64,24 @@ class _MapPageState extends State<MapPage> {
   void dispose() {
     controller.dispose();
     super.dispose();
+  }
+
+  Future uriReceive(Uri uri) async {
+    // TODO: Create a loader
+    print("Uri recie $uri");
+    if (uri.scheme != "app") {
+      return;
+    }
+    if (uri.host == "openshortcut") {
+      List<ViewShortcut> shortcuts = await LocalDataHandler.loadShortcut(context);
+      int shortcutIndex = int.parse(uri.pathSegments[0]);
+      if (shortcutIndex == -1 || !context.mounted) {
+        return;
+      }
+      ViewShortcut shortcut = shortcuts.where((e) => e.isFavorite)
+          .toList()[shortcutIndex];
+      openShortcut(shortcut);
+    }
   }
 
   Future updateReports() async {}

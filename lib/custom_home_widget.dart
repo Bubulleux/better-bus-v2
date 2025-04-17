@@ -14,13 +14,13 @@ class CustomHomeWidgetRequest {
   static const eventChannel = EventChannel("widgetLaunch");
   static bool available = false;
 
-  static void init(BuildContext context) {
+  static void init(BuildContext context, ValueChanged<Uri> onLaunch) {
     if (!Platform.isAndroid) {
       return;
     }
-    CustomHomeWidgetRequest.listenWidgetLaunch(context);
-    CustomHomeWidgetRequest.checkWidgetLaunch(context);
     available = true;
+    CustomHomeWidgetRequest.listenWidgetLaunch(context, onLaunch);
+    CustomHomeWidgetRequest.checkWidgetLaunch(context);
   }
 
 
@@ -47,7 +47,7 @@ class CustomHomeWidgetRequest {
 
   }
 
-  static void listenWidgetLaunch(BuildContext context) {
+  static void listenWidgetLaunch(BuildContext context, ValueChanged<Uri> onLaunch) {
     if (!available) return;
     eventChannel.receiveBroadcastStream().listen(((dynamic value) {
       if (value == null) {
@@ -62,15 +62,12 @@ class CustomHomeWidgetRequest {
         return;
       }
 
-      launchUri(context, uri);
+      onLaunch(uri);
     }));
   }
 
   static void launchUri(BuildContext context, Uri uri) {
     if (!available) return;
-    if (uri.scheme != "app") {
-      return;
-    }
 
     if (uri.host == "openshortcut") {
       launchShortcutByWidget(uri.pathSegments[0], context);

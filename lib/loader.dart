@@ -32,7 +32,7 @@ class _LoaderState extends State<Loader> {
     initFlutterNotificationPlugin();
     checkIfAppIsNotificationLaunched();
     checkIfFisrtTimeOpenningApp();
-    CustomHomeWidgetRequest.init(context);
+    // CustomHomeWidgetRequest.init(context);
   }
 
   Future checkIfAppIsNotificationLaunched() async {
