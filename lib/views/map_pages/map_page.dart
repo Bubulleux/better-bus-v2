@@ -75,7 +75,7 @@ class _MapPageState extends State<MapPage> {
       controller.focused = null;
       return;
     }
-    Navigator.of(context).pop();
+    // Navigator.of(context).pop();
   }
 
   void openShortcut(ViewShortcut newShortcut) {
@@ -147,6 +147,7 @@ class _MapPageState extends State<MapPage> {
     Widget? overlayTitle;
     Widget? overlay = MapHome(
       onClicked: openShortcut,
+      controller: controller,
     );
 
     if (controller.focusedStation != null) {

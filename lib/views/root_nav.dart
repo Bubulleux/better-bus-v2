@@ -30,12 +30,25 @@ class _RootNavState extends State<RootNav> {
    );
   }
 
+  void handlePop(bool didPop, _) {
+    if (didPop) return;
+    if (_curIndex != 0) {
+      setState(() {
+        _curIndex = 0;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: IndexedStack(
-          children: pages,
-          index: _curIndex,
+        body: PopScope(
+          canPop: false,
+          onPopInvokedWithResult: handlePop,
+          child: IndexedStack(
+            children: pages,
+            index: _curIndex,
+          ),
         ),
         bottomNavigationBar: buildNavBar());
   }

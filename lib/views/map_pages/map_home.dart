@@ -1,15 +1,18 @@
 import 'package:better_bus_v2/views/common/background.dart';
+import 'package:better_bus_v2/views/map_pages/near_stations.dart';
 import 'package:flutter/material.dart';
 
 import '../../app_constant/app_string.dart';
 import '../../model/view_shortcut.dart';
 import '../common/content_container.dart';
 import '../home_page/shortcut_section.dart';
+import '../map/controller.dart';
 
 class MapHome extends StatefulWidget {
-  const MapHome({required this.onClicked, super.key});
+  const MapHome({required this.onClicked, required this.controller, super.key});
 
   final ValueSetter<ViewShortcut> onClicked;
+  final NetworkMapController controller;
 
   @override
   State<MapHome> createState() => _MapHomeState();
@@ -26,6 +29,7 @@ class _MapHomeState extends State<MapHome> {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        NearStations(controller: widget.controller),
         Material(
           // elevation: 2,
           child: Container(

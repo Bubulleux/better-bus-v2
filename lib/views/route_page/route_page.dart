@@ -114,6 +114,7 @@ class _RoutePageState extends State<RoutePage> {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
     if (controller.provider.offline) {
@@ -125,15 +126,15 @@ class _RoutePageState extends State<RoutePage> {
     return Scaffold(
       body: SafeArea(
           child: MapLayout(
-        controller: controller,
-        topBar: RouteSearch(onSearch: setSearch, parameter: parameter),
-        topBarHeight: 160,
-        mapLayers: [
+                  controller: controller,
+                  topBar: RouteSearch(onSearch: setSearch, parameter: parameter),
+                  topBarHeight: 160,
+                  mapLayers: [
           route != null ? RouteLayer(route: route!) : Container(),
           parameter != null ? RouteParameterLayer(parameter: parameter!)
               : Container(),
-        ],
-        body: parameter?.valid ?? false || route != null
+                  ],
+                  body: parameter?.valid ?? false || route != null
             ? SizedBox(
                 child: PageView(
                   controller: _pageController,
@@ -154,7 +155,7 @@ class _RoutePageState extends State<RoutePage> {
                   ],
                 ))
             : null,
-      )),
+                )),
     );
   }
 }
