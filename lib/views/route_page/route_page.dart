@@ -1,6 +1,7 @@
 import 'package:better_bus_core/core.dart';
 import 'package:better_bus_v2/app_constant/app_string.dart';
 import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
+import 'package:better_bus_v2/views/connection_needed/connection_needed.dart';
 import 'package:better_bus_v2/views/map/controller.dart';
 import 'package:better_bus_v2/views/map/map_layout.dart';
 import 'package:better_bus_v2/views/map/map_view.dart';
@@ -115,6 +116,12 @@ class _RoutePageState extends State<RoutePage> {
 
   @override
   Widget build(BuildContext context) {
+    if (controller.provider.offline) {
+      return ConnectionNeeded(
+        onRefresh: () => setState(() {}),
+      );
+    }
+
     return Scaffold(
       body: SafeArea(
           child: MapLayout(

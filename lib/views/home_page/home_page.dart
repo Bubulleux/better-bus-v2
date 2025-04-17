@@ -152,7 +152,6 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
-              const CustomNavigationBar(map: true,),
             ],
           ),
         ),

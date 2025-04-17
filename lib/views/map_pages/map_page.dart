@@ -197,7 +197,6 @@ class _MapPageState extends State<MapPage> {
                     overlaySizable: controller.focusedPlace == null,
                   ),
                 ),
-                CustomNavigationBar()
               ],
             ),
           ),

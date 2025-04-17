@@ -11,6 +11,7 @@ import 'package:better_bus_v2/views/interest_line_page/interest_lines_page.dart'
 import 'package:better_bus_v2/views/log_view.dart';
 import 'package:better_bus_v2/views/map_pages/map_page.dart';
 import 'package:better_bus_v2/views/preferences_view.dart';
+import 'package:better_bus_v2/views/root_nav.dart';
 import 'package:better_bus_v2/views/route_detail_page/route_detail_page.dart';
 import 'package:better_bus_v2/views/route_page/route_page.dart';
 import 'package:better_bus_v2/views/setting_page/setting_page.dart';
@@ -151,7 +152,7 @@ class _BetterBusAppState extends State<BetterBusApp>
       routes: {
         // TODO: Eurk...
         // HomePage.routeName: (context) => const HomePage(),
-        MapPage.routeName: (context) => const MapPage(),
+        MapPage.routeName: (context) => const RootNav(),
         SettingPage.routeName: (context) => const SettingPage(),
         MessageView.routeName: (context) => const MessageView(),
         SearchPage.routeName: (context) => const SearchPage(),

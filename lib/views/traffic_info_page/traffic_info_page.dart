@@ -32,6 +32,7 @@ class TrafficInfoPageState extends State<TrafficInfoPage> {
 
   Future<InfoTrafficObject> getAllInformation() async {
     final provider = FullProvider.of(context);
+    await provider.awaitInit();
     if (provider.offline) {
       throw CustomErrors.noInternet;
     }
