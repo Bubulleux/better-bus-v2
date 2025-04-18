@@ -1,7 +1,34 @@
 import 'package:flutter/material.dart';
 
-class LoadingPage extends StatelessWidget {
-  const LoadingPage({super.key});
+import '../../model/loading_step.dart';
+
+class LoadingPage extends StatefulWidget {
+  const LoadingPage(this.steps, {super.key});
+
+  final List<LoadingStep> steps;
+
+  @override
+  State<LoadingPage> createState() => LoadingPageState();
+}
+
+class LoadingPageState extends State<LoadingPage> {
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    widget.steps.forEach((e) => e.then = update);
+  }
+
+  void update() {
+    if (!mounted) return;
+    setState(() {
+
+    });
+  }
+
+  List<Widget> buildSteps() {
+    return widget.steps.map((e) => e.build(context)).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +56,11 @@ class LoadingPage extends StatelessWidget {
                 child: const Image(
                   width: 200, image: AssetImage("assets/images/icon.jpg")),
               ),
-              const CircularProgressIndicator(color: Colors.white24)
+              const CircularProgressIndicator(color: Colors.white24),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: buildSteps(),
+              )
             ],
           ),
         ),

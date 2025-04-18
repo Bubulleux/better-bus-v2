@@ -1,8 +1,10 @@
 import 'dart:io';
 
 import 'package:better_bus_v2/custom_home_widget.dart';
+import 'package:better_bus_v2/model/loading_step.dart';
 import 'package:better_bus_v2/views/root/loading_page.dart';
 import 'package:better_bus_v2/views/root/root_nav.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
@@ -19,8 +21,9 @@ class AppRoot extends StatefulWidget {
 }
 
 class _AppRootState extends State<AppRoot> {
-  bool loading = false;
+  bool loading = true;
   Uri? launchUri;
+  List<LoadingStep> get steps => provider.loader.steps;
 
   FullProvider get provider => FullProvider.of(context);
 
@@ -37,6 +40,16 @@ class _AppRootState extends State<AppRoot> {
     checkIfFisrtTimeOpenningApp();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (provider.isAvailable()) {
+      setState(() {
+        loading = false;
+      });
+    }
+  }
+
   initProvider() async {
     if (provider.isAvailable()) {
       setState(() {
@@ -45,13 +58,13 @@ class _AppRootState extends State<AppRoot> {
       return;
     }
 
-    setState(() {
-      loading = true;
-    });
-
+    final rootStep = LoadingStep(label: "Root Step");
     print("Provider not init");
-    final success = await provider.init();
+    final success = await rootStep.complete(provider.init());
     print("Sucess : $success");
+    if (kDebugMode) {
+      await Future.delayed(Duration(seconds: 1));
+    }
     if (mounted && provider.isAvailable()) {
       setState(() {
         loading = false;
@@ -118,7 +131,7 @@ class _AppRootState extends State<AppRoot> {
   @override
   Widget build(BuildContext context) {
     if (loading) {
-      return LoadingPage();
+      return LoadingPage(steps);
     }
 
     return RootNav(

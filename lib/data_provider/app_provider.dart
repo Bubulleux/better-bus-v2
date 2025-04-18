@@ -5,10 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 
+import '../app_constant/root_load.dart';
 import '../views/stops_search_page/stops_search_page.dart';
 import 'radar_provider.dart';
 
 class FullProvider extends NetworkProvider {
+  final RootLoad loader = RootLoad();
   final ConnectivityStatus connStatus = ConnectivityStatus();
   late final AppRadarProvider radar;
   bool get online => connStatus.connected ?? false;
@@ -29,7 +31,7 @@ class FullProvider extends NetworkProvider {
   @override
   Future<bool> init() async {
     print("Starting full init");
-    await connStatus.isConnected();
+    await loader.internet.complete(connStatus.isConnected());
     print("Conn $online");
     if (offline) {
       print("No Internet connected only GTFS DATA");
@@ -44,12 +46,17 @@ class FullProvider extends NetworkProvider {
       await gtfs.init(offline: true);
       return gtfs.isAvailable();
     }
-    bool success = await super.init();
-    success &= await radar.init();
+    final futures  = [
+      loader.gtfsLoad.completWithProgress((progress) => gtfs.init(onProgress: progress)),
+      loader.api.complete(api.init()),
+      loader.radar.complete(radar.init())
+    ];
+    
+    final success = await Future.wait(futures);
 
-    print("App Provider full init sucess $success");
+    print("App Provider full init $success");
 
-    return success;
+    return success.every((e) => e);
   }
 
   Future awaitInit() async {
