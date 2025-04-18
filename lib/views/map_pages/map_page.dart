@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:better_bus_v2/app_constant/app_string.dart';
 import 'package:better_bus_core/core.dart';
 import 'package:better_bus_v2/custom_home_widget.dart';
-import 'package:better_bus_v2/loader.dart';
+import 'package:better_bus_v2/views/root/loader.dart';
 import 'package:better_bus_v2/model/view_shortcut.dart';
 import 'package:better_bus_v2/views/common/fake_text_field.dart';
 import 'package:better_bus_v2/views/map/controller.dart';
@@ -16,21 +16,18 @@ import 'package:better_bus_v2/views/map_pages/map_home.dart';
 import 'package:better_bus_v2/views/stop_info/stop_info_page.dart';
 import 'package:better_bus_v2/views/stops_search_page/place_searcher_page.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:latlong2/latlong.dart';
 
 import '../../data_provider/local_data_handler.dart';
 import '../stops_search_page/stops_search_page.dart';
 
-class MapPageArg {
-  const MapPageArg({this.station, this.stop});
-
-  final Station? station;
-  final int? stop;
-}
-
 class MapPage extends StatefulWidget {
-  const MapPage({super.key});
+  const MapPage({this.initialShortcut, this.openClosest = false, super.key});
 
   static const String routeName = "/";
+  final ViewShortcut? initialShortcut;
+  final bool openClosest;
 
   @override
   State<MapPage> createState() => _MapPageState();
@@ -43,6 +40,10 @@ class _MapPageState extends State<MapPage> {
   @override
   void initState() {
     super.initState();
+    if (widget.initialShortcut != null) {
+
+      openShortcut(widget.initialShortcut!);
+    }
     controller = NetworkMapController(context);
     controller.loadStation().then((_) => print("Map load finish"),
         onError: (Object e, s) {
@@ -52,12 +53,17 @@ class _MapPageState extends State<MapPage> {
     controller.stateChange.addListener(() {
       if (mounted) setState(() {});
     });
-    CustomHomeWidgetRequest.init(context, uriReceive);
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+  void didUpdateWidget(covariant MapPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.initialShortcut != widget.initialShortcut && widget.initialShortcut != null) {
+        openShortcut(widget.initialShortcut!);
+    }
+    if (oldWidget.openClosest != widget.openClosest  && widget.openClosest) {
+      openClosest();
+    }
   }
 
   @override
@@ -66,25 +72,12 @@ class _MapPageState extends State<MapPage> {
     super.dispose();
   }
 
-  Future uriReceive(Uri uri) async {
-    // TODO: Create a loader
-    print("Uri recie $uri");
-    if (uri.scheme != "app") {
-      return;
-    }
-    if (uri.host == "openshortcut") {
-      List<ViewShortcut> shortcuts = await LocalDataHandler.loadShortcut(context);
-      int shortcutIndex = int.parse(uri.pathSegments[0]);
-      if (shortcutIndex == -1 || !context.mounted) {
-        return;
-      }
-      ViewShortcut shortcut = shortcuts.where((e) => e.isFavorite)
-          .toList()[shortcutIndex];
-      openShortcut(shortcut);
-    }
+  void openClosest() async {
+    final pos = await Geolocator.getCurrentPosition();
+    final coord = LatLng(pos.latitude, pos.longitude);
+    controller.focus((await controller.provider.getClosestStation(coord, max: 1)).first);
   }
 
-  Future updateReports() async {}
 
   void handlePop(bool didPop, Object? result) async {
     if (didPop) return;
@@ -92,7 +85,6 @@ class _MapPageState extends State<MapPage> {
       controller.focused = null;
       return;
     }
-    // Navigator.of(context).pop();
   }
 
   void openShortcut(ViewShortcut newShortcut) {
@@ -106,15 +98,6 @@ class _MapPageState extends State<MapPage> {
         .pushNamed(PlaceSearcherPage.routeName) as Future<dynamic>);
     if (place == null) return;
     controller.focus(place);
-  }
-
-  void onFocusOpen() {
-    final station = controller.focusedStation;
-    if (station == null) return;
-    Navigator.of(context)
-        .pushNamed(StopInfoPage.routeName,
-            arguments: StopInfoPageArgument(station, null, fromMap: true))
-        .then((value) => controller.focus(value));
   }
 
   void camToFocus() {

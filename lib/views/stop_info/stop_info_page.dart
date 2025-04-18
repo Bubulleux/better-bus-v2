@@ -78,15 +78,6 @@ class _StopInfoPageState extends State<StopInfoPage>
     });
   }
 
-  void mapButtonClick() {
-    Navigator.of(context).pop(stop as Station);
-    if (!fromMap) {
-      Navigator.of(context).pushNamed(MapPage.routeName, arguments: MapPageArg(
-        station: stop
-      ));
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     if (stop == null) return const Placeholder();
@@ -115,7 +106,7 @@ class _StopInfoPageState extends State<StopInfoPage>
                           Column(
                             children: [
                               TextButton(
-                                onPressed: mapButtonClick,
+                                onPressed: null,
                                 style: TextButton.styleFrom(
                                   padding: EdgeInsets.zero,
                                   minimumSize: Size.zero,

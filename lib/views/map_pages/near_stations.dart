@@ -34,16 +34,13 @@ class _NearStationsState extends State<NearStations> {
     final provider = widget.controller.provider;
     await provider.awaitInit();
     if (widget.controller.posCoord == null) return;
-    final station = await provider.getStations();
-    final pos = widget.controller.posCoord!;
+    final station = await provider.getClosestStation(widget.controller.posCoord!, max: 4);
 
-    station.sort((a, b) =>
-        getDistanceInKMeter(a, pos).compareTo(getDistanceInKMeter(b, pos)));
 
     if (!mounted) return;
 
     setState(() {
-      nearStation = station.take(4).toList();
+      nearStation = station;
     });
   }
 

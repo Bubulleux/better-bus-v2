@@ -18,7 +18,7 @@ class LocalDataHandler {
   static Future<List<ViewShortcut>> loadShortcut(BuildContext ctx) async {
     await checkPreferences();
     final provider = FullProvider.of(ctx);
-    await provider.awaitInit();
+    assert(provider.isAvailable());
 
     List<String>? rawShortcuts = preferences!.getStringList("shortcuts");
     if (rawShortcuts == null || rawShortcuts.isEmpty) {

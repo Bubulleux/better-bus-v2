@@ -11,7 +11,6 @@ import 'package:better_bus_v2/views/interest_line_page/interest_lines_page.dart'
 import 'package:better_bus_v2/views/log_view.dart';
 import 'package:better_bus_v2/views/map_pages/map_page.dart';
 import 'package:better_bus_v2/views/preferences_view.dart';
-import 'package:better_bus_v2/views/root_nav.dart';
 import 'package:better_bus_v2/views/route_detail_page/route_detail_page.dart';
 import 'package:better_bus_v2/views/route_page/route_page.dart';
 import 'package:better_bus_v2/views/setting_page/setting_page.dart';
@@ -21,9 +20,7 @@ import 'package:better_bus_v2/views/stops_search_page/stops_search_page.dart';
 import 'package:better_bus_v2/views/terminus_selector/terminus_selector_page.dart';
 import 'package:better_bus_v2/views/traffic_info_page/traffic_info_page.dart';
 import 'package:better_bus_v2/views/view_shortcut_editor/view_shortcut_editor_page.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:better_bus_v2/views/home_page/home_page.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
@@ -33,6 +30,7 @@ import 'package:workmanager/workmanager.dart';
 import 'data_provider/app_provider.dart';
 
 import 'app_constant/app_string.dart';
+import 'views/root/root.dart';
 
 @pragma('vm:entry-point')
 void callbackDispatcher() {
@@ -97,20 +95,6 @@ class BetterBusApp extends StatefulWidget {
 
 class _BetterBusAppState extends State<BetterBusApp>
     with WidgetsBindingObserver {
-  @override
-  void initState() {
-    super.initState();
-    initProviders();
-  }
-
-  Future<bool> initProviders() async {
-    final provider = FullProvider.of(context);
-    final success = await provider.init();
-    print("Provider sucress: $success ---------------");
-
-    return success;
-  }
-
 
   @override
   Widget build(BuildContext context) {
@@ -152,7 +136,7 @@ class _BetterBusAppState extends State<BetterBusApp>
       routes: {
         // TODO: Eurk...
         // HomePage.routeName: (context) => const HomePage(),
-        MapPage.routeName: (context) => const RootNav(),
+        MapPage.routeName: (context) => const AppRoot(),
         SettingPage.routeName: (context) => const SettingPage(),
         MessageView.routeName: (context) => const MessageView(),
         SearchPage.routeName: (context) => const SearchPage(),

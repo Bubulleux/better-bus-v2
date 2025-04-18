@@ -2,8 +2,10 @@ import 'package:better_bus_core/core.dart';
 import 'package:better_bus_v2/data_provider/connectivity_checker.dart';
 import 'package:better_bus_v2/error_handler/custom_error.dart';
 import 'package:flutter/material.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 
+import '../views/stops_search_page/stops_search_page.dart';
 import 'radar_provider.dart';
 
 class FullProvider extends NetworkProvider {
@@ -26,7 +28,9 @@ class FullProvider extends NetworkProvider {
 
   @override
   Future<bool> init() async {
+    print("Starting full init");
     await connStatus.isConnected();
+    print("Conn $online");
     if (offline) {
       print("No Internet connected only GTFS DATA");
       connStatus.onConnected(() async {
@@ -69,6 +73,16 @@ class FullProvider extends NetworkProvider {
       throw CustomErrors.noInternet;
     }
     return super.getTrafficInfos();
+  }
+
+  Future<List<Station>> getClosestStation(LatLng origin, {int max = -1}) async {
+    var stations = await getStations();
+    stations.sort((a, b) =>
+        getDistanceInKMeter(a, origin).compareTo(getDistanceInKMeter(b, origin)));
+    if (max > 0) {
+      stations = stations.take(max).toList();
+    }
+    return stations;
   }
 
 }

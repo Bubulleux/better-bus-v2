@@ -15,8 +15,9 @@ import '../../data_provider/app_provider.dart';
 
 
 class TrafficInfoPage extends StatefulWidget {
-  const TrafficInfoPage({super.key});
+  const TrafficInfoPage({this.focused, super.key});
   static const String routeName = "/trafficInfo";
+  final int? focused;
 
   @override
   State<TrafficInfoPage> createState() => TrafficInfoPageState();
@@ -30,6 +31,25 @@ class TrafficInfoPageState extends State<TrafficInfoPage> {
 
   List<InfoTraffic>? trafficInfos;
 
+
+  @override
+  void initState() {
+    super.initState();
+    futureBuilderKey = GlobalKey();
+    focus = widget.focused;
+  }
+
+  @override
+  void didUpdateWidget(covariant TrafficInfoPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.focused == null && widget.focused != null) {
+      setState(() {
+        focus = widget.focused;
+      });
+    }
+  }
+
+
   Future<InfoTrafficObject> getAllInformation() async {
     final provider = FullProvider.of(context);
     await provider.awaitInit();
@@ -42,13 +62,13 @@ class TrafficInfoPageState extends State<TrafficInfoPage> {
 
     infoList.removeWhere((element) => !element.isDisplay);
     infoList.sort(
-      (a, b) {
+          (a, b) {
         List<int> compareValues = [
           (a.isActive ? 1 : 0).compareTo(b.isActive ? 1 : 0),
           ((a.linesId != null ? 0 : 1)).compareTo(b.linesId != null ? 0 : 1),
           (favoriteLines.intersection(a.linesId?.toSet() ?? {}).length)
               .compareTo(
-                  favoriteLines.intersection(b.linesId?.toSet() ?? {}).length),
+              favoriteLines.intersection(b.linesId?.toSet() ?? {}).length),
           BusLine.compareID(
               (b.linesId?.firstOrNull ?? ""), (a.linesId?.firstOrNull ?? ""))
         ];
@@ -62,18 +82,6 @@ class TrafficInfoPageState extends State<TrafficInfoPage> {
     );
     infoList = infoList.reversed.toList();
     return InfoTrafficObject(infoList, busLines);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    futureBuilderKey = GlobalKey();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    focus = ModalRoute.of(context)!.settings.arguments as int?;
   }
 
   void goSetting() {
@@ -91,7 +99,7 @@ class TrafficInfoPageState extends State<TrafficInfoPage> {
             children: [
               CustomTitleBar(
                 title: AppString.trafficInfoTitle,
-                leftChild: const BackArrow(),
+                // leftChild: const BackArrow(),
                 rightChild: IconButton(
                     onPressed: goSetting, icon: const Icon(Icons.settings)),
               ),

@@ -142,10 +142,6 @@ class _SettingPageState extends State<SettingPage> {
         onClick: testNotificationActivation,
       ),
       SettingEntry(
-        "Test Widget Launch",
-        onClick: () => CustomHomeWidgetRequest.checkWidgetLaunch(context),
-      ),
-      SettingEntry(
         "Remove all GTFS data",
         onClick: deleteGtfs,
       ),

@@ -20,7 +20,7 @@ class CustomHomeWidgetRequest {
     }
     available = true;
     CustomHomeWidgetRequest.listenWidgetLaunch(context, onLaunch);
-    CustomHomeWidgetRequest.checkWidgetLaunch(context);
+    CustomHomeWidgetRequest.checkWidgetLaunch(context, onLaunch);
   }
 
 
@@ -66,50 +66,51 @@ class CustomHomeWidgetRequest {
     }));
   }
 
-  static void launchUri(BuildContext context, Uri uri) {
-    if (!available) return;
-
-    if (uri.host == "openshortcut") {
-      launchShortcutByWidget(uri.pathSegments[0], context);
-    }
-
-    if (uri.host == "openmystop") {
-      findClosestStop(context);
-    }
-  }
-
-  static void launchShortcutByWidget(String shortcutRowId, BuildContext context) async {
-    if (!available) return;
-    List<ViewShortcut> shortcuts = await LocalDataHandler.loadShortcut(context);
-    int shortcutIndex = int.parse(shortcutRowId);
-    if (shortcutIndex == -1 || !context.mounted) {
-      return;
-    }
-    ViewShortcut shortcut = shortcuts.where((e) => e.isFavorite)
-      .toList()[shortcutIndex];
-
-    Navigator.of(context).popUntil((route) =>
-    (route.settings.name != StopInfoPage.routeName ||
-        (route.settings.arguments as StopInfoPageArgument?)?.stop !=
-            shortcut.stop));
-    Navigator.of(context).pushNamed(StopInfoPage.routeName,
-        arguments: StopInfoPageArgument(shortcut.stop, shortcut.direction));
-  }
-
-
-  static Future findClosestStop(BuildContext context) async {
-    if (!available) return;
-    return ClosestStopDialog.show(context);
-  }
-
-  static Future checkWidgetLaunch(BuildContext context) async {
+  static Future checkWidgetLaunch(BuildContext context, ValueChanged<Uri> onLaunch) async {
     if (!available) return;
     Uri? uri = await getLaunchUri();
 
     if (uri == null) return;
 
     if (context.mounted) {
-      launchUri(context, uri);
+      onLaunch(uri);
     }
   }
+
+  // static void launchUri(BuildContext context, Uri uri) {
+  //   if (!available) return;
+  //
+  //   if (uri.host == "openshortcut") {
+  //     launchShortcutByWidget(uri.pathSegments[0], context);
+  //   }
+  //
+  //   if (uri.host == "openmystop") {
+  //     findClosestStop(context);
+  //   }
+  // }
+  //
+  // static void launchShortcutByWidget(String shortcutRowId, BuildContext context) async {
+  //   if (!available) return;
+  //   List<ViewShortcut> shortcuts = await LocalDataHandler.loadShortcut(context);
+  //   int shortcutIndex = int.parse(shortcutRowId);
+  //   if (shortcutIndex == -1 || !context.mounted) {
+  //     return;
+  //   }
+  //   ViewShortcut shortcut = shortcuts.where((e) => e.isFavorite)
+  //     .toList()[shortcutIndex];
+  //
+  //   Navigator.of(context).popUntil((route) =>
+  //   (route.settings.name != StopInfoPage.routeName ||
+  //       (route.settings.arguments as StopInfoPageArgument?)?.stop !=
+  //           shortcut.stop));
+  //   Navigator.of(context).pushNamed(StopInfoPage.routeName,
+  //       arguments: StopInfoPageArgument(shortcut.stop, shortcut.direction));
+  // }
+  //
+  //
+  // static Future findClosestStop(BuildContext context) async {
+  //   if (!available) return;
+  //   return ClosestStopDialog.show(context);
+  // }
+
 }
