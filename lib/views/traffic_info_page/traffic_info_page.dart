@@ -29,6 +29,8 @@ class TrafficInfoPageState extends State<TrafficInfoPage> {
   final GlobalKey focusKey = GlobalKey();
   Map<int, GlobalKey<TrafficInfoItemState>>? infoTrafficItemKey;
 
+  final ScrollOffsetController scroll = ScrollOffsetController();
+
   List<InfoTraffic>? trafficInfos;
 
 
@@ -43,9 +45,10 @@ class TrafficInfoPageState extends State<TrafficInfoPage> {
   void didUpdateWidget(covariant TrafficInfoPage oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.focused == null && widget.focused != null) {
-      setState(() {
-        focus = widget.focused;
-      });
+      focus = widget.focused;
+      futureBuilderKey.currentState?.refresh();
+      print("Focus updated");
+      setState(() {});
     }
   }
 
@@ -113,6 +116,7 @@ class TrafficInfoPageState extends State<TrafficInfoPage> {
                     trafficInfos!.forEachIndexed((index, element) =>
                         infoTrafficItemKey![index] = GlobalKey());
                     return ScrollablePositionedList.builder(
+                      key: ValueKey(focus),
                       itemCount: data.infoList.length,
                       initialScrollIndex: focus != null
                           ? trafficInfos!.indexWhere((e) => e.id == focus)

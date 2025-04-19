@@ -22,10 +22,12 @@ class _RootNavState extends State<RootNav> {
   int? infoTrafficIndex;
   bool openClosest = false;
   int _curIndex = 0;
-  List<Widget> get pages => [
+
+
+  List<Widget> getPages() => [
     MapPage(initialShortcut: initialShortcut, openClosest: openClosest),
     RoutePage(),
-    TrafficInfoPage(focused: infoTrafficIndex,)
+    TrafficInfoPage(focused: infoTrafficIndex)
   ];
 
   @override
@@ -67,11 +69,13 @@ class _RootNavState extends State<RootNav> {
 
     if (uri.host == "openmystop") {
       setState(() {
+        _curIndex = 0;
         openClosest = true;
       });
     }
     if (uri.host == "infotraffic") {
       setState(() {
+        _curIndex = 2;
         infoTrafficIndex = int.parse(uri.pathSegments[0]);
       });
     }
@@ -97,12 +101,13 @@ class _RootNavState extends State<RootNav> {
 
   @override
   Widget build(BuildContext context) {
+    print("Build with $infoTrafficIndex");
     return Scaffold(
         body: PopScope(
           canPop: false,
           onPopInvokedWithResult: handlePop,
           child: IndexedStack(
-            children: pages,
+            children: getPages(),
             index: _curIndex,
           ),
         ),
