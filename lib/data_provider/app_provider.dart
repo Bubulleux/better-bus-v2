@@ -28,6 +28,10 @@ class FullProvider extends NetworkProvider {
     return context.read<FullProvider>();
   }
 
+  Future<bool> fastInit() async {
+    return await loader.gtfsLoad.complete(gtfs.downloader.loadIfExist());
+}
+
   @override
   Future<bool> init() async {
     print("Starting full init");
@@ -47,7 +51,7 @@ class FullProvider extends NetworkProvider {
       return gtfs.isAvailable();
     }
     final futures  = [
-      loader.gtfsLoad.completWithProgress((progress) => gtfs.init(onProgress: progress)),
+      loader.gtfsDownloadLoad.completWithProgress(gtfs.downloader.downloadAndLoad),
       loader.api.complete(api.init()),
       loader.radar.complete(radar.init())
     ];

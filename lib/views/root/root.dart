@@ -23,6 +23,7 @@ class AppRoot extends StatefulWidget {
 class _AppRootState extends State<AppRoot> {
   bool loading = true;
   Uri? launchUri;
+
   List<LoadingStep> get steps => provider.loader.steps;
 
   FullProvider get provider => FullProvider.of(context);
@@ -57,21 +58,26 @@ class _AppRootState extends State<AppRoot> {
       });
       return;
     }
-
-    final rootStep = LoadingStep(label: "Root Step");
     print("Provider not init");
-    final success = await rootStep.complete(provider.init());
-    print("Sucess : $success");
-    if (kDebugMode) {
-      await Future.delayed(Duration(seconds: 1));
+
+    if (!kDebugMode && await provider.fastInit()) {
+      loadingEnd();
     }
+
+    final success = await provider.init();
+    print("Sucess : $success");
+
+    loadingEnd();
+  }
+
+  void loadingEnd() {
     if (mounted && provider.isAvailable()) {
       setState(() {
         loading = false;
       });
       return;
     }
-    print("Provider init failed");
+    print("Provider is not available still loading...");
   }
 
   void initHomeWidget() async {
@@ -83,7 +89,6 @@ class _AppRootState extends State<AppRoot> {
       });
     });
   }
-
 
   void checkIfFisrtTimeOpenningApp() async {
     bool showImportantMessage = await LocalDataHandler.showImportantMessage();
@@ -98,8 +103,8 @@ class _AppRootState extends State<AppRoot> {
     flip = FlutterLocalNotificationsPlugin();
 
     AndroidFlutterLocalNotificationsPlugin? androidImp =
-    flip.resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>();
+        flip.resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>();
     androidImp?.requestNotificationsPermission();
 
     var android = const AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -111,8 +116,8 @@ class _AppRootState extends State<AppRoot> {
   Future checkIfAppIsNotificationLaunched() async {
     if (!Platform.isAndroid) return;
     NotificationAppLaunchDetails? launchNotificationDetails =
-    await FlutterLocalNotificationsPlugin()
-        .getNotificationAppLaunchDetails();
+        await FlutterLocalNotificationsPlugin()
+            .getNotificationAppLaunchDetails();
     if (launchNotificationDetails == null) {
       return;
     }
@@ -139,4 +144,3 @@ class _AppRootState extends State<AppRoot> {
     );
   }
 }
-

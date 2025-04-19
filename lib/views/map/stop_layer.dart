@@ -47,10 +47,8 @@ class _StopsMapLayerState extends State<StopsMapLayer> {
 
   Marker buildMaker(Station stop, Report? report, MapCamera camera) {
     final focused = stop == widget.focusedStation;
-    final onTrip =
-        widget.mapController.focusedStopTime?.trip!.isPassingBy(stop) ?? false;
     final color = stationColor(stop);
-    final trip = widget.mapController.focusedStopTime?.trip!;
+    final trip = widget.mapController.focusedStopTime?.trip;
     Color? lineColor;
     if (trip != null && trip.isPassingBy(stop)) {
       lineColor = trip.line.color.withAlpha(200);

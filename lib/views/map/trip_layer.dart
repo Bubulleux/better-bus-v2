@@ -18,6 +18,9 @@ class _TripLayerState extends State<TripLayer> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.stopTime.trip == null) {
+      return Container();
+    }
 
     Polyline<LatLng> polyline = Polyline(
         points: widget.trip.shape.wayPoints.map((e) => e.position).toList(),

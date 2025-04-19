@@ -30,7 +30,7 @@ class AppRadarProvider extends RadarClient {
   bool get sentAvailable => provider.online && (
       lastSent == null ||
       DateTime.now().difference(lastSent!) >= sendThreshold
-          //|| kDebugMode // Retrun alayse true if debug
+          || kDebugMode // Retrun alayse true if debug
   );
 
   factory AppRadarProvider.of(BuildContext context) {
@@ -38,6 +38,8 @@ class AppRadarProvider extends RadarClient {
   }
 
   void preventSpam() {
+    print(provider.online);
+    print(lastSent);
     if (!sentAvailable) throw "Not available wait pls";
     lastSent = DateTime.now();
   }

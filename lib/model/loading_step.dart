@@ -26,8 +26,7 @@ class LoadingStep {
 
   Future<bool> completWithProgress(
       Future<bool> Function(OnProgress _) future) async {
-    setProgress(0);
-    return complete(future(setProgress));
+    return await complete(future(setProgress));
   }
 
   void setProgress(double value) {
@@ -38,8 +37,8 @@ class LoadingStep {
 
   final states = const {
     null: CircularProgressIndicator(color: Colors.white24),
-    true: Icon(Icons.check),
-    false: Icon(Icons.error),
+    true: Icon(Icons.check, size: 35),
+    false: Icon(Icons.error, size: 35),
   };
 
   Widget build(BuildContext context) {
@@ -48,22 +47,33 @@ class LoadingStep {
         Row(
           children: [
             states[success]!,
+            SizedBox(width: 10,),
             Text(label),
           ],
         ),
         progress != null
             ? Container(
                 width: double.infinity,
+                alignment: Alignment.centerLeft,
+                margin: EdgeInsets.only(top: 3),
                 height: 20,
-                color: Colors.white,
+                clipBehavior: Clip.hardEdge,
+                padding: EdgeInsets.all(2),
+                decoration: BoxDecoration(
+                  color: Colors.black12,
+                  borderRadius: BorderRadius.circular(10),
+                ),
                 child: AnimatedFractionallySizedBox(
-                  duration: Duration(milliseconds: 100),
+                  duration: const Duration(milliseconds: 100),
                   heightFactor: 1,
                   widthFactor: progress,
                   child: Container(
                     width: double.infinity,
                     height: double.infinity,
-                    color: Colors.red,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).primaryColor,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
                 ),
               )

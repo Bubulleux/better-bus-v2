@@ -82,7 +82,7 @@ class _RoutePageState extends State<RoutePage> {
   }
 
   void updateCam() {
-    if (parameter!.valid) {
+    if (parameter!.valid && parameter!.start != parameter!.stop) {
       final bound = LatLngBounds.fromPoints([
         parameter!.start!.position,
         parameter!.stop!.position,

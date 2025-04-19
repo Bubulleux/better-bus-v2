@@ -56,10 +56,19 @@ class LoadingPageState extends State<LoadingPage> {
                 child: const Image(
                   width: 200, image: AssetImage("assets/images/icon.jpg")),
               ),
-              const CircularProgressIndicator(color: Colors.white24),
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: buildSteps(),
+              // const CircularProgressIndicator(color: Colors.white24),
+              Container(
+                padding: EdgeInsets.all(10),
+                margin: EdgeInsets.symmetric(horizontal: 20),
+                decoration: BoxDecoration(
+                  color: Colors.black12,
+                  borderRadius: BorderRadius.circular(10)
+                ),
+                child: Column(
+                  spacing: 5,
+                  mainAxisSize: MainAxisSize.min,
+                  children: buildSteps(),
+                ),
               )
             ],
           ),
