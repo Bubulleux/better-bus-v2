@@ -46,11 +46,11 @@ class _MapLayoutState extends State<MapLayout>
   void initState() {
     super.initState();
     assert(widget.topBar != null && widget.topBarHeight != null);
-    widget.controller.setCamPadding(EdgeInsets.only(top: widget.topBarHeight!) +
-        const EdgeInsets.symmetric(horizontal: 20, vertical: 10));
+    setCamPadding();
 
     drawerHeight.addListener(() {
       if (mounted) setState(() {});
+      setCamPadding();
     });
 
     widget.controller.provider.connStatus.isConnected().then((connected) {
@@ -101,6 +101,14 @@ class _MapLayoutState extends State<MapLayout>
     ],
   );
 
+  void setCamPadding() {
+    if (drawerHeight.value.isInfinite) {
+      widget.controller.setCamPadding(EdgeInsets.zero);
+      return;
+    }
+
+    widget.controller.setCamPadding(EdgeInsets.only(top: widget.topBarHeight!, bottom: drawerHeight.value));
+  }
 
   Widget layoutBuilder(BuildContext ctx, BoxConstraints constraint) {
     Widget map = NetworkMap(
@@ -135,7 +143,7 @@ class _MapLayoutState extends State<MapLayout>
     final overlay = Column(
         children: [
           AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
+            duration: const Duration(milliseconds: 100),
             color: drawerFullyOpened ? Colors.white : Colors.white.withAlpha(0),
             height: widget.topBarHeight!,
             child: widget.topBar,
@@ -148,14 +156,7 @@ class _MapLayoutState extends State<MapLayout>
     final stack = Stack(
       clipBehavior: Clip.none,
       children: [
-        Positioned.fill(bottom: botPadding - MapDrawerState.dragBarHeight, child: map),
-        Positioned(
-          bottom: botPadding,
-          right: 0,
-          // TODO: Fix IT height = 100 is bad
-          height: 100,
-          child: MapButtons(widget.controller),
-        ),
+        Positioned.fill(child: map),
         Positioned.fill(child: overlay),
       ],
     );

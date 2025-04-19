@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:better_bus_core/core.dart';
 import 'package:better_bus_v2/views/map/controller.dart';
+import 'package:better_bus_v2/views/map/map_buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 
@@ -60,45 +61,57 @@ class NetworkMapState extends State<NetworkMap> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return FlutterMap(
-      mapController: controller,
-      options: const MapOptions(
-        initialCenter: GpsDataProvider.cityLocation,
-      ),
+    return Stack(
       children: [
-        TileLayer(
-          urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-          userAgentPackageName: 'dev.fleaflet.flutter_map.example',
+        FlutterMap(
+          mapController: controller,
+          options: const MapOptions(
+            initialCenter: GpsDataProvider.cityLocation,
+          ),
+          children: [
+            TileLayer(
+              urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+              userAgentPackageName: 'dev.fleaflet.flutter_map.example',
+            ),
+            ...(rootController.focusedStopTime != null
+                ? [
+                    TripLayer(stopTime: rootController.focusedStopTime!),
+                    // BusLayer(
+                    //   key: Key(rootController.focusedStopTime!.hashCode.toString()),
+                    //   stopTime: rootController.focusedStopTime!,
+                    // controller: rootController,
+                    // )
+                  ]
+                : []),
+            StopsMapLayer(
+              mapController: rootController,
+              stops: rootController.stopsPos?.values.toList() ?? [],
+              onStationClick: (station) => setState(() {
+                rootController.focused = station;
+              }),
+              onStopClick: rootController.setStop,
+              focusedStation: rootController.focusedStation,
+              focusedStop: rootController.focusedStop,
+            ),
+            widget.route != null
+                ? RouteLayer(route: widget.route!)
+                : Container(),
+            ...widget.layers,
+            const EasterEggsLayer(),
+            PositionLayer(
+              positionUpdate: (v) => rootController.position = v,
+            ),
+            rootController.focusedPlace != null
+                ? PlaceLayer(rootController.focusedPlace!)
+                : Container(),
+          ],
         ),
-        ...(rootController.focusedStopTime != null
-            ? [
-          TripLayer(stopTime: rootController.focusedStopTime!),
-          // BusLayer(
-          //   key: Key(rootController.focusedStopTime!.hashCode.toString()),
-          //   stopTime: rootController.focusedStopTime!,
-          // controller: rootController,
-          // )
-        ]
-            : []),
-        StopsMapLayer(
-          mapController: rootController,
-          stops: rootController.stopsPos?.values.toList() ?? [],
-          onStationClick: (station) => setState(() {
-            rootController.focused = station;
-          }),
-          onStopClick: rootController.setStop,
-          focusedStation: rootController.focusedStation,
-          focusedStop: rootController.focusedStop,
+        Positioned.fill(
+          child: Padding(
+            padding: rootController.camPadding,
+            child: MapButtons(rootController),
+          ),
         ),
-        widget.route != null ? RouteLayer(route: widget.route!) : Container(),
-        ...widget.layers,
-        const EasterEggsLayer(),
-        PositionLayer(
-          positionUpdate: (v) => rootController.position = v,
-        ),
-        rootController.focusedPlace != null
-            ? PlaceLayer(rootController.focusedPlace!)
-            : Container(),
       ],
     );
   }

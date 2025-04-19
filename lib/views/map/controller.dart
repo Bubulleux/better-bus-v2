@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:better_bus_core/core.dart';
 import 'package:better_bus_v2/data_provider/app_provider.dart';
 import 'package:better_bus_v2/views/map/map_view.dart';
@@ -19,6 +21,7 @@ class NetworkMapController {
   dynamic _focused;
   int? _focusedStop;
   StopTime? _focusedStopTime;
+  StreamSubscription? events;
 
   set focused(newFocus) {
     assert(newFocus == null || newFocus is LatLng || newFocus is Location);
@@ -121,10 +124,20 @@ class NetworkMapController {
 
   void setWidgetState(NetworkMapState state) {
     widgetState = state;
+
+    events?.cancel();
+    events = controller.mapEventStream.listen(onEvent);
   }
 
   void dispose() {
     _nextFetch?.ignore();
+    events?.cancel();
+  }
+
+  void onEvent(MapEvent event) {
+    if (event.source == MapEventSource.onMultiFinger) {
+      notifyChange();
+    }
   }
 
   void focus(dynamic newFocus, {double zoom = 18}) {
@@ -159,14 +172,20 @@ class NetworkMapController {
     return station.position.distance(posCoord!) < 0.3 || kDebugMode;
   }
 
-  TickerFuture animateCamTo(LatLng dst, {double zoom = 17}) {
+  TickerFuture animateCamTo(LatLng dst, {double zoom = 17, double? angle}) {
+    final fit = CameraFit.coordinates(coordinates: [dst],
+    padding: camPadding, maxZoom: 17);
+    final cam = controller.camera;
     final LatLngTween tween = LatLngTween(
-      begin: controller.camera.center,
-      end: dst,
+      begin: cam.center,
+      end: fit.fit(cam).center,
     );
 
     final Tween<double> zoomTween =
         Tween(begin: controller.camera.zoom, end: zoom);
+
+    final Tween<double> angleTween =
+    Tween(begin: cam.rotationRad, end: angle ?? cam.rotationRad);
 
     final animationController = AnimationController(
       duration: const Duration(milliseconds: 400),
@@ -175,21 +194,30 @@ class NetworkMapController {
     final Animation<double> animation = CurvedAnimation(
         parent: animationController, curve: Curves.fastLinearToSlowEaseIn);
 
+    const factor = 360 / pi * 2;
+
     animationController.addListener(() {
-      controller.move(tween.evaluate(animation), zoomTween.evaluate(animation));
+      controller.moveAndRotate(tween.evaluate(animation), zoomTween.evaluate(animation),
+      angleTween.evaluate(animation) * factor);
+      notifyChange();
     });
 
     return animationController.forward();
   }
 
   TickerFuture animateToBound(LatLngBounds bound) {
-    final fit = CameraFit.bounds(bounds: bound, padding: camPadding);
+    final fit = CameraFit.bounds(bounds: bound, padding: camPadding + const EdgeInsets.all(10));
     final cam = fit.fit(controller.camera);
 
     return animateCamTo(cam.center, zoom: cam.zoom);
   }
 
-  void goToPosition({double zoom = 18}) {
+  TickerFuture animateToNorth() {
+    final cam = controller.camera;
+    return animateCamTo(cam.center, zoom: cam.zoom, angle: 0);
+  }
+
+  void goToPosition({double zoom = 17}) {
     if (posCoord != null) {
       animateCamTo(posCoord!, zoom: zoom);
     }
