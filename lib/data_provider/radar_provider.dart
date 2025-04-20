@@ -16,7 +16,7 @@ class AppRadarProvider extends RadarClient {
   AppRadarProvider({required FullProvider provider})
       : super(
           provider: provider,
-          apiUrl: kDebugMode && false
+          apiUrl: kDebugMode
               ? RadarClient.localhostEndPoint
               : RadarClient.productionEndpoint,
         ){
