@@ -30,33 +30,35 @@ class _MapHomeState extends State<MapHome> {
     return Column(
       children: [
         NearStations(controller: widget.controller),
-        Material(
-          // elevation: 2,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            margin: const EdgeInsets.only(bottom: 5),
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                offset: Offset(0, 5),
-                  blurRadius: 2,
-                  spreadRadius: -1,
-                  color: Colors.black26
-              )]
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    AppString.shortcut,
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+          margin: const EdgeInsets.only(bottom: 5, top: 5),
+          width: double.infinity,
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+              offset: Offset(0, 5),
+                blurRadius: 2,
+                spreadRadius: -1,
+                color: Colors.black26
+            )]
+          ),
+          child: Row(
+            children: [
+              Text(
+                AppString.shortcut,
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              Spacer(),
+              Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: InkWell(
+                  onTap: newShortcut,
+                  child: Icon(Icons.add, color: Theme.of(context).primaryColor),
                 ),
-                TextButton(
-                    onPressed: newShortcut, child: const Icon(Icons.add)),
-              ],
-            ),
+              )
+            ],
           ),
         ),
         Expanded(

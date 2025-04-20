@@ -112,6 +112,14 @@ class ShortcutWidgetRootState extends State<ShortcutWidgetRoot> {
             shortcuts![index].stop, shortcuts![index].direction));
   }
 
+  Widget buildNewBtn() {
+    return Container(
+      key: UniqueKey(),
+      // height: 200,
+      child: ElevatedButton(onPressed: () => editShortcut(null), child: Icon(Icons.add)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<ViewShortcut>>(
@@ -152,9 +160,10 @@ class ShortcutWidgetRootState extends State<ShortcutWidgetRoot> {
                     shortcut: shortcuts![index],
                     onPressed: () => showShortcutContent(index),
                     onLongPressed: () => showContextMenu(index),
-                  ),
+                  ) ,
               proxyDecorator:
                   (Widget child, int index, Animation<double> animation) {
+                if (index == shortcuts!.length) return child;
                 return Material(
                   color: Colors.transparent,
                   child: DecoratedBoxTransition(
