@@ -48,6 +48,7 @@ final StreamController<String?> selectNotificationStream =
     StreamController<String?>.broadcast();
 
 FullProvider createProviders(_) {
+  return FullProvider(api: BrokenApi(), gtfs: GTFSProvider.mobius(AppPaths()));
   return FullProvider(
     api: ApiProvider.vitalis(),
     gtfs: GTFSProvider.vitalis(AppPaths()),
