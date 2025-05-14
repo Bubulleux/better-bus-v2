@@ -1,10 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:better_bus_core/core.dart';
 import 'package:better_bus_v2/data_provider/gps_data_provider.dart';
 import 'package:better_bus_v2/info_traffic_notification.dart';
-import 'package:better_bus_v2/model/app_paths.dart';
 import 'package:better_bus_v2/views/common/messages.dart';
 import 'package:better_bus_v2/views/credit_page.dart';
 import 'package:better_bus_v2/views/interest_line_page/interest_lines_page.dart';
@@ -27,9 +25,9 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:workmanager/workmanager.dart';
-import 'data_provider/app_provider.dart';
 
 import 'app_constant/app_string.dart';
+import 'model/app_config.dart';
 import 'views/root/root.dart';
 
 @pragma('vm:entry-point')
@@ -47,15 +45,12 @@ void callbackDispatcher() {
 final StreamController<String?> selectNotificationStream =
     StreamController<String?>.broadcast();
 
-FullProvider createProviders(_) {
-  return FullProvider(api: BrokenApi(), gtfs: GTFSProvider.mobius(AppPaths()));
-  return FullProvider(
-    api: ApiProvider.vitalis(),
-    gtfs: GTFSProvider.vitalis(AppPaths()),
-  );
-}
 
 void main() async {
+  await runBetterBus(VitalisAppConfig());
+}
+
+Future runBetterBus(AppConfig config) async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
@@ -63,14 +58,14 @@ void main() async {
   Workmanager().initialize(callbackDispatcher);
   Workmanager().registerPeriodicTask("check-traffic-info", "checkTrafficInfo",
       frequency: const Duration(minutes: 15));
-  await GpsDataProvider.initGps();
+  await GpsDataProvider.initGps(config);
 
 
   runApp(MultiProvider(
     providers: [
-      Provider(create: createProviders)
+      Provider(create: (_) => config.createProvider())
     ],
-    child: const BetterBusApp(),
+    child: BetterBusApp(config: config),
   ));
 }
 
@@ -88,7 +83,9 @@ Future initFlip() async {
 }
 
 class BetterBusApp extends StatefulWidget {
-  const BetterBusApp({super.key});
+  const BetterBusApp({required this.config, super.key});
+
+  final AppConfig config;
 
   @override
   State<BetterBusApp> createState() => _BetterBusAppState();
@@ -99,14 +96,15 @@ class _BetterBusAppState extends State<BetterBusApp>
 
   @override
   Widget build(BuildContext context) {
+    final pc = widget.config.primaryColor;
     return MaterialApp(
       title: AppString.appName,
       theme: ThemeData(
         useMaterial3: false,
-        primarySwatch: Colors.lightGreen,
+        primarySwatch: pc,
         primaryColorLight: const Color(0xffe6eee5),
         colorScheme: ColorScheme.fromSwatch(
-          primarySwatch: Colors.lightGreen,
+          primarySwatch: pc,
           backgroundColor: const Color(0xdde4e4e4),
         ),
         textTheme: const TextTheme(

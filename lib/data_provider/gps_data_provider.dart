@@ -4,16 +4,20 @@ import 'dart:math';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 
+import '../model/app_config.dart';
+
 class GpsDataProvider {
   bool askAndDecine = false;
   static late GpsDataProvider instance;
   bool isReady = false;
   static bool _available = false;
 
-  static const LatLng cityLocation = LatLng(46.58150366398437, 0.3413034114105826);
+  final LatLng cityLocation;
 
-  static Future initGps() async {
-    instance = GpsDataProvider();
+  GpsDataProvider(this.cityLocation);
+
+  static Future initGps(AppConfig config) async {
+    instance = GpsDataProvider(config.cityLocation);
   }
 
 

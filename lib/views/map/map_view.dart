@@ -65,13 +65,13 @@ class NetworkMapState extends State<NetworkMap> with TickerProviderStateMixin {
       children: [
         FlutterMap(
           mapController: controller,
-          options: const MapOptions(
-            initialCenter: GpsDataProvider.cityLocation,
+          options: MapOptions(
+            initialCenter: GpsDataProvider.instance.cityLocation,
           ),
           children: [
             TileLayer(
               urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-              userAgentPackageName: 'dev.fleaflet.flutter_map.example',
+              userAgentPackageName: 'dev.fleaflet.flutter_map.bubulle',
             ),
             ...(rootController.focusedStopTime != null
                 ? [
