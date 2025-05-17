@@ -110,7 +110,7 @@ class _StopSignState extends State<StopSign> {
                 AnimatedScale(
                   duration: const Duration(milliseconds: 200),
                   scale: clicked ? 0 : 1,
-                  child: SvgPicture.asset(widget.easterEgg.svg),
+                  child: SvgPicture.asset(widget.easterEgg.svg, package: "better_bus_v2",),
                 )
               ],
             )));
