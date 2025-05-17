@@ -1,6 +1,6 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/animation.dart';
-// TODO: Remove this file
+
 class ConnectivityStatus {
   final Connectivity connectivity = Connectivity();
   List<ConnectivityResult>? _connection;

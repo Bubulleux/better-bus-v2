@@ -6,40 +6,31 @@ import 'package:flutter/foundation.dart';
 const sendThreshold = Duration(minutes: 2);
 
 class AppRadarProvider extends RadarClient {
-  late final FullProvider _provider;
-
-  @override
-  FullProvider get provider => _provider;
+  late final AppProvider provider;
 
   DateTime? lastSent;
 
-  AppRadarProvider({required FullProvider provider})
+  AppRadarProvider({required this.provider})
       : super(
           provider: provider,
           apiUrl: kDebugMode && false
               ? RadarClient.localhostEndPoint
               : RadarClient.productionEndpoint,
-        ){
-    _provider = provider;
-  }
+        );
 
 
-  // TODO: Make it not static
-
-  // TODO: Watch out
-  bool get sentAvailable => provider.online && (
-      lastSent == null ||
-      DateTime.now().difference(lastSent!) >= sendThreshold
-          || kDebugMode // Retrun alayse true if debug
-  );
+  bool get sentAvailable =>
+      provider.online &&
+      (lastSent == null ||
+          DateTime.now().difference(lastSent!) >= sendThreshold ||
+          kDebugMode // Retrun alwayse true if debug
+      );
 
   factory AppRadarProvider.of(BuildContext context) {
-    return FullProvider.of(context).radar;
+    return AppProvider.of(context).radar;
   }
 
   void preventSpam() {
-    print(provider.online);
-    print(lastSent);
     if (!sentAvailable) throw "Not available wait pls";
     lastSent = DateTime.now();
   }

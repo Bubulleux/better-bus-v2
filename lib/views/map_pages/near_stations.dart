@@ -39,7 +39,7 @@ class _NearStationsState extends State<NearStations> {
     await provider.awaitInit();
     if (widget.controller.posCoord == null) return;
     final stations =
-        await provider.getClosestStation(widget.controller.posCoord!, max: 4);
+        await provider.getClosestStation(widget.controller.posCoord!, max: 4, maxDist: 10);
 
     for (var e in stations) {
       if (lines.containsKey(e)) continue;

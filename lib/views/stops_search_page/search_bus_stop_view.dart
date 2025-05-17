@@ -49,7 +49,7 @@ class SearchBusStopViewState extends State<SearchBusStopView>{
 
   // TODO: Make it less blocking and update more
   Future<List<Station>> getValidStops() async{
-    stops ??= await FullProvider.of(context).getStations();
+    stops ??= await AppProvider.of(context).getStations();
     historic ??= await getHistoric();
     // location ??= await GpsDataProvider.getLocation();
 

@@ -30,7 +30,7 @@ class _TimeTableViewState extends State<TimeTableView>
   @override
   void initState() {
     super.initState();
-    FullProvider.of(context).getPassingLines(widget.stop).then((value) {
+    AppProvider.of(context).getPassingLines(widget.stop).then((value) {
       if (mounted) {
         setState(() {
           busLines = value;
@@ -124,7 +124,7 @@ class _TimeTableViewState extends State<TimeTableView>
     Widget timeTableBody = Container();
     if (busLineSelected != null && boardingSelected != null) {
       timeTableBody = FutureBuilder(
-        future: FullProvider.of(context).getLineTimetable(widget.stop, busLineSelected!,
+        future: AppProvider.of(context).getLineTimetable(widget.stop, busLineSelected!,
             boardingSelected!, selectedDate),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {

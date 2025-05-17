@@ -14,7 +14,7 @@ class StopSearcher extends StatefulWidget {
 
 class _StopSearcherState extends State<StopSearcher> {
   _StopSearcherState() {
-    FullProvider.of(context).getStations().then((value) => {
+    AppProvider.of(context).getStations().then((value) => {
           setState(() {
             busStops = value;
           })

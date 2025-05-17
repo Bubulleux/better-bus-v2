@@ -1,5 +1,6 @@
 
 import 'package:better_bus_core/core.dart';
+import 'package:better_bus_v2/data_provider/awgtfs_provider.dart';
 import 'package:flutter/material.dart';
 
 import '../../error_handler/custom_error.dart';
@@ -45,7 +46,7 @@ class _RouteSearchResultState extends State<RouteSearchResult>
   }
 
   Future<List<VitalisRoute>?> getRoutes() async {
-    final provider = FullProvider.of(context).api;
+    final provider = AWGTFSProvider.of(context);
     assert(_parameter != null);
     if (!parameter.valid ||
         !mounted ||
@@ -53,7 +54,7 @@ class _RouteSearchResultState extends State<RouteSearchResult>
       return null;
     }
 
-    final result = await (provider.getVitalisRoute(parameter.start!,
+    final result = await (provider.api.getVitalisRoute(parameter.start!,
         parameter.stop!, parameter.time, parameter.timeType.name));
 
     return result;

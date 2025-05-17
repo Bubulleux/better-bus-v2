@@ -17,7 +17,7 @@ class LocalDataHandler {
 
   static Future<List<ViewShortcut>> loadShortcut(BuildContext ctx) async {
     await checkPreferences();
-    final provider = FullProvider.of(ctx);
+    final provider = AppProvider.of(ctx);
     assert(provider.isAvailable());
 
     List<String>? rawShortcuts = preferences!.getStringList("shortcuts");
@@ -25,7 +25,7 @@ class LocalDataHandler {
       return [];
     }
 
-    final lines = await FullProvider.of(ctx).getAllLines();
+    final lines = await AppProvider.of(ctx).getAllLines();
     List<ViewShortcut> shortcuts = [];
     for (String rawShortcut in rawShortcuts) {
       shortcuts.add(ViewShortcut.fromJson(jsonDecode(rawShortcut), lines));

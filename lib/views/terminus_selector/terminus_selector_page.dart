@@ -40,7 +40,7 @@ class _TerminusSelectorPageState extends State<TerminusSelectorPage> {
   Future<List<BusLine>> getData() async {
     if (!mounted) return [];
 
-    allLines = await FullProvider.of(context).getPassingLines(stop);
+    allLines = await AppProvider.of(context).getPassingLines(stop);
     return allLines!;
   }
 

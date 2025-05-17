@@ -81,7 +81,7 @@ class _BusStopWidgetState extends State<BusStopWidget>
       expand = false;
     } else {
       expand = true;
-      FullProvider.of(context).getPassingLines(widget.stop).then(
+      AppProvider.of(context).getPassingLines(widget.stop).then(
           (value) => {
                 setState(() {
                   if (!mounted) {

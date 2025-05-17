@@ -12,6 +12,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../data_provider/app_provider.dart';
+import '../../data_provider/awgtfs_provider.dart';
 
 typedef PlaceCallback = void Function(Place place);
 
@@ -40,7 +41,7 @@ class _MapPlaceSearcherViewState extends State<MapPlaceSearcherView> {
     if (widget.search == "") {
       return null;
     }
-    List<Place> output = await FullProvider.of(context).api.getPlaceAutoComplete(widget.search);
+    List<Place> output = await AWGTFSProvider.of(context).api.getPlaceAutoComplete(widget.search);
 
 
     if (widget.search == "") {

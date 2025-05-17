@@ -155,7 +155,7 @@ class _StopFocusWidgetState extends State<StopFocusWidget> {
   @override
   Widget build(BuildContext context) {
     List<LineDirection>? direction;
-    final provider = FullProvider.of(context).gtfs;
+    final provider = AppProvider.of(context);
     final stop = widget.controller.focusedStop;
     if (stop != null && provider.isAvailable()) {
       direction = provider.getStopDirections(stop);

@@ -16,7 +16,7 @@ class NetworkMapController {
 
   MapController get controller => widgetState!.controller;
 
-  late FullProvider provider;
+  late AppProvider provider;
 
   dynamic _focused;
   int? _focusedStop;
@@ -79,7 +79,7 @@ class NetworkMapController {
   var camPadding = EdgeInsets.zero;
 
   NetworkMapController(BuildContext ctx) {
-    provider = FullProvider.of(ctx);
+    provider = AppProvider.of(ctx);
     stateChange.value = hashCode;
   }
 

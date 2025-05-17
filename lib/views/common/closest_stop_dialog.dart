@@ -76,7 +76,7 @@ barrierDismissible: false,
 
   static Future<List<Station>?> getClosestStops(context) async {
     LatLng? location = await GpsDataProvider.getLocation(askEnableGPS: true);
-    List<Station>? stops = await FullProvider.of(context).getStations();
+    List<Station>? stops = await AppProvider.of(context).getStations();
     List<Station> result = [];
   
     if (location == null) {

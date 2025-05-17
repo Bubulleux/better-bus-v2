@@ -31,12 +31,12 @@ class RouteDetailState extends State<RouteDetail> {
   Map<Station, Timetable?> timeTable = {};
   Map<String, Station>? stations;
   Map<Station, Report> reports = {};
-  late FullProvider provider;
+  late AppProvider provider;
 
   @override
   void initState() {
     super.initState();
-    provider = FullProvider.of(context);
+    provider = AppProvider.of(context);
     getMoreDetails().onError((e, s) {
       print("Fuck error");
       print(e);

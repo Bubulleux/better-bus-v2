@@ -26,7 +26,7 @@ class _AppRootState extends State<AppRoot> {
 
   List<LoadingStep> get steps => provider.loader.steps;
 
-  FullProvider get provider => FullProvider.of(context);
+  AppProvider get provider => AppProvider.of(context);
 
   late FlutterLocalNotificationsPlugin flip;
 

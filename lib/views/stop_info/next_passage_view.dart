@@ -103,12 +103,12 @@ class NextPassageListWidgetState extends State<NextPassageListWidget> {
   final GlobalKey<CustomFutureBuilderState<List<StopTime>>> futureBuilderKey =
       GlobalKey<CustomFutureBuilderState<List<StopTime>>>();
 
-  late final FullProvider provider;
+  late final AppProvider provider;
 
   @override
   void initState() {
     super.initState();
-    provider = FullProvider.of(context);
+    provider = AppProvider.of(context);
   }
 
   @override

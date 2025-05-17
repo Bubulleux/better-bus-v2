@@ -26,7 +26,7 @@ class _InterestLinePageState extends State<InterestLinePage> {
     linesSelected = await LocalDataHandler.loadInterestedLine();
     notificationEnable = await LocalDataHandler.getNotificationEnable();
     setState(() {});
-    List<BusLine> busLines = (await FullProvider.of(context).getAllLines()).values.toList();
+    List<BusLine> busLines = (await AppProvider.of(context).getAllLines()).values.toList();
     busLines.sort();
     return busLines;
   }

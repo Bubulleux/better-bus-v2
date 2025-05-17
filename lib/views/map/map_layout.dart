@@ -115,7 +115,7 @@ class _MapLayoutState extends State<MapLayout>
       controller: widget.controller,
       layers: widget.mapLayers ?? [],
     );
-    if (FullProvider.of(context).offline) {
+    if (AppProvider.of(context).offline) {
       map = Container();
     }
 

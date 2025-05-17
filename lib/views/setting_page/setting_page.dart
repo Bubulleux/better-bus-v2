@@ -72,7 +72,7 @@ class _SettingPageState extends State<SettingPage> {
   }
 
   void reDownloadGTFSData() async {
-    final provider = FullProvider.of(context);
+    final provider = AppProvider.of(context);
     if (provider.offline) {
       showDialog(
           context: context,
@@ -83,7 +83,7 @@ class _SettingPageState extends State<SettingPage> {
             const Text("Ok"))],
               ), );
     }
-    final downloader = provider.gtfs.downloader;
+    final downloader = provider.downloader;
     AlertDialog alert = AlertDialog(
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -103,7 +103,7 @@ class _SettingPageState extends State<SettingPage> {
   }
 
   void deleteGtfs() async {
-    final result = await FullProvider.of(context).gtfs.downloader.removeFiles();
+    final result = await AppProvider.of(context).downloader.removeFiles();
     AlertDialog alert = AlertDialog(
       content: Text("Removing GTFS files: $result"),
     );

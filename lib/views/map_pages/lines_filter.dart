@@ -1,4 +1,5 @@
 import 'package:better_bus_core/core.dart';
+import 'package:better_bus_v2/data_provider/app_provider.dart';
 import 'package:better_bus_v2/views/common/separator.dart';
 import 'package:flutter/material.dart';
 
@@ -11,7 +12,7 @@ class LinesFilter extends StatefulWidget {
     super.key});
 
   final Station station;
-  final NetworkProvider provider;
+  final AppProvider provider;
 
   @override
   State<LinesFilter> createState() => _LinesFilterState();
