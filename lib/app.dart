@@ -27,7 +27,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-import 'package:flutter_localizations/flutter_localizations.dart';
+// import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:workmanager/workmanager.dart';
 
@@ -127,11 +127,11 @@ class _BetterBusAppState extends State<BetterBusApp>
           ),
         ),
       ),
-      localizationsDelegates: GlobalMaterialLocalizations.delegates,
-      supportedLocales: const [
-        Locale('fr', ""),
-        Locale('en', ""),
-      ],
+      // localizationsDelegates: GlobalMaterialLocalizations.delegates,
+      // supportedLocales: const [
+      //   Locale('fr', ""),
+      //   Locale('en', ""),
+      // ],
       initialRoute: MapPage.routeName,
       routes: {
         // TODO: Eurk...
