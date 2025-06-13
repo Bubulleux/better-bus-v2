@@ -1,6 +1,7 @@
 import 'package:better_bus_v2/views/home_page/navigation_bar.dart';
 import 'package:better_bus_v2/views/map_pages/map_page.dart';
 import 'package:better_bus_v2/views/route_page/route_page.dart';
+import 'package:better_bus_v2/views/ticket/page.dart';
 import 'package:better_bus_v2/views/traffic_info_page/traffic_info_page.dart';
 import 'package:flutter/material.dart';
 
@@ -85,6 +86,13 @@ class _RootNavState extends State<RootNav> {
    return CustomNavigationBar(
      index: _curIndex,
      onTap: (index) => setState(() {
+        if (index > 2) {
+          // TODO: Mayby not the right way to do it
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => TicketPage()
+          ));
+          return;
+        }
        _curIndex = index;
      }),
    );
