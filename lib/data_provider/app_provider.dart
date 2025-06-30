@@ -10,7 +10,7 @@ import '../app_constant/root_load.dart';
 import '../views/stops_search_page/stops_search_page.dart';
 import 'radar_provider.dart';
 
-class AppProvider extends GTFSProvider {
+class AppProvider extends GTFSRTProvider {
   final RootLoad loader = RootLoad();
   final ConnectivityStatus connStatus = ConnectivityStatus();
   late final AppRadarProvider radar;

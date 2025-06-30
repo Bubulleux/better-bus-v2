@@ -12,7 +12,8 @@ class AWGTFSProvider extends AppProvider {
   }
 
   @override
-  Future<GTFSTimeTable> getTimetable(Station station, {DateTime? time}) async {
+  Future<GTFSTimeTable> getTimetable(Station station,
+      {DateTime? time}) async {
     if (time != null && time.atMidnight() != DateTime.now().atMidnight()) {
       assert(super.isAvailable());
       return super.getTimetable(station, time: time);
@@ -22,12 +23,11 @@ class AWGTFSProvider extends AppProvider {
     final apiTimes = await api.getTimetable(station);
 
     return MatchingTimetable(apiTimes, gtfsTimes);
-
   }
 
   @override
   Future<List<InfoTraffic>> getTrafficInfos() {
     return api.getTrafficInfos();
   }
-
 }
+
