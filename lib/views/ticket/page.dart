@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
@@ -14,6 +17,7 @@ class _TicketPageState extends State<TicketPage> with
   late DateTime start;
   DateTime get end => start.add(Duration(hours: 1));
   Offset? drag;
+  double? imgScale;
 
   late AnimationController controlleur;
 
@@ -93,61 +97,82 @@ class _TicketPageState extends State<TicketPage> with
 
   @override
   Widget build(BuildContext context) {
+    final img = AssetImage("assets/images/ticket.png");
+    if (imgScale == null) {
+      img.resolve(ImageConfiguration()).addListener(ImageStreamListener((ImageInfo info, _) {
+          final scale = info.image.width / info.image.height;
+          
+          print("Scale changed  $scale");
+          setState(() => imgScale = scale);
+      }));
+    }
+
     // TODO: Sory fot that code...
     return Scaffold(
       body: SafeArea(
         child: Stack(
           children: [
             Container(
-              decoration: const BoxDecoration(
+              width: double.infinity,
+              height: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.red,
                 image: DecorationImage(
-                  image: AssetImage("assets/images/ticket.png"),
+                  image: img,
                   fit: BoxFit.fitHeight,
+                  repeat: ImageRepeat.repeat,
+                ),
+              ),
+              child: AspectRatio(
+                aspectRatio: imgScale ?? 1,
+                child: FittedBox(
+                  fit: BoxFit.fitHeight,
+                  child: SizedBox(
+                    height: 1000,
+                    child: Column(
+                      children: [
+                        Flexible(
+                          flex: 7,
+                          child: Column(
+                            children: [
+                              SizedBox(height: 270,),
+                              drag == null ? buildBalls() : Container(),
+                            ],
+                          ),
+                    
+                        ),
+                        Flexible(
+                          flex: 4,
+                          child: 
+                          Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  buildTime(start),
+                                  SizedBox(width: 50,),
+                                  buildTime(end),
+                                ],
+                              ),
+                              SizedBox(height: 70,),
+                              buildTime(end)
+                            ],
+                          )
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),
             Positioned(
               top: 0,
-              right: 0,
+              left: 0,
               width: 80,
               height: 80,
               child: GestureDetector(onTap: Navigator.of(context).pop,),
             ),
             Positioned.fill(child: GestureDetector(onPanUpdate: dragUpdate,onPanEnd: stopDrag,)),
-            Positioned.fill(
-              child: Column(
-                children: [
-                  Flexible(
-                    flex: 7,
-                    child: Column(
-                      children: [
-                        SizedBox(height: 270,),
-                        drag == null ? buildBalls() : Container(),
-                      ],
-                    ),
-
-                  ),
-                  Flexible(
-                    flex: 4,
-                    child: 
-                    Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            buildTime(start),
-                            SizedBox(width: 50,),
-                            buildTime(end),
-                          ],
-                        ),
-                        SizedBox(height: 70,),
-                        buildTime(end)
-                      ],
-                    )
-                  ),
-                ],
-              ),
-            ),
             drag != null ?
             Positioned(
               top: drag!.dy,
