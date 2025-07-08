@@ -29,7 +29,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 // import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
-import 'package:workmanager/workmanager.dart';
+// import 'package:workmanager/workmanager.dart';
 
 import 'app_constant/app_string.dart';
 import 'model/app_config.dart';
@@ -38,14 +38,14 @@ import 'views/root/root.dart';
 
 @pragma('vm:entry-point')
 void callbackDispatcher() {
-  Workmanager().executeTask((taskName, inputData) async {
-    try {
-      await checkInfoTraffic();
-    } catch (e) {
-      return Future.value(false);
-    }
-    return Future.value(true);
-  });
+  // Workmanager().executeTask((taskName, inputData) async {
+  //   try {
+  //     await checkInfoTraffic();
+  //   } catch (e) {
+  //     return Future.value(false);
+  //   }
+  //   return Future.value(true);
+  // });
 }
 
 Future initFlip() async {
@@ -69,9 +69,9 @@ Future runBetterBus(AppConfig config) async {
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
-  Workmanager().initialize(callbackDispatcher);
-  Workmanager().registerPeriodicTask("check-traffic-info", "checkTrafficInfo",
-      frequency: const Duration(minutes: 15));
+  // Workmanager().initialize(callbackDispatcher);
+  // Workmanager().registerPeriodicTask("check-traffic-info", "checkTrafficInfo",
+  //     frequency: const Duration(minutes: 15));
   await GpsDataProvider.initGps(config);
 
 
