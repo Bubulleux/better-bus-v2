@@ -172,7 +172,7 @@ class CustomFutureBuilderState<T> extends State<CustomFutureBuilder>
     if (needRefresh) refresh();
 
     if (error != null) {
-      print("Build with error");
+      print("Build with error " + error.toString());
       if (widget.onError != null) {
         return widget.onError!(context, error!, refresh);
       }

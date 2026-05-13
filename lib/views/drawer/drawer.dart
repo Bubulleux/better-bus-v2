@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:better_bus_v2/views/drawer/drawer_controller.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 typedef CloseButtonBuilder = Widget Function(
     BuildContext context, VoidCallback onClick);
@@ -147,6 +149,14 @@ class MapDrawerState extends State<MapDrawer> {
 
   static const _buttonHeight = 40.0;
 
+	Widget buildAttribution()
+	{
+		return SimpleAttributionWidget(
+		source: Text("OpenStreetMap contributors"),
+		onTap: () => launchUrl(Uri.parse("https://www.openstreetmap.org/copyright")),
+		);
+	}
+
   Widget buildBtn() {
     final color = Color.lerp(
         Theme.of(context).primaryColor, Colors.grey, locked ? 0.4 : 0)!;
@@ -178,6 +188,7 @@ class MapDrawerState extends State<MapDrawer> {
       ),
     );
   }
+
 
   @override
   Widget build(BuildContext context) {

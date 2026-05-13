@@ -7,6 +7,8 @@ import 'package:better_bus_v2/views/drawer/drawer_controller.dart';
 import 'package:better_bus_v2/views/map/controller.dart';
 import 'package:better_bus_v2/views/map/map_buttons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'map_view.dart';
 
@@ -109,6 +111,7 @@ class _MapLayoutState extends State<MapLayout>
 
     widget.controller.setCamPadding(EdgeInsets.only(top: widget.topBarHeight!, bottom: drawerHeight.value));
   }
+
 
   Widget layoutBuilder(BuildContext ctx, BoxConstraints constraint) {
     Widget map = NetworkMap(

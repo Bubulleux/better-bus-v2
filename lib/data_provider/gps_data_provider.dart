@@ -44,6 +44,8 @@ class GpsDataProvider {
   }
 
   static Future<bool> available() async{
+		if (Platform.isLinux)
+			return (true);
     if (!_available) {
       final perm = await Geolocator.checkPermission();
       _available = (perm == LocationPermission.always || perm == LocationPermission.whileInUse);
@@ -57,7 +59,9 @@ class GpsDataProvider {
     if (!(await available())) {
       return null;
     }
-    if (Platform.isLinux) return const LatLng(46.58306570646413, 0.34316815224968406);
+    if (Platform.isLinux) {
+			return Future.value(instance.cityLocation);
+		}
     Position pos = await Geolocator.getCurrentPosition();
     return LatLng(pos.latitude, pos.longitude);
   }

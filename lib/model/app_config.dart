@@ -1,6 +1,7 @@
 import 'package:better_bus_core/core.dart';
 import 'package:better_bus_v2/data_provider/app_provider.dart';
 import 'package:better_bus_v2/data_provider/awgtfs_provider.dart';
+
 import 'package:better_bus_v2/vitalis_downloader.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';

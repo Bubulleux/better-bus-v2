@@ -32,7 +32,7 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
       icon: Icons.bus_alert,
     ),
     // TODO: add to appstring
-    CustomNavigationItem(label: "Ticker", icon: Icons.airplane_ticket)
+    // CustomNavigationItem(label: "Ticker", icon: Icons.airplane_ticket)
   ];
 
   Widget buildItem(int index) {

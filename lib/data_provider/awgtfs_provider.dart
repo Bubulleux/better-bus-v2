@@ -30,4 +30,3 @@ class AWGTFSProvider extends AppProvider {
     return api.getTrafficInfos();
   }
 }
-

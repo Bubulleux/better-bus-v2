@@ -5,6 +5,7 @@ import 'package:better_bus_v2/views/map/controller.dart';
 import 'package:better_bus_v2/views/map/map_buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../data_provider/gps_data_provider.dart';
 import 'easter_eggs_layer.dart';
@@ -67,6 +68,7 @@ class NetworkMapState extends State<NetworkMap> with TickerProviderStateMixin {
           mapController: controller,
           options: MapOptions(
             initialCenter: GpsDataProvider.instance.cityLocation,
+						
           ),
           children: [
             TileLayer(
