@@ -29,7 +29,7 @@ Future<bool> checkInfoTraffic() async {
 
   var android = const AndroidInitializationSettings('@drawable/ic_stat_notification');
   var settings = InitializationSettings(android: android);
-  await flip.initialize(settings);
+  await flip.initialize(settings: settings);
 
   // await LocalDataHandler.addLog("Sep 3");
   final conn = ConnectivityStatus(autoUpdate: false);
@@ -70,10 +70,11 @@ Future<bool> checkInfoTraffic() async {
     }
     // await LocalDataHandler.addLog("Sub Sep 2");
     alreadyPushNotifications.add(infoTraffic.id);
-    await flip.show(infoTraffic.id,
-        AppString.notificationTitle,
-        infoTraffic.title,
-        platformChannelSpecifics);
+    await flip.show(
+			id: infoTraffic.id,
+        title: AppString.notificationTitle,
+        body: infoTraffic.title,
+        notificationDetails: platformChannelSpecifics);
     // await LocalDataHandler.addLog("Sucess");
   }
   // await LocalDataHandler.addLog("Sep 9");

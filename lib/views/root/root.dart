@@ -109,7 +109,8 @@ class _AppRootState extends State<AppRoot> {
 
     var android = const AndroidInitializationSettings('@mipmap/ic_launcher');
     var settings = InitializationSettings(android: android);
-    await flip.initialize(settings,
+    await flip.initialize(
+		settings: settings,
         onDidReceiveNotificationResponse: receiveNotification);
   }
 

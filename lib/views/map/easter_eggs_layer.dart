@@ -42,9 +42,9 @@ class _EasterEggsLayerState extends State<EasterEggsLayer> {
       if (hidden.contains(e.pos)) continue;
 
       if (camera.visibleBounds.contains(e.pos)) {
-        final center = (camera.project(e.pos) - camera.pixelOrigin).toOffset();
+        final center = (camera.projectAtZoom(e.pos) - camera.pixelOrigin);
         final secPos =  LatLng(e.pos.latitude + 0.00005, e.pos.longitude + 0.00005);
-        final dx = (camera.project(secPos) - camera.project(e.pos)).x * 1;
+        final dx = (camera.projectAtZoom(secPos) - camera.projectAtZoom(e.pos)).dx * 1;
         final bounds = Rect.fromCenter(
           center: center,
           width: dx,

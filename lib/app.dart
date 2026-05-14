@@ -58,7 +58,7 @@ Future initFlip() async {
 
   var android = const AndroidInitializationSettings('@mipmap/ic_launcher');
   var settings = InitializationSettings(android: android);
-  await flip.initialize(settings);
+  await flip.initialize(settings: settings);
 }
 
 final StreamController<String?> selectNotificationStream =
