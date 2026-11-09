@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:intl/date_symbol_data_local.dart';
+
 import 'model/app_config.dart';
 
 
@@ -73,7 +75,7 @@ Future runBetterBus(AppConfig config) async {
   // Workmanager().registerPeriodicTask("check-traffic-info", "checkTrafficInfo",
   //     frequency: const Duration(minutes: 15));
   await GpsDataProvider.initGps(config);
-
+	initializeDateFormatting();
 
   runApp(MultiProvider(
     providers: [

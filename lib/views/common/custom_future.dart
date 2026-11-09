@@ -100,8 +100,9 @@ class CustomFutureBuilderState<T> extends State<CustomFutureBuilder>
       error = widget.errorTest?.call(newData);
     } on CustomError catch (e){
       error = e;
-    } catch (e) {
+    } catch (e, st) {
       error = CustomError(e.toString(), null, true);
+			print(st);
     } finally {
       data = newData;
     }

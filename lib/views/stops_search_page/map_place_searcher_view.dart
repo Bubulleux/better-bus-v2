@@ -41,7 +41,7 @@ class _MapPlaceSearcherViewState extends State<MapPlaceSearcherView> {
     if (widget.search == "") {
       return null;
     }
-    List<Place> output = await AWGTFSProvider.of(context).api.getPlaceAutoComplete(widget.search);
+    List<Place> output = await AppProvider.of(context).getPlaceAutoComplete(widget.search);
 
 
     if (widget.search == "") {

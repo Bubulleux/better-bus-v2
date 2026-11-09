@@ -24,6 +24,7 @@ class RouteSearchResult extends StatefulWidget {
 class _RouteSearchResultState extends State<RouteSearchResult>
   with AutomaticKeepAliveClientMixin<RouteSearchResult>{
 
+	late final AppProvider provider;
   RouteSearchParameter? _parameter;
   RouteSearchParameter get parameter => _parameter!;
 
@@ -34,6 +35,7 @@ class _RouteSearchResultState extends State<RouteSearchResult>
   void initState() {
     super.initState();
     _parameter = widget.parameter;
+    provider = AppProvider.of(context);
   }
 
 @override
@@ -46,15 +48,13 @@ class _RouteSearchResultState extends State<RouteSearchResult>
   }
 
   Future<List<VitalisRoute>?> getRoutes() async {
-    final provider = AWGTFSProvider.of(context);
     assert(_parameter != null);
     if (!parameter.valid ||
         !mounted ||
         !provider.isAvailable()) {
       return null;
     }
-
-    final result = await (provider.api.getVitalisRoute(parameter.start!,
+    final result = await (provider.getRoutes(parameter.start!,
         parameter.stop!, parameter.time, parameter.timeType.name));
 
     return result;

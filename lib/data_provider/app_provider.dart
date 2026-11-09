@@ -3,6 +3,7 @@ import 'package:better_bus_v2/data_provider/broken_radar.dart';
 import 'package:better_bus_v2/data_provider/connectivity_checker.dart';
 import 'package:better_bus_v2/error_handler/custom_error.dart';
 import 'package:flutter/material.dart';
+import 'package:http/retry.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 
@@ -23,7 +24,7 @@ class AppProvider extends GTFSRTProvider {
     AppRadarProvider? radar,
     required super.downloader,
   }) {
-    this.radar = radar ?? BrokenRadar();
+    this.radar = radar ?? AppRadarProvider(provider: this);
   }
 
   factory AppProvider.of(BuildContext context) {
@@ -56,11 +57,11 @@ class AppProvider extends GTFSRTProvider {
       loader.gtfsDownloadLoad
           .completWithProgress((p) => downloader.downloadAndLoad(onProgress: p)),
       // loader.api.complete(api.init()),
-      // loader.radar.complete(radar.init())
     ];
 
     final success = await Future.wait(futures);
 
+    await loader.radar.complete(radar.init());
     print("App Provider full init $success");
 
     return success.every((e) => e);
@@ -93,4 +94,14 @@ class AppProvider extends GTFSRTProvider {
     }
     return stations;
   }
+
+
+	Future<List<VitalisRoute>>? getRoutes(Place start, Place end, DateTime date, 
+		String timeType, {int count = 5}) {
+		return Future.value([]);
+	}
+
+  Future<List<Place>> getPlaceAutoComplete(String input)  {
+		return Future.value([]);
+	}
 }
